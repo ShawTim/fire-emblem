@@ -448,11 +448,18 @@ class Game {
 
     // EXP
     if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedUnit.hp > 0 && this.combatResult.exp > 0) {
-      const gains = this.selectedUnit.gainExp(this.combatResult.exp);
-      if (gains) {
-        UI.showLevelUp(this.selectedUnit, gains, () => this.afterCombatDone());
-        return;
-      }
+      const expAmt = this.combatResult.exp;
+      const prevExp = this.selectedUnit.exp;
+      const gains = this.selectedUnit.gainExp(expAmt);
+      // Show EXP gain animation first
+      UI.showExpGain(this.selectedUnit, expAmt, () => {
+        if (gains) {
+          UI.showLevelUp(this.selectedUnit, gains, () => this.afterCombatDone());
+        } else {
+          this.afterCombatDone();
+        }
+      });
+      return;
     }
     this.afterCombatDone();
   }
@@ -686,6 +693,14 @@ class Game {
       return;
     }
 
+    // R key = status screen
+    if (key === 'r' || key === 'R') {
+      if (UI.isStatusScreenOpen()) { UI.hideStatusScreen(); return; }
+      const unit = this.units.find(u => u.x === Cursor.x && u.y === Cursor.y && u.hp > 0);
+      if (unit && unit.faction === 'player') { UI.showStatusScreen(unit); }
+      return;
+    }
+
     if (key === 'Enter' || key === 'z') {
       // Simulate click at cursor position
       const ts = GameMap.tileSize * GameMap.scale;
@@ -696,6 +711,7 @@ class Game {
     }
 
     if (key === 'Escape' || key === 'x') {
+      if (UI.isStatusScreenOpen()) { UI.hideStatusScreen(); return; }
       if (this.state === 'unitSelected') {
         this.cancelSelection();
       } else if (this.state === 'unitMoved') {
