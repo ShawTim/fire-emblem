@@ -1,0 +1,97 @@
+// items.js — Weapons and Staves
+
+const ITEMS = {
+  // Swords
+  ironSword:    { name: '鐵劍', type: 'sword', might: 5, hit: 90, crit: 0, weight: 5, range: [1], uses: 46 },
+  steelSword:   { name: '鋼劍', type: 'sword', might: 8, hit: 75, crit: 0, weight: 10, range: [1], uses: 30 },
+  silverSword:  { name: '銀劍', type: 'sword', might: 13, hit: 80, crit: 0, weight: 8, range: [1], uses: 20 },
+  rapier:       { name: '細劍', type: 'sword', might: 7, hit: 95, crit: 10, weight: 5, range: [1], uses: 40, effective: ['armored','cavalry'] },
+  killingEdge:  { name: '殺手劍', type: 'sword', might: 9, hit: 75, crit: 30, weight: 7, range: [1], uses: 20 },
+
+  // Lances
+  ironLance:    { name: '鐵槍', type: 'lance', might: 7, hit: 80, crit: 0, weight: 8, range: [1], uses: 45 },
+  steelLance:   { name: '鋼槍', type: 'lance', might: 10, hit: 70, crit: 0, weight: 13, range: [1], uses: 30 },
+  silverLance:  { name: '銀槍', type: 'lance', might: 14, hit: 75, crit: 0, weight: 10, range: [1], uses: 20 },
+  javelin:      { name: '手槍', type: 'lance', might: 6, hit: 65, crit: 0, weight: 11, range: [1,2], uses: 20 },
+
+  // Axes
+  ironAxe:      { name: '鐵斧', type: 'axe', might: 8, hit: 75, crit: 0, weight: 10, range: [1], uses: 45 },
+  steelAxe:     { name: '鋼斧', type: 'axe', might: 11, hit: 65, crit: 0, weight: 15, range: [1], uses: 30 },
+  handAxe:      { name: '手斧', type: 'axe', might: 7, hit: 60, crit: 0, weight: 12, range: [1,2], uses: 20 },
+
+  // Bows
+  ironBow:      { name: '鐵弓', type: 'bow', might: 6, hit: 85, crit: 0, weight: 5, range: [2], uses: 45 },
+  steelBow:     { name: '鋼弓', type: 'bow', might: 9, hit: 70, crit: 0, weight: 9, range: [2], uses: 30 },
+  killerBow:    { name: '殺手弓', type: 'bow', might: 9, hit: 75, crit: 30, weight: 7, range: [2], uses: 20 },
+  longbow:      { name: '長弓', type: 'bow', might: 5, hit: 65, crit: 0, weight: 10, range: [2,3], uses: 20 },
+
+  // Tomes (magic)
+  fire:         { name: '火焰', type: 'fire', might: 5, hit: 90, crit: 0, weight: 4, range: [1,2], uses: 40, magic: true },
+  thunder:      { name: '雷電', type: 'thunder', might: 8, hit: 80, crit: 5, weight: 6, range: [1,2], uses: 35, magic: true },
+  wind:         { name: '疾風', type: 'wind', might: 4, hit: 95, crit: 0, weight: 2, range: [1,2], uses: 40, magic: true, effective: ['flying'] },
+  elfire:       { name: '烈焰', type: 'fire', might: 10, hit: 85, crit: 0, weight: 10, range: [1,2], uses: 25, magic: true },
+  bolting:      { name: '天雷', type: 'thunder', might: 12, hit: 60, crit: 5, weight: 14, range: [3,10], uses: 5, magic: true },
+  dark:         { name: '暗黑', type: 'dark', might: 10, hit: 85, crit: 0, weight: 12, range: [1,2], uses: 20, magic: true },
+  fenrir:       { name: '芬里爾', type: 'dark', might: 15, hit: 70, crit: 0, weight: 18, range: [1,2], uses: 10, magic: true },
+
+  // Staves
+  heal:         { name: '治療杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 2, range: [1], uses: 30, heals: 10, magic: true },
+  mend:         { name: '恢復杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 4, range: [1], uses: 20, heals: 20, magic: true },
+  physic:       { name: '遠距杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 6, range: [1,2,3], uses: 15, heals: 15, magic: true },
+
+  // Additional magic
+  elthunder:    { name: '雷擊', type: 'thunder', might: 10, hit: 80, crit: 5, weight: 8, range: [1,2], uses: 25, magic: true },
+  flux:         { name: '暗流', type: 'dark', might: 7, hit: 80, crit: 0, weight: 8, range: [1,2], uses: 30, magic: true },
+  nosferatu:    { name: '吸血', type: 'dark', might: 8, hit: 70, crit: 0, weight: 14, range: [1,2], uses: 15, magic: true, drain: true },
+  eclipse:      { name: '蝕', type: 'dark', might: 18, hit: 50, crit: 0, weight: 20, range: [1,2], uses: 5, magic: true },
+
+  // Consumables
+  vulnerary:    { name: '傷藥', type: 'consumable', uses: 3, heals: 10 },
+
+  // Boss weapons
+  starCrest:    { name: '翠星之杖', type: 'dark', might: 20, hit: 90, crit: 10, weight: 12, range: [1,2], uses: 99, magic: true },
+};
+
+function createItem(itemId) {
+  const data = ITEMS[itemId];
+  if (!data) return null;
+  return {
+    id: itemId,
+    name: data.name,
+    type: data.type,
+    atk: data.might || 0,
+    hit: data.hit || 0,
+    crit: data.crit || 0,
+    weight: data.weight || 0,
+    range: data.range || [],
+    uses: data.uses || 1,
+    usesLeft: data.uses || 1,
+    magic: !!data.magic,
+    heals: data.heals || 0,
+    effective: data.effective || [],
+    drain: !!data.drain,
+  };
+}
+
+// Weapon triangle
+const WEAPON_TRIANGLE = {
+  sword: { strong: 'axe', weak: 'lance' },
+  lance: { strong: 'sword', weak: 'axe' },
+  axe:   { strong: 'lance', weak: 'sword' },
+  // Magic triangle
+  fire:    { strong: 'wind', weak: 'thunder' },
+  thunder: { strong: 'fire', weak: 'wind' },
+  wind:    { strong: 'thunder', weak: 'fire' },
+  // Neutral
+  bow: {},
+  staff: {},
+  dark: {},
+};
+
+function getTriangleBonus(attackerWeaponType, defenderWeaponType) {
+  const tri = WEAPON_TRIANGLE[attackerWeaponType];
+  if (!tri) return { hit: 0, atk: 0 };
+  if (tri.strong === defenderWeaponType) return { hit: 15, atk: 1 };
+  if (tri.weak === defenderWeaponType) return { hit: -15, atk: -1 };
+  return { hit: 0, atk: 0 };
+}

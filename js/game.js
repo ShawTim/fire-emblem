@@ -1,0 +1,731 @@
+// game.js — Core game state machine
+
+class Game {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.canvasW = canvas.width;
+    this.canvasH = canvas.height;
+    this.state = 'title';
+    this.units = [];
+    this.playerRoster = [];
+    this.currentChapter = 0;
+    this.chapterData = null;
+    this.turn = 1;
+    this.phase = 'player';
+    this.selectedUnit = null;
+    this.moveRange = [];
+    this.attackRange = [];
+    this.attackTargets = [];
+    this.healTargets = [];
+    this.lastTimestamp = 0;
+    this.dialogue = new DialogueSystem();
+    this.enemyActions = [];
+    this.enemyActionIndex = 0;
+    this.combatResult = null;
+    this.combatStepIndex = 0;
+    this.combatStepTimer = 0;
+    this.prevUnitPos = null;
+  }
+
+  init() {
+    const hasSave = !!localStorage.getItem('fe_save');
+    UI.showTitleScreen(hasSave);
+    this.state = 'title';
+  }
+
+  startNewGame() {
+    this.playerRoster = [];
+    this.currentChapter = 0;
+    UI.hideTitleScreen();
+    UI.clearOverlays();
+    this.startChapter(0);
+  }
+
+  continueGame() {
+    if (this.loadGame()) {
+      UI.hideTitleScreen();
+      UI.clearOverlays();
+      this.startChapter(this.currentChapter);
+    } else {
+      this.startNewGame();
+    }
+  }
+
+  startChapter(id) {
+    const chapter = CHAPTERS[id];
+    if (!chapter) {
+      this.state = 'ending';
+      UI.showEnding();
+      return;
+    }
+    this.chapterData = chapter;
+    this.currentChapter = id;
+    this.turn = 1;
+    this.phase = 'player';
+    this.units = [];
+    this.state = 'chapterTitle';
+
+    GameMap.init(chapter);
+
+    // Place player units
+    for (const pu of chapter.playerUnits) {
+      const charData = CHARACTERS[pu.charId];
+      if (!charData) continue;
+      let unit = this.playerRoster.find(u => u.charId === pu.charId);
+      if (unit) {
+        unit.x = pu.x;
+        unit.y = pu.y;
+        unit.hp = unit.maxHp;
+        unit.acted = false;
+        unit.moved = false;
+        unit.faction = 'player';
+      } else {
+        unit = new Unit({
+          charId: pu.charId, name: charData.name, classId: charData.classId,
+          level: charData.level || 1, faction: 'player', x: pu.x, y: pu.y,
+          isLord: charData.isLord || false, portrait: charData.portrait,
+          growths: charData.growths || {}, baseStats: charData.baseStats, items: charData.items,
+        });
+        this.playerRoster.push(unit);
+      }
+      this.units.push(unit);
+    }
+
+    // Place enemies
+    for (const ed of chapter.enemies) {
+      const unit = new Unit({
+        name: ed.name || '敵兵', classId: ed.classId, level: ed.level || 1,
+        faction: 'enemy', x: ed.x, y: ed.y, ai: ed.ai || 'aggressive',
+        isBoss: ed.isBoss || false, isCain: ed.isCain || false,
+        recruitableBy: ed.recruitableBy || null, bonusStats: ed.bonusStats || null,
+        portrait: ed.portrait || null, items: ed.items,
+        baseStats: this.generateEnemyStats(ed.classId, ed.level),
+      });
+      this.units.push(unit);
+    }
+
+    // Center camera
+    if (chapter.playerUnits.length > 0) {
+      const pu = chapter.playerUnits[0];
+      GameMap.centerOn(pu.x, pu.y, this.canvasW, this.canvasH);
+      Cursor.moveTo(pu.x, pu.y);
+    }
+
+    UI.showChapterCard(chapter.title, chapter.subtitle, () => {
+      if (chapter.dialogues && chapter.dialogues.pre) {
+        this.state = 'dialogue';
+        this.dialogue.start(chapter.dialogues.pre, () => {
+          this.beginPlayerPhase();
+        });
+      } else {
+        this.beginPlayerPhase();
+      }
+    });
+  }
+
+  generateEnemyStats(classId, level) {
+    const cls = getClassData(classId);
+    const isMagic = cls.weapons.some(w => ['fire','thunder','wind','dark','staff'].includes(w));
+    return {
+      hp: 16 + level * 2,
+      str: isMagic ? 1 : 3 + level,
+      mag: isMagic ? 3 + level : 0,
+      skl: 2 + level,
+      spd: 2 + level,
+      lck: 1 + Math.floor(level / 2),
+      def: 2 + level,
+      res: 1 + Math.floor(level / 2),
+    };
+  }
+
+  beginPlayerPhase() {
+    this.phase = 'player';
+    this.state = 'map';
+    this.selectedUnit = null;
+    for (const u of this.units) {
+      if (u.faction === 'player' && u.hp > 0) u.reset();
+    }
+    this.processTurnEvents();
+    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'player');
+    UI.showPhaseBanner('player');
+    UI.showEndTurnBtn();
+    UI.hideActionMenu();
+    UI.hideCombatForecast();
+  }
+
+  processTurnEvents() {
+    if (!this.chapterData.turnEvents) return;
+    for (const evt of this.chapterData.turnEvents) {
+      if (evt.turn !== this.turn) continue;
+      if (evt.type === 'recruit' && this.chapterData.newRecruits) {
+        for (const nr of this.chapterData.newRecruits) {
+          if (nr.turnJoin !== this.turn) continue;
+          if (this.units.find(u => u.charId === nr.charId && u.hp > 0)) continue;
+          const charData = CHARACTERS[nr.charId];
+          if (!charData) continue;
+          let unit = this.playerRoster.find(u => u.charId === nr.charId);
+          if (!unit) {
+            unit = new Unit({
+              charId: nr.charId, name: charData.name, classId: charData.classId,
+              level: charData.level || 1, faction: 'player', x: nr.x, y: nr.y,
+              isLord: charData.isLord || false, portrait: charData.portrait,
+              growths: charData.growths || {}, baseStats: charData.baseStats, items: charData.items,
+            });
+            this.playerRoster.push(unit);
+          } else {
+            unit.x = nr.x; unit.y = nr.y; unit.hp = unit.maxHp;
+            unit.faction = 'player'; unit.acted = false; unit.moved = false;
+          }
+          this.units.push(unit);
+        }
+        if (evt.text) {
+          const prevState = this.state;
+          this.state = 'dialogue';
+          this.dialogue.start(evt.text, () => { this.state = prevState; });
+        }
+      } else if (evt.type === 'reinforce') {
+        for (const ed of (evt.enemies || [])) {
+          const unit = new Unit({
+            name: ed.name || '敵兵', classId: ed.classId, level: ed.level || 1,
+            faction: 'enemy', x: ed.x, y: ed.y, ai: ed.ai || 'aggressive',
+            isBoss: ed.isBoss || false, items: ed.items,
+            baseStats: this.generateEnemyStats(ed.classId, ed.level),
+          });
+          this.units.push(unit);
+        }
+      }
+    }
+  }
+
+  update(timestamp) {
+    const dt = this.lastTimestamp ? timestamp - this.lastTimestamp : 16;
+    this.lastTimestamp = timestamp;
+    Cursor.update(dt);
+    this.dialogue.update(dt);
+    if (this.state === 'combatAnim') {
+      this.updateCombatAnim(dt);
+    }
+  }
+
+  render(ctx) {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    if (this.state === 'title' || this.state === 'ending' || this.state === 'chapterTitle') return;
+
+    GameMap.render(ctx, this.canvasW, this.canvasH, Cursor.frame);
+
+    // Seize marker
+    if (this.chapterData && this.chapterData.seizePos) {
+      const sp = this.chapterData.seizePos;
+      const ts = GameMap.tileSize * GameMap.scale;
+      const sx = sp.x * ts - GameMap.camX;
+      const sy = sp.y * ts - GameMap.camY;
+      ctx.save();
+      ctx.translate(sx, sy);
+      ctx.scale(GameMap.scale, GameMap.scale);
+      Sprites.drawSeizeMarker(ctx, 0, 0, Cursor.frame);
+      ctx.restore();
+    }
+
+    // Overlays
+    if (this.moveRange.length > 0) {
+      GameMap.renderOverlay(ctx, this.moveRange, 'rgba(0,100,255,0.3)', this.canvasW, this.canvasH);
+    }
+    if (this.attackRange.length > 0) {
+      GameMap.renderOverlay(ctx, this.attackRange, 'rgba(255,0,0,0.3)', this.canvasW, this.canvasH);
+    }
+
+    // Units
+    GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH);
+
+    // Cursor
+    if (['map', 'unitSelected', 'selectTarget'].includes(this.state)) {
+      Cursor.render(ctx, this.canvasW, this.canvasH);
+    }
+  }
+
+  handleClick(screenX, screenY) {
+    if (this.dialogue.isActive()) { this.dialogue.advance(); return; }
+    if (this.state === 'title' || this.state === 'ending' || this.state === 'chapterTitle' ||
+        this.state === 'combatAnim' || this.state === 'enemyPhase' || this.state === 'gameOver') return;
+
+    const tile = GameMap.screenToTile(screenX, screenY);
+    Cursor.moveTo(tile.x, tile.y);
+    GameMap.scrollToward(tile.x, tile.y, this.canvasW, this.canvasH);
+
+    if (this.state === 'map') {
+      this.onMapClick(tile.x, tile.y, screenX, screenY);
+    } else if (this.state === 'unitSelected') {
+      this.onUnitSelectedClick(tile.x, tile.y, screenX, screenY);
+    } else if (this.state === 'selectTarget') {
+      this.onSelectTargetClick(tile.x, tile.y);
+    }
+  }
+
+  onMapClick(x, y, screenX, screenY) {
+    if (this.phase !== 'player') return;
+    const unit = this.units.find(u => u.x === x && u.y === y && u.hp > 0);
+    if (unit && unit.faction === 'player' && !unit.acted) {
+      this.selectedUnit = unit;
+      this.moveRange = getMovementRange(unit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
+      this.attackRange = getAttackTilesFromPositions(this.moveRange, unit, GameMap.width, GameMap.height);
+      this.state = 'unitSelected';
+      UI.showUnitPanel(unit);
+    } else if (unit) {
+      UI.showUnitPanel(unit);
+    } else {
+      UI.hideUnitPanel();
+    }
+  }
+
+  onUnitSelectedClick(x, y, screenX, screenY) {
+    const inRange = this.moveRange.find(t => t.x === x && t.y === y);
+    if (inRange) {
+      this.prevUnitPos = { x: this.selectedUnit.x, y: this.selectedUnit.y };
+      this.selectedUnit.x = x;
+      this.selectedUnit.y = y;
+      this.selectedUnit.moved = true;
+      this.moveRange = [];
+      this.attackRange = [];
+      this.state = 'unitMoved';
+      this.showActionMenuForUnit(this.selectedUnit, screenX, screenY);
+    } else {
+      this.cancelSelection();
+    }
+  }
+
+  showActionMenuForUnit(unit, screenX, screenY) {
+    const items = [];
+    const atkRange = unit.getAttackRange();
+
+    if (unit.canAttack()) {
+      const targets = this.units.filter(u => {
+        if (u.faction === 'player' || u.hp <= 0) return false;
+        const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
+        return atkRange.includes(dist);
+      });
+      items.push({ label: '攻擊', action: 'attack', disabled: targets.length === 0 });
+      this.attackTargets = targets;
+    }
+
+    if (unit.canHeal()) {
+      const staff = unit.getHealStaff();
+      const hTargets = this.units.filter(u => {
+        if (u.faction !== 'player' || u.hp <= 0 || u.hp >= u.maxHp) return false;
+        const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
+        return staff.range.includes(dist);
+      });
+      items.push({ label: '治療', action: 'heal', disabled: hTargets.length === 0 });
+      this.healTargets = hTargets;
+    }
+
+    if (this.chapterData.talkEvents) {
+      for (const evt of this.chapterData.talkEvents) {
+        if (evt.from === unit.charId) {
+          const target = this.units.find(u => {
+            if (u.hp <= 0) return false;
+            if (u.isCain && evt.target === 'cain') {
+              return Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y) <= 1;
+            }
+            return false;
+          });
+          if (target) items.push({ label: '對話', action: 'talk', target, event: evt });
+        }
+      }
+    }
+
+    if (unit.isLord && this.chapterData.seizePos) {
+      const sp = this.chapterData.seizePos;
+      if (unit.x === sp.x && unit.y === sp.y) {
+        items.push({ label: '制壓', action: 'seize' });
+      }
+    }
+
+    items.push({ label: '待機', action: 'wait' });
+    items.push({ label: '取消', action: 'cancel' });
+
+    const menuX = Math.min(screenX, this.canvasW - 120);
+    const menuY = Math.min(screenY, this.canvasH - items.length * 32 - 10);
+    UI.showActionMenu(items, menuX, menuY, (action, idx) => this.onActionMenuSelect(action, items[idx]));
+  }
+
+  onActionMenuSelect(action, menuItem) {
+    UI.hideActionMenu();
+    switch (action) {
+      case 'attack':
+        this.state = 'selectTarget';
+        this.attackRange = this.attackTargets.map(t => ({ x: t.x, y: t.y }));
+        this.healTargets = [];
+        break;
+      case 'heal':
+        if (this.healTargets.length === 1) {
+          this.doHeal(this.healTargets[0]);
+        } else {
+          this.state = 'selectTarget';
+          this.attackTargets = [];
+          this.attackRange = this.healTargets.map(u => ({ x: u.x, y: u.y }));
+        }
+        break;
+      case 'talk':
+        this.doTalk(menuItem.target, menuItem.event);
+        break;
+      case 'seize':
+        this.doSeize();
+        break;
+      case 'wait':
+        this.doWait();
+        break;
+      case 'cancel':
+        if (this.prevUnitPos) {
+          this.selectedUnit.x = this.prevUnitPos.x;
+          this.selectedUnit.y = this.prevUnitPos.y;
+          this.selectedUnit.moved = false;
+        }
+        this.cancelSelection();
+        break;
+    }
+  }
+
+  onSelectTargetClick(x, y) {
+    if (this.attackTargets.length > 0) {
+      const target = this.attackTargets.find(t => t.x === x && t.y === y);
+      if (target) {
+        const forecast = calculateCombat(this.selectedUnit, target, GameMap);
+        if (forecast) {
+          UI.showCombatForecast(forecast,
+            () => { UI.hideCombatForecast(); this.startCombat(this.selectedUnit, target); },
+            () => { UI.hideCombatForecast(); }
+          );
+        }
+        return;
+      }
+    }
+    if (this.healTargets.length > 0) {
+      const target = this.healTargets.find(t => t.x === x && t.y === y);
+      if (target) { this.doHeal(target); return; }
+    }
+    // Cancel back to action menu
+    this.state = 'unitMoved';
+    this.attackRange = [];
+    const ts = GameMap.tileSize * GameMap.scale;
+    const sx = this.selectedUnit.x * ts - GameMap.camX;
+    const sy = this.selectedUnit.y * ts - GameMap.camY;
+    this.showActionMenuForUnit(this.selectedUnit, sx, sy);
+  }
+
+  startCombat(attacker, defender) {
+    this.state = 'combatAnim';
+    this.combatResult = executeCombat(attacker, defender, GameMap);
+    this.combatStepIndex = 0;
+    this.combatStepTimer = 0;
+    this.attackRange = [];
+    this.healTargets = [];
+  }
+
+  updateCombatAnim(dt) {
+    this.combatStepTimer += dt;
+    if (this.combatStepTimer < 500) return;
+    this.combatStepTimer = 0;
+
+    if (this.combatStepIndex < this.combatResult.steps.length) {
+      const step = this.combatResult.steps[this.combatStepIndex];
+      const ts = GameMap.tileSize * GameMap.scale;
+      const sx = step.target.x * ts - GameMap.camX + ts / 2;
+      const sy = step.target.y * ts - GameMap.camY;
+      if (step.hit) {
+        UI.showDamagePopup(sx, sy, step.damage, step.crit ? 'crit' : 'normal');
+      } else {
+        UI.showDamagePopup(sx, sy, 0, 'miss');
+      }
+      this.combatStepIndex++;
+    } else {
+      this.finishCombat();
+    }
+  }
+
+  finishCombat() {
+    // Remove dead enemies
+    this.units = this.units.filter(u => !(u.hp <= 0 && u.faction === 'enemy'));
+
+    if (this.checkLoseCondition()) {
+      this.state = 'gameOver';
+      UI.showGameOver(() => this.init());
+      return;
+    }
+
+    if (this.checkWinCondition()) {
+      this.onChapterClear();
+      return;
+    }
+
+    // EXP
+    if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedUnit.hp > 0 && this.combatResult.exp > 0) {
+      const gains = this.selectedUnit.gainExp(this.combatResult.exp);
+      if (gains) {
+        UI.showLevelUp(this.selectedUnit, gains, () => this.afterCombatDone());
+        return;
+      }
+    }
+    this.afterCombatDone();
+  }
+
+  afterCombatDone() {
+    if (this.selectedUnit) {
+      this.selectedUnit.acted = true;
+      this.selectedUnit.moved = true;
+    }
+    this.selectedUnit = null;
+    this.combatResult = null;
+    this.attackTargets = [];
+
+    if (this.phase === 'enemy') {
+      this.processNextEnemyAction();
+    } else {
+      this.state = 'map';
+      UI.hideUnitPanel();
+    }
+  }
+
+  doHeal(target) {
+    const result = executeHeal(this.selectedUnit, target);
+    if (result) {
+      const ts = GameMap.tileSize * GameMap.scale;
+      const sx = target.x * ts - GameMap.camX + ts / 2;
+      const sy = target.y * ts - GameMap.camY;
+      UI.showDamagePopup(sx, sy, result.healAmt, 'heal');
+      if (result.exp > 0) {
+        const gains = this.selectedUnit.gainExp(result.exp);
+        if (gains) {
+          UI.showLevelUp(this.selectedUnit, gains, () => this.doWait());
+          return;
+        }
+      }
+    }
+    this.doWait();
+  }
+
+  doTalk(target, event) {
+    if (target.isCain || target.recruitableBy) {
+      target.faction = 'player';
+      target.recruited = true;
+      target.ai = null;
+      target.acted = true;
+      target.charId = 'cain';
+      const charData = CHARACTERS['cain'];
+      if (charData) {
+        target.portrait = charData.portrait;
+        target.growths = charData.growths;
+      }
+      if (!this.playerRoster.find(u => u.charId === 'cain')) {
+        this.playerRoster.push(target);
+      }
+    }
+    this.state = 'dialogue';
+    this.dialogue.start(event.dialogue, () => this.doWait());
+  }
+
+  doSeize() {
+    if (this.selectedUnit) this.selectedUnit.acted = true;
+    this.onChapterClear();
+  }
+
+  doWait() {
+    if (this.selectedUnit) {
+      this.selectedUnit.acted = true;
+      this.selectedUnit.moved = true;
+    }
+    this.selectedUnit = null;
+    this.moveRange = [];
+    this.attackRange = [];
+    this.attackTargets = [];
+    this.healTargets = [];
+    this.prevUnitPos = null;
+    this.state = 'map';
+    UI.hideUnitPanel();
+    UI.hideActionMenu();
+  }
+
+  cancelSelection() {
+    this.selectedUnit = null;
+    this.moveRange = [];
+    this.attackRange = [];
+    this.attackTargets = [];
+    this.healTargets = [];
+    this.prevUnitPos = null;
+    this.state = 'map';
+    UI.hideActionMenu();
+  }
+
+  endTurn() {
+    if (this.state !== 'map' || this.phase !== 'player') return;
+    UI.hideEndTurnBtn();
+    UI.hideActionMenu();
+    UI.hideUnitPanel();
+    this.cancelSelection();
+    this.beginEnemyPhase();
+  }
+
+  beginEnemyPhase() {
+    this.phase = 'enemy';
+    this.state = 'enemyPhase';
+    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'enemy');
+    UI.showPhaseBanner('enemy');
+
+    for (const u of this.units) {
+      if (u.faction === 'enemy' && u.hp > 0) u.reset();
+    }
+
+    setTimeout(() => {
+      this.enemyActions = executeEnemyPhase(this);
+      this.enemyActionIndex = 0;
+      this.processNextEnemyAction();
+    }, 1600);
+  }
+
+  processNextEnemyAction() {
+    if (this.enemyActionIndex >= this.enemyActions.length) {
+      this.turn++;
+      if (this.checkWinCondition()) { this.onChapterClear(); return; }
+      this.beginPlayerPhase();
+      return;
+    }
+
+    const action = this.enemyActions[this.enemyActionIndex];
+    this.enemyActionIndex++;
+
+    if (action.type === 'attack') {
+      action.unit.x = action.moveX;
+      action.unit.y = action.moveY;
+      GameMap.scrollToward(action.unit.x, action.unit.y, this.canvasW, this.canvasH);
+      this.selectedUnit = action.unit;
+      this.startCombat(action.unit, action.target);
+    } else if (action.type === 'move') {
+      action.unit.x = action.moveX;
+      action.unit.y = action.moveY;
+      setTimeout(() => this.processNextEnemyAction(), 300);
+    } else {
+      setTimeout(() => this.processNextEnemyAction(), 100);
+    }
+  }
+
+  checkWinCondition() {
+    if (!this.chapterData) return false;
+    const obj = this.chapterData.objective;
+    if (obj === 'rout') return !this.units.some(u => u.faction === 'enemy' && u.hp > 0);
+    if (obj === 'boss') return !this.units.some(u => u.faction === 'enemy' && u.hp > 0 && u.isBoss);
+    if (obj === 'seize') {
+      if (this.chapterData.seizePos) {
+        const sp = this.chapterData.seizePos;
+        return !!this.units.find(u => u.isLord && u.x === sp.x && u.y === sp.y && u.acted);
+      }
+      return false;
+    }
+    if (obj === 'survive') return this.turn > (this.chapterData.surviveTurns || 99);
+    return false;
+  }
+
+  checkLoseCondition() {
+    const lord = this.units.find(u => u.isLord);
+    return !lord || lord.hp <= 0;
+  }
+
+  onChapterClear() {
+    this.state = 'chapterClear';
+    UI.hideEndTurnBtn();
+    const postDialogue = this.chapterData.dialogues && this.chapterData.dialogues.post;
+    const isLast = this.currentChapter >= CHAPTERS.length - 1;
+
+    const afterDialogue = () => {
+      if (isLast) {
+        UI.showEnding();
+        this.state = 'ending';
+      } else {
+        this.saveGame();
+        UI.showVictory(() => this.nextChapter());
+      }
+    };
+
+    if (postDialogue) {
+      this.state = 'dialogue';
+      this.dialogue.start(postDialogue, afterDialogue);
+    } else {
+      afterDialogue();
+    }
+  }
+
+  nextChapter() {
+    this.currentChapter++;
+    this.saveGame();
+    UI.clearOverlays();
+    this.startChapter(this.currentChapter);
+  }
+
+  saveGame() {
+    const data = {
+      chapter: this.currentChapter + 1,
+      roster: this.playerRoster.filter(u => u.hp > 0).map(u => u.serialize()),
+    };
+    localStorage.setItem('fe_save', JSON.stringify(data));
+  }
+
+  loadGame() {
+    try {
+      const raw = localStorage.getItem('fe_save');
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      this.currentChapter = data.chapter || 0;
+      this.playerRoster = (data.roster || []).map(d => Unit.deserialize(d));
+      return true;
+    } catch (e) { return false; }
+  }
+
+  handleKey(key) {
+    if (this.dialogue.isActive()) {
+      if (key === 'Enter' || key === ' ') this.dialogue.advance();
+      return;
+    }
+    if (this.state === 'combatAnim' || this.state === 'enemyPhase' || this.state === 'title' || this.state === 'ending') return;
+
+    const dirs = { ArrowUp: [0,-1], ArrowDown: [0,1], ArrowLeft: [-1,0], ArrowRight: [1,0],
+                   w: [0,-1], s: [0,1], a: [-1,0], d: [1,0] };
+    if (dirs[key]) {
+      Cursor.move(dirs[key][0], dirs[key][1]);
+      GameMap.scrollToward(Cursor.x, Cursor.y, this.canvasW, this.canvasH);
+      // Show unit info at cursor
+      const unit = this.units.find(u => u.x === Cursor.x && u.y === Cursor.y && u.hp > 0);
+      if (unit) UI.showUnitPanel(unit);
+      else if (this.state === 'map') UI.hideUnitPanel();
+      return;
+    }
+
+    if (key === 'Enter' || key === 'z') {
+      // Simulate click at cursor position
+      const ts = GameMap.tileSize * GameMap.scale;
+      const sx = Cursor.x * ts - GameMap.camX + ts / 2;
+      const sy = Cursor.y * ts - GameMap.camY + ts / 2;
+      this.handleClick(sx, sy);
+      return;
+    }
+
+    if (key === 'Escape' || key === 'x') {
+      if (this.state === 'unitSelected') {
+        this.cancelSelection();
+      } else if (this.state === 'unitMoved') {
+        if (this.prevUnitPos && this.selectedUnit) {
+          this.selectedUnit.x = this.prevUnitPos.x;
+          this.selectedUnit.y = this.prevUnitPos.y;
+          this.selectedUnit.moved = false;
+        }
+        UI.hideActionMenu();
+        this.cancelSelection();
+      } else if (this.state === 'selectTarget') {
+        this.attackRange = [];
+        this.state = 'unitMoved';
+        const ts = GameMap.tileSize * GameMap.scale;
+        const sx = this.selectedUnit.x * ts - GameMap.camX;
+        const sy = this.selectedUnit.y * ts - GameMap.camY;
+        this.showActionMenuForUnit(this.selectedUnit, sx, sy);
+      }
+    }
+  }
+}

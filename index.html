@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>火炎之紋章：翠星之影</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="game-container">
+  <canvas id="gameCanvas"></canvas>
+  <div id="ui-overlay">
+    <div id="top-bar">
+      <span id="chapter-name"></span>
+      <span id="turn-count"></span>
+      <span id="phase-indicator"></span>
+    </div>
+    <div id="unit-panel" class="hidden">
+      <div id="unit-portrait"></div>
+      <div id="unit-info"></div>
+    </div>
+    <div id="action-menu" class="hidden"></div>
+    <div id="combat-forecast" class="hidden"></div>
+    <div id="dialogue-box" class="hidden">
+      <canvas id="portrait-canvas" width="64" height="64"></canvas>
+      <div id="dialogue-name"></div>
+      <div id="dialogue-text"></div>
+    </div>
+    <div id="phase-banner" class="hidden"></div>
+    <div id="level-up-screen" class="hidden"></div>
+    <div id="title-screen" class="hidden">
+      <h1>火炎之紋章</h1>
+      <h2>翠星之影</h2>
+      <div id="title-menu">
+        <button id="btn-new-game">新遊戲</button>
+        <button id="btn-continue" class="hidden">繼續遊戲</button>
+      </div>
+    </div>
+    <div id="chapter-title-card" class="hidden">
+      <div id="chapter-title-text"></div>
+      <div id="chapter-title-sub"></div>
+    </div>
+    <button id="btn-end-turn" class="hidden">結束回合</button>
+  </div>
+</div>
+<script src="js/data/items.js"></script>
+<script src="js/data/classes.js"></script>
+<script src="js/data/chapters.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/unit.js"></script>
+<script src="js/map.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/cursor.js"></script>
+<script src="js/dialogue.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
