@@ -280,7 +280,7 @@ class Game {
     if (unit && unit.faction === 'player' && !unit.acted) {
       this.selectedUnit = unit;
       UI.showUnitPanel(unit);
-      this.showUnitCommandMenu(unit, screenX, screenY);
+      this.showUnitCommandMenu(unit);
     } else if (unit) {
       UI.showUnitPanel(unit);
     } else {
@@ -288,7 +288,19 @@ class Game {
     }
   }
 
-  showUnitCommandMenu(unit, screenX, screenY) {
+  getMenuPosForUnit(unit) {
+    const ts = GameMap.tileSize * GameMap.scale;
+    let mx = unit.x * ts - GameMap.camX + ts + 8;
+    let my = unit.y * ts - GameMap.camY;
+    // Keep menu on screen
+    if (mx > this.canvasW - 130) mx = unit.x * ts - GameMap.camX - 130;
+    if (my > this.canvasH - 200) my = this.canvasH - 200;
+    if (mx < 4) mx = 4;
+    if (my < 32) my = 32;
+    return { x: mx, y: my };
+  }
+
+  showUnitCommandMenu(unit) {
     const items = [];
     items.push({ label: '移動', action: 'cmd_move' });
     if (unit.canAttack()) {
@@ -299,6 +311,7 @@ class Game {
     }
     items.push({ label: '裝備', action: 'cmd_equip' });
     items.push({ label: '道具', action: 'cmd_item' });
+    items.push({ label: '狀態', action: 'cmd_status' });
 
     // Talk check
     if (this.chapterData.talkEvents) {
@@ -328,9 +341,8 @@ class Game {
     items.push({ label: '取消', action: 'cmd_cancel' });
 
     this.state = 'unitCommand';
-    const menuX = Math.min(screenX, this.canvasW - 120);
-    const menuY = Math.min(screenY, this.canvasH - items.length * 32 - 10);
-    UI.showActionMenu(items, menuX, menuY, (action, idx) => this.onUnitCommandSelect(action, items[idx]));
+    const pos = this.getMenuPosForUnit(unit);
+    UI.showActionMenu(items, pos.x, pos.y, (action, idx) => this.onUnitCommandSelect(action, items[idx]));
   }
 
   onUnitCommandSelect(action, menuItem) {
@@ -391,6 +403,10 @@ class Game {
         this.showItemMenu(unit);
         break;
 
+      case 'cmd_status':
+        UI.showStatusScreen(unit);
+        break;
+
       case 'cmd_talk':
         this.doTalk(menuItem.target, menuItem.event);
         break;
@@ -413,7 +429,7 @@ class Game {
     const weapons = unit.items.filter(it => it.type !== 'consumable' && it.type !== 'staff' && it.usesLeft > 0);
     if (weapons.length <= 1) {
       // Only one weapon or none — nothing to swap
-      this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+      this.showUnitCommandMenu(unit);
       return;
     }
     const items = weapons.map((w, i) => ({
@@ -424,10 +440,11 @@ class Game {
     items.push({ label: '返回', action: 'equip_cancel' });
 
     this.state = 'equipMenu';
-    UI.showActionMenu(items, this.canvasW / 2 - 60, this.canvasH / 2 - 40, (action, idx) => {
+    const pos = this.getMenuPosForUnit(unit);
+    UI.showActionMenu(items, pos.x, pos.y, (action, idx) => {
       UI.hideActionMenu();
       if (action === 'equip_cancel') {
-        this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+        this.showUnitCommandMenu(unit);
         return;
       }
       // Move selected weapon to front of items array
@@ -439,13 +456,13 @@ class Game {
         unit.items.unshift(weapon);
       }
       UI.showUnitPanel(unit);
-      this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+      this.showUnitCommandMenu(unit);
     });
   }
 
   showItemMenu(unit) {
     if (unit.items.length === 0) {
-      this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+      this.showUnitCommandMenu(unit);
       return;
     }
     const items = unit.items.map((it, i) => ({
@@ -456,10 +473,11 @@ class Game {
     items.push({ label: '返回', action: 'item_cancel' });
 
     this.state = 'itemMenu';
-    UI.showActionMenu(items, this.canvasW / 2 - 60, this.canvasH / 2 - 40, (action, idx) => {
+    const pos = this.getMenuPosForUnit(unit);
+    UI.showActionMenu(items, pos.x, pos.y, (action, idx) => {
       UI.hideActionMenu();
       if (action === 'item_cancel') {
-        this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+        this.showUnitCommandMenu(unit);
         return;
       }
       const itemIdx = items[idx].itemIndex;
@@ -476,7 +494,7 @@ class Game {
         UI.showDamagePopup(sx, sy, healAmt, 'heal');
         UI.showUnitPanel(unit);
       }
-      this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+      this.showUnitCommandMenu(unit);
     });
   }
 
