@@ -243,7 +243,7 @@ class Game {
     GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH);
 
     // Cursor
-    if (['map', 'unitSelected', 'selectTarget'].includes(this.state)) {
+    if (['map', 'unitSelected', 'unitCommand', 'selectTarget'].includes(this.state)) {
       Cursor.render(ctx, this.canvasW, this.canvasH);
     }
 
@@ -264,6 +264,9 @@ class Game {
 
     if (this.state === 'map') {
       this.onMapClick(tile.x, tile.y, screenX, screenY);
+    } else if (this.state === 'unitCommand' || this.state === 'equipMenu' || this.state === 'itemMenu') {
+      // Menu is showing, let menu handle clicks
+      return;
     } else if (this.state === 'unitSelected') {
       this.onUnitSelectedClick(tile.x, tile.y, screenX, screenY);
     } else if (this.state === 'selectTarget') {
@@ -276,15 +279,205 @@ class Game {
     const unit = this.units.find(u => u.x === x && u.y === y && u.hp > 0);
     if (unit && unit.faction === 'player' && !unit.acted) {
       this.selectedUnit = unit;
-      this.moveRange = getMovementRange(unit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
-      this.attackRange = getAttackTilesFromPositions(this.moveRange, unit, GameMap.width, GameMap.height);
-      this.state = 'unitSelected';
       UI.showUnitPanel(unit);
+      this.showUnitCommandMenu(unit, screenX, screenY);
     } else if (unit) {
       UI.showUnitPanel(unit);
     } else {
       UI.hideUnitPanel();
     }
+  }
+
+  showUnitCommandMenu(unit, screenX, screenY) {
+    const items = [];
+    items.push({ label: '移動', action: 'cmd_move' });
+    if (unit.canAttack()) {
+      items.push({ label: '攻擊', action: 'cmd_attack' });
+    }
+    if (unit.canHeal()) {
+      items.push({ label: '治療', action: 'cmd_heal' });
+    }
+    items.push({ label: '裝備', action: 'cmd_equip' });
+    items.push({ label: '道具', action: 'cmd_item' });
+
+    // Talk check
+    if (this.chapterData.talkEvents) {
+      for (const evt of this.chapterData.talkEvents) {
+        if (evt.from === unit.charId) {
+          const target = this.units.find(u => {
+            if (u.hp <= 0) return false;
+            if ((u.isCain || u.recruitableBy) && (evt.target === 'cain' || evt.target === u.charId)) {
+              return Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y) <= 1;
+            }
+            return false;
+          });
+          if (target) items.push({ label: '對話', action: 'cmd_talk', target, event: evt });
+        }
+      }
+    }
+
+    // Seize check
+    if (unit.isLord && this.chapterData.seizePos) {
+      const sp = this.chapterData.seizePos;
+      if (unit.x === sp.x && unit.y === sp.y) {
+        items.push({ label: '制壓', action: 'cmd_seize' });
+      }
+    }
+
+    items.push({ label: '待機', action: 'cmd_wait' });
+    items.push({ label: '取消', action: 'cmd_cancel' });
+
+    this.state = 'unitCommand';
+    const menuX = Math.min(screenX, this.canvasW - 120);
+    const menuY = Math.min(screenY, this.canvasH - items.length * 32 - 10);
+    UI.showActionMenu(items, menuX, menuY, (action, idx) => this.onUnitCommandSelect(action, items[idx]));
+  }
+
+  onUnitCommandSelect(action, menuItem) {
+    UI.hideActionMenu();
+    const unit = this.selectedUnit;
+    if (!unit) { this.cancelSelection(); return; }
+
+    switch (action) {
+      case 'cmd_move':
+        this.moveRange = getMovementRange(unit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
+        this.attackRange = getAttackTilesFromPositions(this.moveRange, unit, GameMap.width, GameMap.height);
+        this.state = 'unitSelected';
+        break;
+
+      case 'cmd_attack': {
+        // Attack from current position (no move)
+        const atkRange = unit.getAttackRange();
+        const targets = this.units.filter(u => {
+          if (u.faction === 'player' || u.hp <= 0) return false;
+          const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
+          return atkRange.includes(dist);
+        });
+        if (targets.length > 0) {
+          this.attackTargets = targets;
+          this.attackRange = targets.map(t => ({ x: t.x, y: t.y }));
+          this.state = 'selectTarget';
+        } else {
+          // No targets in range — show move first
+          this.moveRange = getMovementRange(unit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
+          this.attackRange = getAttackTilesFromPositions(this.moveRange, unit, GameMap.width, GameMap.height);
+          this.state = 'unitSelected';
+        }
+        break;
+      }
+
+      case 'cmd_heal': {
+        const staff = unit.getHealStaff();
+        if (staff) {
+          const hTargets = this.units.filter(u => {
+            if (u.faction !== 'player' || u.hp <= 0 || u.hp >= u.maxHp) return false;
+            const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
+            return staff.range.includes(dist);
+          });
+          if (hTargets.length > 0) {
+            this.healTargets = hTargets;
+            this.attackRange = hTargets.map(u => ({ x: u.x, y: u.y }));
+            this.state = 'selectTarget';
+          }
+        }
+        break;
+      }
+
+      case 'cmd_equip':
+        this.showEquipMenu(unit);
+        break;
+
+      case 'cmd_item':
+        this.showItemMenu(unit);
+        break;
+
+      case 'cmd_talk':
+        this.doTalk(menuItem.target, menuItem.event);
+        break;
+
+      case 'cmd_seize':
+        this.doSeize();
+        break;
+
+      case 'cmd_wait':
+        this.doWait();
+        break;
+
+      case 'cmd_cancel':
+        this.cancelSelection();
+        break;
+    }
+  }
+
+  showEquipMenu(unit) {
+    const weapons = unit.items.filter(it => it.type !== 'consumable' && it.type !== 'staff' && it.usesLeft > 0);
+    if (weapons.length <= 1) {
+      // Only one weapon or none — nothing to swap
+      this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+      return;
+    }
+    const items = weapons.map((w, i) => ({
+      label: w.name + ' (' + w.usesLeft + '/' + w.uses + ')',
+      action: 'equip_' + i,
+      weaponIndex: i,
+    }));
+    items.push({ label: '返回', action: 'equip_cancel' });
+
+    this.state = 'equipMenu';
+    UI.showActionMenu(items, this.canvasW / 2 - 60, this.canvasH / 2 - 40, (action, idx) => {
+      UI.hideActionMenu();
+      if (action === 'equip_cancel') {
+        this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+        return;
+      }
+      // Move selected weapon to front of items array
+      const wi = items[idx].weaponIndex;
+      const weapon = weapons[wi];
+      const origIdx = unit.items.indexOf(weapon);
+      if (origIdx > 0) {
+        unit.items.splice(origIdx, 1);
+        unit.items.unshift(weapon);
+      }
+      UI.showUnitPanel(unit);
+      this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+    });
+  }
+
+  showItemMenu(unit) {
+    if (unit.items.length === 0) {
+      this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+      return;
+    }
+    const items = unit.items.map((it, i) => ({
+      label: it.name + (it.heals ? ' [回復]' : '') + ' (' + (it.usesLeft || 0) + '/' + (it.uses || 0) + ')',
+      action: 'item_' + i,
+      itemIndex: i,
+    }));
+    items.push({ label: '返回', action: 'item_cancel' });
+
+    this.state = 'itemMenu';
+    UI.showActionMenu(items, this.canvasW / 2 - 60, this.canvasH / 2 - 40, (action, idx) => {
+      UI.hideActionMenu();
+      if (action === 'item_cancel') {
+        this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+        return;
+      }
+      const itemIdx = items[idx].itemIndex;
+      const item = unit.items[itemIdx];
+      // Use consumable (vulnerary etc)
+      if (item.heals && unit.hp < unit.maxHp) {
+        const healAmt = Math.min(item.heals, unit.maxHp - unit.hp);
+        unit.hp += healAmt;
+        item.usesLeft--;
+        if (item.usesLeft <= 0) unit.items.splice(itemIdx, 1);
+        const ts = GameMap.tileSize * GameMap.scale;
+        const sx = unit.x * ts - GameMap.camX + ts / 2;
+        const sy = unit.y * ts - GameMap.camY;
+        UI.showDamagePopup(sx, sy, healAmt, 'heal');
+        UI.showUnitPanel(unit);
+      }
+      this.showUnitCommandMenu(unit, this.canvasW / 2, this.canvasH / 2);
+    });
   }
 
   onUnitSelectedClick(x, y, screenX, screenY) {
