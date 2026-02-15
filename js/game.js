@@ -249,6 +249,7 @@ class Game {
 
     // Battle scene
     if (this.battleScene.isActive()) {
+      UI.hideUnitPanel();
       this.battleScene.render(ctx, this.canvasW, this.canvasH);
     }
   }
@@ -265,7 +266,9 @@ class Game {
     if (this.state === 'map') {
       this.onMapClick(tile.x, tile.y, screenX, screenY);
     } else if (this.state === 'unitCommand' || this.state === 'equipMenu' || this.state === 'itemMenu') {
-      // Menu is showing, let menu handle clicks
+      // Click outside menu — close and cancel
+      UI.hideActionMenu();
+      this.cancelSelection();
       return;
     } else if (this.state === 'unitSelected') {
       this.onUnitSelectedClick(tile.x, tile.y, screenX, screenY);

@@ -121,11 +121,24 @@ function executeCombat(attacker, defender, map) {
 
 function calculateExp(attacker, defender, killed) {
   if (attacker.faction !== 'player') return 0;
-  const levelDiff = defender.level - attacker.level;
-  let exp = Math.max(1, 20 + levelDiff * 3);
-  if (killed) exp += 20;
-  if (defender.isBoss) exp += 30;
-  return Math.min(100, exp);
+  // Effective level: promoted units count as level + 20
+  const atkEffLevel = attacker.level + (attacker.promoted ? 20 : 0);
+  const defEffLevel = defender.level + (defender.promoted ? 20 : 0);
+  const levelDiff = defEffLevel - atkEffLevel;
+
+  let exp;
+  if (killed) {
+    // Kill EXP: base depends on level difference
+    exp = Math.max(1, Math.floor((defEffLevel * 10) / atkEffLevel));
+    if (levelDiff > 0) exp += levelDiff * 3;
+    if (defender.isBoss) exp += 40;
+    exp = Math.max(1, Math.min(100, exp));
+  } else {
+    // Combat EXP (hit but didn't kill)
+    exp = Math.max(1, Math.floor(1 + levelDiff));
+    if (levelDiff < -5) exp = 1;
+  }
+  return exp;
 }
 
 function executeHeal(healer, target) {
