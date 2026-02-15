@@ -404,7 +404,10 @@ class Game {
         break;
 
       case 'cmd_status':
-        UI.showStatusScreen(unit);
+        UI.showStatusScreen(unit, () => {
+          // Re-open command menu after status screen closes
+          if (this.selectedUnit) this.showUnitCommandMenu(this.selectedUnit);
+        });
         break;
 
       case 'cmd_talk':

@@ -258,7 +258,7 @@ const UI = {
   },
 
   // === Full Character Status Screen (R key) ===
-  showStatusScreen(unit) {
+  showStatusScreen(unit, onClose) {
     if (!unit || unit.faction !== 'player') return;
     const cls = getClassData(unit.classId);
     const growths = unit.growths || {};
@@ -394,7 +394,8 @@ const UI = {
       </div>
     `;
 
-    overlay.addEventListener('click', () => overlay.remove());
+    this._statusOnClose = onClose || null;
+    overlay.addEventListener('click', () => { overlay.remove(); const cb = this._statusOnClose; this._statusOnClose = null; if (cb) cb(); });
     document.getElementById('ui-overlay').appendChild(overlay);
 
     // Draw portrait
@@ -410,6 +411,9 @@ const UI = {
   hideStatusScreen() {
     const el = document.getElementById('status-screen');
     if (el) el.remove();
+    const cb = this._statusOnClose;
+    this._statusOnClose = null;
+    if (cb) cb();
   },
 
   isStatusScreenOpen() {
