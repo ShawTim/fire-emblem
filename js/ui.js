@@ -145,15 +145,16 @@ const UI = {
     let html = `<div class="lvup-title">🎉 Level Up! → Lv.${unit.level}</div>`;
     let totalGains = 0;
     for (const [label, key, val] of stats) {
-      const inc = gains[key] ? 1 : 0;
+      const inc = gains[key] || 0;
       totalGains += inc;
-      const cls = inc ? 'increased' : 'same';
-      const g = growths[key] || 0;
+      const cls = inc > 0 ? 'increased' : 'same';
+      const incText = inc > 1 ? '<span style="color:#ffd700;font-weight:bold">+' + inc + '</span>'
+                    : inc === 1 ? '<span style="color:#4f4;font-weight:bold">+1</span>'
+                    : '<span style="color:#444">—</span>';
       html += `<div class="lvup-stat ${cls}" style="display:flex;justify-content:space-between;padding:1px 0">
         <span>${label}</span>
         <span style="flex:1;text-align:right;margin-right:8px">${val}</span>
-        <span style="width:40px;text-align:center">${inc ? '<span style="color:#4f4;font-weight:bold">+1</span>' : '<span style="color:#444">—</span>'}</span>
-        <span style="width:30px;text-align:right;font-size:10px;color:#666">(${g}%)</span>
+        <span style="width:40px;text-align:center">${incText}</span>
       </div>`;
     }
     // Rating
@@ -316,8 +317,7 @@ const UI = {
               <div style="background:${label === 'HP' ? hpColor : '#4a9eff'};height:6px;width:${barW}%"></div>
             </div>
           </td>
-          <td style="width:40px;text-align:center;font-size:10px;color:${growthColor(g)}">${g}%</td>
-          <td style="width:50px">${growthStars(g)}</td>
+          
         </tr>`;
     }
 
@@ -373,7 +373,7 @@ const UI = {
         <div style="display:flex;gap:24px">
           <div style="flex:1">
             <div style="color:#ffa500;font-weight:bold;margin-bottom:6px;border-bottom:1px solid #333;padding-bottom:4px">
-              屬性 <span style="font-size:10px;color:#666;font-weight:normal">（成長率）</span>
+              屬性
             </div>
             <table style="width:100%;font-size:12px">${statsHtml}</table>
           </div>

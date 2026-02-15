@@ -149,14 +149,26 @@ class Unit {
     const stats = ['hp', 'str', 'mag', 'skl', 'spd', 'lck', 'def', 'res'];
     for (const stat of stats) {
       const growth = this.growths[stat] || 0;
-      if (Math.random() * 100 < growth) {
-        gains[stat] = 1;
-        if (stat === 'hp') this.maxHp++;
-        else this[stat]++;
+      let inc = 0;
+      // Growth > 100 = guaranteed +1, remainder is chance for +2
+      // e.g. growth 130 = +1 guaranteed, 30% chance of +2
+      // growth 200 = +2 guaranteed, etc.
+      let remaining = growth;
+      while (remaining > 0) {
+        if (remaining >= 100) {
+          inc++;
+          remaining -= 100;
+        } else {
+          if (Math.random() * 100 < remaining) inc++;
+          remaining = 0;
+        }
+      }
+      if (inc > 0) {
+        gains[stat] = inc;
+        if (stat === 'hp') { this.maxHp += inc; this.hp = Math.min(this.maxHp, this.hp + inc); }
+        else this[stat] += inc;
       }
     }
-    // HP also heals on level up
-    if (gains.hp) this.hp = Math.min(this.maxHp, this.hp + 1);
     return gains;
   }
 
