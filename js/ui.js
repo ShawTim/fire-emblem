@@ -21,7 +21,7 @@ const UI = {
     const hpColor = hpPct > 50 ? '#4f4' : (hpPct > 25 ? '#cc4' : '#c44');
     const expPct = unit.faction === 'player' ? unit.exp : 0;
     const weapon = unit.getEquippedWeapon ? unit.getEquippedWeapon() : null;
-    const atkPow = weapon ? (weapon.magic ? unit.mag + weapon.might : unit.str + weapon.might) : 0;
+    const atkPow = weapon ? (weapon.magic ? unit.mag + weapon.atk : unit.str + weapon.atk) : 0;
     const hitRate = weapon ? (unit.skl * 2 + unit.lck + weapon.hit) : 0;
     const avoRate = unit.spd * 2 + unit.lck;
     const critRate = weapon ? Math.floor(unit.skl / 2) + weapon.crit : 0;
@@ -266,7 +266,7 @@ const UI = {
     const hpColor = hpPct > 50 ? '#4f4' : (hpPct > 25 ? '#cc4' : '#c44');
 
     const weapon = unit.getEquippedWeapon ? unit.getEquippedWeapon() : null;
-    const atkPow = weapon ? (weapon.magic ? unit.mag + weapon.might : unit.str + weapon.might) : 0;
+    const atkPow = weapon ? (weapon.magic ? unit.mag + weapon.atk : unit.str + weapon.atk) : 0;
     const hitRate = weapon ? (unit.skl * 2 + unit.lck + weapon.hit) : 0;
     const avoRate = unit.spd * 2 + unit.lck;
     const critRate = weapon ? Math.floor(unit.skl / 2) + weapon.crit : 0;
