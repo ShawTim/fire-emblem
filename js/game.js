@@ -25,6 +25,7 @@ class Game {
     this.combatStepIndex = 0;
     this.combatStepTimer = 0;
     this.prevUnitPos = null;
+    this.battleScene = new BattleScene();
   }
 
   init() {
@@ -202,8 +203,11 @@ class Game {
     this.lastTimestamp = timestamp;
     Cursor.update(dt);
     this.dialogue.update(dt);
+    this.battleScene.update(dt);
     if (this.state === 'combatAnim') {
-      this.updateCombatAnim(dt);
+      if (!this.battleScene.isActive()) {
+        this.finishCombat();
+      }
     }
   }
 
@@ -241,6 +245,11 @@ class Game {
     // Cursor
     if (['map', 'unitSelected', 'selectTarget'].includes(this.state)) {
       Cursor.render(ctx, this.canvasW, this.canvasH);
+    }
+
+    // Battle scene
+    if (this.battleScene.isActive()) {
+      this.battleScene.render(ctx, this.canvasW, this.canvasH);
     }
   }
 
@@ -416,31 +425,10 @@ class Game {
   startCombat(attacker, defender) {
     this.state = 'combatAnim';
     this.combatResult = executeCombat(attacker, defender, GameMap);
-    this.combatStepIndex = 0;
-    this.combatStepTimer = 0;
+    const forecast = calculateCombat(attacker, defender, GameMap);
     this.attackRange = [];
     this.healTargets = [];
-  }
-
-  updateCombatAnim(dt) {
-    this.combatStepTimer += dt;
-    if (this.combatStepTimer < 500) return;
-    this.combatStepTimer = 0;
-
-    if (this.combatStepIndex < this.combatResult.steps.length) {
-      const step = this.combatResult.steps[this.combatStepIndex];
-      const ts = GameMap.tileSize * GameMap.scale;
-      const sx = step.target.x * ts - GameMap.camX + ts / 2;
-      const sy = step.target.y * ts - GameMap.camY;
-      if (step.hit) {
-        UI.showDamagePopup(sx, sy, step.damage, step.crit ? 'crit' : 'normal');
-      } else {
-        UI.showDamagePopup(sx, sy, 0, 'miss');
-      }
-      this.combatStepIndex++;
-    } else {
-      this.finishCombat();
-    }
+    this.battleScene.start(attacker, defender, this.combatResult, forecast, () => this.finishCombat());
   }
 
   finishCombat() {
