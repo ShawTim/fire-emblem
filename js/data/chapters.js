@@ -276,7 +276,7 @@ post:[
 {id:7,title:'第七章',subtitle:'深淵之森',objective:'rout',objectiveDesc:'殲滅所有敵人',width:20,height:16,
 terrain:['FFPFFFPPPFFFPFFFPPFF','FPFFPFFPPFPFPFFPPPFP','PPPFFPPPPPPPPFFPPPPP','FFPPPPVPPPPPPPPPPFFF','FPPPPPPPPPPPPPPPPPFP','PPPPFFPPPFFFPPPFFPPP','FFPPFFPPPFVFPPPFFPFF','PPPPPPPPPPPPPPPPPPPP','PPFFPPPPPPPPPPPPFFPP','PFFFPPPFFFPPPFFFPFFP','PPPPPPPPFPPPPPPPPPPP','FFPPPPPPPPPPPFFPPFFF','FPPPFFPPPPPPPFPPPFPP','PPPPFFPPPPVPPPPPPPPF','PPPPPPPPPPPPPPPPPPPF','FFPFFFPPPFFFPPFFFPFF'],
 playerUnits:[{charId:'eirine',x:2,y:14},{charId:'marcus',x:1,y:14},{charId:'lina',x:3,y:14},{charId:'thor',x:2,y:15},{charId:'serra',x:1,y:15},{charId:'cain',x:3,y:15},{charId:'fran',x:4,y:14},{charId:'rex',x:4,y:15},{charId:'natasha',x:5,y:14}],
-newRecruits:[{charId:'olivier',x:10,y:6,turnJoin:0,recruitMethod:'village'}],
+newRecruits:[{charId:'olivier',x:10,y:6,turnJoin:2}],
 enemies:[
 {classId:'brigand',level:9,x:8,y:2,items:['steelAxe'],ai:'aggressive',name:'森林盜賊'},
 {classId:'brigand',level:9,x:14,y:2,items:['handAxe'],ai:'aggressive',name:'森林盜賊'},
@@ -300,6 +300,10 @@ enemies:[
 npcs:[],
 talkEvents:[],
 turnEvents:[
+{turn:2,type:'recruit',text:[
+{speaker:'olivier',text:'……你們是反抗帝國的人嗎？我一直在這片森林裡躲藏……'},
+{speaker:'eirine',text:'你是誰？'},
+{speaker:'olivier',text:'叫我オリヴィエ就好。讓我跟你們一起戰鬥吧。'}]},
 {turn:4,type:'reinforce',enemies:[
 {classId:'brigand',level:9,x:0,y:7,items:['ironAxe'],ai:'aggressive',name:'森林盜賊'},
 {classId:'brigand',level:9,x:19,y:7,items:['ironAxe'],ai:'aggressive',name:'森林盜賊'},
@@ -345,7 +349,7 @@ enemies:[
 {classId:'archer',level:10,x:16,y:1,items:['killerBow'],ai:'defensive',name:'精銳弓兵'},
 {classId:'mage',level:10,x:6,y:2,items:['elfire'],ai:'defensive',name:'要塞魔法師'},
 {classId:'mage',level:10,x:13,y:2,items:['elthunder'],ai:'defensive',name:'要塞魔法師'},
-{classId:'general',level:1,x:4,y:8,items:['silverLance','javelin'],ai:'defensive',name:'ヘルガ',isHelga:true,recruitableBy:'eirine'},
+{classId:'general',level:1,x:4,y:8,items:['silverLance','javelin'],ai:'defensive',name:'ヘルガ',charId:'helga',isHelga:true,recruitableBy:'eirine'},
 {classId:'greatKnight',level:3,x:9,y:1,items:['silverLance','silverSword'],ai:'boss',name:'要塞司令官ゲルハルト',isBoss:true,bonusStats:{hp:12,str:5,skl:3,spd:2,def:6,res:2}}],
 npcs:[],talkEvents:[{from:'eirine',target:'helga',dialogue:[
 {speaker:'eirine',text:'ヘルガ將軍！我是艾琳。你還記得我父王嗎？'},

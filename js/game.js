@@ -563,7 +563,7 @@ class Game {
         if (evt.from === unit.charId) {
           const target = this.units.find(u => {
             if (u.hp <= 0) return false;
-            if (u.isCain && evt.target === 'cain') {
+            if ((u.isCain || u.recruitableBy) && (evt.target === 'cain' || evt.target === u.charId)) {
               return Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y) <= 1;
             }
             return false;
@@ -735,13 +735,15 @@ class Game {
       target.recruited = true;
       target.ai = null;
       target.acted = true;
-      target.charId = 'cain';
-      const charData = CHARACTERS['cain'];
+      // Determine the correct charId for recruitment
+      const recruitCharId = target.isCain ? 'cain' : (event.target || target.charId || 'cain');
+      target.charId = recruitCharId;
+      const charData = CHARACTERS[recruitCharId];
       if (charData) {
         target.portrait = charData.portrait;
         target.growths = charData.growths;
       }
-      if (!this.playerRoster.find(u => u.charId === 'cain')) {
+      if (!this.playerRoster.find(u => u.charId === recruitCharId)) {
         this.playerRoster.push(target);
       }
     }

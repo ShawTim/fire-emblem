@@ -7,6 +7,8 @@ const TERRAIN_DATA = {
   gate:     { def: 3, avo: 30, cost: 1 },
   river:    { def: 0, avo: 0, cost: 999 },
   village:  { def: 0, avo: 10, cost: 1 },
+  throne:   { def: 3, avo: 30, cost: 1 },
+  pillar:   { def: 1, avo: 15, cost: 2 },
 };
 
 class Unit {
