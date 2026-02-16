@@ -106,6 +106,32 @@ const CLASSES = {
     caps: { hp:60, str:28, mag:5, skl:24, spd:22, lck:30, def:28, res:15 },
     bonus: { hp:4, str:2, skl:2, spd:2, def:3, res:2 }
   },
+  pegasusKnight: {
+    name: '天馬騎士', weapons: ['lance'], mov: 7, tags: ['flying','mounted'],
+    promo: [{ to: 'falconKnight' }],
+    caps: { hp:60, str:18, mag:10, skl:22, spd:24, lck:30, def:16, res:22 }
+  },
+  falconKnight: {
+    name: '隼騎士', weapons: ['lance','sword'], mov: 8, promoted: true, tags: ['flying','mounted'],
+    caps: { hp:60, str:22, mag:15, skl:26, spd:28, lck:30, def:20, res:28 },
+    bonus: { hp:3, str:2, skl:2, spd:2, def:2, res:3 }
+  },
+  thief: {
+    name: '盜賊', weapons: ['sword'], mov: 6,
+    promo: [{ to: 'assassin' }],
+    caps: { hp:60, str:18, mag:5, skl:24, spd:26, lck:30, def:14, res:16 }
+  },
+  assassin: {
+    name: '刺客', weapons: ['sword'], mov: 6, promoted: true,
+    caps: { hp:60, str:22, mag:5, skl:30, spd:30, lck:30, def:18, res:20 },
+    bonus: { hp:2, str:2, skl:3, spd:3, def:1, res:2 },
+    critBonus: 15
+  },
+  general: {
+    name: '將軍', weapons: ['lance','axe'], mov: 4, promoted: true, tags: ['armored'],
+    caps: { hp:60, str:28, mag:5, skl:22, spd:14, lck:30, def:30, res:14 },
+    bonus: { hp:5, str:3, skl:1, spd:0, def:5, res:1 }
+  },
   // Enemy-only classes
   soldier: {
     name: '士兵', weapons: ['lance'], mov: 5,
