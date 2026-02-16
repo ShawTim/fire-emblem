@@ -184,37 +184,54 @@ const Sprites = {
     }
   },
 
+  _portraitCache: {},
+
   drawPortrait(ctx, charId, w, h) {
     const ch = CHARACTERS[charId];
-    if (!ch || !ch.portrait) {
+    if (!ch) {
+      ctx.fillStyle = '#333';
+      ctx.fillRect(0, 0, w, h);
+      return;
+    }
+
+    // Try loading real portrait image
+    if (!this._portraitCache[charId]) {
+      const img = new Image();
+      img.src = 'portraits/' + charId + '.png';
+      this._portraitCache[charId] = { img, loaded: false, failed: false };
+      img.onload = () => { this._portraitCache[charId].loaded = true; };
+      img.onerror = () => { this._portraitCache[charId].failed = true; };
+    }
+
+    const cached = this._portraitCache[charId];
+    if (cached.loaded) {
+      ctx.drawImage(cached.img, 0, 0, w, h);
+      return;
+    }
+
+    // Fallback: procedural portrait
+    if (!ch.portrait) {
       ctx.fillStyle = '#333';
       ctx.fillRect(0, 0, w, h);
       return;
     }
     const p = ch.portrait;
-    // Background
     ctx.fillStyle = '#223';
     ctx.fillRect(0, 0, w, h);
-    // Face
     ctx.fillStyle = p.skin;
     ctx.fillRect(16, 20, 32, 36);
-    // Hair
     ctx.fillStyle = p.hair;
     ctx.fillRect(12, 8, 40, 16);
     ctx.fillRect(12, 8, 8, 40);
     ctx.fillRect(44, 8, 8, 30);
-    // Eyes
     ctx.fillStyle = p.eyes;
     ctx.fillRect(22, 32, 6, 4);
     ctx.fillRect(36, 32, 6, 4);
-    // Pupils
     ctx.fillStyle = '#111';
     ctx.fillRect(24, 33, 3, 2);
     ctx.fillRect(38, 33, 3, 2);
-    // Mouth
     ctx.fillStyle = '#c88';
     ctx.fillRect(28, 44, 8, 2);
-    // Nose
     ctx.fillStyle = '#da9';
     ctx.fillRect(31, 38, 3, 4);
   },
