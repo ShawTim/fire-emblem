@@ -7,8 +7,11 @@ const Cursor = {
   frame: 0,
 
   moveTo(x, y) {
-    this.x = Math.max(0, Math.min(GameMap.width - 1, x));
-    this.y = Math.max(0, Math.min(GameMap.height - 1, y));
+    var nx = Math.max(0, Math.min(GameMap.width - 1, x));
+    var ny = Math.max(0, Math.min(GameMap.height - 1, y));
+    if (nx !== this.x || ny !== this.y) { if (typeof SFX !== 'undefined') SFX.cursor(); }
+    this.x = nx;
+    this.y = ny;
   },
 
   move(dx, dy) {

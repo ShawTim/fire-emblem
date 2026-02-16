@@ -5,6 +5,8 @@ canvas.width = 800;
 canvas.height = 600;
 const ctx = canvas.getContext('2d');
 
+SFX.init();
+
 const game = new Game(canvas);
 game.init();
 
@@ -74,6 +76,13 @@ document.getElementById('btn-new-game').addEventListener('click', (e) => {
 document.getElementById('btn-continue').addEventListener('click', (e) => {
   e.stopPropagation();
   game.continueGame();
+});
+
+// Mute toggle
+document.getElementById('btn-mute').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const muted = SFX.toggleMute();
+  e.target.textContent = muted ? '🔇' : '🔊';
 });
 
 // Prevent zoom on double-tap (iOS)

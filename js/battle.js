@@ -155,16 +155,18 @@ class BattleScene {
 
   _hit(s, a) {
     var tx=a?560:240, ty=240;
-    if(!s.hit){this.effects.push({type:'miss',x:tx,y:ty,text:'MISS',color:'#999',duration:800,timer:0});return;}
+    if(!s.hit){this.effects.push({type:'miss',x:tx,y:ty,text:'MISS',color:'#999',duration:800,timer:0});if(typeof SFX!=='undefined')SFX.miss();return;}
     if(s.crit){
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffff00',duration:250,timer:0});
       this.effects.push({type:'crit',x:400,y:160,text:'必殺！',color:'#ffd700',duration:1000,timer:0});
       this.effects.push({type:'damage',x:tx,y:ty-30,text:String(s.damage),color:'#ffd700',duration:1000,timer:0});
       this.shakeTimer=300;
+      if(typeof SFX!=='undefined')SFX.crit();
     } else {
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffffff',duration:150,timer:0});
       this.effects.push({type:'damage',x:tx,y:ty-20,text:String(s.damage),color:'#ff3333',duration:800,timer:0});
       this.shakeTimer=150;
+      if(typeof SFX!=='undefined')SFX.hit();
     }
   }
 
