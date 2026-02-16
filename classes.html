@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>職業圖鑑 — 翠星傳說</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#1a1a2e; color:#ccc; font-family:'Segoe UI',sans-serif; padding:20px; }
+h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
+.subtitle { text-align:center; color:#888; font-size:13px; margin-bottom:24px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; max-width:1200px; margin:0 auto; }
+.card {
+  background:#16213e; border:2px solid #334; border-radius:8px; padding:16px;
+  text-align:center; transition:border-color 0.2s;
+}
+.card:hover { border-color:#e8d080; }
+.card canvas { image-rendering:pixelated; display:block; margin:0 auto 10px; }
+.class-name { color:#e8d080; font-size:16px; font-weight:bold; margin-bottom:4px; }
+.class-id { color:#666; font-size:11px; margin-bottom:6px; }
+.weapons { color:#8ab; font-size:12px; margin-bottom:4px; }
+.stats { color:#999; font-size:11px; line-height:1.5; }
+.faction-toggle { text-align:center; margin-bottom:20px; }
+.faction-toggle button {
+  background:#16213e; color:#ccc; border:2px solid #334; padding:8px 16px;
+  margin:0 4px; cursor:pointer; border-radius:4px; font-size:13px;
+}
+.faction-toggle button.active { border-color:#e8d080; color:#e8d080; }
+</style>
+</head>
+<body>
+<h1>⚔️ 職業圖鑑</h1>
+<p class="subtitle">翠星傳說 — 全職業一覽</p>
+
+<div class="faction-toggle">
+  <button id="btn-player" class="active" onclick="setFaction('player')">我方</button>
+  <button id="btn-enemy" onclick="setFaction('enemy')">敵方</button>
+</div>
+
+<div class="grid" id="class-grid"></div>
+
+<script src="js/data/items.js"></script>
+<script src="js/data/classes.js"></script>
+<script src="js/data/chapters.js"></script>
+<script src="js/sprites.js"></script>
+<script>
+// Minimal GameMap stub for sprites
+const GameMap = { tileSize:32, scale:2, width:20, height:15, terrain:[], getTerrain:()=>'plain',
+  screenToTile:()=>({x:0,y:0}), camX:0, camY:0 };
+
+const CLASS_INFO = {
+  lord:       { name:'領主', nameEn:'Lord', weapons:'劍', desc:'王族血統，振奮士氣' },
+  paladin:    { name:'聖騎士', nameEn:'Paladin', weapons:'劍/槍', desc:'騎馬重裝，機動力強' },
+  cavalier:   { name:'騎士', nameEn:'Cavalier', weapons:'劍/槍', desc:'輕騎兵，攻守兼備' },
+  archer:     { name:'弓箭手', nameEn:'Archer', weapons:'弓', desc:'遠程攻擊，剋飛行' },
+  sniper:     { name:'狙擊手', nameEn:'Sniper', weapons:'弓', desc:'弓箭手上位職' },
+  fighter:    { name:'戰士', nameEn:'Fighter', weapons:'斧', desc:'高攻擊力，力量型' },
+  warrior:    { name:'勇者', nameEn:'Warrior', weapons:'斧/弓', desc:'戰士上位職' },
+  mercenary:  { name:'傭兵', nameEn:'Mercenary', weapons:'劍', desc:'均衡型，速度優秀' },
+  swordmaster:{ name:'劍聖', nameEn:'Swordmaster', weapons:'劍', desc:'傭兵上位職，必殺高' },
+  hero:       { name:'勇士', nameEn:'Hero', weapons:'劍/斧', desc:'傭兵上位職，攻守均衡' },
+  mage:       { name:'魔法師', nameEn:'Mage', weapons:'魔法', desc:'魔法攻擊，無視防禦' },
+  sage:       { name:'賢者', nameEn:'Sage', weapons:'魔法/杖', desc:'魔法師上位職' },
+  darkMage:   { name:'暗黑法師', nameEn:'Dark Mage', weapons:'暗魔法', desc:'操縱黑暗之力' },
+  cleric:     { name:'僧侶', nameEn:'Cleric', weapons:'杖', desc:'回復支援，不能攻擊' },
+  bishop:     { name:'司祭', nameEn:'Bishop', weapons:'杖/魔法', desc:'僧侶上位職' },
+  knight:     { name:'重騎士', nameEn:'Knight', weapons:'槍', desc:'高防禦，移動力低' },
+  general:    { name:'將軍', nameEn:'General', weapons:'槍/劍', desc:'重騎士上位職，鐵壁' },
+  thief:      { name:'盜賊', nameEn:'Thief', weapons:'劍', desc:'開鎖/偷竊，速度高' },
+  assassin:   { name:'刺客', nameEn:'Assassin', weapons:'劍', desc:'盜賊上位職，必殺高' },
+  wyvernRider:{ name:'飛龍騎士', nameEn:'Wyvern Rider', weapons:'槍', desc:'飛行重裝，弱弓箭' },
+  wyvernLord: { name:'飛龍將軍', nameEn:'Wyvern Lord', weapons:'槍/劍', desc:'飛龍上位職' },
+  pegasusKnight:{ name:'天馬騎士', nameEn:'Pegasus Knight', weapons:'槍', desc:'飛行輕裝，弱弓箭' },
+  falconKnight:{ name:'隼騎士', nameEn:'Falcon Knight', weapons:'槍/劍', desc:'天馬上位職' },
+  brigand:    { name:'山賊', nameEn:'Brigand', weapons:'斧', desc:'粗暴蠻力型敵兵' },
+  skeleton:   { name:'骷髏兵', nameEn:'Skeleton', weapons:'劍/槍', desc:'不死族敵兵' },
+  soldier:    { name:'士兵', nameEn:'Soldier', weapons:'槍', desc:'基本敵兵' },
+};
+
+let currentFaction = 'player';
+
+function setFaction(f) {
+  currentFaction = f;
+  document.getElementById('btn-player').className = f==='player'?'active':'';
+  document.getElementById('btn-enemy').className = f==='enemy'?'active':'';
+  renderAll();
+}
+
+function renderAll() {
+  const grid = document.getElementById('class-grid');
+  grid.innerHTML = '';
+  
+  const classIds = Object.keys(CLASS_INFO);
+  
+  classIds.forEach(classId => {
+    const info = CLASS_INFO[classId];
+    const card = document.createElement('div');
+    card.className = 'card';
+    
+    // Canvas for sprite
+    const canvas = document.createElement('canvas');
+    const scale = 4;
+    canvas.width = 32 * scale;
+    canvas.height = 32 * scale;
+    canvas.style.width = (32 * scale) + 'px';
+    canvas.style.height = (32 * scale) + 'px';
+    
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    ctx.scale(scale, scale);
+    
+    // Create mock unit
+    const unit = {
+      classId: classId,
+      faction: currentFaction,
+      hp: 20,
+      maxHp: 20,
+      portrait: currentFaction === 'player' ? { hair:'#8040a0', skin:'#fdb', eyes:'#222' } : null,
+      isBoss: false,
+    };
+    
+    // Vary hair colors for player units
+    const hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
+    if (currentFaction === 'player') {
+      unit.portrait.hair = hairColors[classIds.indexOf(classId) % hairColors.length];
+    }
+    
+    Sprites.drawUnit(ctx, unit, 0, 0, false);
+    
+    card.appendChild(canvas);
+    card.innerHTML += `
+      <div class="class-name">${info.name}</div>
+      <div class="class-id">${info.nameEn} (${classId})</div>
+      <div class="weapons">🗡️ ${info.weapons}</div>
+      <div class="stats">${info.desc}</div>
+    `;
+    // Re-append canvas since innerHTML killed it
+    const newCanvas = card.querySelector('canvas');
+    if (!newCanvas) {
+      card.insertBefore(canvas, card.firstChild);
+    }
+    
+    grid.appendChild(card);
+  });
+  
+  // Re-render canvases (innerHTML destroyed them)
+  const cards = grid.querySelectorAll('.card');
+  cards.forEach((card, i) => {
+    const classId = classIds[i];
+    if (!card.querySelector('canvas')) {
+      const canvas = document.createElement('canvas');
+      const scale = 4;
+      canvas.width = 32 * scale;
+      canvas.height = 32 * scale;
+      canvas.style.width = (32 * scale) + 'px';
+      canvas.style.height = (32 * scale) + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.scale(scale, scale);
+      
+      const unit = {
+        classId: classId,
+        faction: currentFaction,
+        hp: 20, maxHp: 20,
+        portrait: currentFaction === 'player' ? 
+          { hair: ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'][i%8], skin:'#fdb', eyes:'#222' } : null,
+        isBoss: false,
+      };
+      
+      Sprites.drawUnit(ctx, unit, 0, 0, false);
+      card.insertBefore(canvas, card.firstChild);
+    }
+  });
+}
+
+// Init
+Sprites._frameCounter = 0;
+renderAll();
+</script>
+</body>
+</html>

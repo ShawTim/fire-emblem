@@ -143,39 +143,41 @@ var Sprites = {
     var R=function(a,b,w,h,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,w,h);};
     var P=function(a,b,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,1,1);};
 
-    // FE GBA style: hair blob + 2 eyes ONLY. No face features. 
-    // Head ~10px, body ~10px, legs ~6px. Balanced chibi.
-    // Weapon is the biggest visual feature.
+    // FE GBA style: hair shape + small skin window + black dot eyes
     var drawHead=function(hx,hy,sz){
       var s=sz||10;
-      // Hair blob (rounded)
-      R(hx+2,hy,s-4,2,hair);
-      R(hx+1,hy+1,s-2,2,hair);
-      R(hx,hy+2,s,s-4,hair);
-      R(hx+1,hy+s-3,s-2,2,hair);
-      // Eyes only (2 bright dots in lower-middle of head)
-      var ey=hy+Math.floor(s*0.55);
-      var ex1=hx+Math.floor(s*0.3);
-      var ex2=hx+Math.floor(s*0.6);
-      P(ex1,ey,'#fff');P(ex1+1,ey,'#fff');
-      P(ex2,ey,'#fff');P(ex2+1,ey,'#fff');
-      P(ex1,ey+1,'#222');P(ex1+1,ey+1,'#222');
-      P(ex2,ey+1,'#222');P(ex2+1,ey+1,'#222');
+      // Hair top (shaped, not uniform blob)
+      R(hx+3,hy,s-6,1,hair);
+      R(hx+2,hy+1,s-4,1,hair);
+      R(hx+1,hy+2,s-2,2,hair);
+      R(hx,hy+4,s,1,hair);
+      // Small skin-colored eye area (not full face, just a window)
+      R(hx+1,hy+5,s-2,3,skin);
+      // Hair sides + bottom
+      R(hx,hy+5,1,3,hair);R(hx+s-1,hy+5,1,3,hair);
+      R(hx+1,hy+8,s-2,2,hair);
+      R(hx+2,hy+9,s-4,1,hair);
+      // Eyes = just 2 black dots
+      P(hx+Math.floor(s*0.3),hy+6,'#111');
+      P(hx+Math.floor(s*0.65),hy+6,'#111');
     };
 
     switch(cls){
       case'lord':case'masterLord':{
-        drawHead(x+10,by+4,12);
-        // Cape
-        R(x+20,by+8,4,12,c.accent);R(x+22,by+12,3,8,c.accent);
-        // Torso
-        R(x+11,by+16,10,6,c.body);
-        // Sword arm forward — BIG sword
-        R(x+8,by+16,3,5,c.cloth);
-        R(x+5,by+10,2,12,'#c0c8d8');R(x+4,by+10,4,2,'#e0d040'); // sword + guard
-        // Legs apart
-        R(x+11,by+22,4,6,c.armor);R(x+17,by+23,4,5,c.armor);
-        R(x+10,by+27,5,2,'#604020');R(x+16,by+27,5,2,'#604020');
+        // Leaning forward, sword thrust pose
+        drawHead(x+8,by+4,12);
+        // Cape flowing back-right
+        R(x+20,by+10,5,10,c.accent);R(x+23,by+14,3,6,c.accent);
+        // Torso tilted forward
+        R(x+9,by+16,11,6,c.body);R(x+10,by+17,9,4,c.cloth);
+        // Left arm thrusting sword forward
+        R(x+5,by+16,4,3,c.cloth);
+        // BIG sword angled forward-down
+        R(x+2,by+14,2,1,'#e0d040');R(x+1,by+15,4,1,'#e0d040');
+        R(x+0,by+16,2,10,'#c0c8d8');P(x+1,by+16,'#e0e8f0');
+        // Front leg forward, back leg bent
+        R(x+9,by+22,4,4,c.armor);R(x+16,by+22,3,4,c.armor);
+        R(x+8,by+26,5,3,'#604020');R(x+16,by+26,4,3,'#604020');
         break;
       }
       case'paladin':case'greatKnight':{
@@ -203,45 +205,53 @@ var Sprites = {
         break;
       }
       case'archer':case'sniper':case'ranger':{
-        drawHead(x+11,by+4,10);
-        // Sideways body
-        R(x+12,by+14,8,8,c.body);
-        // BIG bow (left side, drawn as arc)
+        // Sideways stance, pulling bow
+        drawHead(x+13,by+4,10);
+        // Body turned sideways (narrow)
+        R(x+14,by+14,7,8,c.body);
+        // Back arm holding bow out left
+        R(x+11,by+15,3,3,c.cloth);
+        // BIG bow 
         oc.strokeStyle='#a07030';oc.lineWidth=2;
-        oc.beginPath();oc.arc(x-x+ox+6,by-y+oy+18,9,-1.0,1.0);oc.stroke();oc.lineWidth=1;
-        // Arrow nocked
-        R(x+6,by+17,14,1,'#c8c8c8');R(x+5,by+16,2,3,'#888');
-        // Arms pulling
-        R(x+9,by+15,3,3,c.cloth);R(x+19,by+16,3,3,c.cloth);
-        // Legs
-        R(x+13,by+22,3,6,c.armor);R(x+17,by+23,3,5,c.armor);
-        R(x+12,by+27,5,2,'#604020');R(x+16,by+27,5,2,'#604020');
+        oc.beginPath();oc.arc(x-x+ox+6,by-y+oy+17,10,-1.0,1.0);oc.stroke();oc.lineWidth=1;
+        // Front arm pulling string back
+        R(x+20,by+15,3,3,c.cloth);
+        // Arrow nocked horizontally
+        R(x+5,by+17,16,1,'#c8c8c8');R(x+4,by+16,2,3,'#888');
+        // Quiver on back
+        R(x+21,by+10,3,9,'#8B6040');
+        // Legs: front bent, back straight
+        R(x+13,by+22,3,4,c.armor);R(x+18,by+22,3,5,c.armor);
+        R(x+12,by+26,4,3,'#604020');R(x+17,by+26,4,3,'#604020');
         break;
       }
       case'fighter':case'warrior':{
-        drawHead(x+9,by+4,11);
-        // Wide torso
-        R(x+8,by+15,14,8,c.body);
-        R(x+6,by+15,3,5,c.cloth);R(x+21,by+15,3,5,c.cloth);
-        // BIG AXE over shoulder
-        R(x+22,by+4,2,14,'#8B6040');
-        R(x+19,by+1,8,6,'#a0a0a0');R(x+20,by+2,6,4,'#c0c0c0');
-        // Wide legs
-        R(x+9,by+23,5,5,c.armor);R(x+17,by+23,5,5,c.armor);
-        R(x+8,by+27,6,2,'#604020');R(x+16,by+27,6,2,'#604020');
+        // Wide stance, axe raised for swing
+        drawHead(x+8,by+5,11);
+        // Bare chest / wide torso
+        R(x+7,by+16,14,7,c.body);R(x+5,by+16,3,4,skin);R(x+20,by+16,3,4,skin);
+        // BIG AXE raised diagonally
+        R(x+21,by+3,2,14,'#8B6040');
+        R(x+18,by+0,8,5,'#a0a0a0');R(x+19,by+1,6,3,'#c0c0c0');
+        // Legs wide apart, knees bent
+        R(x+7,by+23,5,3,c.armor);R(x+18,by+23,5,3,c.armor);
+        R(x+6,by+26,6,3,'#604020');R(x+17,by+26,6,3,'#604020');
         break;
       }
       case'mercenary':case'swordmaster':case'hero':{
-        drawHead(x+10,by+4,10);
-        R(x+7,by+7,3,7,'#e04040'); // bandana
-        // Body action pose
-        R(x+11,by+14,9,8,c.body);
-        // BIG sword extended right
-        R(x+20,by+14,3,3,c.cloth);
-        R(x+22,by+8,2,10,'#d0d0e0');R(x+21,by+8,4,2,'#c0a030');
-        // Legs
-        R(x+12,by+22,3,6,c.armor);R(x+16,by+23,3,5,c.armor);
-        R(x+11,by+27,5,2,'#604020');R(x+15,by+27,5,2,'#604020');
+        // Lunging forward, sword extended
+        drawHead(x+8,by+5,10);
+        R(x+5,by+8,3,6,'#e04040'); // bandana trailing
+        // Body leaning forward
+        R(x+9,by+15,10,7,c.body);
+        // Sword arm extended far right
+        R(x+19,by+15,4,3,c.cloth);
+        // BIG sword extended diagonally right-up
+        R(x+23,by+10,1,8,'#d0d0e0');R(x+24,by+9,1,4,'#d0d0e0');
+        R(x+22,by+14,3,2,'#c0a030');
+        // Lunge: front leg far forward, back leg stretched
+        R(x+8,by+22,4,3,c.armor);R(x+17,by+22,3,5,c.armor);
+        R(x+7,by+25,5,4,'#604020');R(x+16,by+26,4,3,'#604020');
         break;
       }
       case'mage':case'sage':case'darkMage':case'mageKnight':{
@@ -356,13 +366,17 @@ var Sprites = {
         break;
       }
       default:{ // soldier
-        drawHead(x+10,by+4,10);
-        R(x+10,by+4,10,3,c.armor); // helmet
-        R(x+11,by+14,9,8,c.body);
-        // Lance angled
-        R(x+21,by+3,2,16,'#b0b0b0');R(x+20,by+3,4,2,'#999');
-        R(x+12,by+22,3,6,c.armor);R(x+17,by+22,3,6,c.armor);
-        R(x+11,by+27,5,2,'#604020');R(x+16,by+27,5,2,'#604020');
+        // Guarding pose, lance angled forward
+        drawHead(x+11,by+5,10);
+        R(x+11,by+5,10,3,c.armor); // helmet
+        R(x+12,by+15,9,7,c.body);
+        // Shield left
+        R(x+8,by+15,4,7,c.accent);
+        // Lance angled forward-right
+        R(x+22,by+2,2,18,'#b0b0b0');R(x+21,by+2,4,2,'#999');
+        // Legs: one slightly forward
+        R(x+12,by+22,3,5,c.armor);R(x+17,by+23,3,4,c.armor);
+        R(x+11,by+26,5,3,'#604020');R(x+16,by+26,5,3,'#604020');
         break;
       }
     }
