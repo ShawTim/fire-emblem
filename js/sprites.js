@@ -6,7 +6,7 @@ var Sprites = {
   _portraitCache: {},
   _mapIconCache: {},
   tick: function() { this._frameCounter++; },
-  _idleBounce: function() { return (Math.floor(this._frameCounter / 8) % 2 === 0) ? 0 : -1; },
+  _idleFrame: function() { return Math.floor(this._frameCounter / 15) % 2; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
   _seed: function(x, y) { return (x * 31 + y * 17) & 0xffff; },
 
@@ -134,9 +134,14 @@ var Sprites = {
     var skin=(unit.portrait&&unit.portrait.skin)?unit.portrait.skin:c.skin;
     var eyes=(unit.portrait&&unit.portrait.eyes)?unit.portrait.eyes:'#222';
     if(grayed)ctx.globalAlpha=0.5;
-    var b=this._idleBounce(),by=y+b,cls=unit.classId||'soldier';
-    var R=function(a,b,w,h,col){ctx.fillStyle=col;ctx.fillRect(a,b,w,h);};
-    var P=function(a,b,col){ctx.fillStyle=col;ctx.fillRect(a,b,1,1);};
+    var frame=this._idleFrame(),by=y,cls=unit.classId||'soldier';
+
+    // FE3-style: draw to offscreen, then render with thick black outline
+    var os=document.createElement('canvas');os.width=36;os.height=36;
+    var oc=os.getContext('2d');
+    var ox=2,oy=2; // offset inside offscreen canvas
+    var R=function(a,b,w,h,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,w,h);};
+    var P=function(a,b,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,1,1);};
 
     // FE3 style: HUGE head (16x14), tiny body (8-10), stubby legs (4)
     // Head helper (centered at hx, hy) — 14w x 12h round-ish
@@ -378,17 +383,50 @@ var Sprites = {
       R(x+10,by-2,12,2,'#fc0');P(x+10,by-3,'#fc0');P(x+14,by-3,'#fc0');P(x+18,by-3,'#fc0');P(x+21,by-3,'#fc0');
     }
     if(grayed)ctx.globalAlpha=1.0;
-    // HP bar
+
+    // Render with FE3-style black outline: draw offscreen sprite shifted in 4 dirs as black, then normal on top
+    // Apply idle frame horizontal shift
+    var sx=frame===1?1:0;
+    ctx.globalCompositeOperation='source-over';
+    // Black outline (draw sprite as silhouette in 8 directions)
+    oc.globalCompositeOperation='source-in';
+    oc.fillStyle='#000';oc.fillRect(0,0,36,36);
+    oc.globalCompositeOperation='source-over';
+    // Draw the black silhouette offset
+    for(var di=0;di<8;di++){
+      var dd=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]][di];
+      ctx.drawImage(os,x-ox+dd[0]+sx,y-oy+dd[1]);
+    }
+    // Redraw the colored sprite on top (need to re-render)
+    // Actually simpler: save the colored version too
+    // Let me use a second offscreen for the colored version
+    // ... this approach is too complex. Use simpler method:
+
+    // Reset: just draw outline by drawing black shifted copies of offscreen
+    // The offscreen already has the colored sprite. Make a black copy:
+    var os2=document.createElement('canvas');os2.width=36;os2.height=36;
+    var oc2=os2.getContext('2d');
+    oc2.drawImage(os,0,0);
+    oc2.globalCompositeOperation='source-in';
+    oc2.fillStyle='#000';oc2.fillRect(0,0,36,36);
+    // Draw black outline
+    ctx.drawImage(os2,x-ox-1+sx,y-oy);
+    ctx.drawImage(os2,x-ox+1+sx,y-oy);
+    ctx.drawImage(os2,x-ox+sx,y-oy-1);
+    ctx.drawImage(os2,x-ox+sx,y-oy+1);
+    // Draw colored sprite on top
+    ctx.drawImage(os,x-ox+sx,y-oy);
+
+    // HP bar (drawn directly, not offscreen)
     if(unit.hp!==undefined&&unit.maxHp){
       var ratio=unit.hp/unit.maxHp;
-      R(x+4,y+30,24,2,'#222');
-      R(x+4,y+30,Math.floor(24*ratio),2,ratio>0.5?'#40c040':ratio>0.25?'#c0c040':'#c04040');
+      ctx.fillStyle='#000';ctx.fillRect(x+3+sx,y+30,26,3);
+      ctx.fillStyle=ratio>0.5?'#40c040':ratio>0.25?'#c0c040':'#c04040';
+      ctx.fillRect(x+4+sx,y+31,Math.floor(24*ratio),1);
     }
   },
 
-  _idleBounce: function(){
-    var t=Date.now();return Math.floor(Math.sin(t*0.004)*1.5);
-  },
+
 
   _portraitCallbacks: [],
 
