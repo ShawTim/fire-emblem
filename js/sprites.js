@@ -6,7 +6,7 @@ var Sprites = {
   _portraitCache: {},
   _mapIconCache: {},
   tick: function() { this._frameCounter++; },
-  _idleFrame: function() { return Math.floor(this._frameCounter / 15) % 2; },
+  _idleFrame: function() { return Math.floor(this._frameCounter / 12) % 3; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
   _seed: function(x, y) { return (x * 31 + y * 17) & 0xffff; },
 
@@ -148,25 +148,18 @@ var Sprites = {
 
     switch(cls){
       case'lord':case'masterLord':{
-        // Hair on TOP only — spiky upward + side bangs
-        R(x+11,by+1,2,1,hair);R(x+14,by+0,2,1,hair); // spikes up
+        R(x+11,by+1,2,1,hair);R(x+14,by+0,2,1,hair);
         R(x+9,by+2,8,1,hair);R(x+8,by+3,10,2,hair);
-        R(x+7,by+4,3,3,hair); // left bang
-        R(x+18,by+4,2,2,hair); // right bang
-        // Face: skin from eye-line down (NO hair below)
-        R(x+9,by+5,9,4,skin);R(x+10,by+9,7,1,skin); // chin
+        R(x+7,by+4,3,3,hair);R(x+18,by+4,2,2,hair);
+        R(x+9,by+5,9,4,skin);R(x+10,by+9,7,1,skin);
         dot(x+10,by+6);
-        // Tiara
         P(x+13,by+1,'#f0e040');P(x+14,by+1,'#f0e040');
-        // Cape
         R(x+19,by+8,5,12,c.accent);R(x+22,by+13,3,6,c.accent);
-        // Torso leaning
         R(x+10,by+10,8,6,c.body);R(x+9,by+11,7,4,c.cloth);
-        // Sword arm left
         R(x+6,by+11,3,3,c.cloth);
-        // BIG rapier
-        R(x+3,by+9,1,10,'#c8d0e0');R(x+2,by+9,3,1,'#e0d040');
-        // Legs
+        // Sword swing: 0=high, 1=mid, 2=low thrust
+        var sw=[[3,6],[2,10],[1,14]][frame];
+        R(x+sw[0],by+sw[1],1,8,'#c8d0e0');R(x+sw[0]-1,by+sw[1],3,1,'#e0d040');
         R(x+9,by+16,4,6,c.armor);R(x+15,by+17,3,5,c.armor);
         R(x+8,by+22,5,3,'#604020');R(x+14,by+22,4,3,'#604020');
         break;
@@ -187,8 +180,9 @@ var Sprites = {
         R(x+24,by+14,3,3,'#6B4020');
         R(x+4,by+18,3,5,'#7B5030');R(x+11,by+19,3,4,'#7B5030');
         R(x+17,by+18,3,5,'#7B5030');R(x+22,by+19,3,4,'#7B5030');
-        // Lance
-        R(x+20,by-1,2,14,'#b0b0b0');R(x+19,by-1,4,2,'#888');
+        // Lance bob
+        var lb=[0,-1,1][frame];
+        R(x+20,by-1+lb,2,14,'#b0b0b0');R(x+19,by-1+lb,4,2,'#888');
         R(x+3,by+23,4,2,'#604020');R(x+10,by+23,4,2,'#604020');R(x+16,by+23,4,2,'#604020');R(x+21,by+23,4,2,'#604020');
         break;
       }
@@ -204,7 +198,8 @@ var Sprites = {
         R(x+4,by+13,20,5,'#9B7050');
         R(x+1,by+11,4,4,'#9B7050');P(x+2,by+12,'#222');
         R(x+5,by+18,3,5,'#8B6040');R(x+12,by+19,3,4,'#8B6040');R(x+18,by+18,3,5,'#8B6040');
-        R(x+21,by+2,2,12,'#b0b0b0');R(x+20,by+2,4,2,'#999');
+        var lb=[0,-1,1][frame];
+        R(x+21,by+2+lb,2,12,'#b0b0b0');R(x+20,by+2+lb,4,2,'#999');
         R(x+4,by+23,4,2,'#604020');R(x+11,by+23,4,2,'#604020');R(x+17,by+23,4,2,'#604020');
         break;
       }
@@ -218,13 +213,12 @@ var Sprites = {
         R(x+14,by+8,4,1,skin);
         // Body sideways
         R(x+13,by+9,7,7,c.body);
-        // BIG bow left
+        // Bow draw animation
+        var pullX=[0,2,4][frame];
         oc.strokeStyle='#a07030';oc.lineWidth=2;
         oc.beginPath();oc.arc(x-x+ox+7,by-y+oy+14,10,-1.0,1.0);oc.stroke();oc.lineWidth=1;
-        // Arrow
-        R(x+6,by+13,14,1,'#c8c8c8');R(x+5,by+12,2,3,'#888');
-        // Pull arm
-        R(x+19,by+10,3,3,c.cloth);
+        R(x+6+pullX,by+13,14-pullX,1,'#c8c8c8');R(x+5+pullX,by+12,2,3,'#888');
+        R(x+19+pullX,by+10,3,3,c.cloth);
         // Quiver
         R(x+20,by+7,3,8,'#8B6040');
         // Legs
@@ -244,9 +238,10 @@ var Sprites = {
         R(x+10,by+9,8,1,skin);
         // Wide body + bare arms
         R(x+6,by+10,16,7,c.body);R(x+4,by+10,3,4,skin);R(x+21,by+10,3,4,skin);
-        // BIG AXE raised
-        R(x+22,by+1,2,12,'#8B6040');
-        R(x+19,by-1,8,4,'#a0a0a0');R(x+20,by+0,6,2,'#c0c0c0');
+        // AXE swing: raised → mid → down
+        var ax=[[22,1,19,-1],[20,4,17,2],[18,8,15,6]][frame];
+        R(x+ax[0],by+ax[1],2,12,'#8B6040');
+        R(x+ax[2],by+ax[3],8,4,'#a0a0a0');R(x+ax[2]+1,by+ax[3]+1,6,2,'#c0c0c0');
         // Wide legs
         R(x+7,by+17,5,4,c.armor);R(x+16,by+17,5,4,c.armor);
         R(x+6,by+21,6,3,'#604020');R(x+15,by+21,6,3,'#604020');
@@ -266,9 +261,10 @@ var Sprites = {
         R(x+9,by+8,9,7,c.body);
         // Sword arm right
         R(x+18,by+9,4,3,c.cloth);
-        // BIG sword angled
-        R(x+22,by+3,1,9,'#d0d0e0');R(x+23,by+2,1,5,'#d0d0e0');
-        R(x+21,by+8,3,2,'#c0a030');
+        // Sword slash: high → mid → low
+        var ss=[[22,3,23,2],[23,6,24,5],[24,10,25,9]][frame];
+        R(x+ss[0],by+ss[1],1,9,'#d0d0e0');R(x+ss[2],by+ss[3],1,5,'#d0d0e0');
+        R(x+ss[0]-1,by+ss[1]+5,3,2,'#c0a030');
         // Legs lunge
         R(x+8,by+15,4,4,c.armor);R(x+16,by+16,3,5,c.armor);
         R(x+7,by+19,5,4,'#604020');R(x+15,by+20,4,3,'#604020');
@@ -292,8 +288,10 @@ var Sprites = {
         // Casting arm + BIG orb
         R(x+22,by+12,3,3,rc);
         var orbC=cls==='darkMage'?'#a040d0':'#50c0ff';
-        oc.fillStyle=orbC;oc.beginPath();oc.arc(x-x+ox+26,by-y+oy+11,4,0,Math.PI*2);oc.fill();
-        P(x+25,by+10,'#fff');P(x+26,by+10,'#fff');
+        var orbR=[3,4,5][frame];
+        oc.fillStyle=orbC;oc.beginPath();oc.arc(x-x+ox+26,by-y+oy+11,orbR,0,Math.PI*2);oc.fill();
+        if(frame>0){P(x+25,by+10,'#fff');P(x+26,by+10,'#fff');}
+        if(frame===2){P(x+24,by+9,'#fff');}
         // Feet
         R(x+8,by+22,4,2,rc);R(x+16,by+22,4,2,rc);
         break;
@@ -310,7 +308,8 @@ var Sprites = {
         R(x+9,by+9,10,4,'#f0e8d8');R(x+8,by+13,12,5,'#e8e0d0');R(x+7,by+18,14,4,'#f0e8d8');
         // BIG staff with glow
         R(x+22,by+0,2,22,'#c0a040');R(x+21,by-1,4,2,'#f0e060');
-        oc.fillStyle='rgba(255,255,180,0.5)';oc.beginPath();oc.arc(x-x+ox+23,by-y+oy-1,5,0,Math.PI*2);oc.fill();
+        var glowR=[4,5,6][frame];var glowA=[0.3,0.5,0.7][frame];
+        oc.fillStyle='rgba(255,255,180,'+glowA+')';oc.beginPath();oc.arc(x-x+ox+23,by-y+oy-1,glowR,0,Math.PI*2);oc.fill();
         R(x+9,by+22,5,2,'#d0c8b0');R(x+15,by+22,5,2,'#d0c8b0');
         break;
       }
@@ -323,9 +322,10 @@ var Sprites = {
         R(x+7,by+8,14,1,c.armor);
         // MASSIVE armor
         R(x+4,by+9,22,9,c.armor);R(x+5,by+10,20,7,c.body);
-        // Shield left
-        R(x+0,by+9,5,10,c.accent);R(x+1,by+10,3,8,c.body);
-        P(x+2,by+13,'#e0c030');P(x+2,by+14,'#e0c030');
+        // Shield raise: low → mid → high
+        var sh=[0,-1,-2][frame];
+        R(x+0,by+9+sh,5,10,c.accent);R(x+1,by+10+sh,3,8,c.body);
+        P(x+2,by+13+sh,'#e0c030');P(x+2,by+14+sh,'#e0c030');
         // Lance right
         R(x+25,by+1,2,16,'#b0b0b0');R(x+24,by+1,4,2,'#999');
         // Thick legs
@@ -345,9 +345,10 @@ var Sprites = {
         // Slim crouching body
         R(x+10,by+9,8,5,c.body);
         R(x+8,by+10,3,5,c.armor); // cloak
-        // Dagger forward
-        R(x+18,by+10,3,2,c.cloth);
-        R(x+21,by+8,1,6,'#d0d0e0');R(x+20,by+8,3,1,'#a0a080');
+        // Dagger stab: ready → thrust → retract
+        var dk=[0,3,1][frame];
+        R(x+18+dk,by+10,3,2,c.cloth);
+        R(x+21+dk,by+8,1,6,'#d0d0e0');R(x+20+dk,by+8,3,1,'#a0a080');
         // Crouching legs
         R(x+9,by+14,4,5,c.armor);R(x+15,by+13,4,6,c.armor);
         R(x+8,by+19,5,2,'#404040');R(x+14,by+19,5,2,'#404040');
@@ -364,10 +365,11 @@ var Sprites = {
         R(x+2,by+10,26,7,'#406050');R(x+4,by+11,22,5,'#507060');
         R(x-2,by+9,6,4,'#406050');P(x-1,by+10,'#f03030');
         R(x+27,by+12,4,3,'#3a5040');
-        // BIG wings
+        // Wing flap: up → mid → down
+        var wy=[[-1,2,1],[2,5,4],[5,8,7]][frame];
         oc.fillStyle='#508060';
-        oc.beginPath();oc.moveTo(x-x+ox+6,by-y+oy+10);oc.lineTo(x-x+ox-4,by-y+oy-1);oc.lineTo(x-x+ox+14,by-y+oy+7);oc.fill();
-        oc.beginPath();oc.moveTo(x-x+ox+24,by-y+oy+10);oc.lineTo(x-x+ox+35,by-y+oy+1);oc.lineTo(x-x+ox+20,by-y+oy+7);oc.fill();
+        oc.beginPath();oc.moveTo(x-x+ox+6,by-y+oy+10);oc.lineTo(x-x+ox-4,by-y+oy+wy[0]);oc.lineTo(x-x+ox+14,by-y+oy+7);oc.fill();
+        oc.beginPath();oc.moveTo(x-x+ox+24,by-y+oy+10);oc.lineTo(x-x+ox+35,by-y+oy+wy[1]);oc.lineTo(x-x+ox+20,by-y+oy+7);oc.fill();
         // Dragon feet
         R(x+4,by+17,4,6,'#406050');R(x+22,by+17,4,6,'#406050');
         R(x+3,by+22,5,2,'#305040');R(x+21,by+22,5,2,'#305040');
@@ -386,10 +388,11 @@ var Sprites = {
         // Pegasus (white)
         R(x+4,by+11,20,6,'#e8e0d8');R(x+5,by+12,16,4,'#f0e8e0');
         R(x+0,by+9,5,4,'#e8e0d8');P(x+1,by+10,'#222');
-        // White wings
+        // Wing flap: up → mid → down
+        var pw=[[-1,1,0],[2,4,3],[5,7,6]][frame];
         oc.fillStyle='#f0f0ff';
-        oc.beginPath();oc.moveTo(x-x+ox+8,by-y+oy+11);oc.lineTo(x-x+ox-1,by-y+oy-1);oc.lineTo(x-x+ox+14,by-y+oy+8);oc.fill();
-        oc.beginPath();oc.moveTo(x-x+ox+22,by-y+oy+11);oc.lineTo(x-x+ox+33,by-y+oy+1);oc.lineTo(x-x+ox+19,by-y+oy+8);oc.fill();
+        oc.beginPath();oc.moveTo(x-x+ox+8,by-y+oy+11);oc.lineTo(x-x+ox-1,by-y+oy+pw[0]);oc.lineTo(x-x+ox+14,by-y+oy+8);oc.fill();
+        oc.beginPath();oc.moveTo(x-x+ox+22,by-y+oy+11);oc.lineTo(x-x+ox+33,by-y+oy+pw[1]);oc.lineTo(x-x+ox+19,by-y+oy+8);oc.fill();
         // Pegasus legs
         R(x+6,by+17,2,5,'#d8d0c8');R(x+12,by+18,2,4,'#d8d0c8');R(x+19,by+17,2,5,'#d8d0c8');
         R(x+22,by+2,2,10,'#b0b0b0');
@@ -404,9 +407,10 @@ var Sprites = {
         R(x+10,by+9,6,1,skin);
         // Body
         R(x+7,by+10,14,7,c.body);R(x+5,by+10,3,4,skin);R(x+20,by+10,3,4,skin);
-        // BIG AXE
-        R(x+21,by+1,2,12,'#8B6040');
-        R(x+18,by-1,8,4,'#a0a0a0');R(x+19,by+0,6,2,'#c0c0c0');
+        // AXE swing
+        var bx=[[21,1,18,-1],[19,4,16,2],[17,8,14,6]][frame];
+        R(x+bx[0],by+bx[1],2,12,'#8B6040');
+        R(x+bx[2],by+bx[3],8,4,'#a0a0a0');R(x+bx[2]+1,by+bx[3]+1,6,2,'#c0c0c0');
         // Wide legs
         R(x+8,by+17,5,4,c.armor);R(x+16,by+17,5,4,c.armor);
         R(x+7,by+21,6,3,'#604020');R(x+15,by+21,6,3,'#604020');
@@ -426,7 +430,8 @@ var Sprites = {
         P(x+11,by+13,'#888');P(x+16,by+13,'#888');
         // Bony legs
         R(x+11,by+16,2,7,'#c8c0a8');R(x+15,by+16,2,7,'#c8c0a8');
-        R(x+19,by+7,1,10,'#808080');R(x+20,by+6,1,5,'#808080');
+        var sk=[0,1,-1][frame];
+        R(x+19+sk,by+7,1,10,'#808080');R(x+20+sk,by+6,1,5,'#808080');
         R(x+10,by+22,4,2,'#a09880');R(x+14,by+22,4,2,'#a09880');
         break;
       }
@@ -440,8 +445,9 @@ var Sprites = {
         // Body + shield
         R(x+10,by+9,8,7,c.body);
         R(x+7,by+10,4,6,c.accent);
-        // Lance
-        R(x+20,by+1,2,14,'#b0b0b0');R(x+19,by+1,4,2,'#999');
+        // Lance bob
+        var sl=[0,-1,1][frame];
+        R(x+20,by+1+sl,2,14,'#b0b0b0');R(x+19,by+1+sl,4,2,'#999');
         // Legs
         R(x+10,by+16,4,5,c.armor);R(x+16,by+17,3,4,c.armor);
         R(x+9,by+21,5,3,'#604020');R(x+15,by+21,4,3,'#604020');
