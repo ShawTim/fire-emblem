@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>角色一覽 — 火炎之紋章：翠星之影</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0a0a12; color:#e0e0e0; font-family:'Noto Sans TC','PingFang TC',sans-serif; min-height:100vh; }
+
+header {
+  text-align:center; padding:40px 20px 20px;
+  background:linear-gradient(180deg,#12122a 0%,#0a0a12 100%);
+  border-bottom:2px solid #334;
+}
+header h1 { font-size:28px; color:#e8c44a; text-shadow:0 0 20px rgba(232,196,74,0.3); margin-bottom:8px; }
+header p { color:#888; font-size:14px; }
+
+.container { max-width:900px; margin:0 auto; padding:20px; }
+
+.char-card {
+  display:flex; gap:20px; padding:24px;
+  margin-bottom:16px; border-radius:12px;
+  background:#14142a; border:1px solid #252540;
+  transition:border-color 0.2s;
+}
+.char-card:hover { border-color:#445; }
+
+.char-portrait {
+  width:96px; height:96px; border-radius:8px;
+  background:#1e1e38; border:2px solid #334;
+  display:flex; align-items:center; justify-content:center;
+  font-size:48px; flex-shrink:0;
+}
+
+.char-info { flex:1; min-width:0; }
+.char-header { display:flex; align-items:baseline; gap:12px; margin-bottom:6px; flex-wrap:wrap; }
+.char-name { font-size:22px; font-weight:700; color:#fff; }
+.char-class { font-size:13px; color:#8ab4f8; background:#1a2a4a; padding:2px 10px; border-radius:4px; }
+.char-join { font-size:12px; color:#666; }
+
+.char-desc { font-size:14px; color:#aaa; line-height:1.7; margin-bottom:10px; }
+
+.char-stats {
+  display:flex; gap:6px; flex-wrap:wrap;
+}
+.stat {
+  font-size:11px; padding:3px 8px; border-radius:4px;
+  background:#1a1a30; color:#ccc; border:1px solid #252540;
+}
+.stat-high { color:#6fce6f; border-color:#2a4a2a; }
+.stat-low { color:#ce6f6f; border-color:#4a2a2a; }
+
+.faction-label {
+  font-size:13px; color:#e8c44a; text-transform:uppercase; letter-spacing:2px;
+  margin:32px 0 12px; padding-bottom:8px; border-bottom:1px solid #252540;
+}
+
+.back-link {
+  display:inline-block; margin-bottom:20px; color:#8ab4f8;
+  text-decoration:none; font-size:14px;
+}
+.back-link:hover { text-decoration:underline; }
+
+@media(max-width:600px){
+  .char-card { flex-direction:column; align-items:center; text-align:center; }
+  .char-header { justify-content:center; }
+  .char-stats { justify-content:center; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗡️ 角色一覽</h1>
+  <p>火炎之紋章：翠星之影 — 全 11 位可操控角色</p>
+</header>
+
+<div class="container">
+<a href="index.html" class="back-link">← 返回遊戲</a>
+
+<div class="faction-label">主角</div>
+
+<div class="char-card">
+  <div class="char-portrait">⚔️</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">艾琳 (Eirine)</span>
+      <span class="char-class">領主 Lord</span>
+      <span class="char-join">序章加入</span>
+    </div>
+    <p class="char-desc">亡國公主，在王宮陷落之夜被迫出逃。性格堅毅但心懷慈悲，不願犧牲任何同伴。手持細劍「霜刃」，劍術靈巧而精準。背負著復國的重擔，卻從未失去對人的信任。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">SPD ★★★</span>
+      <span class="stat stat-high">SKL ★★★</span>
+      <span class="stat">STR ★★</span>
+      <span class="stat stat-low">DEF ★</span>
+      <span class="stat stat-low">RES ★</span>
+    </div>
+  </div>
+</div>
+
+<div class="faction-label">騎士團</div>
+
+<div class="char-card">
+  <div class="char-portrait">🛡️</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">馬庫斯 (Marcus)</span>
+      <span class="char-class">聖騎士 Paladin</span>
+      <span class="char-join">序章加入</span>
+    </div>
+    <p class="char-desc">艾琳父王的近衛騎士，沙場老將。忠誠、嚴肅、寡言，把保護公主視為畢生使命。前期戰力壓倒性，但成長潛力有限——典型的謝根型角色，用來擋刀而非搶經驗。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">DEF ★★★★</span>
+      <span class="stat stat-high">HP ★★★★</span>
+      <span class="stat">STR ★★</span>
+      <span class="stat stat-low">SPD ★</span>
+      <span class="stat stat-low">成長率 ↓</span>
+    </div>
+  </div>
+</div>
+
+<div class="char-card">
+  <div class="char-portrait">🐉</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">雷克斯 (Rex)</span>
+      <span class="char-class">飛龍騎士 Wyvern Rider</span>
+      <span class="char-join">第五章加入</span>
+    </div>
+    <p class="char-desc">帝國脫逃的飛龍騎士，沉默寡言但重義氣。高攻高防的空中戰力，能無視地形移動。弱點是弓箭和魔法，需要小心敵方弓手。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">DEF ★★★★</span>
+      <span class="stat stat-high">STR ★★★</span>
+      <span class="stat stat-high">HP ★★★</span>
+      <span class="stat stat-low">RES ★</span>
+      <span class="stat">🦅 飛行</span>
+    </div>
+  </div>
+</div>
+
+<div class="faction-label">仲間（中途加入）</div>
+
+<div class="char-card">
+  <div class="char-portrait">🏹</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">莉娜 (Lina)</span>
+      <span class="char-class">弓手 Archer</span>
+      <span class="char-join">第一章加入</span>
+    </div>
+    <p class="char-desc">荒野中的獨行弓手，說話尖酸刻薄但重情重義。加入隊伍只因「剛好順路」。命中率極高，能精準狙殺飛行單位，但近身戰毫無防備——站位至關重要。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">SKL ★★★★</span>
+      <span class="stat stat-high">SPD ★★★</span>
+      <span class="stat">STR ★★</span>
+      <span class="stat stat-low">DEF ★</span>
+      <span class="stat">🏹 遠程</span>
+    </div>
+  </div>
+</div>
+
+<div class="char-card">
+  <div class="char-portrait">🪓</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">托爾 (Thor)</span>
+      <span class="char-class">戰士 Fighter</span>
+      <span class="char-join">第二章加入</span>
+    </div>
+    <p class="char-desc">北境山村的蠻力青年，性格粗獷豪爽，戰鬥時狂笑不止。斧頭揮得又猛又快……準頭就算了。HP 和力量成長極高，練起來是後期主力輸出。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">HP ★★★★</span>
+      <span class="stat stat-high">STR ★★★★</span>
+      <span class="stat stat-low">SKL ★</span>
+      <span class="stat stat-low">SPD ★</span>
+      <span class="stat stat-low">RES ✗</span>
+    </div>
+  </div>
+</div>
+
+<div class="char-card">
+  <div class="char-portrait">✨</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">賽拉 (Serra)</span>
+      <span class="char-class">修道士 Cleric</span>
+      <span class="char-join">第二章加入</span>
+    </div>
+    <p class="char-desc">溫柔而神秘的治療師，總是面帶微笑。過去似乎藏著什麼秘密。唯一的治療單位，戰場上的生命線。治療也能獲得經驗值，務必多用。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">RES ★★★★</span>
+      <span class="stat stat-high">MAG ★★★</span>
+      <span class="stat stat-high">LCK ★★★</span>
+      <span class="stat stat-low">STR ✗</span>
+      <span class="stat stat-low">DEF ✗</span>
+      <span class="stat">💚 治療</span>
+    </div>
+  </div>
+</div>
+
+<div class="char-card">
+  <div class="char-portrait">⚔️</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">凱恩 (Cain)</span>
+      <span class="char-class">傭兵 Mercenary</span>
+      <span class="char-join">第三章說服加入</span>
+    </div>
+    <p class="char-desc">冷眼看世界的傭兵，只為錢而戰——至少他自己是這麼說的。需要艾琳主動對話才會加入。全屬性均衡，速度優秀，是中後期的萬金油劍士。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">SPD ★★★★</span>
+      <span class="stat stat-high">SKL ★★★</span>
+      <span class="stat">STR ★★</span>
+      <span class="stat">DEF ★★</span>
+      <span class="stat">🗡️ 均衡型</span>
+    </div>
+  </div>
+</div>
+
+<div class="char-card">
+  <div class="char-portrait">🔥</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">法蘭 (Fran)</span>
+      <span class="char-class">魔道士 Mage</span>
+      <span class="char-join">第四章加入</span>
+    </div>
+    <p class="char-desc">年少氣盛的天才魔法師，目中無人但實力確實驚人。被困在魔法塔中，獲救後加入隊伍。火雷雙修，對重裝敵人特別有效。紙防禦，站位需謹慎。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">MAG ★★★★</span>
+      <span class="stat stat-high">SPD ★★★</span>
+      <span class="stat stat-low">HP ★</span>
+      <span class="stat stat-low">DEF ✗</span>
+      <span class="stat">🔥 魔法</span>
+    </div>
+  </div>
+</div>
+
+<div class="char-card">
+  <div class="char-portrait">🦅</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">ナターシャ (Natasha)</span>
+      <span class="char-class">天馬騎士 Pegasus Knight</span>
+      <span class="char-join">第六章增援加入</span>
+    </div>
+    <p class="char-desc">開朗勇敢的天馬騎士，性格直率。在港口之戰中作為增援登場。高速高魔防的飛行單位，能快速支援前線或繞後狙殺法師。致命弱點：弓箭。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">SPD ★★★★★</span>
+      <span class="stat stat-high">RES ★★★</span>
+      <span class="stat">SKL ★★</span>
+      <span class="stat stat-low">DEF ★</span>
+      <span class="stat">🦅 飛行</span>
+    </div>
+  </div>
+</div>
+
+<div class="char-card">
+  <div class="char-portrait">🗡️</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">オリヴィエ (Olivier)</span>
+      <span class="char-class">盜賊 Thief</span>
+      <span class="char-join">第七章村莊招募</span>
+    </div>
+    <p class="char-desc">沉默寡言的盜賊，觀察力驚人。藏身於深淵之森的村莊中，訪問村莊即可招募。速度全隊最高，適合偵察和搶寶箱。戰鬥力偏弱，但轉職刺客後質變。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">SPD ★★★★★</span>
+      <span class="stat stat-high">SKL ★★★★</span>
+      <span class="stat stat-low">STR ★</span>
+      <span class="stat stat-low">DEF ★</span>
+      <span class="stat">🔓 開鎖</span>
+    </div>
+  </div>
+</div>
+
+<div class="char-card">
+  <div class="char-portrait">🏰</div>
+  <div class="char-info">
+    <div class="char-header">
+      <span class="char-name">ヘルガ (Helga)</span>
+      <span class="char-class">將軍 General</span>
+      <span class="char-join">第八章對話加入</span>
+    </div>
+    <p class="char-desc">帝國要塞的副官，嚴厲而內心矛盾。曾效忠於艾琳的父王，在信念與職責之間掙扎。艾琳對話後叛變加入。移動力極低但防禦無雙，是最強的壁壘型角色。</p>
+    <div class="char-stats">
+      <span class="stat stat-high">DEF ★★★★★</span>
+      <span class="stat stat-high">HP ★★★★★</span>
+      <span class="stat stat-low">SPD ✗</span>
+      <span class="stat stat-low">RES ★</span>
+      <span class="stat">🛡️ 重裝</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -2,6 +2,8 @@
 
 const ITEMS = {
   // Swords
+  slimSword:    { name: '細身劍', type: 'sword', might: 3, hit: 85, crit: 0, weight: 3, range: [1], uses: 30 },
+  slimLance:    { name: '細身槍', type: 'lance', might: 4, hit: 85, crit: 0, weight: 4, range: [1], uses: 30 },
   ironSword:    { name: '鐵劍', type: 'sword', might: 5, hit: 90, crit: 0, weight: 5, range: [1], uses: 46 },
   steelSword:   { name: '鋼劍', type: 'sword', might: 8, hit: 75, crit: 0, weight: 10, range: [1], uses: 30 },
   silverSword:  { name: '銀劍', type: 'sword', might: 13, hit: 80, crit: 0, weight: 8, range: [1], uses: 20 },

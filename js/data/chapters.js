@@ -6,12 +6,12 @@ const CHAPTERS=[
 terrain:['WWWWGWWWWW','WLPPPPPLWW','WPWWPPWWPW','WPPPLPPPPW','WPWWPPWWPW','WPPPPPPPPW','WLPPPPPLGW','WWWWWWWWWW'],
 playerUnits:[{charId:'eirine',x:1,y:1},{charId:'marcus',x:1,y:2}],
 enemies:[
-{classId:'soldier',level:1,x:5,y:1,items:['ironLance'],ai:'aggressive',name:'帝國兵'},
+{classId:'soldier',level:1,x:5,y:1,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
 {classId:'soldier',level:1,x:7,y:2,items:['ironLance'],ai:'aggressive',name:'帝國兵'},
 {classId:'soldier',level:1,x:4,y:3,items:['ironLance'],ai:'defensive',name:'帝國兵'},
-{classId:'soldier',level:2,x:8,y:4,items:['ironLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:1,x:3,y:5,items:['ironLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:2,x:6,y:5,items:['ironLance'],ai:'defensive',name:'帝國兵'},
+{classId:'soldier',level:1,x:8,y:4,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
+{classId:'soldier',level:1,x:3,y:5,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
+{classId:'soldier',level:2,x:6,y:5,items:['slimLance'],ai:'defensive',name:'帝國兵'},
 {classId:'knight',level:2,x:8,y:6,items:['ironLance'],ai:'defensive',name:'守衛隊長'}],
 npcs:[],newRecruits:[],talkEvents:[],turnEvents:[],
 dialogues:{pre:[
@@ -492,8 +492,8 @@ post:[
 
 // ===== CHARACTERS =====
 const CHARACTERS={
-eirine:{name:'艾琳',classId:'lord',level:1,isLord:true,portrait:{hair:'#c4a',eyes:'#48f',skin:'#fdb'},baseStats:{hp:18,str:5,mag:1,skl:5,spd:7,lck:6,def:4,res:1},growths:{hp:70,str:45,mag:15,skl:45,spd:55,lck:50,def:30,res:25},items:['rapier']},
-marcus:{name:'馬庫斯',classId:'paladin',level:1,portrait:{hair:'#666',eyes:'#432',skin:'#eca'},baseStats:{hp:28,str:10,mag:1,skl:12,spd:9,lck:8,def:9,res:6},growths:{hp:40,str:20,mag:5,skl:20,spd:15,lck:20,def:15,res:10},items:['steelSword','ironLance']},
+eirine:{name:'艾琳',classId:'lord',level:1,isLord:true,portrait:{hair:'#c4a',eyes:'#48f',skin:'#fdb'},baseStats:{hp:20,str:7,mag:1,skl:6,spd:8,lck:7,def:5,res:2},growths:{hp:70,str:45,mag:15,skl:45,spd:55,lck:50,def:30,res:25},items:['rapier']},
+marcus:{name:'馬庫斯',classId:'paladin',level:1,portrait:{hair:'#666',eyes:'#432',skin:'#eca'},baseStats:{hp:28,str:8,mag:1,skl:10,spd:7,lck:8,def:9,res:6},growths:{hp:40,str:15,mag:5,skl:15,spd:10,lck:20,def:15,res:10},items:['ironSword','ironLance']},
 lina:{name:'莉娜',classId:'archer',level:1,portrait:{hair:'#6c4',eyes:'#4a4',skin:'#fdb'},baseStats:{hp:17,str:5,mag:0,skl:7,spd:7,lck:4,def:3,res:1},growths:{hp:55,str:40,mag:5,skl:55,spd:55,lck:35,def:20,res:20},items:['ironBow']},
 thor:{name:'托爾',classId:'fighter',level:3,portrait:{hair:'#d82',eyes:'#654',skin:'#dba'},baseStats:{hp:24,str:8,mag:0,skl:4,spd:4,lck:3,def:5,res:0},growths:{hp:80,str:55,mag:5,skl:30,spd:25,lck:25,def:35,res:10},items:['ironAxe','handAxe']},
 serra:{name:'賽拉',classId:'cleric',level:2,portrait:{hair:'#ffa',eyes:'#88f',skin:'#fed'},baseStats:{hp:16,str:1,mag:5,skl:4,spd:6,lck:7,def:1,res:7},growths:{hp:45,str:5,mag:55,skl:30,spd:35,lck:45,def:10,res:55},items:['heal']},
