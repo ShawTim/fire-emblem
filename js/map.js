@@ -5,8 +5,8 @@ const GameMap = {
   height: 0,
   camX: 0,
   camY: 0,
-  tileSize: 16,
-  scale: 3,
+  tileSize: 32,
+  scale: 2,
 
   init(chapter) {
     this.width = chapter.width;
