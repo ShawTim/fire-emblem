@@ -32,6 +32,11 @@ canvas.addEventListener('click', (e) => {
   game.handleClick(pos.x, pos.y);
 });
 
+canvas.addEventListener('mousemove', (e) => {
+  const pos = screenToCanvas(e.clientX, e.clientY);
+  game.handleHover(pos.x, pos.y);
+});
+
 // Touch input (prevent double-fire with mouse events)
 let touchHandled = false;
 canvas.addEventListener('touchstart', (e) => {

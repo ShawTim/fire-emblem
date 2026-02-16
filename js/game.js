@@ -255,6 +255,15 @@ class Game {
     }
   }
 
+  handleHover(screenX, screenY) {
+    if (this.state !== 'map' && this.state !== 'unitSelected' && this.state !== 'unitCommand') return;
+    const tile = GameMap.screenToTile(screenX, screenY);
+    if (!tile) return;
+    const terrain = GameMap.getTerrain(tile.x, tile.y);
+    const unit = this.units.find(u => u.x === tile.x && u.y === tile.y && u.hp > 0);
+    UI.showTerrainInfo(terrain, unit);
+  }
+
   handleClick(screenX, screenY) {
     if (this.dialogue.isActive()) { this.dialogue.advance(); return; }
     if (this.state === 'title' || this.state === 'ending' || this.state === 'chapterTitle' ||
@@ -904,9 +913,11 @@ class Game {
     if (dirs[key]) {
       Cursor.move(dirs[key][0], dirs[key][1]);
       GameMap.scrollToward(Cursor.x, Cursor.y, this.canvasW, this.canvasH);
-      // Show unit info at cursor
+      // Show terrain + unit info at cursor
+      const terrain = GameMap.getTerrain(Cursor.x, Cursor.y);
       const unit = this.units.find(u => u.x === Cursor.x && u.y === Cursor.y && u.hp > 0);
-      if (unit) UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+      UI.showTerrainInfo(terrain, unit);
+      if (unit) UI.showUnitPanel(unit, terrain);
       else if (this.state === 'map') UI.hideUnitPanel();
       return;
     }

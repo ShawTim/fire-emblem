@@ -8,6 +8,7 @@ const UI = {
   phaseBanner: document.getElementById('phase-banner'),
   levelUpScreen: document.getElementById('level-up-screen'),
   topBar: document.getElementById('top-bar'),
+  terrainInfo: null,
   endTurnBtn: document.getElementById('btn-end-turn'),
   titleScreen: document.getElementById('title-screen'),
   chapterCard: document.getElementById('chapter-title-card'),
@@ -87,6 +88,25 @@ const UI = {
   },
 
   hideUnitPanel() { this.unitPanel.classList.add('hidden'); },
+
+  showTerrainInfo(terrain, unit) {
+    if (!this.terrainInfo) {
+      this.terrainInfo = document.createElement('div');
+      this.terrainInfo.id = 'terrain-info';
+      this.terrainInfo.style.cssText = 'position:absolute;bottom:8px;left:8px;background:rgba(10,10,30,0.88);border:1px solid #445;border-radius:4px;padding:4px 8px;font-size:11px;color:#ccd;pointer-events:none;z-index:20;font-family:monospace;min-width:80px';
+      document.getElementById('game-container').appendChild(this.terrainInfo);
+    }
+    const td = {plain:{def:0,avo:0,name:'平原'},forest:{def:1,avo:20,name:'森林'},mountain:{def:2,avo:30,name:'山地'},wall:{def:3,avo:20,name:'城牆'},gate:{def:3,avo:30,name:'城門'},river:{def:0,avo:0,name:'河川'},village:{def:0,avo:10,name:'村莊'},throne:{def:3,avo:30,name:'王座'},pillar:{def:1,avo:15,name:'柱子'}}[terrain] || {def:0,avo:0,name:terrain||'?'};
+    let html = '<span style="color:#bc9">' + td.name + '</span>';
+    if (td.def > 0) html += ' <span style="color:#8cf">防+' + td.def + '</span>';
+    if (td.avo > 0) html += ' <span style="color:#8cf">避+' + td.avo + '</span>';
+    this.terrainInfo.innerHTML = html;
+    this.terrainInfo.style.display = 'block';
+  },
+
+  hideTerrainInfo() {
+    if (this.terrainInfo) this.terrainInfo.style.display = 'none';
+  },
 
   showActionMenu(items, x, y, onClick) {
     this.actionMenu.innerHTML = '';
