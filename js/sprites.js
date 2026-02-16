@@ -262,6 +262,29 @@ const Sprites = {
 
     if (grayed) ctx.globalAlpha = 0.5;
 
+    // Try map icon for player characters
+    if (unit.charId && unit.faction === 'player' && this._mapIconCache[unit.charId]) {
+      const cached = this._mapIconCache[unit.charId];
+      if (cached.loaded) {
+        // Draw icon with faction-colored border
+        ctx.fillStyle = colors.body;
+        ctx.fillRect(x, y, s, s);
+        ctx.drawImage(cached.img, x+1, y+1, s-2, s-2);
+        // Border
+        ctx.strokeStyle = colors.accent;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x+0.5, y+0.5, s-1, s-1);
+        // HP indicator bar at bottom
+        if (unit.hp !== undefined && unit.maxHp !== undefined) {
+          const hpRatio = unit.hp / unit.maxHp;
+          ctx.fillStyle = hpRatio > 0.5 ? '#4f4' : hpRatio > 0.25 ? '#ff4' : '#f44';
+          ctx.fillRect(x+1, y+s-2, Math.floor((s-2) * hpRatio), 1);
+        }
+        if (grayed) ctx.globalAlpha = 1;
+        return;
+      }
+    }
+
     // Body
     ctx.fillStyle = colors.body;
     ctx.fillRect(x+4, y+6, 8, 8);
@@ -347,6 +370,7 @@ const Sprites = {
 
   _portraitCache: {},
   _portraitCallbacks: [],
+  _mapIconCache: {},
 
   preloadPortraits() {
     const chars = Object.keys(CHARACTERS);
@@ -357,10 +381,17 @@ const Sprites = {
         this._portraitCache[id] = { img, loaded: false, failed: false };
         img.onload = () => {
           this._portraitCache[id].loaded = true;
-          // Fire any pending redraw callbacks
           this._portraitCallbacks.forEach(cb => cb());
         };
         img.onerror = () => { this._portraitCache[id].failed = true; };
+      }
+      // Also preload map icons
+      if (!this._mapIconCache[id]) {
+        const mimg = new Image();
+        mimg.src = 'portraits/' + id + '_map.png';
+        this._mapIconCache[id] = { img: mimg, loaded: false };
+        mimg.onload = () => { this._mapIconCache[id].loaded = true; };
+        mimg.onerror = () => { this._mapIconCache[id].loaded = false; };
       }
     }
   },
