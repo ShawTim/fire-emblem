@@ -130,273 +130,264 @@ var Sprites = {
     var c=this.getUnitColors(unit.faction);
     var hair=(unit.portrait&&unit.portrait.hair)?unit.portrait.hair:c.accent;
     var skin=(unit.portrait&&unit.portrait.skin)?unit.portrait.skin:c.skin;
-    var eyes=(unit.portrait&&unit.portrait.eyes)?unit.portrait.eyes:'#222244';
+    var eyes=(unit.portrait&&unit.portrait.eyes)?unit.portrait.eyes:'#222';
     if(grayed)ctx.globalAlpha=0.5;
     var b=this._idleBounce(),by=y+b,cls=unit.classId||'soldier';
+    var R=function(a,b,w,h,col){ctx.fillStyle=col;ctx.fillRect(a,b,w,h);};
+    var P=function(a,b,col){ctx.fillStyle=col;ctx.fillRect(a,b,1,1);};
+
+    // FE3 style: HUGE head (16x14), tiny body (8-10), stubby legs (4)
+    // Head helper (centered at hx, hy) — 14w x 12h round-ish
+    var drawHead=function(hx,hy){
+      // Hair top
+      R(hx+2,hy,10,3,hair);
+      R(hx+1,hy+1,12,2,hair);
+      // Hair sides
+      R(hx,hy+3,2,6,hair);
+      R(hx+12,hy+3,2,6,hair);
+      // Face
+      R(hx+2,hy+3,10,8,skin);
+      R(hx+1,hy+4,12,6,skin);
+      // Eyes (2 dots)
+      P(hx+4,hy+6,'#222');P(hx+9,hy+6,'#222');
+      // Mouth
+      P(hx+6,hy+8,skin==='#fdb'?'#c98':'#a76');P(hx+7,hy+8,skin==='#fdb'?'#c98':'#a76');
+      // Chin
+      R(hx+3,hy+11,8,1,skin);
+    };
+
     switch(cls){
-      case'lord':case'masterLord':this._drawLord(ctx,x,by,hair,skin,eyes,c);break;
-      case'paladin':case'greatKnight':this._drawPaladin(ctx,x,by,hair,skin,eyes,c);break;
-      case'cavalier':this._drawCavalier(ctx,x,by,hair,skin,eyes,c);break;
-      case'archer':case'sniper':case'ranger':this._drawArcher(ctx,x,by,hair,skin,eyes,c);break;
-      case'fighter':case'warrior':this._drawFighter(ctx,x,by,hair,skin,eyes,c);break;
-      case'mercenary':case'swordmaster':case'hero':this._drawMercenary(ctx,x,by,hair,skin,eyes,c);break;
-      case'mage':case'sage':case'darkMage':case'mageKnight':this._drawMage(ctx,x,by,hair,skin,eyes,c,cls);break;
-      case'cleric':case'bishop':case'valkyrie':this._drawCleric(ctx,x,by,hair,skin,eyes,c);break;
-      case'knight':case'general':this._drawKnight(ctx,x,by,hair,skin,eyes,c);break;
-      case'thief':case'assassin':this._drawThief(ctx,x,by,hair,skin,eyes,c);break;
-      case'wyvernRider':case'wyvernLord':this._drawWyvern(ctx,x,by,hair,skin,eyes,c);break;
-      case'pegasusKnight':case'falconKnight':this._drawPegasus(ctx,x,by,hair,skin,eyes,c);break;
-      case'brigand':this._drawBrigand(ctx,x,by,hair,skin,eyes,c);break;
-      case'skeleton':this._drawSkeleton(ctx,x,by,hair,skin,eyes,c);break;
-      default:this._drawSoldier(ctx,x,by,hair,skin,eyes,c);break;
+      case'lord':case'masterLord':{
+        // Big head
+        drawHead(x+9,by+0);
+        // Tiara
+        R(x+11,by+0,8,2,'#e0c030');P(x+15,by-1,'#f0d050');
+        // Small body (blue tunic)
+        R(x+11,by+12,10,7,c.body);
+        // Cape
+        R(x+8,by+13,3,8,c.accent);
+        // Legs
+        R(x+12,by+19,3,4,c.armor);R(x+17,by+19,3,4,c.armor);
+        // Feet
+        R(x+11,by+22,5,2,'#604020');R(x+16,by+22,5,2,'#604020');
+        // Sword right side
+        R(x+22,by+8,1,12,'#d0d0e0');R(x+21,by+12,3,1,'#c0a030');
+        break;
+      }
+      case'paladin':case'greatKnight':{
+        // Head (slightly higher for mounted)
+        drawHead(x+9,by+0);
+        // Helmet crest
+        R(x+14,by-1,4,2,c.accent);
+        // Armored body
+        R(x+10,by+10,12,6,c.armor);R(x+11,by+11,10,4,c.body);
+        // Horse body
+        R(x+4,by+16,22,6,'#8B6040');R(x+5,by+17,20,4,'#9B7050');
+        // Horse head
+        R(x+1,by+14,5,5,'#8B6040');P(x+2,by+15,'#222');
+        // Horse legs (4 stubby)
+        R(x+5,by+22,3,4,'#7B5030');R(x+11,by+22,3,4,'#7B5030');
+        R(x+17,by+22,3,4,'#7B5030');R(x+22,by+22,3,4,'#7B5030');
+        // Lance
+        R(x+24,by+2,2,16,'#b0b0b0');R(x+23,by+2,4,2,'#999');
+        break;
+      }
+      case'cavalier':{
+        drawHead(x+9,by+1);
+        R(x+10,by+11,12,5,c.body);
+        R(x+5,by+16,20,5,'#9B7050');
+        R(x+2,by+14,4,4,'#9B7050');P(x+3,by+15,'#222');
+        R(x+6,by+21,3,4,'#8B6040');R(x+12,by+21,3,4,'#8B6040');R(x+18,by+21,3,4,'#8B6040');
+        R(x+23,by+4,2,14,'#b0b0b0');R(x+22,by+4,4,2,'#999');
+        break;
+      }
+      case'archer':case'sniper':case'ranger':{
+        drawHead(x+9,by+0);
+        R(x+11,by+12,10,8,c.body);
+        R(x+12,by+20,3,4,c.armor);R(x+17,by+20,3,4,c.armor);
+        R(x+11,by+23,5,2,'#604020');R(x+16,by+23,5,2,'#604020');
+        // Bow (arc)
+        ctx.strokeStyle='#a08040';ctx.lineWidth=2;
+        ctx.beginPath();ctx.arc(x+24,by+14,6,-1.2,1.2);ctx.stroke();ctx.lineWidth=1;
+        // Arrow
+        R(x+18,by+13,7,1,'#c0c0c0');
+        break;
+      }
+      case'fighter':case'warrior':{
+        drawHead(x+9,by+0);
+        // Wide body
+        R(x+8,by+12,16,8,c.body);
+        R(x+6,by+12,3,4,c.body); // broad shoulder
+        R(x+23,by+12,3,4,c.body);
+        R(x+11,by+20,4,4,c.armor);R(x+17,by+20,4,4,c.armor);
+        R(x+10,by+23,6,2,'#604020');R(x+16,by+23,6,2,'#604020');
+        // Axe
+        R(x+24,by+4,2,14,'#8B6040');R(x+22,by+3,6,4,'#a0a0a0');
+        break;
+      }
+      case'mercenary':case'swordmaster':case'hero':{
+        drawHead(x+9,by+0);
+        R(x+11,by+12,10,8,c.body);
+        // Bandana tail
+        R(x+7,by+4,3,6,'#e04040');
+        R(x+12,by+20,3,4,c.armor);R(x+17,by+20,3,4,c.armor);
+        R(x+11,by+23,5,2,'#604020');R(x+16,by+23,5,2,'#604020');
+        // Sword
+        R(x+23,by+8,1,13,'#d0d0e0');R(x+22,by+12,3,1,'#c0a030');
+        break;
+      }
+      case'mage':case'sage':case'darkMage':case'mageKnight':{
+        drawHead(x+9,by+2);
+        // Pointy hat
+        var hc=cls==='darkMage'?'#302040':c.armor;
+        ctx.fillStyle=hc;ctx.beginPath();
+        ctx.moveTo(x+15,by-3);ctx.lineTo(x+21,by+4);ctx.lineTo(x+9,by+4);ctx.fill();
+        // Robe (wide, covers legs)
+        var rc=cls==='darkMage'?'#402050':c.body;
+        R(x+8,by+14,16,10,rc);R(x+7,by+18,18,6,rc);
+        // Feet peek out
+        R(x+9,by+23,4,2,rc);R(x+19,by+23,4,2,rc);
+        // Orb
+        var oc=cls==='darkMage'?'#8030a0':'#40a0f0';
+        ctx.fillStyle=oc;ctx.beginPath();ctx.arc(x+25,by+17,3,0,Math.PI*2);ctx.fill();
+        P(x+24,by+16,'#fff');
+        break;
+      }
+      case'cleric':case'bishop':case'valkyrie':{
+        drawHead(x+9,by+0);
+        // White robe
+        R(x+9,by+12,14,10,'#e8e0d0');R(x+8,by+16,16,6,'#f0e8d8');
+        // Feet
+        R(x+10,by+22,4,2,'#e0d8c0');R(x+18,by+22,4,2,'#e0d8c0');
+        // Staff with glow
+        R(x+24,by+2,2,20,'#c0a040');R(x+23,by+0,4,3,'#f0e060');
+        ctx.fillStyle='rgba(255,255,180,0.4)';ctx.beginPath();ctx.arc(x+25,by+1,4,0,Math.PI*2);ctx.fill();
+        break;
+      }
+      case'knight':case'general':{
+        drawHead(x+8,by+0);
+        // Helmet visor
+        R(x+8,by+5,14,2,c.armor);
+        // VERY wide armored body
+        R(x+4,by+10,24,10,c.armor);R(x+6,by+11,20,8,c.body);
+        // Shield
+        R(x+1,by+11,5,8,c.accent);R(x+2,by+12,3,6,c.body);
+        // Thick legs
+        R(x+8,by+20,6,5,c.armor);R(x+18,by+20,6,5,c.armor);
+        R(x+7,by+24,8,2,'#505050');R(x+17,by+24,8,2,'#505050');
+        break;
+      }
+      case'thief':case'assassin':{
+        // Hood over head
+        R(x+8,by+0,14,5,c.armor);R(x+7,by+2,3,5,c.armor);
+        drawHead(x+9,by+1);
+        // Slim crouching body (lower)
+        R(x+11,by+13,10,6,c.body);
+        // Cloak
+        R(x+8,by+10,4,10,c.armor);
+        // Bent legs
+        R(x+12,by+19,3,4,c.armor);R(x+17,by+19,3,4,c.armor);
+        R(x+11,by+22,5,2,'#404040');R(x+16,by+22,5,2,'#404040');
+        // Dagger
+        R(x+22,by+14,1,7,'#c0c0d0');
+        break;
+      }
+      case'wyvernRider':case'wyvernLord':{
+        drawHead(x+9,by+0);
+        // Rider body
+        R(x+10,by+10,12,6,c.armor);
+        // Dragon body
+        R(x+4,by+16,24,6,'#406050');R(x+5,by+17,22,4,'#507060');
+        // Dragon head
+        R(x+0,by+14,5,4,'#406050');P(x+1,by+15,'#f03030');
+        // Wings (triangles)
+        ctx.fillStyle='#508060';
+        ctx.beginPath();ctx.moveTo(x+8,by+16);ctx.lineTo(x+1,by+6);ctx.lineTo(x+12,by+14);ctx.fill();
+        ctx.beginPath();ctx.moveTo(x+22,by+16);ctx.lineTo(x+31,by+6);ctx.lineTo(x+20,by+14);ctx.fill();
+        // Dragon legs
+        R(x+6,by+22,3,4,'#406050');R(x+22,by+22,3,4,'#406050');
+        break;
+      }
+      case'pegasusKnight':case'falconKnight':{
+        drawHead(x+9,by+1);
+        // Rider body
+        R(x+10,by+11,12,5,c.body);
+        // Pegasus body
+        R(x+5,by+16,20,5,'#e8e0d8');
+        // Pegasus head
+        R(x+1,by+13,5,4,'#e8e0d8');P(x+2,by+14,'#222');
+        // White wings
+        ctx.fillStyle='#f0f0ff';
+        ctx.beginPath();ctx.moveTo(x+10,by+16);ctx.lineTo(x+2,by+5);ctx.lineTo(x+14,by+13);ctx.fill();
+        ctx.beginPath();ctx.moveTo(x+20,by+16);ctx.lineTo(x+30,by+5);ctx.lineTo(x+18,by+13);ctx.fill();
+        // Pegasus legs
+        R(x+7,by+21,2,4,'#d8d0c8');R(x+13,by+21,2,4,'#d8d0c8');R(x+19,by+21,2,4,'#d8d0c8');
+        // Lance
+        R(x+23,by+4,2,14,'#b0b0b0');
+        break;
+      }
+      case'brigand':{
+        drawHead(x+9,by+0);
+        // Bandana
+        R(x+9,by+0,14,3,'#804020');
+        // Muscular body
+        R(x+8,by+12,16,8,c.body);R(x+6,by+12,3,3,skin);R(x+23,by+12,3,3,skin);
+        R(x+11,by+20,4,4,c.armor);R(x+17,by+20,4,4,c.armor);
+        R(x+10,by+23,6,2,'#604020');R(x+16,by+23,6,2,'#604020');
+        // Big axe
+        R(x+24,by+4,2,14,'#8B6040');R(x+22,by+2,6,5,'#a0a0a0');
+        break;
+      }
+      case'skeleton':{
+        // Skull (no hair)
+        R(x+10,by+0,12,12,'#d8d0b8');R(x+11,by+1,10,10,'#e8e0c8');
+        // Eye sockets
+        R(x+12,by+4,3,3,'#222');R(x+17,by+4,3,3,'#222');
+        // Glowing eyes
+        P(x+13,by+5,'#f03030');P(x+18,by+5,'#f03030');
+        // Jaw
+        R(x+12,by+9,8,2,'#c8c0a8');R(x+13,by+10,6,1,'#222');
+        // Bony body
+        R(x+12,by+12,8,6,'#d0c8b0');R(x+14,by+13,4,4,'#c0b8a0');
+        // Ribs
+        P(x+13,by+13,'#a09880');P(x+18,by+13,'#a09880');P(x+13,by+15,'#a09880');P(x+18,by+15,'#a09880');
+        // Legs
+        R(x+13,by+18,2,5,'#c8c0a8');R(x+17,by+18,2,5,'#c8c0a8');
+        // Weapon
+        R(x+22,by+8,1,12,'#808080');
+        break;
+      }
+      default:{ // soldier
+        drawHead(x+9,by+0);
+        // Simple helmet
+        R(x+9,by+0,14,3,c.armor);
+        // Body
+        R(x+11,by+12,10,8,c.body);
+        R(x+12,by+20,3,4,c.armor);R(x+17,by+20,3,4,c.armor);
+        R(x+11,by+23,5,2,'#604020');R(x+16,by+23,5,2,'#604020');
+        // Lance upright
+        R(x+23,by+4,2,16,'#b0b0b0');R(x+22,by+4,4,2,'#999');
+        break;
+      }
     }
-    if(unit.isBoss)this._drawCrown(ctx,x,by);
+
+    if(unit.isBoss){
+      ctx.fillStyle='#fc0';
+      R(x+10,by-2,12,2,'#fc0');P(x+10,by-3,'#fc0');P(x+14,by-3,'#fc0');P(x+18,by-3,'#fc0');P(x+21,by-3,'#fc0');
+    }
     if(grayed)ctx.globalAlpha=1.0;
-    this._drawHP(ctx,unit,x,y);
+    // HP bar
+    if(unit.hp!==undefined&&unit.maxHp){
+      var ratio=unit.hp/unit.maxHp;
+      R(x+4,y+30,24,2,'#222');
+      R(x+4,y+30,Math.floor(24*ratio),2,ratio>0.5?'#40c040':ratio>0.25?'#c0c040':'#c04040');
+    }
   },
 
-  _drawLord: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Cape flowing behind
-    R(x+6,y+14,12,12,c.accent);R(x+4,y+18,6,8,'rgba(40,40,120,0.4)');
-    // Body slim
-    R(x+11,y+14,10,10,c.body);R(x+12,y+15,8,8,c.cloth);
-    // Head
-    this._drawHead(ctx,x+10,y+1,hair,skin,eyes,12,13);
-    // Tiara
-    R(x+12,y+1,8,2,'#e0c030');ctx.fillStyle='#f0d050';ctx.fillRect(x+16,y+0,1,1);
-    // Legs
-    R(x+12,y+24,3,5,c.armor);R(x+17,y+24,3,5,c.armor);
-    // Rapier
-    R(x+23,y+8,1,14,'#d0d0e0');R(x+22,y+14,3,1,'#c0b040');
-    // Boots
-    R(x+11,y+27,5,2,'#604020');R(x+16,y+27,5,2,'#604020');
+  _idleBounce: function(){
+    var t=Date.now();return Math.floor(Math.sin(t*0.004)*1.5);
   },
 
-  _drawPaladin: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Horse body
-    R(x+3,y+18,24,8,'#8B6040');R(x+4,y+19,22,6,'#9B7050');
-    // Horse legs
-    R(x+5,y+26,3,4,'#7B5030');R(x+11,y+26,3,4,'#7B5030');R(x+18,y+26,3,4,'#7B5030');R(x+23,y+26,3,4,'#7B5030');
-    // Horse head
-    R(x+1,y+14,6,7,'#8B6040');R(x+0,y+14,3,4,'#9B7050');ctx.fillStyle='#222';ctx.fillRect(x+1,y+15,1,1);
-    // Heavy armor body
-    R(x+10,y+10,12,9,c.armor);R(x+11,y+11,10,7,c.body);
-    // Shoulder pauldrons
-    R(x+8,y+10,4,4,c.armor);R(x+20,y+10,4,4,c.armor);
-    // Head
-    this._drawHead(ctx,x+10,y+0,hair,skin,eyes,12,11);
-    // Helmet crest
-    R(x+14,y-1,4,2,c.accent);
-    // Lance
-    R(x+25,y+0,2,20,'#b0b0b0');R(x+24,y+0,4,3,'#a0a0a0');
-  },
-
-  _drawCavalier: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Horse (smaller)
-    R(x+5,y+19,20,7,'#9B7050');R(x+6,y+20,18,5,'#AB8060');
-    R(x+7,y+26,3,4,'#8B6040');R(x+13,y+26,3,4,'#8B6040');R(x+19,y+26,3,4,'#8B6040');
-    R(x+2,y+15,5,6,'#9B7050');ctx.fillStyle='#222';ctx.fillRect(x+3,y+16,1,1);
-    // Rider body
-    R(x+11,y+12,10,8,c.body);R(x+12,y+13,8,6,c.cloth);
-    this._drawHead(ctx,x+11,y+1,hair,skin,eyes,11,11);
-    // Lance
-    R(x+23,y+4,2,16,'#b0b0b0');R(x+22,y+4,4,2,'#a0a0a0');
-  },
-
-  _drawArcher: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    R(x+10,y+14,10,10,c.body);R(x+11,y+15,8,8,c.cloth);
-    this._drawHead(ctx,x+10,y+1,hair,skin,eyes,12,13);
-    R(x+11,y+24,3,5,c.armor);R(x+16,y+24,3,5,c.armor);
-    R(x+11,y+27,4,2,'#604020');R(x+16,y+27,4,2,'#604020');
-    // Quiver on back
-    R(x+7,y+12,3,10,'#8B6040');R(x+7,y+10,3,2,'#c0c0c0');
-    // Bow
-    ctx.strokeStyle='#a08040';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x+25,y+16,7,-1.2,1.2);ctx.stroke();ctx.lineWidth=1;
-    // Arrow + arm
-    R(x+18,y+15,8,1,'#c0c0c0');R(x+25,y+14,2,3,'#808080');R(x+19,y+14,4,2,skin);
-  },
-
-  _drawFighter: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Wide body
-    R(x+7,y+14,18,11,c.body);R(x+8,y+15,16,9,c.cloth);
-    // Broad shoulders
-    R(x+5,y+14,4,5,c.body);R(x+23,y+14,4,5,c.body);
-    this._drawHead(ctx,x+10,y+1,hair,skin,eyes,12,13);
-    R(x+10,y+25,4,4,c.armor);R(x+17,y+25,4,4,c.armor);
-    R(x+9,y+27,6,2,'#604020');R(x+16,y+27,6,2,'#604020');
-    // Axe over shoulder
-    R(x+24,y+4,2,16,'#8B6040');R(x+22,y+2,6,5,'#a0a0a0');R(x+23,y+3,4,3,'#c0c0c0');
-  },
-
-  _drawMercenary: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    R(x+10,y+14,12,10,c.body);R(x+11,y+15,10,8,c.cloth);
-    this._drawHead(ctx,x+10,y+1,hair,skin,eyes,12,13);
-    // Scarf/bandana
-    R(x+6,y+6,4,6,'#e04040');R(x+5,y+8,3,8,'#c03030');
-    R(x+12,y+24,3,5,c.armor);R(x+17,y+24,3,5,c.armor);
-    R(x+11,y+27,5,2,'#604020');R(x+16,y+27,5,2,'#604020');
-    // Sword at side
-    R(x+23,y+10,1,14,'#d0d0e0');R(x+22,y+16,3,1,'#c0b040');R(x+22,y+10,3,2,'#c0b040');
-  },
-
-  _drawMage: function(ctx,x,y,hair,skin,eyes,c,cls){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    var robeCol=cls==='darkMage'?'#402050':c.body;
-    var hatCol=cls==='darkMage'?'#302040':c.armor;
-    // Robes (wide)
-    R(x+8,y+14,16,12,robeCol);R(x+6,y+18,20,8,robeCol);R(x+9,y+15,14,10,robeCol);
-    this._drawHead(ctx,x+10,y+3,hair,skin,eyes,12,12);
-    // Pointed hat
-    ctx.fillStyle=hatCol;ctx.beginPath();ctx.moveTo(x+16,y-2);ctx.lineTo(x+22,y+5);ctx.lineTo(x+10,y+5);ctx.fill();
-    R(x+9,y+4,14,2,hatCol);
-    R(x+8,y+26,16,3,robeCol);
-    // Orb
-    var orbCol=cls==='darkMage'?'#8030a0':'#40a0f0';
-    ctx.fillStyle=orbCol;ctx.beginPath();ctx.arc(x+24,y+18,3,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(x+23,y+17,1,0,Math.PI*2);ctx.fill();
-  },
-
-  _drawCleric: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // White robes
-    R(x+9,y+14,14,12,'#e0d8c8');R(x+7,y+18,18,8,'#e0d8c8');R(x+10,y+15,12,10,'#f0e8d8');
-    this._drawHead(ctx,x+10,y+1,hair,skin,eyes,12,13);
-    R(x+9,y+1,14,3,'#e0d8c8');
-    R(x+9,y+26,14,3,'#e0d8c8');
-    // Staff with glow
-    R(x+24,y+2,2,24,'#c0a040');R(x+23,y+0,4,3,'#f0e060');
-    ctx.fillStyle='rgba(255,255,200,0.4)';ctx.beginPath();ctx.arc(x+25,y+1,4,0,Math.PI*2);ctx.fill();
-  },
-
-  _drawKnight: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Very wide armored body
-    R(x+4,y+10,24,14,c.armor);R(x+5,y+11,22,12,c.body);
-    // Huge pauldrons
-    R(x+2,y+10,4,6,c.armor);R(x+26,y+10,4,6,c.armor);
-    this._drawHead(ctx,x+10,y+0,hair,skin,eyes,12,11);
-    // Helmet visor
-    R(x+10,y+5,12,2,c.armor);
-    // Shield (left side)
-    R(x+0,y+12,6,10,c.accent);R(x+1,y+13,4,8,c.body);
-    ctx.fillStyle='#e0c030';ctx.fillRect(x+2,y+15,2,4);
-    // Thick legs
-    R(x+8,y+24,6,5,c.armor);R(x+18,y+24,6,5,c.armor);
-    R(x+7,y+27,8,2,'#505050');R(x+17,y+27,8,2,'#505050');
-  },
-
-  _drawThief: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Crouching body (lower)
-    R(x+10,y+16,12,8,c.body);R(x+11,y+17,10,6,c.cloth);
-    // Hood
-    R(x+9,y+3,14,6,c.armor);R(x+8,y+5,3,4,c.armor);
-    this._drawHead(ctx,x+10,y+4,hair,skin,eyes,12,12);
-    // Cloak drape
-    R(x+7,y+10,4,12,c.armor);
-    // Crouching legs (bent)
-    R(x+12,y+24,3,4,c.armor);R(x+17,y+24,3,4,c.armor);
-    R(x+11,y+26,5,2,'#404040');R(x+16,y+26,5,2,'#404040');
-    // Dagger
-    R(x+23,y+16,1,8,'#c0c0d0');R(x+22,y+18,3,1,'#c0b040');
-  },
-
-  _drawWyvern: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Dragon body
-    R(x+4,y+18,22,8,'#406050');R(x+5,y+19,20,6,'#507060');
-    // Dragon head
-    R(x+0,y+16,6,5,'#406050');R(x+0,y+17,3,3,'#507060');ctx.fillStyle='#ff3030';ctx.fillRect(x+1,y+17,1,1);
-    // Dragon tail
-    R(x+25,y+20,5,3,'#406050');R(x+28,y+21,3,2,'#507060');
-    // Wings spread
-    ctx.fillStyle='#508060';ctx.beginPath();ctx.moveTo(x+8,y+18);ctx.lineTo(x+0,y+6);ctx.lineTo(x+12,y+14);ctx.fill();
-    ctx.fillStyle='#508060';ctx.beginPath();ctx.moveTo(x+20,y+18);ctx.lineTo(x+30,y+6);ctx.lineTo(x+18,y+14);ctx.fill();
-    // Wing membrane
-    ctx.fillStyle='#60a078';ctx.beginPath();ctx.moveTo(x+8,y+18);ctx.lineTo(x+2,y+8);ctx.lineTo(x+11,y+15);ctx.fill();
-    // Dragon legs
-    R(x+6,y+26,3,4,'#406050');R(x+20,y+26,3,4,'#406050');
-    // Rider body
-    R(x+11,y+11,10,8,c.armor);R(x+12,y+12,8,6,c.body);
-    this._drawHead(ctx,x+10,y+0,hair,skin,eyes,12,11);
-    // Lance
-    R(x+23,y+2,2,16,'#b0b0b0');R(x+22,y+2,4,3,'#a0a0a0');
-  },
-
-  _drawPegasus: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Pegasus body
-    R(x+5,y+19,20,7,'#e0d8d0');R(x+6,y+20,18,5,'#f0e8e0');
-    // Pegasus head
-    R(x+1,y+15,6,6,'#e0d8d0');ctx.fillStyle='#222';ctx.fillRect(x+2,y+16,1,1);
-    // Pegasus legs
-    R(x+7,y+26,3,4,'#d0c8c0');R(x+13,y+26,3,4,'#d0c8c0');R(x+19,y+26,3,4,'#d0c8c0');
-    // White wings
-    ctx.fillStyle='#f0f0ff';ctx.beginPath();ctx.moveTo(x+10,y+19);ctx.lineTo(x+2,y+6);ctx.lineTo(x+14,y+15);ctx.fill();
-    ctx.fillStyle='#f0f0ff';ctx.beginPath();ctx.moveTo(x+20,y+19);ctx.lineTo(x+30,y+6);ctx.lineTo(x+18,y+15);ctx.fill();
-    // Wing feather detail
-    ctx.fillStyle='#e0e0f0';ctx.beginPath();ctx.moveTo(x+10,y+19);ctx.lineTo(x+4,y+9);ctx.lineTo(x+13,y+16);ctx.fill();
-    // Rider body
-    R(x+11,y+12,10,8,c.body);R(x+12,y+13,8,6,c.cloth);
-    this._drawHead(ctx,x+11,y+1,hair,skin,eyes,11,11);
-    // Lance
-    R(x+23,y+4,2,16,'#b0b0b0');R(x+22,y+4,4,2,'#a0a0a0');
-  },
-
-  _drawBrigand: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Muscular body
-    R(x+7,y+14,18,11,c.body);R(x+8,y+15,16,9,'#806040');
-    // Bare arms
-    R(x+4,y+14,5,6,skin);R(x+23,y+14,5,6,skin);
-    this._drawHead(ctx,x+10,y+1,hair,skin,eyes,12,13);
-    // Bandana
-    R(x+10,y+1,12,3,'#c03030');R(x+22,y+2,4,2,'#c03030');
-    R(x+10,y+25,4,4,c.armor);R(x+17,y+25,4,4,c.armor);
-    R(x+9,y+27,6,2,'#604020');R(x+16,y+27,6,2,'#604020');
-    // Big axe
-    R(x+25,y+4,2,18,'#705030');R(x+23,y+2,6,6,'#a0a0a0');R(x+24,y+3,4,4,'#c0c0c0');
-  },
-
-  _drawSkeleton: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    // Bone-colored body
-    R(x+11,y+14,10,10,'#c8c0a8');R(x+12,y+15,8,8,'#b8b098');
-    // Ribcage lines
-    R(x+12,y+16,8,1,'#908880');R(x+12,y+18,8,1,'#908880');R(x+12,y+20,8,1,'#908880');
-    // Skull head
-    R(x+10,y+1,12,12,'#d8d0b8');R(x+11,y+2,10,10,'#e0d8c0');
-    R(x+12,y+0,8,2,'#d8d0b8');
-    // Eye sockets (glowing)
-    R(x+12,y+5,3,3,'#201010');R(x+17,y+5,3,3,'#201010');
-    ctx.fillStyle='#ff2020';ctx.fillRect(x+13,y+6,1,1);ctx.fillRect(x+18,y+6,1,1);
-    // Jaw
-    R(x+12,y+10,8,2,'#c8c0a8');R(x+13,y+11,6,1,'#b0a890');
-    // Bone legs
-    R(x+12,y+24,2,5,'#c8c0a8');R(x+18,y+24,2,5,'#c8c0a8');
-    // Dark aura
-    ctx.fillStyle='rgba(40,0,40,0.15)';ctx.fillRect(x+8,y+12,16,16);
-  },
-
-  _drawSoldier: function(ctx,x,y,hair,skin,eyes,c){
-    var R=function(a,b,c,d,e){ctx.fillStyle=e;ctx.fillRect(a,b,c,d);};
-    R(x+10,y+14,12,10,c.body);R(x+11,y+15,10,8,c.cloth);
-    this._drawHead(ctx,x+10,y+2,hair,skin,eyes,12,12);
-    // Simple helmet
-    R(x+10,y+1,12,3,c.armor);R(x+14,y+0,4,2,c.armor);
-    R(x+12,y+24,3,5,c.armor);R(x+17,y+24,3,5,c.armor);
-    R(x+11,y+27,5,2,'#604020');R(x+16,y+27,5,2,'#604020');
-    // Lance upright
-    R(x+24,y+2,2,22,'#b0b0b0');R(x+23,y+2,4,3,'#a0a0a0');
-  },
-
-  _portraitCache: {},
   _portraitCallbacks: [],
   _mapIconCache: {},
 
