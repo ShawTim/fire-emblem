@@ -89,87 +89,59 @@ function setFaction(f) {
 function renderAll() {
   const grid = document.getElementById('class-grid');
   grid.innerHTML = '';
-  
   const classIds = Object.keys(CLASS_INFO);
   
-  classIds.forEach(classId => {
+  classIds.forEach((classId, i) => {
     const info = CLASS_INFO[classId];
     const card = document.createElement('div');
     card.className = 'card';
     
-    // Canvas for sprite
     const canvas = document.createElement('canvas');
     const scale = 4;
     canvas.width = 32 * scale;
     canvas.height = 32 * scale;
     canvas.style.width = (32 * scale) + 'px';
     canvas.style.height = (32 * scale) + 'px';
+    canvas.style.imageRendering = 'pixelated';
     
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
     ctx.scale(scale, scale);
     
-    // Create mock unit
+    const hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
     const unit = {
       classId: classId,
       faction: currentFaction,
-      hp: 20,
-      maxHp: 20,
-      portrait: currentFaction === 'player' ? { hair:'#8040a0', skin:'#fdb', eyes:'#222' } : null,
+      hp: 20, maxHp: 20,
+      portrait: currentFaction === 'player' ? { hair: hairColors[i%8], skin:'#fdb', eyes:'#222' } : null,
       isBoss: false,
     };
-    
-    // Vary hair colors for player units
-    const hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
-    if (currentFaction === 'player') {
-      unit.portrait.hair = hairColors[classIds.indexOf(classId) % hairColors.length];
-    }
     
     Sprites.drawUnit(ctx, unit, 0, 0, false);
     
     card.appendChild(canvas);
-    card.innerHTML += `
-      <div class="class-name">${info.name}</div>
-      <div class="class-id">${info.nameEn} (${classId})</div>
-      <div class="weapons">🗡️ ${info.weapons}</div>
-      <div class="stats">${info.desc}</div>
-    `;
-    // Re-append canvas since innerHTML killed it
-    const newCanvas = card.querySelector('canvas');
-    if (!newCanvas) {
-      card.insertBefore(canvas, card.firstChild);
-    }
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'class-name';
+    nameDiv.textContent = info.name;
+    card.appendChild(nameDiv);
+    
+    const idDiv = document.createElement('div');
+    idDiv.className = 'class-id';
+    idDiv.textContent = info.nameEn + ' (' + classId + ')';
+    card.appendChild(idDiv);
+    
+    const weapDiv = document.createElement('div');
+    weapDiv.className = 'weapons';
+    weapDiv.textContent = '🗡️ ' + info.weapons;
+    card.appendChild(weapDiv);
+    
+    const descDiv = document.createElement('div');
+    descDiv.className = 'stats';
+    descDiv.textContent = info.desc;
+    card.appendChild(descDiv);
     
     grid.appendChild(card);
-  });
-  
-  // Re-render canvases (innerHTML destroyed them)
-  const cards = grid.querySelectorAll('.card');
-  cards.forEach((card, i) => {
-    const classId = classIds[i];
-    if (!card.querySelector('canvas')) {
-      const canvas = document.createElement('canvas');
-      const scale = 4;
-      canvas.width = 32 * scale;
-      canvas.height = 32 * scale;
-      canvas.style.width = (32 * scale) + 'px';
-      canvas.style.height = (32 * scale) + 'px';
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = false;
-      ctx.scale(scale, scale);
-      
-      const unit = {
-        classId: classId,
-        faction: currentFaction,
-        hp: 20, maxHp: 20,
-        portrait: currentFaction === 'player' ? 
-          { hair: ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'][i%8], skin:'#fdb', eyes:'#222' } : null,
-        isBoss: false,
-      };
-      
-      Sprites.drawUnit(ctx, unit, 0, 0, false);
-      card.insertBefore(canvas, card.firstChild);
-    }
   });
 }
 
