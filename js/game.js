@@ -283,10 +283,10 @@ class Game {
     const unit = this.units.find(u => u.x === x && u.y === y && u.hp > 0);
     if (unit && unit.faction === 'player' && !unit.acted) {
       this.selectedUnit = unit;
-      UI.showUnitPanel(unit);
+      UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
       this.showUnitCommandMenu(unit);
     } else if (unit) {
-      UI.showUnitPanel(unit);
+      UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
     } else {
       UI.hideUnitPanel();
     }
@@ -462,7 +462,7 @@ class Game {
         unit.items.splice(origIdx, 1);
         unit.items.unshift(weapon);
       }
-      UI.showUnitPanel(unit);
+      UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
       this.showUnitCommandMenu(unit);
     });
   }
@@ -499,7 +499,7 @@ class Game {
         const sx = unit.x * ts - GameMap.camX + ts / 2;
         const sy = unit.y * ts - GameMap.camY;
         UI.showDamagePopup(sx, sy, healAmt, 'heal');
-        UI.showUnitPanel(unit);
+        UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
       }
       this.showUnitCommandMenu(unit);
     });
@@ -906,7 +906,7 @@ class Game {
       GameMap.scrollToward(Cursor.x, Cursor.y, this.canvasW, this.canvasH);
       // Show unit info at cursor
       const unit = this.units.find(u => u.x === Cursor.x && u.y === Cursor.y && u.hp > 0);
-      if (unit) UI.showUnitPanel(unit);
+      if (unit) UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
       else if (this.state === 'map') UI.hideUnitPanel();
       return;
     }

@@ -14,9 +14,11 @@ const UI = {
   chapterText: document.getElementById('chapter-title-text'),
   chapterSub: document.getElementById('chapter-title-sub'),
 
-  showUnitPanel(unit) {
+  showUnitPanel(unit, terrainType) {
     if (!unit) { this.unitPanel.classList.add('hidden'); return; }
     const cls = getClassData(unit.classId);
+    const terrain = terrainType || 'plain';
+    const td = { plain:{def:0,avo:0,name:'平原'}, forest:{def:1,avo:20,name:'森林'}, mountain:{def:2,avo:30,name:'山地'}, wall:{def:3,avo:20,name:'城牆'}, gate:{def:3,avo:30,name:'城門'}, river:{def:0,avo:0,name:'河川'}, village:{def:0,avo:10,name:'村莊'}, throne:{def:3,avo:30,name:'王座'}, pillar:{def:1,avo:15,name:'柱子'} }[terrain] || {def:0,avo:0,name:terrain};
     const hpPct = Math.round(unit.hp / unit.maxHp * 100);
     const hpColor = hpPct > 50 ? '#4f4' : (hpPct > 25 ? '#cc4' : '#c44');
     const expPct = unit.faction === 'player' ? unit.exp : 0;
@@ -63,6 +65,11 @@ const UI = {
       </div>
       ${weapon ? `<div style="border-top:1px solid #333;margin:4px 0;padding-top:2px;font-size:10px;color:#aaa">
       ${weapon.name} <span style="color:#888">(${weapon.usesLeft !== undefined ? weapon.usesLeft : weapon.uses}/${weapon.uses})</span></div>` : ''}
+      <div style="border-top:1px solid #333;margin:4px 0;padding-top:2px">
+      <div class="stat-row"><span class="stat-label" style="color:#9a8">地形</span><span class="stat-val" style="color:#bc9">${td.name}</span></div>
+      ${td.def > 0 ? `<div class="stat-row"><span class="stat-label" style="color:#777">防＋</span><span class="stat-val" style="color:#8cf">${td.def}</span></div>` : ''}
+      ${td.avo > 0 ? `<div class="stat-row"><span class="stat-label" style="color:#777">避＋</span><span class="stat-val" style="color:#8cf">${td.avo}</span></div>` : ''}
+      </div>
       ${unit.faction === 'player' ? '<div style="font-size:9px;color:#555;margin-top:4px;text-align:center">按 R 查看詳細</div>' : ''}
     `;
     this.unitPanel.classList.remove('hidden');
