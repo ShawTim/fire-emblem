@@ -259,9 +259,12 @@ class Game {
     if (this.state !== 'map' && this.state !== 'unitSelected' && this.state !== 'unitCommand') return;
     const tile = GameMap.screenToTile(screenX, screenY);
     if (!tile) return;
+    Cursor.moveTo(tile.x, tile.y);
     const terrain = GameMap.getTerrain(tile.x, tile.y);
     const unit = this.units.find(u => u.x === tile.x && u.y === tile.y && u.hp > 0);
     UI.showTerrainInfo(terrain, unit);
+    if (unit) UI.showUnitPanel(unit, terrain);
+    else if (this.state === 'map') UI.hideUnitPanel();
   }
 
   handleClick(screenX, screenY) {
