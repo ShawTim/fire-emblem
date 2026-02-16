@@ -1,13 +1,13 @@
 // main.js — Game initialization and main loop
 
-const canvas = document.getElementById('gameCanvas');
+var canvas = document.getElementById('gameCanvas');
 canvas.width = 800;
 canvas.height = 600;
-const ctx = canvas.getContext('2d');
+var ctx = canvas.getContext('2d');
 
 SFX.init();
 
-const game = new Game(canvas);
+var game = new Game(canvas);
 game.init();
 
 function gameLoop(timestamp) {
