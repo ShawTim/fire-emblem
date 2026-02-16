@@ -400,6 +400,68 @@ const Sprites = {
     this._portraitCallbacks.push(cb);
   },
 
+  drawGenericPortrait(ctx, unit, w, h) {
+    // Generic face for enemies based on class
+    const cls = getClassData(unit.classId);
+    const colors = this.getUnitColors(unit.faction);
+    const seed = (unit.classId || '').length * 31 + (unit.level || 1) * 7;
+    
+    // Background
+    ctx.fillStyle = unit.faction === 'enemy' ? '#2a1018' : '#182a10';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Face shape
+    const skinTones = ['#dba','#ecb','#fdb','#ca9','#eda'];
+    ctx.fillStyle = skinTones[seed % skinTones.length];
+    ctx.fillRect(w*0.25, h*0.2, w*0.5, h*0.55);
+    
+    // Hair based on class type
+    const hairColors = ['#444','#654','#543','#765','#333','#876'];
+    ctx.fillStyle = hairColors[seed % hairColors.length];
+    if (cls.tags && cls.tags.includes('armored')) {
+      // Helmet
+      ctx.fillStyle = '#888';
+      ctx.fillRect(w*0.2, h*0.05, w*0.6, h*0.3);
+      ctx.fillStyle = '#777';
+      ctx.fillRect(w*0.25, h*0.35, w*0.5, h*0.08);
+    } else if (cls.weapons && cls.weapons.includes('staff')) {
+      // Hood
+      ctx.fillStyle = '#ddc';
+      ctx.fillRect(w*0.15, h*0.05, w*0.7, h*0.25);
+      ctx.fillRect(w*0.1, h*0.15, w*0.2, h*0.3);
+      ctx.fillRect(w*0.7, h*0.15, w*0.2, h*0.3);
+    } else {
+      // Normal hair
+      ctx.fillRect(w*0.2, h*0.05, w*0.6, h*0.2);
+      ctx.fillRect(w*0.15, h*0.1, w*0.15, h*0.25);
+      ctx.fillRect(w*0.7, h*0.1, w*0.15, h*0.25);
+    }
+    
+    // Eyes
+    ctx.fillStyle = '#222';
+    ctx.fillRect(w*0.32, h*0.42, w*0.1, h*0.08);
+    ctx.fillRect(w*0.58, h*0.42, w*0.1, h*0.08);
+    
+    // Mouth
+    ctx.fillStyle = '#a86';
+    ctx.fillRect(w*0.38, h*0.6, w*0.24, h*0.05);
+    
+    // Armor/clothing hint
+    ctx.fillStyle = colors.body;
+    ctx.fillRect(w*0.1, h*0.75, w*0.8, h*0.25);
+    ctx.fillStyle = colors.armor;
+    ctx.fillRect(w*0.2, h*0.8, w*0.6, h*0.15);
+    
+    // Boss marker
+    if (unit.isBoss) {
+      ctx.fillStyle = '#fc0';
+      ctx.fillRect(w*0.3, h*0.0, w*0.4, h*0.08);
+      ctx.fillRect(w*0.3, h*0.0, w*0.08, h*0.12);
+      ctx.fillRect(w*0.46, h*0.0, w*0.08, h*0.12);
+      ctx.fillRect(w*0.62, h*0.0, w*0.08, h*0.12);
+    }
+  },
+
   drawPortrait(ctx, charId, w, h) {
     const ch = CHARACTERS[charId];
     if (!ch) {

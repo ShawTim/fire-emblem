@@ -25,9 +25,17 @@ const UI = {
     const hitRate = weapon ? (unit.skl * 2 + unit.lck + weapon.hit) : 0;
     const avoRate = unit.spd * 2 + unit.lck;
     const critRate = weapon ? Math.floor(unit.skl / 2) + weapon.crit : 0;
+    // Portrait
+    const portraitId = unit.charId || ('_enemy_' + unit.classId);
+    const hasPortrait = unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded;
     this.unitInfo.innerHTML = `
-      <div class="stat-name">${unit.name}</div>
-      <div class="stat-class">${cls.name} Lv.${unit.level}</div>
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
+        <canvas id="panel-portrait" width="32" height="32" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;image-rendering:pixelated;flex-shrink:0"></canvas>
+        <div>
+          <div class="stat-name">${unit.name}</div>
+          <div class="stat-class">${cls.name} Lv.${unit.level}</div>
+        </div>
+      </div>
       <div class="stat-row"><span class="stat-label">HP</span>
         <span class="stat-hp">${unit.hp}/${unit.maxHp}</span></div>
       <div style="background:#300;height:4px;margin:2px 0">
@@ -58,6 +66,17 @@ const UI = {
       ${unit.faction === 'player' ? '<div style="font-size:9px;color:#555;margin-top:4px;text-align:center">按 R 查看詳細</div>' : ''}
     `;
     this.unitPanel.classList.remove('hidden');
+    // Draw portrait on panel canvas
+    const pCanvas = document.getElementById('panel-portrait');
+    if (pCanvas) {
+      const pCtx = pCanvas.getContext('2d');
+      pCtx.clearRect(0, 0, 32, 32);
+      if (unit.charId) {
+        Sprites.drawPortrait(pCtx, unit.charId, 32, 32);
+      } else {
+        Sprites.drawGenericPortrait(pCtx, unit, 32, 32);
+      }
+    }
   },
 
   hideUnitPanel() { this.unitPanel.classList.add('hidden'); },
