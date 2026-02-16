@@ -143,302 +143,306 @@ var Sprites = {
     var R=function(a,b,w,h,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,w,h);};
     var P=function(a,b,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,1,1);};
 
-    // Helper: just eyes (2 black dots) at position
-    var eyes2=function(ex,ey){ P(ex,ey,'#111'); P(ex+4,ey,'#111'); };
-    // Helper: skin patch (small area for face)
-    var face=function(fx,fy,w,h){ R(fx,fy,w,h,skin); };
+    // Eyes helper
+    var dot=function(ex,ey){ P(ex,ey,'#111'); P(ex+4,ey,'#111'); };
 
     switch(cls){
       case'lord':case'masterLord':{
-        // Spiky/flowing hair
-        R(x+10,by+3,3,1,hair);R(x+9,by+4,6,1,hair);
-        R(x+8,by+5,8,3,hair);R(x+7,by+6,2,4,hair); // side bangs
-        R(x+18,by+5,2,3,hair); // right side
-        // Face window
-        face(x+9,by+7,7,3);
-        eyes2(x+10,by+8);
-        // Hair back/bottom
-        R(x+8,by+10,8,1,hair);
-        // Cape flowing back
-        R(x+19,by+9,5,12,c.accent);R(x+22,by+14,3,6,c.accent);
-        // Torso leaning forward
-        R(x+10,by+11,8,6,c.body);R(x+9,by+12,7,4,c.cloth);
-        // Sword arm reaching left
-        R(x+6,by+12,3,3,c.cloth);
-        // BIG rapier angled down-left
-        R(x+3,by+10,1,10,'#c8d0e0');R(x+2,by+10,3,1,'#e0d040');
-        // Legs: front forward, back angled
-        R(x+9,by+17,4,6,c.armor);R(x+15,by+18,3,5,c.armor);
-        R(x+8,by+23,5,2,'#604020');R(x+14,by+23,4,2,'#604020');
-        // Tiara sparkle
-        P(x+12,by+3,'#f0e040');P(x+13,by+2,'#f0e040');
+        // Hair on TOP only — spiky upward + side bangs
+        R(x+11,by+1,2,1,hair);R(x+14,by+0,2,1,hair); // spikes up
+        R(x+9,by+2,8,1,hair);R(x+8,by+3,10,2,hair);
+        R(x+7,by+4,3,3,hair); // left bang
+        R(x+18,by+4,2,2,hair); // right bang
+        // Face: skin from eye-line down (NO hair below)
+        R(x+9,by+5,9,4,skin);R(x+10,by+9,7,1,skin); // chin
+        dot(x+10,by+6);
+        // Tiara
+        P(x+13,by+1,'#f0e040');P(x+14,by+1,'#f0e040');
+        // Cape
+        R(x+19,by+8,5,12,c.accent);R(x+22,by+13,3,6,c.accent);
+        // Torso leaning
+        R(x+10,by+10,8,6,c.body);R(x+9,by+11,7,4,c.cloth);
+        // Sword arm left
+        R(x+6,by+11,3,3,c.cloth);
+        // BIG rapier
+        R(x+3,by+9,1,10,'#c8d0e0');R(x+2,by+9,3,1,'#e0d040');
+        // Legs
+        R(x+9,by+16,4,6,c.armor);R(x+15,by+17,3,5,c.armor);
+        R(x+8,by+22,5,3,'#604020');R(x+14,by+22,4,3,'#604020');
         break;
       }
       case'paladin':case'greatKnight':{
-        // Helmet with crest
-        R(x+10,by+1,8,2,c.armor);R(x+9,by+3,10,3,c.armor);
-        R(x+14,by+0,3,2,c.accent); // crest plume
-        face(x+10,by+5,8,2);
-        eyes2(x+11,by+5);
-        R(x+10,by+7,8,1,c.armor); // chin guard
-        // Body armored
-        R(x+10,by+8,9,5,c.armor);R(x+11,by+9,7,3,c.body);
-        // Horse body
-        R(x+3,by+13,22,6,'#8B6040');R(x+5,by+14,18,4,'#9B7050');
-        // Horse head reaching forward
-        R(x-1,by+11,5,4,'#8B6040');P(x+0,by+12,'#222');
-        R(x+24,by+15,3,3,'#6B4020'); // tail
-        // Horse legs staggered
-        R(x+4,by+19,3,5,'#7B5030');R(x+11,by+20,3,4,'#7B5030');
-        R(x+17,by+19,3,5,'#7B5030');R(x+22,by+20,3,4,'#7B5030');
-        // BIG lance angled forward
-        R(x+20,by+0,2,13,'#b0b0b0');R(x+19,by+0,4,2,'#888');
-        R(x+3,by+24,4,2,'#604020');R(x+10,by+24,4,2,'#604020');R(x+16,by+24,4,2,'#604020');R(x+21,by+24,4,2,'#604020');
+        // Helmet (no hair visible)
+        R(x+10,by+0,8,2,c.armor);R(x+9,by+2,10,3,c.armor);
+        R(x+14,by-1,3,2,c.accent); // plume
+        // Visor opening
+        R(x+10,by+4,8,2,skin);
+        dot(x+11,by+4);
+        R(x+10,by+6,8,1,c.armor); // chin guard
+        // Armored body
+        R(x+10,by+7,9,5,c.armor);R(x+11,by+8,7,3,c.body);
+        // Horse
+        R(x+3,by+12,22,6,'#8B6040');R(x+5,by+13,18,4,'#9B7050');
+        R(x-1,by+10,5,4,'#8B6040');P(x+0,by+11,'#222');
+        R(x+24,by+14,3,3,'#6B4020');
+        R(x+4,by+18,3,5,'#7B5030');R(x+11,by+19,3,4,'#7B5030');
+        R(x+17,by+18,3,5,'#7B5030');R(x+22,by+19,3,4,'#7B5030');
+        // Lance
+        R(x+20,by-1,2,14,'#b0b0b0');R(x+19,by-1,4,2,'#888');
+        R(x+3,by+23,4,2,'#604020');R(x+10,by+23,4,2,'#604020');R(x+16,by+23,4,2,'#604020');R(x+21,by+23,4,2,'#604020');
         break;
       }
       case'cavalier':{
-        // Short hair + headband
-        R(x+10,by+3,8,2,hair);R(x+9,by+5,10,3,hair);
-        face(x+10,by+6,7,2);
-        eyes2(x+11,by+6);
-        R(x+10,by+8,8,1,hair);
+        // Hair top only
+        R(x+10,by+2,8,2,hair);R(x+9,by+4,10,1,hair);
+        R(x+9,by+5,9,3,skin); // face
+        dot(x+10,by+5);
+        R(x+10,by+8,7,1,skin); // chin
         // Body
         R(x+10,by+9,9,4,c.body);
-        // Smaller horse
+        // Horse
         R(x+4,by+13,20,5,'#9B7050');
         R(x+1,by+11,4,4,'#9B7050');P(x+2,by+12,'#222');
         R(x+5,by+18,3,5,'#8B6040');R(x+12,by+19,3,4,'#8B6040');R(x+18,by+18,3,5,'#8B6040');
-        // Lance
         R(x+21,by+2,2,12,'#b0b0b0');R(x+20,by+2,4,2,'#999');
         R(x+4,by+23,4,2,'#604020');R(x+11,by+23,4,2,'#604020');R(x+17,by+23,4,2,'#604020');
         break;
       }
       case'archer':case'sniper':case'ranger':{
-        // Ponytail hair
-        R(x+14,by+3,6,2,hair);R(x+13,by+5,8,3,hair);
-        R(x+20,by+4,2,5,hair); // ponytail right
-        R(x+21,by+6,2,3,hair);
-        face(x+14,by+6,5,3);
-        eyes2(x+15,by+7);
-        // Body turned sideways
-        R(x+14,by+10,6,7,c.body);
-        // Arm pulling back
-        R(x+19,by+11,3,3,c.cloth);
-        // BIG bow on left
+        // Ponytail — hair on top, ponytail extends RIGHT
+        R(x+13,by+2,7,2,hair);R(x+12,by+4,8,1,hair);
+        R(x+19,by+3,2,3,hair);R(x+20,by+5,2,3,hair); // ponytail
+        // Face
+        R(x+13,by+5,6,3,skin);
+        dot(x+14,by+6);
+        R(x+14,by+8,4,1,skin);
+        // Body sideways
+        R(x+13,by+9,7,7,c.body);
+        // BIG bow left
         oc.strokeStyle='#a07030';oc.lineWidth=2;
-        oc.beginPath();oc.arc(x-x+ox+8,by-y+oy+15,10,-1.0,1.0);oc.stroke();oc.lineWidth=1;
+        oc.beginPath();oc.arc(x-x+ox+7,by-y+oy+14,10,-1.0,1.0);oc.stroke();oc.lineWidth=1;
         // Arrow
-        R(x+7,by+14,14,1,'#c8c8c8');R(x+6,by+13,2,3,'#888');
-        // Quiver on back
-        R(x+20,by+8,3,8,'#8B6040');R(x+20,by+7,3,1,'#ccc');
-        // Legs staggered
-        R(x+14,by+17,3,5,c.armor);R(x+18,by+18,3,4,c.armor);
-        R(x+13,by+22,4,3,'#604020');R(x+17,by+22,4,3,'#604020');
+        R(x+6,by+13,14,1,'#c8c8c8');R(x+5,by+12,2,3,'#888');
+        // Pull arm
+        R(x+19,by+10,3,3,c.cloth);
+        // Quiver
+        R(x+20,by+7,3,8,'#8B6040');
+        // Legs
+        R(x+13,by+16,3,5,c.armor);R(x+17,by+17,3,4,c.armor);
+        R(x+12,by+21,4,3,'#604020');R(x+16,by+21,4,3,'#604020');
         break;
       }
       case'fighter':case'warrior':{
-        // Spiky wild hair
-        R(x+9,by+2,2,2,hair);R(x+12,by+1,3,2,hair);R(x+16,by+2,2,2,hair);
-        R(x+8,by+4,12,3,hair);R(x+19,by+4,2,3,hair);
-        face(x+9,by+6,9,3);
-        eyes2(x+10,by+7);
-        // Thick neck / bare shoulders
-        R(x+10,by+9,8,2,skin);
-        // Wide body
-        R(x+6,by+11,16,7,c.body);R(x+4,by+11,3,4,skin);R(x+21,by+11,3,4,skin);
-        // BIG AXE raised high
-        R(x+22,by+2,2,12,'#8B6040');
-        R(x+19,by+0,8,4,'#a0a0a0');R(x+20,by+1,6,2,'#c0c0c0');
-        // Wide legs, knees bent
-        R(x+7,by+18,5,4,c.armor);R(x+16,by+18,5,4,c.armor);
-        R(x+6,by+22,6,3,'#604020');R(x+15,by+22,6,3,'#604020');
+        // Wild spiky hair — extends UP and OUT
+        R(x+8,by+0,2,2,hair);R(x+11,by-1,3,2,hair);R(x+15,by+0,2,2,hair);R(x+18,by+1,2,1,hair);
+        R(x+8,by+2,12,2,hair);
+        // Face below (wide)
+        R(x+8,by+4,11,4,skin);
+        dot(x+9,by+5);
+        R(x+10,by+8,6,1,skin);
+        // Thick neck
+        R(x+10,by+9,8,1,skin);
+        // Wide body + bare arms
+        R(x+6,by+10,16,7,c.body);R(x+4,by+10,3,4,skin);R(x+21,by+10,3,4,skin);
+        // BIG AXE raised
+        R(x+22,by+1,2,12,'#8B6040');
+        R(x+19,by-1,8,4,'#a0a0a0');R(x+20,by+0,6,2,'#c0c0c0');
+        // Wide legs
+        R(x+7,by+17,5,4,c.armor);R(x+16,by+17,5,4,c.armor);
+        R(x+6,by+21,6,3,'#604020');R(x+15,by+21,6,3,'#604020');
         break;
       }
       case'mercenary':case'swordmaster':case'hero':{
-        // Messy hair + bandana
-        R(x+9,by+3,8,1,'#e04040'); // bandana
-        R(x+8,by+4,10,3,hair);R(x+7,by+5,2,4,hair);
-        R(x+5,by+7,3,5,'#e04040'); // bandana tail
-        face(x+9,by+6,7,3);
-        eyes2(x+10,by+7);
-        R(x+9,by+9,8,1,hair);
+        // Messy hair top + bandana
+        R(x+9,by+2,8,1,'#e04040'); // bandana
+        R(x+8,by+0,9,2,hair);R(x+7,by+2,3,3,hair); // messy left
+        R(x+17,by+1,2,2,hair); // messy right
+        R(x+5,by+4,3,5,'#e04040'); // bandana tail
+        // Face
+        R(x+9,by+3,8,4,skin);
+        dot(x+10,by+4);
+        R(x+10,by+7,6,1,skin);
         // Body lunging
-        R(x+9,by+10,9,7,c.body);
-        // Sword arm extended right
-        R(x+18,by+11,4,3,c.cloth);
-        // BIG sword angled up-right
-        R(x+22,by+5,1,9,'#d0d0e0');R(x+23,by+4,1,5,'#d0d0e0');
-        R(x+21,by+10,3,2,'#c0a030'); // guard
-        // Lunge legs
-        R(x+8,by+17,4,4,c.armor);R(x+16,by+18,3,5,c.armor);
-        R(x+7,by+21,5,4,'#604020');R(x+15,by+22,4,3,'#604020');
+        R(x+9,by+8,9,7,c.body);
+        // Sword arm right
+        R(x+18,by+9,4,3,c.cloth);
+        // BIG sword angled
+        R(x+22,by+3,1,9,'#d0d0e0');R(x+23,by+2,1,5,'#d0d0e0');
+        R(x+21,by+8,3,2,'#c0a030');
+        // Legs lunge
+        R(x+8,by+15,4,4,c.armor);R(x+16,by+16,3,5,c.armor);
+        R(x+7,by+19,5,4,'#604020');R(x+15,by+20,4,3,'#604020');
         break;
       }
       case'mage':case'sage':case'darkMage':case'mageKnight':{
         var hc=cls==='darkMage'?'#302040':c.armor;
         var rc=cls==='darkMage'?'#402050':c.body;
-        // Pointy hat
+        // Pointy hat (big, extends up)
         oc.fillStyle=hc;oc.beginPath();
-        oc.moveTo(x-x+ox+14,by-y+oy+0);oc.lineTo(x-x+ox+20,by-y+oy+6);oc.lineTo(x-x+ox+8,by-y+oy+6);oc.fill();
-        R(x+8,by+6,12,2,hc); // hat brim
-        // Hair peeking out
-        R(x+8,by+7,3,2,hair);R(x+17,by+7,3,2,hair);
-        face(x+10,by+7,7,3);
-        eyes2(x+11,by+8);
-        // Robe (A-shape widens at bottom)
-        R(x+10,by+10,8,4,rc);R(x+8,by+14,12,4,rc);R(x+6,by+18,16,5,rc);
-        // Casting arm forward with BIG orb
-        R(x+22,by+13,3,3,rc);
-        var oc2c=cls==='darkMage'?'#a040d0':'#50c0ff';
-        oc.fillStyle=oc2c;oc.beginPath();oc.arc(x-x+ox+26,by-y+oy+12,4,0,Math.PI*2);oc.fill();
-        P(x+25,by+11,'#fff');P(x+26,by+11,'#fff');
-        // Feet peek
-        R(x+8,by+23,4,2,rc);R(x+16,by+23,4,2,rc);
+        oc.moveTo(x-x+ox+14,by-y+oy-2);oc.lineTo(x-x+ox+20,by-y+oy+5);oc.lineTo(x-x+ox+8,by-y+oy+5);oc.fill();
+        R(x+7,by+5,14,2,hc); // brim
+        // Hair peeking from under hat
+        R(x+7,by+6,3,1,hair);R(x+18,by+6,3,1,hair);
+        // Face
+        R(x+9,by+6,8,3,skin);
+        dot(x+10,by+7);
+        R(x+10,by+9,6,1,skin);
+        // Robe A-shape
+        R(x+10,by+10,8,4,rc);R(x+8,by+14,12,4,rc);R(x+6,by+18,16,4,rc);
+        // Casting arm + BIG orb
+        R(x+22,by+12,3,3,rc);
+        var orbC=cls==='darkMage'?'#a040d0':'#50c0ff';
+        oc.fillStyle=orbC;oc.beginPath();oc.arc(x-x+ox+26,by-y+oy+11,4,0,Math.PI*2);oc.fill();
+        P(x+25,by+10,'#fff');P(x+26,by+10,'#fff');
+        // Feet
+        R(x+8,by+22,4,2,rc);R(x+16,by+22,4,2,rc);
         break;
       }
       case'cleric':case'bishop':case'valkyrie':{
-        // Long hair
-        R(x+10,by+3,8,2,hair);R(x+9,by+5,10,4,hair);
-        R(x+8,by+8,2,6,hair);R(x+18,by+8,2,6,hair); // long sides
-        face(x+10,by+6,7,3);
-        eyes2(x+11,by+7);
+        // Long hair — extends DOWN past shoulders on sides
+        R(x+10,by+2,8,2,hair);R(x+9,by+4,10,1,hair);
+        R(x+7,by+5,2,8,hair);R(x+19,by+5,2,8,hair); // long side hair
+        // Face
+        R(x+9,by+5,9,3,skin);
+        dot(x+10,by+6);
+        R(x+10,by+8,7,1,skin);
         // White robe
-        R(x+10,by+10,8,4,'#f0e8d8');R(x+8,by+14,12,5,'#e8e0d0');R(x+7,by+19,14,4,'#f0e8d8');
+        R(x+9,by+9,10,4,'#f0e8d8');R(x+8,by+13,12,5,'#e8e0d0');R(x+7,by+18,14,4,'#f0e8d8');
         // BIG staff with glow
-        R(x+22,by+1,2,22,'#c0a040');R(x+21,by+0,4,2,'#f0e060');
-        oc.fillStyle='rgba(255,255,180,0.5)';oc.beginPath();oc.arc(x-x+ox+23,by-y+oy+0,5,0,Math.PI*2);oc.fill();
-        R(x+9,by+23,5,2,'#d0c8b0');R(x+15,by+23,5,2,'#d0c8b0');
+        R(x+22,by+0,2,22,'#c0a040');R(x+21,by-1,4,2,'#f0e060');
+        oc.fillStyle='rgba(255,255,180,0.5)';oc.beginPath();oc.arc(x-x+ox+23,by-y+oy-1,5,0,Math.PI*2);oc.fill();
+        R(x+9,by+22,5,2,'#d0c8b0');R(x+15,by+22,5,2,'#d0c8b0');
         break;
       }
       case'knight':case'general':{
-        // Full helmet
-        R(x+8,by+2,12,3,c.armor);R(x+7,by+5,14,4,c.armor);
-        // Visor slit
-        face(x+9,by+6,10,2);
-        eyes2(x+10,by+6);
+        // Full enclosed helmet
+        R(x+8,by+1,12,3,c.armor);R(x+7,by+4,14,4,c.armor);
+        // Visor slit = face
+        R(x+9,by+5,10,2,skin);
+        dot(x+10,by+5);
         R(x+7,by+8,14,1,c.armor);
-        // MASSIVE armored body
+        // MASSIVE armor
         R(x+4,by+9,22,9,c.armor);R(x+5,by+10,20,7,c.body);
-        // BIG shield on left
+        // Shield left
         R(x+0,by+9,5,10,c.accent);R(x+1,by+10,3,8,c.body);
         P(x+2,by+13,'#e0c030');P(x+2,by+14,'#e0c030');
-        // Spear right
-        R(x+25,by+2,2,16,'#b0b0b0');R(x+24,by+2,4,2,'#999');
-        // Thick armored legs
-        R(x+7,by+18,7,5,c.armor);R(x+17,by+18,7,5,c.armor);
-        R(x+6,by+23,8,2,'#505050');R(x+16,by+23,8,2,'#505050');
+        // Lance right
+        R(x+25,by+1,2,16,'#b0b0b0');R(x+24,by+1,4,2,'#999');
+        // Thick legs
+        R(x+7,by+18,7,4,c.armor);R(x+17,by+18,7,4,c.armor);
+        R(x+6,by+22,8,2,'#505050');R(x+16,by+22,8,2,'#505050');
         break;
       }
       case'thief':case'assassin':{
-        // Hood covering top of head
-        R(x+9,by+3,10,3,c.armor);R(x+8,by+5,12,3,c.armor);
-        R(x+7,by+6,2,4,c.armor); // hood drape
-        face(x+10,by+6,7,3);
-        eyes2(x+11,by+7);
-        // Slim body crouching LOW
-        R(x+10,by+10,8,5,c.body);
-        R(x+8,by+11,3,5,c.armor); // cloak drape
-        // Dagger held forward
-        R(x+18,by+11,3,2,c.cloth);
-        R(x+21,by+9,1,6,'#d0d0e0');R(x+20,by+9,3,1,'#a0a080');
-        // Crouching: knees very bent, body low
-        R(x+9,by+15,4,5,c.armor);R(x+15,by+14,4,6,c.armor);
-        R(x+8,by+20,5,2,'#404040');R(x+14,by+20,5,2,'#404040');
+        // Hood on top only — face exposed below
+        R(x+9,by+2,10,3,c.armor);R(x+8,by+4,12,1,c.armor);
+        R(x+7,by+3,2,3,c.armor); // hood side
+        R(x+20,by+3,2,3,c.armor);
+        // Face exposed
+        R(x+9,by+5,9,3,skin);
+        dot(x+10,by+6);
+        R(x+10,by+8,7,1,skin);
+        // Slim crouching body
+        R(x+10,by+9,8,5,c.body);
+        R(x+8,by+10,3,5,c.armor); // cloak
+        // Dagger forward
+        R(x+18,by+10,3,2,c.cloth);
+        R(x+21,by+8,1,6,'#d0d0e0');R(x+20,by+8,3,1,'#a0a080');
+        // Crouching legs
+        R(x+9,by+14,4,5,c.armor);R(x+15,by+13,4,6,c.armor);
+        R(x+8,by+19,5,2,'#404040');R(x+14,by+19,5,2,'#404040');
         break;
       }
       case'wyvernRider':case'wyvernLord':{
-        // Rider head with helm
-        R(x+10,by+0,8,2,c.armor);R(x+9,by+2,10,3,hair);
-        face(x+10,by+4,7,2);
-        eyes2(x+11,by+4);
+        // Helm + hair
+        R(x+10,by-1,8,2,c.armor);R(x+9,by+1,10,2,hair);
+        R(x+9,by+3,9,2,skin); // face
+        dot(x+10,by+3);
         // Rider body
-        R(x+10,by+6,9,5,c.armor);
-        // Dragon body (big!)
-        R(x+2,by+11,26,7,'#406050');R(x+4,by+12,22,5,'#507060');
-        // Dragon head snaking forward left
-        R(x-2,by+10,6,4,'#406050');R(x-3,by+11,3,2,'#507060');
-        P(x-2,by+11,'#f03030'); // red eye
-        R(x+27,by+13,4,3,'#3a5040'); // tail
+        R(x+10,by+5,9,5,c.armor);
+        // Dragon body
+        R(x+2,by+10,26,7,'#406050');R(x+4,by+11,22,5,'#507060');
+        R(x-2,by+9,6,4,'#406050');P(x-1,by+10,'#f03030');
+        R(x+27,by+12,4,3,'#3a5040');
         // BIG wings
         oc.fillStyle='#508060';
-        oc.beginPath();oc.moveTo(x-x+ox+6,by-y+oy+11);oc.lineTo(x-x+ox-4,by-y+oy+0);oc.lineTo(x-x+ox+14,by-y+oy+8);oc.fill();
-        oc.beginPath();oc.moveTo(x-x+ox+24,by-y+oy+11);oc.lineTo(x-x+ox+35,by-y+oy+2);oc.lineTo(x-x+ox+20,by-y+oy+8);oc.fill();
-        // Dragon feet with claws
-        R(x+4,by+18,4,6,'#406050');R(x+22,by+18,4,6,'#406050');
-        R(x+3,by+23,5,2,'#305040');R(x+21,by+23,5,2,'#305040');
+        oc.beginPath();oc.moveTo(x-x+ox+6,by-y+oy+10);oc.lineTo(x-x+ox-4,by-y+oy-1);oc.lineTo(x-x+ox+14,by-y+oy+7);oc.fill();
+        oc.beginPath();oc.moveTo(x-x+ox+24,by-y+oy+10);oc.lineTo(x-x+ox+35,by-y+oy+1);oc.lineTo(x-x+ox+20,by-y+oy+7);oc.fill();
+        // Dragon feet
+        R(x+4,by+17,4,6,'#406050');R(x+22,by+17,4,6,'#406050');
+        R(x+3,by+22,5,2,'#305040');R(x+21,by+22,5,2,'#305040');
         break;
       }
       case'pegasusKnight':case'falconKnight':{
-        // Long flowing hair
-        R(x+11,by+1,7,2,hair);R(x+10,by+3,9,3,hair);
-        R(x+18,by+3,3,5,hair); // hair flowing right
-        face(x+11,by+5,6,2);
-        eyes2(x+12,by+5);
+        // Long flowing hair extending right
+        R(x+11,by+0,7,2,hair);R(x+10,by+2,8,1,hair);
+        R(x+18,by+1,3,4,hair);R(x+20,by+3,2,3,hair); // flowing right
+        // Face
+        R(x+10,by+3,7,3,skin);
+        dot(x+11,by+4);
+        R(x+11,by+6,5,1,skin);
         // Rider body
-        R(x+11,by+7,8,4,c.body);
-        // Pegasus body (white/cream)
+        R(x+10,by+7,8,4,c.body);
+        // Pegasus (white)
         R(x+4,by+11,20,6,'#e8e0d8');R(x+5,by+12,16,4,'#f0e8e0');
-        // Pegasus head
         R(x+0,by+9,5,4,'#e8e0d8');P(x+1,by+10,'#222');
-        // BIG white wings
+        // White wings
         oc.fillStyle='#f0f0ff';
-        oc.beginPath();oc.moveTo(x-x+ox+8,by-y+oy+11);oc.lineTo(x-x+ox-1,by-y+oy+0);oc.lineTo(x-x+ox+14,by-y+oy+8);oc.fill();
-        oc.beginPath();oc.moveTo(x-x+ox+22,by-y+oy+11);oc.lineTo(x-x+ox+33,by-y+oy+2);oc.lineTo(x-x+ox+19,by-y+oy+8);oc.fill();
+        oc.beginPath();oc.moveTo(x-x+ox+8,by-y+oy+11);oc.lineTo(x-x+ox-1,by-y+oy-1);oc.lineTo(x-x+ox+14,by-y+oy+8);oc.fill();
+        oc.beginPath();oc.moveTo(x-x+ox+22,by-y+oy+11);oc.lineTo(x-x+ox+33,by-y+oy+1);oc.lineTo(x-x+ox+19,by-y+oy+8);oc.fill();
         // Pegasus legs
         R(x+6,by+17,2,5,'#d8d0c8');R(x+12,by+18,2,4,'#d8d0c8');R(x+19,by+17,2,5,'#d8d0c8');
-        // Lance
-        R(x+22,by+2,2,12,'#b0b0b0');
+        R(x+22,by+2,2,10,'#b0b0b0');
         R(x+5,by+22,3,2,'#c0b8b0');R(x+11,by+22,3,2,'#c0b8b0');R(x+18,by+22,3,2,'#c0b8b0');
         break;
       }
       case'brigand':{
-        // Bald + bandana
-        R(x+9,by+4,10,2,'#804020'); // bandana
-        R(x+8,by+6,12,2,skin); // bald head
-        face(x+9,by+7,8,2);
-        eyes2(x+10,by+7);
-        R(x+9,by+9,8,1,skin);
-        // Thick body
-        R(x+7,by+10,14,8,c.body);R(x+5,by+10,3,5,skin);R(x+20,by+10,3,5,skin);
-        // BIG AXE swinging over head
-        R(x+21,by+2,2,12,'#8B6040');
-        R(x+18,by+0,8,4,'#a0a0a0');R(x+19,by+1,6,2,'#c0c0c0');
+        // Bald head + bandana on top
+        R(x+9,by+3,10,2,'#804020');
+        R(x+8,by+5,12,4,skin); // bald head is skin-colored
+        dot(x+9,by+6);
+        R(x+10,by+9,6,1,skin);
+        // Body
+        R(x+7,by+10,14,7,c.body);R(x+5,by+10,3,4,skin);R(x+20,by+10,3,4,skin);
+        // BIG AXE
+        R(x+21,by+1,2,12,'#8B6040');
+        R(x+18,by-1,8,4,'#a0a0a0');R(x+19,by+0,6,2,'#c0c0c0');
         // Wide legs
-        R(x+8,by+18,5,4,c.armor);R(x+16,by+18,5,4,c.armor);
-        R(x+7,by+22,6,3,'#604020');R(x+15,by+22,6,3,'#604020');
+        R(x+8,by+17,5,4,c.armor);R(x+16,by+17,5,4,c.armor);
+        R(x+7,by+21,6,3,'#604020');R(x+15,by+21,6,3,'#604020');
         break;
       }
       case'skeleton':{
-        // Skull (white, no hair)
-        R(x+10,by+3,8,3,'#e8e0c8');R(x+9,by+5,10,4,'#d8d0b8');
-        // Dark eye sockets with red glow
-        R(x+11,by+6,2,2,'#222');R(x+15,by+6,2,2,'#222');
-        P(x+11,by+6,'#f03030');P(x+16,by+6,'#f03030');
-        // Jaw
-        R(x+11,by+9,6,1,'#c8c0a8');R(x+12,by+10,4,1,'#333');
-        // Bony ribcage body
-        R(x+10,by+11,8,6,'#d0c8b0');
-        P(x+11,by+12,'#888');P(x+16,by+12,'#888');
-        P(x+11,by+14,'#888');P(x+16,by+14,'#888');
+        // Skull — round white, no hair
+        R(x+10,by+2,8,3,'#e8e0c8');R(x+9,by+4,10,4,'#d8d0b8');
+        // Dark eye sockets
+        R(x+11,by+5,2,2,'#222');R(x+15,by+5,2,2,'#222');
+        P(x+11,by+5,'#f03030');P(x+16,by+5,'#f03030');
+        // Jaw (open, no skin below)
+        R(x+11,by+8,6,1,'#c8c0a8');R(x+12,by+9,4,1,'#333');
+        // Ribcage
+        R(x+10,by+10,8,6,'#d0c8b0');
+        P(x+11,by+11,'#888');P(x+16,by+11,'#888');
+        P(x+11,by+13,'#888');P(x+16,by+13,'#888');
         // Bony legs
-        R(x+11,by+17,2,7,'#c8c0a8');R(x+15,by+17,2,7,'#c8c0a8');
-        // Weapon angled
-        R(x+19,by+8,1,10,'#808080');R(x+20,by+7,1,5,'#808080');
-        R(x+10,by+23,4,2,'#a09880');R(x+14,by+23,4,2,'#a09880');
+        R(x+11,by+16,2,7,'#c8c0a8');R(x+15,by+16,2,7,'#c8c0a8');
+        R(x+19,by+7,1,10,'#808080');R(x+20,by+6,1,5,'#808080');
+        R(x+10,by+22,4,2,'#a09880');R(x+14,by+22,4,2,'#a09880');
         break;
       }
       default:{ // soldier
-        // Simple helmet
-        R(x+10,by+3,8,3,c.armor);R(x+9,by+6,10,2,c.armor);
-        face(x+10,by+6,7,2);
-        eyes2(x+11,by+7);
-        R(x+10,by+8,8,1,c.armor);
-        // Body with shield
+        // Simple helmet top
+        R(x+10,by+2,8,3,c.armor);R(x+9,by+5,10,1,c.armor);
+        // Face
+        R(x+10,by+5,7,3,skin);
+        dot(x+11,by+6);
+        R(x+10,by+8,7,1,skin);
+        // Body + shield
         R(x+10,by+9,8,7,c.body);
-        R(x+7,by+10,4,6,c.accent); // shield
-        // Lance angled forward
-        R(x+20,by+2,2,14,'#b0b0b0');R(x+19,by+2,4,2,'#999');
-        // Legs, one forward
+        R(x+7,by+10,4,6,c.accent);
+        // Lance
+        R(x+20,by+1,2,14,'#b0b0b0');R(x+19,by+1,4,2,'#999');
+        // Legs
         R(x+10,by+16,4,5,c.armor);R(x+16,by+17,3,4,c.armor);
         R(x+9,by+21,5,3,'#604020');R(x+15,by+21,4,3,'#604020');
         break;
