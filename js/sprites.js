@@ -137,9 +137,9 @@ var Sprites = {
     var frame=this._idleFrame(),by=y,cls=unit.classId||'soldier';
 
     // FE3-style: draw to offscreen, then render with thick black outline
-    var os=document.createElement('canvas');os.width=36;os.height=36;
+    var os=document.createElement('canvas');os.width=40;os.height=40;
     var oc=os.getContext('2d');
-    var ox=2,oy=2; // offset inside offscreen canvas
+    var ox=4,oy=4; // offset inside offscreen canvas
     var R=function(a,b,w,h,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,w,h);};
     var P=function(a,b,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,1,1);};
 
@@ -464,11 +464,11 @@ var Sprites = {
     // FE3-style black outline: make black silhouette, draw shifted in 4 dirs, then colored on top
     var sx=frame===1?1:0;
     // Make black silhouette copy
-    var os2=document.createElement('canvas');os2.width=36;os2.height=36;
+    var os2=document.createElement('canvas');os2.width=40;os2.height=40;
     var oc2=os2.getContext('2d');
     oc2.drawImage(os,0,0);
     oc2.globalCompositeOperation='source-in';
-    oc2.fillStyle='#000';oc2.fillRect(0,0,36,36);
+    oc2.fillStyle='#000';oc2.fillRect(0,0,40,40);
     // Draw black outline (2px thick: 8 directions + 2px cardinal)
     var dirs=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1],[-2,0],[2,0],[0,-2],[0,2]];
     for(var di=0;di<dirs.length;di++){ctx.drawImage(os2,x-ox+dirs[di][0]+sx,y-oy+dirs[di][1]);}

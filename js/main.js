@@ -9,6 +9,7 @@ const game = new Game(canvas);
 game.init();
 
 function gameLoop(timestamp) {
+  Sprites.tick();
   game.update(timestamp);
   game.render(ctx);
   requestAnimationFrame(gameLoop);
