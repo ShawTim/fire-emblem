@@ -3,6 +3,8 @@ var Sprites = {
   cache: {},
   TILE: 32,
   _frameCounter: 0,
+  _portraitCache: {},
+  _mapIconCache: {},
   tick: function() { this._frameCounter++; },
   _idleBounce: function() { return (Math.floor(this._frameCounter / 8) % 2 === 0) ? 0 : -1; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
@@ -389,7 +391,6 @@ var Sprites = {
   },
 
   _portraitCallbacks: [],
-  _mapIconCache: {},
 
   preloadPortraits: function() {
     var chars = Object.keys(CHARACTERS);
