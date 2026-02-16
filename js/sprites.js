@@ -384,32 +384,15 @@ var Sprites = {
     }
     if(grayed)ctx.globalAlpha=1.0;
 
-    // Render with FE3-style black outline: draw offscreen sprite shifted in 4 dirs as black, then normal on top
-    // Apply idle frame horizontal shift
+    // FE3-style black outline: make black silhouette, draw shifted in 4 dirs, then colored on top
     var sx=frame===1?1:0;
-    ctx.globalCompositeOperation='source-over';
-    // Black outline (draw sprite as silhouette in 8 directions)
-    oc.globalCompositeOperation='source-in';
-    oc.fillStyle='#000';oc.fillRect(0,0,36,36);
-    oc.globalCompositeOperation='source-over';
-    // Draw the black silhouette offset
-    for(var di=0;di<8;di++){
-      var dd=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]][di];
-      ctx.drawImage(os,x-ox+dd[0]+sx,y-oy+dd[1]);
-    }
-    // Redraw the colored sprite on top (need to re-render)
-    // Actually simpler: save the colored version too
-    // Let me use a second offscreen for the colored version
-    // ... this approach is too complex. Use simpler method:
-
-    // Reset: just draw outline by drawing black shifted copies of offscreen
-    // The offscreen already has the colored sprite. Make a black copy:
+    // Make black silhouette copy
     var os2=document.createElement('canvas');os2.width=36;os2.height=36;
     var oc2=os2.getContext('2d');
     oc2.drawImage(os,0,0);
     oc2.globalCompositeOperation='source-in';
     oc2.fillStyle='#000';oc2.fillRect(0,0,36,36);
-    // Draw black outline
+    // Draw black outline (4 cardinal directions)
     ctx.drawImage(os2,x-ox-1+sx,y-oy);
     ctx.drawImage(os2,x-ox+1+sx,y-oy);
     ctx.drawImage(os2,x-ox+sx,y-oy-1);
