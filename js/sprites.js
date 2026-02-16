@@ -22,22 +22,22 @@ var Sprites = {
     var P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
 
     if(type==='plain'){
-      R(x,y,s,s,'#5a8844');
-      var gr=['#4e7a3a','#5a8844','#6b9950','#4a7035'];
+      R(x,y,s,s,'#2a7828');
+      var gr=['#1a6018','#2a7828','#3a8838','#206820'];
       for(var py=0;py<s;py++)for(var px=0;px<s;px++){var ck=(px+py)%2,z=((py>>2)+(px>>3))%3;
         if(ck===0&&z===0)P(x+px,y+py,gr[0]);else if(ck===1&&z===1)P(x+px,y+py,gr[2]);else if(ck===0&&z===2)P(x+px,y+py,gr[3]);}
-      for(var i=0;i<4+(seed%4);i++){var gx=x+Math.floor(rng(i)*28)+2,gy=y+Math.floor(rng(i+20)*20)+8;P(gx,gy,'#6ba855');P(gx,gy-1,'#7cc060');}
+      for(var i=0;i<4+(seed%4);i++){var gx=x+Math.floor(rng(i)*28)+2,gy=y+Math.floor(rng(i+20)*20)+8;P(gx,gy,'#48a040');P(gx,gy-1,'#58b048');}
       if(rng(99)>0.82){var fx=x+8+(seed%14),fy=y+10+(seed%10);R(fx,fy,2,2,rng(88)>0.5?'#ffe060':'#ff80d0');}
 
     }else if(type==='forest'){
-      R(x,y,s,s,'#3a7030');
-      for(var py=0;py<s;py++)for(var px=0;px<s;px++){if((px+py)%3===0)P(x+px,y+py,'#2e6028');}
-      R(x+2,y+22,28,8,'rgba(0,0,0,0.2)');R(x+8,y+18,4,10,'#5a4030');R(x+9,y+19,2,9,'#6b5040');R(x+20,y+20,3,8,'#5a4030');
-      ctx.fillStyle='#1a5520';ctx.beginPath();ctx.arc(x+10,y+14,10,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#2a6830';ctx.beginPath();ctx.arc(x+21,y+16,8,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#3a7a40';ctx.beginPath();ctx.arc(x+10,y+11,7,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#50a058';ctx.beginPath();ctx.arc(x+8,y+9,3,0,Math.PI*2);ctx.fill();
-      R(x+12,y+8,2,2,'#60b068');
+      R(x,y,s,s,'#185818');
+      for(var py=0;py<s;py++)for(var px=0;px<s;px++){if((px+py)%3===0)P(x+px,y+py,'#104810');}
+      R(x+2,y+22,28,8,'rgba(0,0,0,0.2)');R(x+8,y+18,4,10,'#3a2818');R(x+9,y+19,2,9,'#4a3828');R(x+20,y+20,3,8,'#3a2818');
+      ctx.fillStyle='#0a4010';ctx.beginPath();ctx.arc(x+10,y+14,10,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#185018';ctx.beginPath();ctx.arc(x+21,y+16,8,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#287028';ctx.beginPath();ctx.arc(x+10,y+11,7,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#389038';ctx.beginPath();ctx.arc(x+8,y+9,3,0,Math.PI*2);ctx.fill();
+      R(x+12,y+8,2,2,'#48a048');
 
     }else if(type==='mountain'){
       R(x,y,s,s,'#887766');
@@ -45,14 +45,14 @@ var Sprites = {
       ctx.fillStyle='#665544';ctx.beginPath();ctx.moveTo(x+16,y+1);ctx.lineTo(x+2,y+24);ctx.lineTo(x+16,y+24);ctx.fill();
       ctx.fillStyle='#887766';ctx.beginPath();ctx.moveTo(x+24,y+6);ctx.lineTo(x+31,y+20);ctx.lineTo(x+18,y+20);ctx.fill();
       R(x+13,y+1,6,4,'#dde0e8');R(x+14,y+0,4,2,'#eef0f4');R(x+22,y+6,4,3,'#ccd0d8');
-      R(x+8,y+16,3,1,'#554433');R(x+20,y+12,1,3,'#554433');R(x+17,y+2,1,8,'#bbaa99');
+      R(x+8,y+16,3,1,'#504028');R(x+20,y+12,1,3,'#504028');R(x+17,y+2,1,8,'#a09068');
 
     }else if(type==='wall'){
-      R(x,y,s,s,'#667078');
+      R(x,y,s,s,'#585048');
       for(var row=0;row<4;row++){var ry=y+row*8,off=(row%2)*8;
-        for(var col=0;col<3;col++){var bx=x+off+col*16,bc=['#707880','#687078','#6a7480','#5e6870','#747c84'][((row*3+col*7+seed)%5)];
-          R(bx,ry,15,7,bc);R(bx,ry,15,1,'#808890');R(bx,ry+6,15,1,'#505860');}
-        R(x,ry+7,s,1,'#4a5058');}
+        for(var col=0;col<3;col++){var bx=x+off+col*16,bc=['#605848','#585048','#5c5448','#504840','#686058'][((row*3+col*7+seed)%5)];
+          R(bx,ry,15,7,bc);R(bx,ry,15,1,'#787060');R(bx,ry+6,15,1,'#484038');}
+        R(x,ry+7,s,1,'#403830');}
       R(x,y,s,1,'#8890a0');
 
     }else if(type==='gate'){
@@ -71,7 +71,7 @@ var Sprites = {
       R(x+wo+2,y+5,3,1,'#a0d0f0');R(x+((wo+14)%22),y+13,4,1,'#a0d0f0');
 
     }else if(type==='village'){
-      R(x,y,s,s,'#5a8844');
+      R(x,y,s,s,'#2a7828');
       R(x+4,y+14,24,14,'#c8a878');R(x+5,y+15,22,12,'#d4b888');
       ctx.fillStyle='#a83830';ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+30,y+14);ctx.lineTo(x+2,y+14);ctx.fill();
       ctx.fillStyle='#902828';ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+2,y+14);ctx.lineTo(x+16,y+14);ctx.fill();
@@ -95,7 +95,7 @@ var Sprites = {
       R(x+13,y+4,3,24,'#c8c8d8');R(x+14,y+5,1,22,'#d8d8e8');
       R(x+8,y+2,16,3,'#989898');R(x+8,y+27,16,3,'#989898');
 
-    }else{R(x,y,s,s,'#5a8844');}
+    }else{R(x,y,s,s,'#2a7828');}
     ctx.strokeStyle='rgba(0,0,0,0.10)';ctx.strokeRect(x+0.5,y+0.5,s-1,s-1);
   },
 
