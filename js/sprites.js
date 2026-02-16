@@ -17,74 +17,235 @@ const Sprites = {
 
   drawTerrain(ctx, type, x, y) {
     const s = this.TILE;
-    const c = this.getTerrainColor(type);
-    ctx.fillStyle = c.base;
-    ctx.fillRect(x, y, s, s);
-    // Add texture
-    ctx.fillStyle = c.dark;
-    for (let i = 0; i < 4; i++) {
-      const px = x + ((i * 7 + 3) % s);
-      const py = y + ((i * 5 + 2) % s);
-      ctx.fillRect(px, py, 1, 1);
-    }
-    ctx.fillStyle = c.light;
-    for (let i = 0; i < 3; i++) {
-      const px = x + ((i * 11 + 1) % s);
-      const py = y + ((i * 9 + 4) % s);
-      ctx.fillRect(px, py, 1, 1);
-    }
-    // Special decorations
-    if (type === 'forest') {
-      ctx.fillStyle = '#2a5';
-      ctx.fillRect(x+4, y+2, 8, 6);
-      ctx.fillStyle = '#1a4';
-      ctx.fillRect(x+5, y+3, 6, 4);
-      ctx.fillStyle = '#653';
-      ctx.fillRect(x+7, y+8, 2, 6);
+    // Seeded random for consistent terrain variation
+    const seed = (x * 31 + y * 17) & 0xffff;
+    const rng = (n) => ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280;
+
+    if (type === 'plain') {
+      // Grass with variation
+      const greens = ['#5a8','#5b8','#4a7','#6b9','#5a7'];
+      ctx.fillStyle = greens[seed % greens.length];
+      ctx.fillRect(x, y, s, s);
+      // Grass blades
+      ctx.fillStyle = '#6c9';
+      for (let i = 0; i < 6; i++) {
+        const gx = x + Math.floor(rng(i) * 14) + 1;
+        const gy = y + Math.floor(rng(i+10) * 10) + 3;
+        ctx.fillRect(gx, gy, 1, 2);
+      }
+      // Occasional flower
+      if (rng(99) > 0.85) {
+        ctx.fillStyle = rng(88) > 0.5 ? '#ff8' : '#f8f';
+        ctx.fillRect(x + 6 + (seed%4), y + 5 + (seed%3), 2, 2);
+      }
+
+    } else if (type === 'forest') {
+      // Dark grass base
+      ctx.fillStyle = '#3a6';
+      ctx.fillRect(x, y, s, s);
+      ctx.fillStyle = '#295';
+      ctx.fillRect(x, y+12, s, 4);
+      // Tree trunk
+      ctx.fillStyle = '#654';
+      ctx.fillRect(x+6, y+8, 4, 7);
+      ctx.fillStyle = '#543';
+      ctx.fillRect(x+7, y+9, 2, 6);
+      // Tree canopy (layered circles)
+      ctx.fillStyle = '#1a5';
+      ctx.fillRect(x+2, y+1, 12, 8);
+      ctx.fillStyle = '#2b6';
+      ctx.fillRect(x+3, y+0, 10, 7);
+      ctx.fillStyle = '#3c7';
+      ctx.fillRect(x+4, y+1, 8, 5);
+      // Canopy highlights
+      ctx.fillStyle = '#4d8';
+      ctx.fillRect(x+5, y+2, 3, 2);
+      ctx.fillRect(x+9, y+1, 2, 2);
+      // Shadow at base
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(x+2, y+12, 12, 2);
+
     } else if (type === 'mountain') {
+      // Rocky ground
+      ctx.fillStyle = '#887';
+      ctx.fillRect(x, y, s, s);
+      ctx.fillStyle = '#776';
+      ctx.fillRect(x, y+12, s, 4);
+      // Main peak
       ctx.fillStyle = '#998';
       ctx.beginPath();
-      ctx.moveTo(x+8, y+2);
-      ctx.lineTo(x+14, y+13);
-      ctx.lineTo(x+2, y+13);
+      ctx.moveTo(x+8, y+0);
+      ctx.lineTo(x+15, y+12);
+      ctx.lineTo(x+1, y+12);
       ctx.fill();
-      ctx.fillStyle = '#aaa';
-      ctx.fillRect(x+7, y+2, 2, 2);
-    } else if (type === 'wall') {
-      ctx.fillStyle = '#667';
-      ctx.fillRect(x, y, s, 2);
-      ctx.fillRect(x, y+7, s, 2);
-      ctx.fillRect(x, y+14, s, 2);
-      ctx.fillStyle = '#445';
-      ctx.fillRect(x+4, y+2, 1, 5);
-      ctx.fillRect(x+12, y+2, 1, 5);
-      ctx.fillRect(x+8, y+9, 1, 5);
-    } else if (type === 'gate') {
-      ctx.fillStyle = '#665';
-      ctx.fillRect(x+2, y, 12, s);
-      ctx.fillStyle = '#443';
-      ctx.fillRect(x+5, y+3, 6, 10);
+      // Shading (left = dark, right = light)
       ctx.fillStyle = '#776';
-      ctx.fillRect(x+6, y+4, 4, 8);
-    } else if (type === 'river') {
-      ctx.fillStyle = '#5ae';
-      for (let i = 0; i < 3; i++) {
-        ctx.fillRect(x + (i*5+1), y + 6 + (i%2)*2, 4, 1);
+      ctx.beginPath();
+      ctx.moveTo(x+8, y+0);
+      ctx.lineTo(x+1, y+12);
+      ctx.lineTo(x+8, y+12);
+      ctx.fill();
+      // Snow cap
+      ctx.fillStyle = '#dde';
+      ctx.fillRect(x+6, y+0, 4, 3);
+      ctx.fillRect(x+7, y+0, 2, 1);
+      // Rocky texture
+      ctx.fillStyle = '#665';
+      ctx.fillRect(x+4, y+8, 2, 1);
+      ctx.fillRect(x+10, y+6, 1, 2);
+      ctx.fillRect(x+6, y+5, 1, 1);
+
+    } else if (type === 'wall') {
+      // Stone wall with brick pattern
+      ctx.fillStyle = '#667';
+      ctx.fillRect(x, y, s, s);
+      // Brick rows
+      for (let row = 0; row < 4; row++) {
+        const ry = y + row * 4;
+        ctx.fillStyle = '#778';
+        ctx.fillRect(x, ry, s, 3);
+        ctx.fillStyle = '#556';
+        ctx.fillRect(x, ry+3, s, 1);
+        // Vertical mortar (offset every other row)
+        const off = (row % 2) * 5;
+        ctx.fillRect(x + off + 3, ry, 1, 3);
+        ctx.fillRect(x + off + 10, ry, 1, 3);
       }
+      // Top edge highlight
+      ctx.fillStyle = '#889';
+      ctx.fillRect(x, y, s, 1);
+
+    } else if (type === 'gate') {
+      // Stone frame
+      ctx.fillStyle = '#776';
+      ctx.fillRect(x, y, s, s);
+      // Archway
+      ctx.fillStyle = '#554';
+      ctx.fillRect(x+3, y+0, 10, s);
+      // Door
+      ctx.fillStyle = '#653';
+      ctx.fillRect(x+4, y+4, 8, 12);
+      ctx.fillStyle = '#764';
+      ctx.fillRect(x+5, y+5, 6, 10);
+      // Door planks
+      ctx.fillStyle = '#543';
+      ctx.fillRect(x+7, y+4, 1, 12);
+      // Door handle
+      ctx.fillStyle = '#cc8';
+      ctx.fillRect(x+9, y+9, 2, 2);
+      // Arch top
+      ctx.fillStyle = '#887';
+      ctx.fillRect(x+4, y+0, 8, 2);
+      ctx.fillRect(x+5, y+2, 6, 1);
+      // Stone pillars
+      ctx.fillStyle = '#888';
+      ctx.fillRect(x+1, y+0, 3, s);
+      ctx.fillRect(x+12, y+0, 3, s);
+      ctx.fillStyle = '#999';
+      ctx.fillRect(x+2, y+0, 1, s);
+      ctx.fillRect(x+13, y+0, 1, s);
+
+    } else if (type === 'river') {
+      // Water with waves
+      ctx.fillStyle = '#48c';
+      ctx.fillRect(x, y, s, s);
+      ctx.fillStyle = '#59d';
+      ctx.fillRect(x, y+2, s, 4);
+      ctx.fillRect(x, y+10, s, 3);
+      // Animated-looking wave highlights
+      const woff = (seed % 3) * 3;
+      ctx.fillStyle = '#6ae';
+      ctx.fillRect(x + woff, y+3, 4, 1);
+      ctx.fillRect(x + ((woff+7)%14), y+11, 5, 1);
+      // Darker depths
+      ctx.fillStyle = '#37a';
+      ctx.fillRect(x + 2, y+7, 6, 1);
+      ctx.fillRect(x + 9, y+5, 4, 1);
+      // Foam/ripple
+      ctx.fillStyle = '#8cf';
+      ctx.fillRect(x + woff + 1, y+2, 2, 1);
+      ctx.fillRect(x + ((woff+5)%12), y+10, 3, 1);
+
     } else if (type === 'village') {
-      ctx.fillStyle = '#964';
-      ctx.fillRect(x+3, y+5, 10, 8);
+      // Grass base
+      ctx.fillStyle = '#5a8';
+      ctx.fillRect(x, y, s, s);
+      // House body
+      ctx.fillStyle = '#b97';
+      ctx.fillRect(x+2, y+6, 12, 9);
+      ctx.fillStyle = '#a86';
+      ctx.fillRect(x+3, y+7, 10, 7);
+      // Roof
       ctx.fillStyle = '#c44';
       ctx.beginPath();
       ctx.moveTo(x+8, y+1);
-      ctx.lineTo(x+14, y+5);
-      ctx.lineTo(x+2, y+5);
+      ctx.lineTo(x+15, y+6);
+      ctx.lineTo(x+1, y+6);
       ctx.fill();
-      ctx.fillStyle = '#653';
-      ctx.fillRect(x+6, y+9, 4, 4);
+      ctx.fillStyle = '#b33';
+      ctx.beginPath();
+      ctx.moveTo(x+8, y+1);
+      ctx.lineTo(x+1, y+6);
+      ctx.lineTo(x+8, y+6);
+      ctx.fill();
+      // Door
+      ctx.fillStyle = '#654';
+      ctx.fillRect(x+6, y+10, 4, 5);
+      ctx.fillStyle = '#765';
+      ctx.fillRect(x+7, y+11, 2, 4);
+      // Window
+      ctx.fillStyle = '#8cf';
+      ctx.fillRect(x+10, y+8, 3, 3);
+      ctx.fillStyle = '#654';
+      ctx.fillRect(x+11, y+8, 1, 3);
+      ctx.fillRect(x+10, y+9, 3, 1);
+      // Chimney smoke? nah keep it clean
+
+    } else if (type === 'throne') {
+      // Ornate floor
+      ctx.fillStyle = '#658';
+      ctx.fillRect(x, y, s, s);
+      ctx.fillStyle = '#769';
+      ctx.fillRect(x+1, y+1, s-2, s-2);
+      // Carpet pattern
+      ctx.fillStyle = '#c64';
+      ctx.fillRect(x+3, y+3, 10, 10);
+      ctx.fillStyle = '#d75';
+      ctx.fillRect(x+4, y+4, 8, 8);
+      // Throne chair
+      ctx.fillStyle = '#cc8';
+      ctx.fillRect(x+5, y+2, 6, 3);
+      ctx.fillRect(x+6, y+5, 4, 6);
+      ctx.fillStyle = '#dd9';
+      ctx.fillRect(x+7, y+3, 2, 1);
+      // Gems
+      ctx.fillStyle = '#f44';
+      ctx.fillRect(x+7, y+2, 2, 1);
+
+    } else if (type === 'pillar') {
+      // Floor base
+      ctx.fillStyle = '#667';
+      ctx.fillRect(x, y, s, s);
+      // Pillar
+      ctx.fillStyle = '#aab';
+      ctx.fillRect(x+4, y+0, 8, s);
+      ctx.fillStyle = '#bbc';
+      ctx.fillRect(x+5, y+0, 6, s);
+      ctx.fillStyle = '#ccd';
+      ctx.fillRect(x+6, y+0, 3, s);
+      // Capital and base
+      ctx.fillStyle = '#998';
+      ctx.fillRect(x+3, y+0, 10, 2);
+      ctx.fillRect(x+3, y+14, 10, 2);
+
+    } else {
+      // Default/unknown → plain
+      ctx.fillStyle = '#5a8';
+      ctx.fillRect(x, y, s, s);
     }
+
     // Grid line
-    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+    ctx.strokeStyle = 'rgba(0,0,0,0.12)';
     ctx.strokeRect(x + 0.5, y + 0.5, s - 1, s - 1);
   },
 
@@ -185,6 +346,28 @@ const Sprites = {
   },
 
   _portraitCache: {},
+  _portraitCallbacks: [],
+
+  preloadPortraits() {
+    const chars = Object.keys(CHARACTERS);
+    for (const id of chars) {
+      if (!this._portraitCache[id]) {
+        const img = new Image();
+        img.src = 'portraits/' + id + '.png';
+        this._portraitCache[id] = { img, loaded: false, failed: false };
+        img.onload = () => {
+          this._portraitCache[id].loaded = true;
+          // Fire any pending redraw callbacks
+          this._portraitCallbacks.forEach(cb => cb());
+        };
+        img.onerror = () => { this._portraitCache[id].failed = true; };
+      }
+    }
+  },
+
+  onPortraitReady(cb) {
+    this._portraitCallbacks.push(cb);
+  },
 
   drawPortrait(ctx, charId, w, h) {
     const ch = CHARACTERS[charId];

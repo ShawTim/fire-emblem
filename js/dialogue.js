@@ -41,10 +41,17 @@ class DialogueSystem {
     if (line.speaker && CHARACTERS[line.speaker]) {
       this.nameEl.textContent = CHARACTERS[line.speaker].name;
       this.nameEl.style.display = 'block';
-      // Draw portrait
+      // Draw portrait (redraw when image loads)
       this.portraitCtx.clearRect(0, 0, 64, 64);
       Sprites.drawPortrait(this.portraitCtx, line.speaker, 64, 64);
       this.portraitCanvas.style.display = 'block';
+      // Re-draw if portrait image loads after initial draw
+      const _speaker = line.speaker;
+      const _ctx = this.portraitCtx;
+      Sprites.onPortraitReady(() => {
+        _ctx.clearRect(0, 0, 64, 64);
+        Sprites.drawPortrait(_ctx, _speaker, 64, 64);
+      });
     } else {
       this.nameEl.textContent = line.speaker ? line.speaker : '';
       this.nameEl.style.display = line.speaker ? 'block' : 'none';

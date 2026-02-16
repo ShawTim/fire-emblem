@@ -29,6 +29,7 @@ class Game {
   }
 
   init() {
+    Sprites.preloadPortraits();
     const hasSave = !!localStorage.getItem('fe_save');
     UI.showTitleScreen(hasSave);
     this.state = 'title';
