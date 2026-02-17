@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>職業圖鑑 — 翠星傳說</title>
+<title>職業圖鑑 — 翠星之影</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:#1a1a2e; color:#ccc; font-family:'Segoe UI',sans-serif; padding:20px; }
@@ -30,7 +30,7 @@ h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
 </head>
 <body>
 <h1>⚔️ 職業圖鑑</h1>
-<p class="subtitle">翠星傳說 — 全職業一覽</p>
+<p class="subtitle">翠星之影 — 全職業一覽</p>
 
 <div class="faction-toggle">
   <button id="btn-player" class="active" onclick="setFaction('player')">我方</button>
@@ -148,6 +148,32 @@ function renderAll() {
 // Init
 Sprites._frameCounter = 0;
 renderAll();
+
+// Animation loop — re-render all canvases every 200ms
+setInterval(function() {
+  Sprites.tick();
+  Sprites.tick();
+  Sprites.tick();
+  var canvases = document.querySelectorAll('.card canvas');
+  var classIds = Object.keys(CLASS_INFO);
+  var hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
+  canvases.forEach(function(canvas, i) {
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.scale(4, 4);
+    var classId = classIds[i];
+    var unit = {
+      classId: classId,
+      faction: currentFaction,
+      hp: 20, maxHp: 20,
+      portrait: currentFaction === 'player' ? { hair: hairColors[i%8], skin:'#fdb', eyes:'#222' } : null,
+      isBoss: false,
+    };
+    Sprites.drawUnit(ctx, unit, 0, 0, false);
+    ctx.restore();
+  });
+}, 200);
 </script>
 </body>
 </html>

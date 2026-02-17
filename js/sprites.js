@@ -543,7 +543,7 @@ var Sprites = {
     if(grayed)ctx.globalAlpha=1.0;
 
     // FE3-style black outline: make black silhouette, draw shifted in 4 dirs, then colored on top
-    var sx=frame===1?1:0;
+    var sx=0;
     // Make black silhouette copy
     var os2=document.createElement('canvas');os2.width=40;os2.height=40;
     var oc2=os2.getContext('2d');
