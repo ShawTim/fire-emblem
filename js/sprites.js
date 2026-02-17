@@ -221,7 +221,7 @@ var Sprites = {
     // FE3-style: draw to offscreen, then render with thick black outline
     var os=document.createElement('canvas');os.width=48;os.height=48;
     var oc=os.getContext('2d');
-    var ox=6,oy=6; // offset inside offscreen canvas
+    var ox=2,oy=2; // offset inside offscreen canvas
     var R=function(a,b,w,h,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,w,h);};
     var P=function(a,b,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,1,1);};
 
