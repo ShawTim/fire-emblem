@@ -220,7 +220,7 @@ var Sprites = {
     // FE3-style: draw to offscreen, then render with thick black outline
     var os=document.createElement('canvas');os.width=48;os.height=48;
     var oc=os.getContext('2d');
-    var ox=8,oy=4; // offset inside offscreen canvas
+    var ox=8,oy=8; // offset inside offscreen canvas
     var R=function(a,b,w,h,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,w,h);};
     var P=function(a,b,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,1,1);};
 
@@ -542,26 +542,32 @@ var Sprites = {
     }
     if(grayed)ctx.globalAlpha=1.0;
 
-    // FE3-style black outline: make black silhouette, draw shifted in 4 dirs, then colored on top
-    var sx=0;
-    // Make black silhouette copy
+    // Build final sprite with outline in compositing canvas
+    var fin=document.createElement('canvas');fin.width=48;fin.height=48;
+    var fc=fin.getContext('2d');
     var os2=document.createElement('canvas');os2.width=48;os2.height=48;
     var oc2=os2.getContext('2d');
     oc2.drawImage(os,0,0);
     oc2.globalCompositeOperation='source-in';
     oc2.fillStyle='#000';oc2.fillRect(0,0,48,48);
-    // Draw black outline (2px thick: 8 directions + 2px cardinal)
     var dirs=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1],[-2,0],[2,0],[0,-2],[0,2]];
-    for(var di=0;di<dirs.length;di++){ctx.drawImage(os2,x-ox+dirs[di][0]+sx,y-oy+dirs[di][1]);}
-    // Draw colored sprite on top
-    ctx.drawImage(os,x-ox+sx,y-oy);
+    for(var di=0;di<dirs.length;di++){fc.drawImage(os2,dirs[di][0],dirs[di][1]);}
+    fc.drawImage(os,0,0);
+    // Save current transform, reset to identity, draw at pixel coords, restore
+    var ct=ctx.getTransform();
+    ctx.setTransform(1,0,0,1,0,0);
+    // Calculate actual screen position: apply the saved transform to (x-ox, y-oy)
+    var px=(x-ox)*ct.a+ct.e, py=(y-oy)*ct.d+ct.f;
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(fin,Math.round(px),Math.round(py),Math.round(48*ct.a),Math.round(48*ct.d));
+    ctx.setTransform(ct);
 
-    // HP bar (drawn directly, not offscreen)
+    // HP bar (drawn on ctx, positioned correctly for scaled context)
     if(unit.hp!==undefined&&unit.maxHp){
       var ratio=unit.hp/unit.maxHp;
-      ctx.fillStyle='#000';ctx.fillRect(x+3+sx,y+30,26,3);
+      ctx.fillStyle='#000';ctx.fillRect(x+3,y+30,26,3);
       ctx.fillStyle=ratio>0.5?'#40c040':ratio>0.25?'#c0c040':'#c04040';
-      ctx.fillRect(x+4+sx,y+31,Math.floor(24*ratio),1);
+      ctx.fillRect(x+4,y+31,Math.floor(24*ratio),1);
     }
   },
 
