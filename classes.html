@@ -98,10 +98,10 @@ function renderAll() {
     
     const canvas = document.createElement('canvas');
     const scale = 4;
-    canvas.width = 32 * scale;
-    canvas.height = 32 * scale;
-    canvas.style.width = (32 * scale) + 'px';
-    canvas.style.height = (32 * scale) + 'px';
+    canvas.width = 40 * scale;
+    canvas.height = 40 * scale;
+    canvas.style.width = (40 * scale) + 'px';
+    canvas.style.height = (40 * scale) + 'px';
     canvas.style.imageRendering = 'pixelated';
     
     const ctx = canvas.getContext('2d');
@@ -117,7 +117,7 @@ function renderAll() {
       isBoss: false,
     };
     
-    Sprites.drawUnit(ctx, unit, 0, 0, false);
+    Sprites.drawUnit(ctx, unit, 4, 4, false);
     
     card.appendChild(canvas);
     
@@ -170,7 +170,7 @@ setInterval(function() {
       portrait: currentFaction === 'player' ? { hair: hairColors[i%8], skin:'#fdb', eyes:'#222' } : null,
       isBoss: false,
     };
-    Sprites.drawUnit(ctx, unit, 0, 0, false);
+    Sprites.drawUnit(ctx, unit, 4, 4, false);
     ctx.restore();
   });
 }, 200);
