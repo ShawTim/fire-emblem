@@ -460,7 +460,7 @@ body {
 }
 
 /* Mobile fullscreen */
-#fullscreen-btn {
+#mobile-toggle {
   display: none;
   position: fixed;
   bottom: 12px;
@@ -477,7 +477,6 @@ body {
   touch-action: manipulation;
 }
 @media (max-width: 900px), (max-height: 600px) {
-  #fullscreen-btn { display: block; }
   body { margin: 0; padding: 0; overflow: hidden; }
   #gameCanvas { display: block; margin: 0 auto; }
 }

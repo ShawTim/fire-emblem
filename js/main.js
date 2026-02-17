@@ -96,3 +96,70 @@ document.addEventListener('touchend', (e) => {
   if (now - lastTouchEnd <= 300) e.preventDefault();
   lastTouchEnd = now;
 }, { passive: false });
+
+// === Mobile Support ===
+var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+var isLandscapeFS = false;
+var mobileBtn = document.getElementById('mobile-toggle');
+
+function resizeCanvas() {
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+  canvas.width = 800;
+  canvas.height = 600;
+  var scale = Math.min(w / 800, h / 600);
+  canvas.style.width = Math.floor(800 * scale) + 'px';
+  canvas.style.height = Math.floor(600 * scale) + 'px';
+  ctx.imageSmoothingEnabled = false;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function enterLandscapeFS() {
+  var el = document.documentElement;
+  var p = null;
+  if (el.requestFullscreen) p = el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) p = el.webkitRequestFullscreen();
+  if (p && p.then) {
+    p.then(function() {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(function(){});
+      }
+      isLandscapeFS = true;
+      mobileBtn.textContent = '↩ 還原';
+      setTimeout(resizeCanvas, 300);
+    }).catch(function(){});
+  }
+}
+
+function exitLandscapeFS() {
+  if (document.exitFullscreen) document.exitFullscreen();
+  else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  if (screen.orientation && screen.orientation.unlock) {
+    screen.orientation.unlock();
+  }
+  isLandscapeFS = false;
+  mobileBtn.textContent = '📱 橫向全螢幕';
+  setTimeout(resizeCanvas, 300);
+}
+
+if (isMobile && mobileBtn) {
+  mobileBtn.style.display = 'block';
+  mobileBtn.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    if (isLandscapeFS) exitLandscapeFS();
+    else enterLandscapeFS();
+  });
+  mobileBtn.addEventListener('click', function(e) {
+    if (isLandscapeFS) exitLandscapeFS();
+    else enterLandscapeFS();
+  });
+}
+
+document.addEventListener('fullscreenchange', function() {
+  if (!document.fullscreenElement) {
+    isLandscapeFS = false;
+    if (mobileBtn) mobileBtn.textContent = '📱 橫向全螢幕';
+    setTimeout(resizeCanvas, 300);
+  }
+});
