@@ -209,7 +209,8 @@ var Sprites = {
     ctx.fillStyle='#ff3030';ctx.fillRect(x+15,y,1,1);
   },
 
-  drawUnit: function(ctx,unit,x,y,grayed){
+  drawUnit: function(ctx,unit,x,y,grayed,sc){
+    sc=sc||1;
     var c=this.getUnitColors(unit.faction);
     var hair=(unit.portrait&&unit.portrait.hair)?unit.portrait.hair:c.accent;
     var skin=(unit.portrait&&unit.portrait.skin)?unit.portrait.skin:c.skin;
