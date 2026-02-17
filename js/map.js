@@ -14,29 +14,11 @@ const GameMap = {
     this.terrain = parseTerrain(chapter.terrain, this.width, this.height);
     this.camX = 0;
     this.camY = 0;
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   getTerrain(x, y) {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) return 'wall';
     return this.terrain[y][x];
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   screenToTile(sx, sy) {
@@ -45,15 +27,6 @@ const GameMap = {
       x: Math.floor((sx + this.camX) / ts),
       y: Math.floor((sy + this.camY) / ts),
     };
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   tileToScreen(tx, ty) {
@@ -62,15 +35,6 @@ const GameMap = {
       x: tx * ts - this.camX,
       y: ty * ts - this.camY,
     };
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   centerOn(tx, ty, canvasW, canvasH) {
@@ -78,15 +42,6 @@ const GameMap = {
     this.camX = tx * ts - canvasW / 2 + ts / 2;
     this.camY = ty * ts - canvasH / 2 + ts / 2;
     this.clampCamera(canvasW, canvasH);
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   clampCamera(canvasW, canvasH) {
@@ -95,15 +50,6 @@ const GameMap = {
     const maxY = this.height * ts - canvasH;
     this.camX = Math.max(0, Math.min(maxX, this.camX));
     this.camY = Math.max(0, Math.min(maxY, this.camY));
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   scrollToward(tx, ty, canvasW, canvasH) {
@@ -116,15 +62,6 @@ const GameMap = {
     if (sy < margin) this.camY -= ts;
     if (sy > canvasH - margin - ts) this.camY += ts;
     this.clampCamera(canvasW, canvasH);
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   render(ctx, canvasW, canvasH, frame) {
@@ -148,15 +85,6 @@ const GameMap = {
         ctx.restore();
       }
     }
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   renderOverlay(ctx, tiles, color, canvasW, canvasH) {
@@ -168,40 +96,16 @@ const GameMap = {
       if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
       ctx.fillRect(sx, sy, ts, ts);
     }
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
-    }
   },
 
   renderUnits(ctx, units, canvasW, canvasH) {
     const ts = this.tileSize * this.scale;
-    const sc = this.scale;
     for (const unit of units) {
       if (unit.hp <= 0) continue;
       const sx = unit.x * ts - this.camX;
       const sy = unit.y * ts - this.camY;
       if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      // Draw to temp canvas at native size, then scale to screen
-      const tmp = document.createElement('canvas');
-      tmp.width = 48; tmp.height = 48;
-      const tc = tmp.getContext('2d');
-      Sprites.drawUnit(tc, unit, 8, 4, unit.acted);
-      ctx.drawImage(tmp, 0, 0, 48, 48, sx - 8*sc, sy - 4*sc, 48*sc, 48*sc);
-    }
-  renderUnits(ctx, units, canvasW, canvasH) {
-    const ts = this.tileSize * this.scale;
-    for (const unit of units) {
-      if (unit.hp <= 0) continue;
-      const sx = unit.x * ts - this.camX;
-      const sy = unit.y * ts - this.camY;
-      if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnitScaled(ctx, unit, sx, sy, this.scale, unit.acted);
+      Sprites.drawUnit(ctx, unit, sx, sy, unit.acted, this.scale);
     }
   },
 };
