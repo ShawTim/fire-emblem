@@ -221,7 +221,7 @@ var Sprites = {
     // FE3-style: draw to offscreen, then render with thick black outline
     var os=document.createElement('canvas');os.width=48;os.height=48;
     var oc=os.getContext('2d');
-    var ox=8,oy=8; // offset inside offscreen canvas
+    var ox=6,oy=6; // offset inside offscreen canvas
     var R=function(a,b,w,h,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,w,h);};
     var P=function(a,b,col){oc.fillStyle=col;oc.fillRect(a-x+ox,b-y+oy,1,1);};
 
@@ -554,14 +554,9 @@ var Sprites = {
     var dirs=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1],[-2,0],[2,0],[0,-2],[0,2]];
     for(var di=0;di<dirs.length;di++){fc.drawImage(os2,dirs[di][0],dirs[di][1]);}
     fc.drawImage(os,0,0);
-    // Save current transform, reset to identity, draw at pixel coords, restore
-    var ct=ctx.getTransform();
-    ctx.setTransform(1,0,0,1,0,0);
-    // Calculate actual screen position: apply the saved transform to (x-ox, y-oy)
-    var px=(x-ox)*ct.a+ct.e, py=(y-oy)*ct.d+ct.f;
+    // Draw final composited sprite onto main canvas
     ctx.imageSmoothingEnabled=false;
-    ctx.drawImage(fin,Math.round(px),Math.round(py),Math.round(48*ct.a),Math.round(48*ct.d));
-    ctx.setTransform(ct);
+    ctx.drawImage(fin,x-ox,y-oy);
 
     // HP bar (drawn on ctx, positioned correctly for scaled context)
     if(unit.hp!==undefined&&unit.maxHp){

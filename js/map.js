@@ -105,7 +105,11 @@ const GameMap = {
       const sx = unit.x * ts - this.camX;
       const sy = unit.y * ts - this.camY;
       if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
-      Sprites.drawUnit(ctx, unit, sx, sy, unit.acted, this.scale);
+      ctx.save();
+      ctx.translate(sx, sy);
+      ctx.scale(this.scale, this.scale);
+      Sprites.drawUnit(ctx, unit, 0, 0, unit.acted);
+      ctx.restore();
     }
   },
 };
