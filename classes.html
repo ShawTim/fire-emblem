@@ -159,8 +159,8 @@ setInterval(function() {
   var hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
   canvases.forEach(function(canvas, i) {
     var ctx = canvas.getContext('2d');
+    ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
     ctx.scale(4, 4);
     var classId = classIds[i];
     var unit = {
@@ -171,7 +171,6 @@ setInterval(function() {
       isBoss: false,
     };
     Sprites.drawUnit(ctx, unit, 4, 4, false);
-    ctx.restore();
   });
 }, 200);
 </script>
