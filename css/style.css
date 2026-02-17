@@ -458,3 +458,41 @@ body {
   #title-screen h2 { font-size: 15px; }
   #title-menu button { padding: 12px 36px; font-size: 18px; }
 }
+
+/* Mobile fullscreen */
+#fullscreen-btn {
+  display: none;
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  background: rgba(0,0,40,0.8);
+  border: 2px solid #48f;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+@media (max-width: 900px), (max-height: 600px) {
+  #fullscreen-btn { display: block; }
+  body { margin: 0; padding: 0; overflow: hidden; }
+  #gameCanvas { display: block; margin: 0 auto; }
+}
+@media (orientation: portrait) {
+  #rotate-hint {
+    display: flex !important;
+  }
+}
+#rotate-hint {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 200;
+  background: rgba(0,0,20,0.95);
+  color: #ffd700;
+  font-size: 24px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

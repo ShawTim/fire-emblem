@@ -212,10 +212,20 @@ const UI = {
     this.levelUpScreen.innerHTML = html;
     this.levelUpScreen.classList.remove('hidden');
     if (typeof SFX !== 'undefined') SFX.levelUp();
-    setTimeout(() => {
+    // Click or tap to dismiss, or auto-dismiss after 4s
+    var dismissed = false;
+    var dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
       this.levelUpScreen.classList.add('hidden');
+      this.levelUpScreen.removeEventListener('click', dismiss);
+      document.removeEventListener('keydown', dismiss);
       if (onDone) onDone();
-    }, 2500);
+    };
+    this.levelUpScreen.style.cursor = 'pointer';
+    this.levelUpScreen.addEventListener('click', dismiss);
+    document.addEventListener('keydown', dismiss);
+    setTimeout(dismiss, 4000);
   },
 
   updateTopBar(chapterTitle, turn, phase) {
@@ -469,7 +479,8 @@ const UI = {
 
   // === EXP Gain Animation ===
   showExpGain(unit, expGained, onDone) {
-    const startExp = unit.exp - expGained;
+    const startExp = Math.max(0, unit.exp >= expGained ? unit.exp - expGained : (unit.exp + 100) - expGained);
+    const endExp = startExp + expGained >= 100 ? unit.exp : startExp + expGained;
     const overlay = document.createElement('div');
     overlay.id = 'exp-gain-overlay';
     overlay.style.cssText = 'position:absolute;bottom:130px;left:50%;transform:translateX(-50%);background:rgba(0,0,30,0.95);border:2px solid #48f;border-radius:6px;padding:12px 24px;z-index:45;text-align:center;min-width:200px;pointer-events:auto;';
@@ -489,8 +500,8 @@ const UI = {
     setTimeout(() => {
       const bar = document.getElementById('exp-bar-anim');
       const text = document.getElementById('exp-text-anim');
-      if (bar) bar.style.width = (unit.exp * 1.6) + 'px';
-      if (text) text.textContent = unit.exp + '/100';
+      if (bar) bar.style.width = (endExp * 1.6) + 'px';
+      if (text) text.textContent = endExp + '/100';
     }, 100);
 
     setTimeout(() => {

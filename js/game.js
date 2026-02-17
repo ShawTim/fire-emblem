@@ -205,10 +205,11 @@ class Game {
     Cursor.update(dt);
     this.dialogue.update(dt);
     this.battleScene.update(dt);
-    if (this.state === 'combatAnim') {
-      if (!this.battleScene.isActive()) {
-        this.finishCombat();
-      }
+    // Note: finishCombat is called via battleScene.onComplete callback
+    // Do NOT call it again from update() to avoid double execution
+
+    if (this.state === 'animating') {
+      // Movement animation in progress — handled by animateMove
     }
   }
 
@@ -517,17 +518,37 @@ class Game {
     });
   }
 
+  animateMove(unit, path, onDone) {
+    if (!path || path.length <= 1) { if (onDone) onDone(); return; }
+    this.state = 'animating';
+    let step = 1;
+    const advance = () => {
+      if (step >= path.length) {
+        if (onDone) onDone();
+        return;
+      }
+      unit.x = path[step].x;
+      unit.y = path[step].y;
+      GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
+      step++;
+      setTimeout(advance, 80);
+    };
+    advance();
+  }
+
   onUnitSelectedClick(x, y, screenX, screenY) {
     const inRange = this.moveRange.find(t => t.x === x && t.y === y);
     if (inRange) {
       this.prevUnitPos = { x: this.selectedUnit.x, y: this.selectedUnit.y };
-      this.selectedUnit.x = x;
-      this.selectedUnit.y = y;
-      this.selectedUnit.moved = true;
+      const path = findPath(this.selectedUnit.x, this.selectedUnit.y, x, y,
+        this.selectedUnit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
       this.moveRange = [];
       this.attackRange = [];
-      this.state = 'unitMoved';
-      this.showActionMenuForUnit(this.selectedUnit, screenX, screenY);
+      this.animateMove(this.selectedUnit, path, () => {
+        this.selectedUnit.moved = true;
+        this.state = 'unitMoved';
+        this.showActionMenuForUnit(this.selectedUnit, screenX, screenY);
+      });
     } else {
       this.cancelSelection();
     }
@@ -681,7 +702,7 @@ class Game {
       const expAmt = this.combatResult.exp;
       const prevExp = this.selectedUnit.exp;
       const gains = this.selectedUnit.gainExp(expAmt);
-      // Show EXP gain animation first
+      // Show EXP gain animation first (pass prevExp since gainExp already modified unit.exp)
       UI.showExpGain(this.selectedUnit, expAmt, () => {
         if (gains) {
           UI.showLevelUp(this.selectedUnit, gains, () => this.afterCombatDone());

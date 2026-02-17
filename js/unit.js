@@ -290,3 +290,34 @@ function getTilesInRange(x, y, ranges, mapW, mapH) {
   }
   return result;
 }
+
+function findPath(fromX, fromY, toX, toY, unit, terrainMap, allUnits, mapW, mapH) {
+  const visited = {};
+  const queue = [{ x: fromX, y: fromY, remaining: unit.mov, path: [{x: fromX, y: fromY}] }];
+  visited[`${fromX},${fromY}`] = unit.mov;
+  let best = null;
+
+  while (queue.length > 0) {
+    const { x, y, remaining, path } = queue.shift();
+    if (x === toX && y === toY) { best = path; break; }
+
+    const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+    for (const [dx, dy] of dirs) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= mapW || ny >= mapH) continue;
+      const terrain = terrainMap[ny][nx];
+      const cost = getMovementCost(terrain, unit);
+      if (cost >= 999) continue;
+      const newRemaining = remaining - cost;
+      if (newRemaining < 0) continue;
+      const key = `${nx},${ny}`;
+      if (visited[key] !== undefined && visited[key] >= newRemaining) continue;
+      const occupant = allUnits.find(u => u.x === nx && u.y === ny && u.hp > 0);
+      if (occupant && occupant.faction !== unit.faction) continue;
+      if (occupant && occupant !== unit && nx === toX && ny === toY) continue;
+      visited[key] = newRemaining;
+      queue.push({ x: nx, y: ny, remaining: newRemaining, path: [...path, {x: nx, y: ny}] });
+    }
+  }
+  return best || [{x: fromX, y: fromY}, {x: toX, y: toY}];
+}
