@@ -553,17 +553,19 @@ var Sprites = {
     for(var di=0;di<dirs.length;di++){fc.drawImage(os2,dirs[di][0],dirs[di][1]);}
     fc.drawImage(os,0,0);
     if(grayed){
-      // Desaturate: draw gray overlay with source-atop
-      fc.globalCompositeOperation='source-atop';
-      fc.fillStyle='rgba(80,80,80,0.5)';
-      fc.fillRect(0,0,48,48);
-      fc.globalCompositeOperation='source-over';
-      ctx.globalAlpha=0.7;
+      // Desaturate to grayscale (solid, no transparency)
+      var imgData = fc.getImageData(0,0,48,48);
+      var d = imgData.data;
+      for(var i=0;i<d.length;i+=4){
+        if(d[i+3]===0) continue;
+        var gray = Math.round(d[i]*0.3 + d[i+1]*0.59 + d[i+2]*0.11);
+        d[i]=gray; d[i+1]=gray; d[i+2]=gray;
+      }
+      fc.putImageData(imgData,0,0);
     }
     ctx.imageSmoothingEnabled=false;
     var padding = 3;
     ctx.drawImage(fin,x-ox + padding,y-oy + padding);
-    if(grayed)ctx.globalAlpha=1.0;
 
     // HP bar (drawn on ctx, positioned correctly for scaled context)
     if(unit.hp!==undefined&&unit.maxHp){
