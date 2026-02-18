@@ -97,9 +97,10 @@ const UI = {
       document.getElementById('game-container').appendChild(this.terrainInfo);
     }
     const td = {plain:{def:0,avo:0,name:'平原'},forest:{def:1,avo:20,name:'森林'},mountain:{def:2,avo:30,name:'山地'},wall:{def:3,avo:20,name:'城牆'},gate:{def:3,avo:30,name:'城門'},river:{def:0,avo:0,name:'河川'},village:{def:0,avo:10,name:'村莊'},throne:{def:3,avo:30,name:'王座'},pillar:{def:1,avo:15,name:'柱子'}}[terrain] || {def:0,avo:0,name:terrain||'?'};
-    let html = '<span style="color:#bc9">' + td.name + '</span>';
+    let html = '<span style="color:#bc9;font-weight:bold">' + td.name + '</span>';
     if (td.def > 0) html += ' <span style="color:#8cf">防+' + td.def + '</span>';
     if (td.avo > 0) html += ' <span style="color:#8cf">避+' + td.avo + '</span>';
+    if (td.def === 0 && td.avo === 0) html += ' <span style="color:#666">無加成</span>';
     this.terrainInfo.innerHTML = html;
     this.terrainInfo.style.display = 'block';
   },
@@ -465,6 +466,8 @@ const UI = {
             <div class="stat-row" style="margin:4px 0"><span style="color:#aaa;width:60px;display:inline-block">移動力</span><span style="color:#fff;font-weight:bold">${unit.mov}</span></div>
             <div style="color:#ffa500;font-weight:bold;margin:12px 0 6px;border-bottom:1px solid #333;padding-bottom:4px">裝備</div>
             <div style="font-size:11px;line-height:1.6">${itemsHtml}</div>
+            <div style="color:#ffa500;font-weight:bold;margin:12px 0 6px;border-bottom:1px solid #333;padding-bottom:4px">武器適性</div>
+            <div style="font-size:11px;line-height:1.6">${this._getWeaponProficiency(cls)}</div>
           </div>
         </div>
         <div style="text-align:center;margin-top:16px;color:#555;font-size:11px">按 R / Esc / 點擊 關閉</div>
@@ -528,6 +531,16 @@ const UI = {
       overlay.remove();
       if (onDone) onDone();
     }, 1200);
+  },
+
+  _getWeaponProficiency(cls) {
+    var weapons = cls.weapons || [];
+    var icons = {sword:'⚔️',lance:'🔱',axe:'🪓',bow:'🏹',fire:'🔥',thunder:'⚡',wind:'🌀',dark:'🌑',light:'✨',staff:'✝️'};
+    var names = {sword:'劍',lance:'槍',axe:'斧',bow:'弓',fire:'火',thunder:'雷',wind:'風',dark:'暗',light:'光',staff:'杖'};
+    if (weapons.length === 0) return '<span style="color:#555">—</span>';
+    return weapons.map(function(w) {
+      return '<span style="color:#adf">' + (icons[w]||'') + ' ' + (names[w]||w) + '</span>';
+    }).join('　');
   },
 
   clearOverlays() {
