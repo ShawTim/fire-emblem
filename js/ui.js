@@ -178,7 +178,7 @@ const UI = {
     this.phaseBanner.style.animation = 'none';
     this.phaseBanner.offsetHeight;
     this.phaseBanner.style.animation = '';
-    // phase change — no SFX
+    if (typeof SFX !== 'undefined') SFX.phaseChange();
     setTimeout(() => this.phaseBanner.classList.add('hidden'), 1500);
   },
 
@@ -287,6 +287,7 @@ const UI = {
   },
 
   showVictory(onContinue) {
+    if (typeof SFX !== 'undefined') SFX.victory();
     const overlay = document.createElement('div');
     overlay.id = 'victory-overlay';
     overlay.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:200;';

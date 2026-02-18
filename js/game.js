@@ -512,6 +512,7 @@ class Game {
         const sx = unit.x * ts - GameMap.camX + ts / 2;
         const sy = unit.y * ts - GameMap.camY;
         UI.showDamagePopup(sx, sy, healAmt, 'heal');
+        if (typeof SFX !== 'undefined') SFX.heal();
         UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
       }
       this.showUnitCommandMenu(unit);
@@ -531,7 +532,7 @@ class Game {
       unit.y = path[step].y;
       GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
       step++;
-      setTimeout(advance, 130);
+      setTimeout(advance, 110);
     };
     advance();
   }
@@ -675,6 +676,8 @@ class Game {
 
   startCombat(attacker, defender) {
     this.state = 'combatAnim';
+    this.combatAttacker = attacker;
+    this.combatDefender = defender;
     this.combatResult = executeCombat(attacker, defender, GameMap);
     const forecast = calculateCombat(attacker, defender, GameMap);
     this.attackRange = [];
@@ -697,15 +700,35 @@ class Game {
       return;
     }
 
-    // EXP
+    // EXP — determine which player unit gets exp
+    let expUnit = null;
+    let expAmt = 0;
     if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedUnit.hp > 0 && this.combatResult.exp > 0) {
-      const expAmt = this.combatResult.exp;
-      const prevExp = this.selectedUnit.exp;
-      const gains = this.selectedUnit.gainExp(expAmt);
-      // Show EXP gain animation first (pass prevExp since gainExp already modified unit.exp)
-      UI.showExpGain(this.selectedUnit, expAmt, () => {
+      // Player attacked enemy — attacker gets exp (already calculated)
+      expUnit = this.selectedUnit;
+      expAmt = this.combatResult.exp;
+    } else if (this.phase === 'enemy' && this.combatDefender && this.combatDefender.faction === 'player' && this.combatDefender.hp > 0) {
+      // Enemy attacked player — defender gets exp
+      const atk = this.combatAttacker;
+      const def = this.combatDefender;
+      const killed = atk.hp <= 0;
+      const atkEffLevel = atk.level + (atk.promoted ? 20 : 0);
+      const defEffLevel = def.level + (def.promoted ? 20 : 0);
+      const levelDiff = atkEffLevel - defEffLevel;
+      if (killed) {
+        expAmt = Math.max(1, Math.min(100, Math.floor((atkEffLevel * 10) / defEffLevel) + (levelDiff > 0 ? levelDiff * 3 : 0) + (atk.isBoss ? 40 : 0)));
+      } else {
+        expAmt = Math.max(1, Math.floor(1 + levelDiff));
+        if (levelDiff < -5) expAmt = 1;
+      }
+      expUnit = def;
+    }
+
+    if (expUnit && expAmt > 0) {
+      const gains = expUnit.gainExp(expAmt);
+      UI.showExpGain(expUnit, expAmt, () => {
         if (gains) {
-          UI.showLevelUp(this.selectedUnit, gains, () => this.afterCombatDone());
+          UI.showLevelUp(expUnit, gains, () => this.afterCombatDone());
         } else {
           this.afterCombatDone();
         }
@@ -739,6 +762,7 @@ class Game {
       const sx = target.x * ts - GameMap.camX + ts / 2;
       const sy = target.y * ts - GameMap.camY;
       UI.showDamagePopup(sx, sy, result.healAmt, 'heal');
+      if (typeof SFX !== 'undefined') SFX.heal();
       if (result.exp > 0) {
         const gains = this.selectedUnit.gainExp(result.exp);
         if (gains) {

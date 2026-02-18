@@ -2,7 +2,7 @@
 const CHAPTERS=[
 
 // ===== PROLOGUE (10x8) =====
-{id:0,title:'序章',subtitle:'墜落之夜',objective:'seize',objectiveDesc:'艾琳到達出口',seizePos:{x:9,y:6},width:10,height:8,
+{id:0,title:'序章',subtitle:'墜落之夜',objective:'seize',objectiveDesc:'艾琳到達出口',seizePos:{x:7,y:6},width:10,height:8,
 terrain:['WWWWGWWWWW','WLPPPPPLWW','WPWWPPWWPW','WPPPLPPPPW','WPWWPPWWPW','WPPPPPPPPW','WLPPPPPLGW','WWWWWWWWWW'],
 playerUnits:[{charId:'eirine',x:1,y:1},{charId:'marcus',x:1,y:2}],
 enemies:[
