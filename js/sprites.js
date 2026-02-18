@@ -556,7 +556,8 @@ var Sprites = {
     fc.drawImage(os,0,0);
     // Draw final composited sprite onto main canvas
     ctx.imageSmoothingEnabled=false;
-    ctx.drawImage(fin,x-ox,y-oy);
+    var padding = 3;
+    ctx.drawImage(fin,x-ox + padding,y-oy + padding);
 
     // HP bar (drawn on ctx, positioned correctly for scaled context)
     if(unit.hp!==undefined&&unit.maxHp){
