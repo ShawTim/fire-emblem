@@ -215,7 +215,7 @@ var Sprites = {
     var hair=(unit.portrait&&unit.portrait.hair)?unit.portrait.hair:c.accent;
     var skin=(unit.portrait&&unit.portrait.skin)?unit.portrait.skin:c.skin;
     var eyes=(unit.portrait&&unit.portrait.eyes)?unit.portrait.eyes:'#222';
-    if(grayed)ctx.globalAlpha=0.5;
+    // grayed handled after compositing
     var frame=this._idleFrame(),by=y,cls=unit.classId||'soldier';
 
     // FE3-style: draw to offscreen, then render with thick black outline
@@ -541,8 +541,6 @@ var Sprites = {
       ctx.fillStyle='#fc0';
       R(x+10,by-2,12,2,'#fc0');P(x+10,by-3,'#fc0');P(x+14,by-3,'#fc0');P(x+18,by-3,'#fc0');P(x+21,by-3,'#fc0');
     }
-    if(grayed)ctx.globalAlpha=1.0;
-
     // Build final sprite with outline in compositing canvas
     var fin=document.createElement('canvas');fin.width=48;fin.height=48;
     var fc=fin.getContext('2d');
@@ -554,10 +552,18 @@ var Sprites = {
     var dirs=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1],[-2,0],[2,0],[0,-2],[0,2]];
     for(var di=0;di<dirs.length;di++){fc.drawImage(os2,dirs[di][0],dirs[di][1]);}
     fc.drawImage(os,0,0);
-    // Draw final composited sprite onto main canvas
+    if(grayed){
+      // Desaturate: draw gray overlay with source-atop
+      fc.globalCompositeOperation='source-atop';
+      fc.fillStyle='rgba(80,80,80,0.5)';
+      fc.fillRect(0,0,48,48);
+      fc.globalCompositeOperation='source-over';
+      ctx.globalAlpha=0.7;
+    }
     ctx.imageSmoothingEnabled=false;
     var padding = 3;
     ctx.drawImage(fin,x-ox + padding,y-oy + padding);
+    if(grayed)ctx.globalAlpha=1.0;
 
     // HP bar (drawn on ctx, positioned correctly for scaled context)
     if(unit.hp!==undefined&&unit.maxHp){
