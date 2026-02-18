@@ -242,7 +242,7 @@ class Game {
     }
 
     // Units
-    GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH);
+    GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
 
     // Cursor
     if (['map', 'unitSelected', 'unitCommand', 'selectTarget'].includes(this.state)) {

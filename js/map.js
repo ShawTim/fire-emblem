@@ -98,7 +98,7 @@ const GameMap = {
     }
   },
 
-  renderUnits(ctx, units, canvasW, canvasH) {
+  renderUnits(ctx, units, canvasW, canvasH, game) {
     const ts = this.tileSize * this.scale;
     for (const unit of units) {
       if (unit.hp <= 0) continue;
@@ -108,7 +108,8 @@ const GameMap = {
       ctx.save();
       ctx.translate(sx, sy);
       ctx.scale(this.scale, this.scale);
-      Sprites.drawUnit(ctx, unit, 0, 0, unit.acted);
+      var showGray = unit.acted && ((unit.faction === 'player' && game && game.phase === 'player') || (unit.faction === 'enemy' && game && game.phase === 'enemy'));
+      Sprites.drawUnit(ctx, unit, 0, 0, showGray);
       ctx.restore();
     }
   },
