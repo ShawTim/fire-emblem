@@ -6,6 +6,8 @@ canvas.height = 600;
 var ctx = canvas.getContext('2d');
 
 SFX.init();
+BGM.init();
+BGM.createVolumeControl();
 
 var game = new Game(canvas);
 game.init();
@@ -81,7 +83,7 @@ document.getElementById('btn-continue').addEventListener('click', (e) => {
 // Mute toggle
 document.getElementById('btn-mute').addEventListener('click', (e) => {
   e.stopPropagation();
-  const muted = SFX.toggleMute();
+  const muted = BGM.toggleMute();
   e.target.textContent = muted ? '🔇' : '🔊';
 });
 

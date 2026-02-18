@@ -33,6 +33,7 @@ class Game {
     const hasSave = !!localStorage.getItem('fe_save');
     UI.showTitleScreen(hasSave);
     this.state = 'title';
+    BGM.play('title', true);
   }
 
   startNewGame() {
@@ -116,6 +117,7 @@ class Game {
     UI.showChapterCard(chapter.title, chapter.subtitle, () => {
       if (chapter.dialogues && chapter.dialogues.pre) {
         this.state = 'dialogue';
+        BGM.play('dialogue', true);
         this.dialogue.start(chapter.dialogues.pre, () => {
           this.beginPlayerPhase();
         });
@@ -153,6 +155,7 @@ class Game {
     UI.showEndTurnBtn();
     UI.hideActionMenu();
     UI.hideCombatForecast();
+    BGM.play('playerPhase', true);
   }
 
   processTurnEvents() {
@@ -694,6 +697,12 @@ class Game {
     const forecast = calculateCombat(attacker, defender, GameMap);
     this.attackRange = [];
     this.healTargets = [];
+    BGM.resumeTrack = BGM.currentTrackName;
+    if (defender.isBoss || attacker.isBoss) {
+      BGM.play('bossBattle', true);
+    } else {
+      BGM.play('battle', true);
+    }
     this.battleScene.start(attacker, defender, this.combatResult, forecast, () => this.finishCombat());
   }
 
@@ -703,6 +712,7 @@ class Game {
 
     if (this.checkLoseCondition()) {
       this.state = 'gameOver';
+      BGM.play('gameOver', true);
       UI.showGameOver(() => this.init());
       return;
     }
@@ -758,6 +768,12 @@ class Game {
     this.selectedUnit = null;
     this.combatResult = null;
     this.attackTargets = [];
+
+    // Resume map music after combat
+    if (BGM.resumeTrack) {
+      BGM.play(BGM.resumeTrack, true);
+      BGM.resumeTrack = null;
+    }
 
     if (this.phase === 'enemy') {
       this.processNextEnemyAction();
@@ -854,6 +870,7 @@ class Game {
     this.state = 'enemyPhase';
     UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'enemy', this.chapterData.objective);
     UI.showPhaseBanner('enemy');
+    BGM.play('enemyPhase', true);
 
     for (const u of this.units) {
       if (u.faction === 'enemy' && u.hp > 0) u.reset();
@@ -942,6 +959,7 @@ class Game {
   onChapterClear() {
     this.state = 'chapterClear';
     UI.hideEndTurnBtn();
+    BGM.play('victory', true);
     const postDialogue = this.chapterData.dialogues && this.chapterData.dialogues.post;
     const isLast = this.currentChapter >= CHAPTERS.length - 1;
 
@@ -990,6 +1008,13 @@ class Game {
   }
 
   handleKey(key) {
+    // M key: mute toggle (works in all states)
+    if (key === 'm' || key === 'M') {
+      var muted = BGM.toggleMute();
+      var btn = document.getElementById('btn-mute');
+      if (btn) btn.textContent = muted ? '🔇' : '🔊';
+      return;
+    }
     if (this.dialogue.isActive()) {
       if (key === 'Enter' || key === ' ') this.dialogue.advance();
       return;
