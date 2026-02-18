@@ -130,12 +130,19 @@ const UI = {
 
   showCombatForecast(forecast, onConfirm, onCancel) {
     const a = forecast.attacker, d = forecast.defender;
+    // Weapon triangle indicator
+    var triA = '', triD = '';
+    if (forecast.weaponTriangle === 1) { triA = ' <span style="color:#4f4">▲</span>'; triD = ' <span style="color:#f44">▼</span>'; }
+    else if (forecast.weaponTriangle === -1) { triA = ' <span style="color:#f44">▼</span>'; triD = ' <span style="color:#4f4">▲</span>'; }
+    // Double attack indicator
+    var aDbl = a.doubleAttack ? ' <span style="color:#ffd700;font-weight:bold">×2</span>' : '';
+    var dDbl = (d.canCounter && d.doubleAttack) ? ' <span style="color:#ffd700;font-weight:bold">×2</span>' : '';
     this.forecastEl.innerHTML = `
       <div class="forecast-header">戰鬥預測</div>
       <div class="forecast-row">
-        <span class="forecast-attacker">${a.name}</span>
+        <span class="forecast-attacker">${a.name}${triA}</span>
         <span class="forecast-label">VS</span>
-        <span class="forecast-defender">${d.name}</span>
+        <span class="forecast-defender">${d.name}${triD}</span>
       </div>
       <div class="forecast-row">
         <span class="forecast-attacker">${a.hp}</span>
@@ -143,9 +150,9 @@ const UI = {
         <span class="forecast-defender">${d.hp}</span>
       </div>
       <div class="forecast-row">
-        <span class="forecast-attacker">${a.damage}${a.doubleAttack ? ' ×2' : ''}</span>
+        <span class="forecast-attacker">${a.damage}${aDbl}</span>
         <span class="forecast-label">威力</span>
-        <span class="forecast-defender">${d.canCounter ? d.damage + (d.doubleAttack ? ' ×2' : '') : '-'}</span>
+        <span class="forecast-defender">${d.canCounter ? d.damage + '' : '-'}${dDbl}</span>
       </div>
       <div class="forecast-row">
         <span class="forecast-attacker">${a.hit}%</span>
@@ -228,12 +235,24 @@ const UI = {
     setTimeout(dismiss, 4000);
   },
 
-  updateTopBar(chapterTitle, turn, phase) {
+  updateTopBar(chapterTitle, turn, phase, objective) {
     document.getElementById('chapter-name').textContent = chapterTitle || '';
     document.getElementById('turn-count').textContent = `第 ${turn} 回合`;
     const pi = document.getElementById('phase-indicator');
     pi.textContent = phase === 'player' ? '自軍回合' : '敵軍回合';
     pi.className = phase === 'player' ? 'phase-player' : 'phase-enemy';
+    // Objective display
+    var objEl = document.getElementById('objective-display');
+    if (!objEl) {
+      objEl = document.createElement('span');
+      objEl.id = 'objective-display';
+      objEl.style.cssText = 'margin-left:12px;font-size:11px;color:#bc9;';
+      document.getElementById('top-bar').appendChild(objEl);
+    }
+    if (objective) {
+      var objNames = {rout:'殲滅敵軍',boss:'擊破敵將',seize:'制壓據點',survive:'堅守防線'};
+      objEl.textContent = '目標：' + (objNames[objective] || objective);
+    }
   },
 
   showEndTurnBtn() { this.endTurnBtn.classList.remove('hidden'); },

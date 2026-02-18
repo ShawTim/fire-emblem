@@ -49,6 +49,9 @@ function calculateCombat(attacker, defender, map) {
     }
   }
 
+  // Weapon triangle direction: 1=advantage, -1=disadvantage, 0=neutral
+  var triDir = triBonus.atk > 0 ? 1 : (triBonus.atk < 0 ? -1 : 0);
+
   return {
     attacker: {
       name: attacker.name, hp: attacker.hp, maxHp: attacker.maxHp,
@@ -57,7 +60,8 @@ function calculateCombat(attacker, defender, map) {
     defender: {
       name: defender.name, hp: defender.hp, maxHp: defender.maxHp,
       damage: defDmg, hit: defHit, crit: defCrit, doubleAttack: defDouble, canCounter
-    }
+    },
+    weaponTriangle: triDir
   };
 }
 

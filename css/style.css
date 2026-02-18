@@ -221,10 +221,10 @@ body {
 #phase-banner.hidden { display: none; }
 
 @keyframes phaseBanner {
-  0% { opacity: 0; letter-spacing: 20px; }
-  20% { opacity: 1; letter-spacing: 8px; }
-  70% { opacity: 1; letter-spacing: 8px; }
-  100% { opacity: 0; letter-spacing: 0; }
+  0% { opacity: 0; transform: translateX(-100%) translateY(-50%); }
+  15% { opacity: 1; transform: translateX(0%) translateY(-50%); }
+  75% { opacity: 1; transform: translateX(0%) translateY(-50%); }
+  100% { opacity: 0; transform: translateX(100%) translateY(-50%); }
 }
 
 .banner-player {

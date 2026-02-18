@@ -148,7 +148,7 @@ class Game {
       if (u.faction === 'player' && u.hp > 0) u.reset();
     }
     this.processTurnEvents();
-    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'player');
+    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'player', this.chapterData.objective);
     UI.showPhaseBanner('player');
     UI.showEndTurnBtn();
     UI.hideActionMenu();
@@ -849,7 +849,7 @@ class Game {
   beginEnemyPhase() {
     this.phase = 'enemy';
     this.state = 'enemyPhase';
-    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'enemy');
+    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'enemy', this.chapterData.objective);
     UI.showPhaseBanner('enemy');
 
     for (const u of this.units) {
