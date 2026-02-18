@@ -319,5 +319,5 @@ function findPath(fromX, fromY, toX, toY, unit, terrainMap, allUnits, mapW, mapH
       queue.push({ x: nx, y: ny, remaining: newRemaining, path: [...path, {x: nx, y: ny}] });
     }
   }
-  return best || [{x: fromX, y: fromY}, {x: toX, y: toY}];
+  return best || null;
 }

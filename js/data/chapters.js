@@ -230,7 +230,7 @@ post:[
 {speaker:'eirine',text:'我理解。戰爭讓每個人都身不由己。但我們必須繼續前進。'}]}},
 
 // ===== CHAPTER 6 (18x16) =====
-{id:6,title:'第六章',subtitle:'裏切之港',objective:'seize',objectiveDesc:'佔領港口',seizePos:{x:9,y:1},width:18,height:16,
+{id:6,title:'第六章',subtitle:'裏切之港',objective:'seize',objectiveDesc:'佔領港口',seizePos:{x:8,y:1},width:18,height:16,
 terrain:['WWWWWWWWWWWWWWWWWW','WWWWPPPPGPPPPPWWWW','WWWPPPPPPPPPPPWWWW','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','PPPPWWPPPPPWWPPPPP','PPPPWWPPPPPWWPPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPVPPPPVPPPPPP','PPPPPPPPPPPPPPPPPP','RRRRRRRRRRRRRRRRPP','RRRRRRRRRRRRRRRRRR','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP'],
 playerUnits:[{charId:'eirine',x:4,y:14},{charId:'marcus',x:3,y:14},{charId:'lina',x:5,y:14},{charId:'thor',x:4,y:15},{charId:'serra',x:3,y:15},{charId:'cain',x:5,y:15},{charId:'fran',x:6,y:15},{charId:'rex',x:7,y:14}],
 newRecruits:[{charId:'natasha',x:14,y:8,turnJoin:3}],
@@ -378,9 +378,9 @@ post:[
 {speaker:'serra',text:'古老的神殿裡封印著一件神器。也許那就是我們需要的。'}]}},
 
 // ===== CHAPTER 9 (18x20) =====
-{id:9,title:'第九章',subtitle:'翠星之神殿',objective:'boss',objectiveDesc:'擊敗莫爾甘的副官',seizePos:{x:9,y:1},width:18,height:20,
+{id:9,title:'第九章',subtitle:'翠星之神殿',objective:'boss',objectiveDesc:'擊敗莫爾甘的副官',width:18,height:20,
 terrain:['WWWWWWWWWWWWWWWWWW','WWWWWWPPTPPWWWWWWW','WWWWPPPPPPPPWWWWWW','WWWPPLPPPPPLPPWWWW','WWWPPPPPPPPPPPWWWW','WWWWWGPPPPGWWWWWWW','WWWPPPPPPPPPPPWWWW','WWWPLPPPPPPLPPWWWW','WWWPPPPPPPPPPPWWWW','WWWWWGPPPPGWWWWWWW','WWWPPPPPPPPPPPWWWW','WWWPLPPPPPPPLPWWWW','WWWPPPPPPPPPPPWWWW','WWWWWGPPPPGWWWWWWW','WWWPPPPPPPPPPPWWWW','WWWPLPPPPPPPLPWWWW','WWWPPPPPPPPPPPWWWW','WWWWWWPPPPWWWWWWWW','WWWWPPPPPPPPWWWWWW','WWWWWWWGGWWWWWWWWW'],
-playerUnits:[{charId:'eirine',x:8,y:19},{charId:'marcus',x:7,y:19},{charId:'lina',x:9,y:19},{charId:'thor',x:8,y:18},{charId:'serra',x:7,y:18},{charId:'cain',x:9,y:18},{charId:'fran',x:10,y:19},{charId:'rex',x:6,y:19},{charId:'natasha',x:10,y:18},{charId:'olivier',x:11,y:19}],
+playerUnits:[{charId:'eirine',x:8,y:19},{charId:'marcus',x:7,y:19},{charId:'lina',x:9,y:19},{charId:'thor',x:8,y:18},{charId:'serra',x:7,y:18},{charId:'cain',x:9,y:18},{charId:'fran',x:10,y:19},{charId:'rex',x:6,y:19},{charId:'natasha',x:10,y:18},{charId:'olivier',x:11,y:19},{charId:'helga',x:12,y:18}],
 newRecruits:[],
 enemies:[
 {classId:'skeleton',level:10,x:5,y:16,items:['steelLance'],ai:'aggressive',name:'亡靈騎士'},

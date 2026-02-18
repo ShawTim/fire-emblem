@@ -104,6 +104,7 @@ function executeCombat(attacker, defender, map) {
 
   // Attacker doubles
   if (forecast.attacker.doubleAttack && defender.hp > 0) {
+    if (atkWpn) atkWpn.usesLeft = Math.max(0, atkWpn.usesLeft - 1);
     if (doAttack(attacker, defender, forecast.attacker)) {
       return { steps, exp: calculateExp(attacker, defender, true) };
     }
@@ -111,6 +112,7 @@ function executeCombat(attacker, defender, map) {
 
   // Defender doubles
   if (forecast.defender.canCounter && forecast.defender.doubleAttack && attacker.hp > 0 && defender.hp > 0) {
+    if (defWpn) defWpn.usesLeft = Math.max(0, defWpn.usesLeft - 1);
     if (doAttack(defender, attacker, forecast.defender)) {
       return { steps, exp: 0 };
     }
@@ -144,10 +146,11 @@ function calculateExp(attacker, defender, killed) {
 function executeHeal(healer, target) {
   const staff = healer.getHealStaff();
   if (!staff) return null;
-  const healAmt = Math.min(staff.heals + healer.mag, target.maxHp - target.hp);
+  const missingHp = target.maxHp - target.hp;
+  const healAmt = Math.min(staff.heals + healer.mag, missingHp);
   target.heal(healAmt);
   staff.usesLeft = Math.max(0, staff.usesLeft - 1);
-  // Healer gets some EXP
-  const exp = Math.min(100, Math.max(10, 20 + (target.maxHp - target.hp)));
+  // Healer gets EXP based on how much HP was missing before healing
+  const exp = Math.min(100, Math.max(10, 20 + missingHp));
   return { healAmt, exp: Math.min(60, exp) };
 }

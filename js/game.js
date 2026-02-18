@@ -545,11 +545,20 @@ class Game {
         this.selectedUnit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
       this.moveRange = [];
       this.attackRange = [];
-      this.animateMove(this.selectedUnit, path, () => {
+      if (!path || path.length <= 1) {
+        // Direct placement if path is trivial
+        this.selectedUnit.x = x;
+        this.selectedUnit.y = y;
         this.selectedUnit.moved = true;
         this.state = 'unitMoved';
         this.showActionMenuForUnit(this.selectedUnit, screenX, screenY);
-      });
+      } else {
+        this.animateMove(this.selectedUnit, path, () => {
+          this.selectedUnit.moved = true;
+          this.state = 'unitMoved';
+          this.showActionMenuForUnit(this.selectedUnit, screenX, screenY);
+        });
+      }
     } else {
       this.cancelSelection();
     }
@@ -893,9 +902,12 @@ class Game {
       if (path && path.length > 1) {
         // Small delay before movement starts so you can see who's acting
         setTimeout(() => this.animateMove(action.unit, path, doAfterMove), 300);
+      } else if (path) {
+        doAfterMove();
       } else {
-        action.unit.x = action.moveX;
-        action.unit.y = action.moveY;
+        // No valid path found — skip this move, stay in place
+        action.moveX = action.unit.x;
+        action.moveY = action.unit.y;
         doAfterMove();
       }
     } else {
