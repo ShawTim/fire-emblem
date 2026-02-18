@@ -115,7 +115,7 @@ const UI = {
       div.className = 'menu-item' + (item.disabled ? ' disabled' : '');
       div.textContent = item.label;
       if (!item.disabled) {
-        div.addEventListener('click', (e) => { e.stopPropagation(); if(typeof SFX!=='undefined')SFX.select(); onClick(item.action, i); });
+        div.addEventListener('click', (e) => { e.stopPropagation(); onClick(item.action, i); });
       }
       this.actionMenu.appendChild(div);
     });
@@ -178,7 +178,7 @@ const UI = {
     this.phaseBanner.style.animation = 'none';
     this.phaseBanner.offsetHeight;
     this.phaseBanner.style.animation = '';
-    if (typeof SFX !== 'undefined') SFX.phaseChange();
+    // phase change — no SFX
     setTimeout(() => this.phaseBanner.classList.add('hidden'), 1500);
   },
 

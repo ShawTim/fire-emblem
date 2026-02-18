@@ -531,7 +531,7 @@ class Game {
       unit.y = path[step].y;
       GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
       step++;
-      setTimeout(advance, 80);
+      setTimeout(advance, 130);
     };
     advance();
   }
