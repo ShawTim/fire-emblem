@@ -9,7 +9,7 @@ const Cursor = {
   moveTo(x, y) {
     var nx = Math.max(0, Math.min(GameMap.width - 1, x));
     var ny = Math.max(0, Math.min(GameMap.height - 1, y));
-    if (nx !== this.x || ny !== this.y) { if (typeof SFX !== 'undefined') SFX.cursor(); }
+    // No sound on hover — too noisy
     this.x = nx;
     this.y = ny;
   },

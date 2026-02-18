@@ -520,7 +520,7 @@ class Game {
 
   animateMove(unit, path, onDone) {
     if (!path || path.length <= 1) { if (onDone) onDone(); return; }
-    this.state = 'animating';
+    if (this.state !== 'enemyPhase') this.state = 'animating';
     let step = 1;
     const advance = () => {
       if (step >= path.length) {
@@ -841,18 +841,41 @@ class Game {
     const action = this.enemyActions[this.enemyActionIndex];
     this.enemyActionIndex++;
 
-    if (action.type === 'attack') {
-      action.unit.x = action.moveX;
-      action.unit.y = action.moveY;
-      GameMap.scrollToward(action.unit.x, action.unit.y, this.canvasW, this.canvasH);
-      this.selectedUnit = action.unit;
-      this.startCombat(action.unit, action.target);
-    } else if (action.type === 'move') {
-      action.unit.x = action.moveX;
-      action.unit.y = action.moveY;
-      setTimeout(() => this.processNextEnemyAction(), 300);
-    } else {
+    if (action.type === 'wait') {
       setTimeout(() => this.processNextEnemyAction(), 100);
+      return;
+    }
+
+    const needsMove = action.moveX !== action.unit.x || action.moveY !== action.unit.y;
+
+    const doAfterMove = () => {
+      if (action.type === 'attack') {
+        GameMap.scrollToward(action.unit.x, action.unit.y, this.canvasW, this.canvasH);
+        this.selectedUnit = action.unit;
+        // Brief pause after move so player sees positioning before combat
+        setTimeout(() => this.startCombat(action.unit, action.target), needsMove ? 300 : 0);
+      } else {
+        action.unit.acted = true;
+        setTimeout(() => this.processNextEnemyAction(), 250);
+      }
+    };
+
+    // Scroll to enemy unit first so player sees who's about to act
+    GameMap.scrollToward(action.unit.x, action.unit.y, this.canvasW, this.canvasH);
+
+    if (needsMove) {
+      const path = findPath(action.unit.x, action.unit.y, action.moveX, action.moveY,
+        action.unit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
+      if (path && path.length > 1) {
+        // Small delay before movement starts so you can see who's acting
+        setTimeout(() => this.animateMove(action.unit, path, doAfterMove), 300);
+      } else {
+        action.unit.x = action.moveX;
+        action.unit.y = action.moveY;
+        doAfterMove();
+      }
+    } else {
+      doAfterMove();
     }
   }
 
