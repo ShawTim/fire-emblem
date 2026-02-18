@@ -235,11 +235,14 @@ class Game {
 
     // Overlays
     if (this.moveRange.length > 0) {
-      GameMap.renderOverlay(ctx, this.moveRange, 'rgba(0,100,255,0.3)', this.canvasW, this.canvasH);
+      GameMap.renderOverlay(ctx, this.moveRange, 'rgba(0,100,255,0.3)', this.canvasW, this.canvasH, true);
     }
     if (this.attackRange.length > 0) {
-      GameMap.renderOverlay(ctx, this.attackRange, 'rgba(255,0,0,0.3)', this.canvasW, this.canvasH);
+      GameMap.renderOverlay(ctx, this.attackRange, 'rgba(255,50,50,0.3)', this.canvasW, this.canvasH, false);
     }
+
+    // Grid overlay
+    GameMap.renderGrid(ctx, this.canvasW, this.canvasH);
 
     // Units
     GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
@@ -1004,6 +1007,12 @@ class Game {
       UI.showTerrainInfo(terrain, unit);
       if (unit) UI.showUnitPanel(unit, terrain);
       else if (this.state === 'map') UI.hideUnitPanel();
+      return;
+    }
+
+    // G key = toggle grid
+    if (key === 'g' || key === 'G') {
+      GameMap.toggleGrid();
       return;
     }
 

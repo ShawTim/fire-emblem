@@ -668,11 +668,28 @@ var Sprites = {
 
   drawSeizeMarker: function(ctx, x, y, frame) {
     var s = this.TILE;
-    var alpha = 0.4 + 0.3 * Math.sin(frame * 0.1);
+    var alpha = 0.3 + 0.25 * Math.sin(frame * 0.1);
+    // Outer glow
+    ctx.save();
+    ctx.shadowColor = 'rgba(255,255,0,0.8)';
+    ctx.shadowBlur = 8 + 4 * Math.sin(frame * 0.08);
     ctx.fillStyle = 'rgba(255,255,0,' + alpha + ')';
     ctx.fillRect(x+2, y+2, s-4, s-4);
+    ctx.restore();
+    // Animated border
     ctx.strokeStyle = '#ff0'; ctx.lineWidth = 2;
-    ctx.strokeRect(x+1, y+1, s-2, s-2); ctx.lineWidth = 1;
+    ctx.strokeRect(x+1, y+1, s-2, s-2);
+    // Inner diamond pulse
+    var da = 0.4 + 0.3 * Math.sin(frame * 0.12);
+    ctx.save();
+    ctx.globalAlpha = da;
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.moveTo(x+s/2, y+4); ctx.lineTo(x+s-4, y+s/2);
+    ctx.lineTo(x+s/2, y+s-4); ctx.lineTo(x+4, y+s/2);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+    ctx.lineWidth = 1;
   },
 
 };
