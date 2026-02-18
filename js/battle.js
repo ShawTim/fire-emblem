@@ -32,8 +32,11 @@ class BattleScene {
     this.deathAlpha = 1;
     this.deathFall = 0;
     this.terrainType = 'plain';
+    this.defenderTerrainType = 'plain';
     this.forecast = null;
     this.hitTriggered = false;
+    this.vsAlpha = 0;
+    this.hitDisplayShown = false;
   }
 
   start(attacker, defender, combatResult, forecast, onComplete) {
@@ -66,20 +69,26 @@ class BattleScene {
     this.attackerAnimOffset = 0; this.defenderAnimOffset = 0;
     this.shakeX = 0; this.shakeY = 0; this.shakeTimer = 0;
     this.hitTriggered = false;
+    this.vsAlpha = 0;
+    this.hitDisplayShown = false;
     var dt = GameMap.getTerrain(defender.x, defender.y);
     this.terrainType = dt || 'plain';
+    var at = GameMap.getTerrain(attacker.x, attacker.y);
+    this.defenderTerrainType = dt || 'plain';
+    this.attackerTerrainType = at || 'plain';
     this.setPhase('intro');
   }
 
   setPhase(p) {
-    this.phase = p; this.timer = 0; this.hitTriggered = false;
-    var d = {intro:300,ready:500,atk1:700,def1:700,atk2:700,def2:700,result:1000,outro:400};
+    this.phase = p; this.timer = 0; this.hitTriggered = false; this.hitDisplayShown = false;
+    var d = {intro:300,vs:800,ready:500,atk1:700,def1:700,atk2:700,def2:700,result:1000,outro:400};
     this.phaseDuration = d[p] || 0;
   }
 
   nextPhase() {
     switch(this.phase) {
-      case 'intro': this.setPhase('ready'); break;
+      case 'intro': this.setPhase('vs'); break;
+      case 'vs': this.setPhase('ready'); break;
       case 'ready':
         this.stepIndex < this.combatSteps.length ? this.beginStrike() : this.setPhase('result'); break;
       case 'atk1': case 'def1': case 'atk2': case 'def2':
@@ -107,20 +116,31 @@ class BattleScene {
     var t = Math.min(1, this.timer / this.phaseDuration);
     if (this.shakeTimer > 0) {
       this.shakeTimer -= dt;
-      this.shakeX = (Math.random()-0.5)*8; this.shakeY = (Math.random()-0.5)*6;
+      var intensity = Math.min(1, this.shakeTimer / 200);
+      this.shakeX = (Math.random()-0.5)*12*intensity; this.shakeY = (Math.random()-0.5)*10*intensity;
       if (this.shakeTimer <= 0) { this.shakeX=0; this.shakeY=0; }
     }
-    var hs = dt * 0.06;
-    if (this.attackerHP > this.attackerTargetHP)
-      this.attackerHP = Math.max(this.attackerTargetHP, this.attackerHP - hs*this.attackerMaxHP);
-    if (this.defenderHP > this.defenderTargetHP)
-      this.defenderHP = Math.max(this.defenderTargetHP, this.defenderHP - hs*this.defenderMaxHP);
+    var hs = dt * 0.03;
+    if (this.attackerHP > this.attackerTargetHP) {
+      var diff = this.attackerHP - this.attackerTargetHP;
+      var speed = Math.max(0.5, diff * 0.08) * dt * 0.06;
+      this.attackerHP = Math.max(this.attackerTargetHP, this.attackerHP - speed);
+    }
+    if (this.defenderHP > this.defenderTargetHP) {
+      var diff = this.defenderHP - this.defenderTargetHP;
+      var speed = Math.max(0.5, diff * 0.08) * dt * 0.06;
+      this.defenderHP = Math.max(this.defenderTargetHP, this.defenderHP - speed);
+    }
     for (var i = this.effects.length-1; i >= 0; i--) {
       this.effects[i].timer += dt;
       if (this.effects[i].timer >= this.effects[i].duration) this.effects.splice(i,1);
     }
     switch(this.phase) {
       case 'intro': this.fadeAlpha = 1-t; if(this.timer>=this.phaseDuration) this.nextPhase(); break;
+      case 'vs':
+        this.vsAlpha = t < 0.2 ? this._eo(t/0.2) : (t > 0.75 ? 1-this._eo((t-0.75)/0.25) : 1);
+        this.attackerSlide = -200; this.defenderSlide = 200;
+        if(this.timer>=this.phaseDuration) this.nextPhase(); break;
       case 'ready':
         this.attackerSlide = -200*(1-this._eo(t)); this.defenderSlide = 200*(1-this._eo(t));
         this.panelAlpha = this._eo(t); if(this.timer>=this.phaseDuration) this.nextPhase(); break;
@@ -142,6 +162,18 @@ class BattleScene {
   _upStrike(t) {
     var s = this.combatSteps[this.stepIndex-1]; if(!s) return;
     var a = s.actor === this.attacker;
+    // Show hit% display at start of strike
+    if(t<0.15 && !this.hitDisplayShown && this.forecast){
+      this.hitDisplayShown = true;
+      var fc = a ? this.forecast.attacker : (this.forecast.defender.canCounter ? this.forecast.defender : null);
+      if(fc){
+        var hitPct = fc.hit || 0;
+        var critPct = fc.crit || 0;
+        var tx = a ? 240 : 560;
+        this.effects.push({type:'hitpct',x:tx,y:180,text:'命中'+hitPct+'%',color:'#8f8',duration:500,timer:0});
+        if(critPct > 0) this.effects.push({type:'hitpct',x:tx,y:200,text:'必殺'+critPct+'%',color:'#ff8',duration:500,timer:0});
+      }
+    }
     if (t<0.3) { var d=t/0.3; if(a) this.attackerAnimOffset=this._eo(d)*50; else this.defenderAnimOffset=-this._eo(d)*50; }
     else if (t<0.5) {
       if(a) this.attackerAnimOffset=50; else this.defenderAnimOffset=-50;
@@ -158,9 +190,10 @@ class BattleScene {
     if(!s.hit){this.effects.push({type:'miss',x:tx,y:ty,text:'MISS',color:'#999',duration:800,timer:0});if(typeof SFX!=='undefined')SFX.miss();return;}
     if(s.crit){
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffff00',duration:250,timer:0});
+      this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffffff',duration:100,timer:0});
       this.effects.push({type:'crit',x:400,y:160,text:'必殺！',color:'#ffd700',duration:1000,timer:0});
       this.effects.push({type:'damage',x:tx,y:ty-30,text:String(s.damage),color:'#ffd700',duration:1000,timer:0});
-      this.shakeTimer=300;
+      this.shakeTimer=500;
       if(typeof SFX!=='undefined')SFX.crit();
     } else {
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffffff',duration:150,timer:0});
@@ -177,6 +210,9 @@ class BattleScene {
     ctx.save(); ctx.translate(this.shakeX, this.shakeY);
     this._drawBg(ctx, this.terrainType, cw, ch);
     this._drawPlat(ctx, cw, ch);
+    // Terrain labels
+    this._drawTerrainLabel(ctx, this.attackerTerrainType, 20, ch*0.58);
+    this._drawTerrainLabel(ctx, this.terrainType, cw-120, ch*0.58);
     var gy=ch*0.62, ax=180+this.attackerSlide+this.attackerAnimOffset;
     var dx=cw-180+this.defenderSlide+this.defenderAnimOffset, sz=64;
     var atkS=(this.phase==='atk1'||this.phase==='atk2');
@@ -195,8 +231,42 @@ class BattleScene {
       this._drawHP(ctx,this.defender,this.defenderHP,cw-290,ch-135,true,cw);
       ctx.globalAlpha=1;
     }
+    // VS display
+    if(this.phase==='vs' && this.vsAlpha>0){
+      ctx.save();
+      ctx.globalAlpha=this.vsAlpha;
+      // Attacker name left
+      ctx.fillStyle='#4a9eff';ctx.font='bold 22px sans-serif';ctx.textAlign='right';
+      ctx.fillText(this.attacker.name,cw/2-40,ch/2-10);
+      // VS
+      var vsSc=1+0.1*Math.sin(this.timer*0.01);
+      ctx.save();ctx.translate(cw/2,ch/2-5);ctx.scale(vsSc,vsSc);
+      ctx.fillStyle='#ffd700';ctx.font='bold 36px sans-serif';ctx.textAlign='center';
+      ctx.shadowColor='rgba(255,215,0,0.6)';ctx.shadowBlur=12;
+      ctx.fillText('VS',0,0);ctx.restore();
+      // Defender name right
+      ctx.fillStyle='#ff5555';ctx.font='bold 22px sans-serif';ctx.textAlign='left';
+      ctx.fillText(this.defender.name,cw/2+40,ch/2-10);
+      // Weapon names
+      var aw=this.attacker.getEquippedWeapon(), dw=this.defender.getEquippedWeapon();
+      ctx.font='14px sans-serif';
+      if(aw){ctx.fillStyle='#ccc';ctx.textAlign='right';ctx.fillText(aw.name,cw/2-40,ch/2+18);}
+      if(dw){ctx.fillStyle='#ccc';ctx.textAlign='left';ctx.fillText(dw.name,cw/2+40,ch/2+18);}
+      ctx.shadowBlur=0;
+      ctx.restore();
+    }
     this._renderFx(ctx,cw,ch);
     if(this.fadeAlpha>0){ctx.fillStyle='rgba(0,0,0,'+this.fadeAlpha+')';ctx.fillRect(-10,-10,cw+20,ch+20);}
+    ctx.restore();
+  }
+
+  _drawTerrainLabel(ctx, ter, x, y) {
+    var names={plain:'平原',forest:'森林',mountain:'山地',wall:'城牆',gate:'城門',river:'河川',village:'村莊',throne:'王座',pillar:'柱子'};
+    var name=names[ter]||ter;
+    ctx.save();
+    ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(x,y,100,20);
+    ctx.fillStyle='#bc9';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText(name,x+50,y+14);
     ctx.restore();
   }
 
@@ -338,10 +408,11 @@ class BattleScene {
     // Weapon info
     var wpn=unit.getEquippedWeapon();
     if(wpn){
-      ctx.fillStyle='#fa8';ctx.font='11px monospace';ctx.textAlign='left';
+      ctx.fillStyle='#fa8';ctx.font='bold 12px sans-serif';ctx.textAlign='left';
       ctx.fillText(wpn.name,px+12,py+70);
       var atk=wpn.atk+(wpn.magic?unit.mag:unit.str);
-      ctx.fillStyle='#8f8';ctx.fillText('\u653b:'+atk,px+12,py+85);
+      ctx.fillStyle='#8f8';ctx.font='11px monospace';ctx.fillText('攻:'+atk,px+12,py+85);
+      ctx.fillStyle='#8ef';ctx.fillText('重:'+wpn.weight,px+80,py+85);
     }
     ctx.fillStyle='#888';ctx.font='10px sans-serif';
     var durText=wpn?'\u8015:'+wpn.usesLeft+'/'+wpn.uses:'\u6c92\u6709\u6b66\u5668';
@@ -374,6 +445,9 @@ class BattleScene {
         ctx.fillText(e.text,0,0);ctx.restore();
       } else if(e.type==='flash'){
         ctx.fillStyle=e.color;ctx.fillRect(0,0,cw,ch);
+      } else if(e.type==='hitpct'){
+        ctx.fillStyle=e.color;ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+        ctx.fillText(e.text,e.x,e.y);
       }
     }
     ctx.globalAlpha=1;
