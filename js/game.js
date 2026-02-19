@@ -895,6 +895,7 @@ class Game {
     this.enemyActionIndex++;
 
     if (action.type === 'wait') {
+      action.unit.acted = true;
       setTimeout(() => this.processNextEnemyAction(), 100);
       return;
     }

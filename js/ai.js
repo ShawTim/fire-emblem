@@ -6,7 +6,7 @@ function executeEnemyPhase(game) {
   for (const unit of enemies) {
     const action = getAIAction(unit, game);
     if (action) actions.push(action);
-    unit.acted = true;
+    // Don't set unit.acted here - it will be set after the action is executed
   }
   return actions;
 }

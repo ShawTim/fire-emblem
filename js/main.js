@@ -32,15 +32,72 @@ function screenToCanvas(clientX, clientY) {
 }
 
 // Mouse input
-canvas.addEventListener('click', (e) => {
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let dragStartCamX = 0;
+let dragStartCamY = 0;
+
+canvas.addEventListener('mousedown', (e) => {
   const pos = screenToCanvas(e.clientX, e.clientY);
-  game.handleClick(pos.x, pos.y);
+  isDragging = true;
+  dragStartX = pos.x;
+  dragStartY = pos.y;
+  dragStartCamX = GameMap.camX;
+  dragStartCamY = GameMap.camY;
+  canvas.style.cursor = 'grabbing';
 });
 
 canvas.addEventListener('mousemove', (e) => {
   const pos = screenToCanvas(e.clientX, e.clientY);
-  game.handleHover(pos.x, pos.y);
+  
+  if (isDragging) {
+    // Drag to scroll the map
+    const dx = dragStartX - pos.x;
+    const dy = dragStartY - pos.y;
+    GameMap.camX = dragStartCamX + dx;
+    GameMap.camY = dragStartCamY + dy;
+    GameMap.clampCamera(canvas.width, canvas.height);
+  } else {
+    // Normal hover behavior
+    game.handleHover(pos.x, pos.y);
+  }
 });
+
+canvas.addEventListener('mouseup', (e) => {
+  if (isDragging) {
+    isDragging = false;
+    canvas.style.cursor = 'default';
+    
+    // Check if this was a click (minimal drag) or actual drag
+    const pos = screenToCanvas(e.clientX, e.clientY);
+    const dragDistance = Math.abs(pos.x - dragStartX) + Math.abs(pos.y - dragStartY);
+    
+    // If drag distance is small (< 5 pixels), treat it as a click
+    if (dragDistance < 5) {
+      game.handleClick(pos.x, pos.y);
+    }
+  }
+});
+
+canvas.addEventListener('mouseleave', (e) => {
+  if (isDragging) {
+    isDragging = false;
+    canvas.style.cursor = 'default';
+  }
+});
+
+// Old click handler - now handled in mouseup
+// canvas.addEventListener('click', (e) => {
+//   const pos = screenToCanvas(e.clientX, e.clientY);
+//   game.handleClick(pos.x, pos.y);
+// });
+
+// Old mousemove handler - now integrated above
+// canvas.addEventListener('mousemove', (e) => {
+//   const pos = screenToCanvas(e.clientX, e.clientY);
+//   game.handleHover(pos.x, pos.y);
+// });
 
 // Touch input (prevent double-fire with mouse events)
 let touchHandled = false;
