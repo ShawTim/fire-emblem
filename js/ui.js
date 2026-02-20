@@ -340,9 +340,10 @@ const UI = {
     document.getElementById('ui-overlay').appendChild(overlay);
   },
 
-  // === Full Character Status Screen (R key) ===
+  // === Full Character Status Screen (R key or click on enemy) ===
   showStatusScreen(unit, onClose) {
-    if (!unit || unit.faction !== 'player') return;
+    if (!unit) return;
+    const isPlayer = unit.faction === 'player';
     const cls = getClassData(unit.classId);
     const growths = unit.growths || {};
     const hpPct = Math.round(unit.hp / unit.maxHp * 100);
@@ -413,42 +414,47 @@ const UI = {
     }
     if (!itemsHtml) itemsHtml = '<div style="color:#555">（無裝備）</div>';
 
-    // Promotion paths
+    // Promotion paths (player only)
     let promoHtml = '';
-    if (cls.promo && cls.promo.length > 0) {
-      promoHtml = '<div style="margin-top:8px;font-size:11px;color:#aaa">轉職路線：';
-      for (const p of cls.promo) {
-        const targetCls = getClassData(p.to);
-        promoHtml += `<span style="color:#ffa500"> ${targetCls.name}</span>`;
+    if (isPlayer) {
+      if (cls.promo && cls.promo.length > 0) {
+        promoHtml = '<div style="margin-top:8px;font-size:11px;color:#aaa">轉職路線：';
+        for (const p of cls.promo) {
+          const targetCls = getClassData(p.to);
+          promoHtml += `<span style="color:#ffa500"> ${targetCls.name}</span>`;
+        }
+        promoHtml += '</div>';
+      } else if (cls.promoted) {
+        promoHtml = '<div style="margin-top:8px;font-size:11px;color:#ffa500">（已轉職）</div>';
       }
-      promoHtml += '</div>';
-    } else if (cls.promoted) {
-      promoHtml = '<div style="margin-top:8px;font-size:11px;color:#ffa500">（已轉職）</div>';
     }
 
+    const borderColor = isPlayer ? '#4a9eff' : '#ff4a4a';
+    const nameColor = isPlayer ? '#4a9eff' : '#ff4a4a';
+
     overlay.innerHTML = `
-      <div style="background:#111;border:2px solid #4a9eff;border-radius:8px;padding:24px;min-width:550px;max-width:650px;font-size:13px">
+      <div style="background:#111;border:2px solid ${borderColor};border-radius:8px;padding:24px;min-width:550px;max-width:650px;font-size:13px">
         <div style="display:flex;gap:24px;margin-bottom:16px;align-items:flex-start">
           <div>
-            <canvas id="status-portrait" width="64" height="64" style="image-rendering:pixelated;width:96px;height:96px;border:2px solid #4a9eff"></canvas>
+            <canvas id="status-portrait" width="64" height="64" style="image-rendering:pixelated;width:96px;height:96px;border:2px solid ${borderColor}"></canvas>
           </div>
           <div style="flex:1">
-            <div style="font-size:20px;color:#4a9eff;font-weight:bold">${unit.name}</div>
+            <div style="font-size:20px;color:${nameColor};font-weight:bold">${unit.name}</div>
             <div style="color:#aaa;margin:2px 0">${cls.name}</div>
             <div style="display:flex;gap:20px;margin-top:6px">
               <div>
                 <span style="color:#888">Lv.</span>
                 <span style="color:#fff;font-size:18px;font-weight:bold">${unit.level}</span>
               </div>
-              <div>
+              ${isPlayer ? `<div>
                 <span style="color:#888">EXP</span>
                 <span style="color:#48f;font-size:14px;font-weight:bold"> ${unit.exp}</span>
                 <span style="color:#555">/100</span>
-              </div>
+              </div>` : ''}
             </div>
-            <div style="background:#224;height:6px;width:150px;margin-top:4px;border-radius:2px">
+            ${isPlayer ? `<div style="background:#224;height:6px;width:150px;margin-top:4px;border-radius:2px">
               <div style="background:#48f;height:6px;width:${unit.exp * 1.5}px;border-radius:2px"></div>
-            </div>
+            </div>` : ''}
             ${promoHtml}
           </div>
         </div>
@@ -484,11 +490,15 @@ const UI = {
     document.getElementById('ui-overlay').appendChild(overlay);
 
     // Draw portrait
-    if (unit.charId && typeof Sprites !== 'undefined' && Sprites.drawPortrait) {
+    if (typeof Sprites !== 'undefined') {
       const pCanvas = document.getElementById('status-portrait');
       if (pCanvas) {
         const pCtx = pCanvas.getContext('2d');
-        Sprites.drawPortrait(pCtx, unit.charId, 64, 64);
+        if (unit.charId && Sprites.drawPortrait) {
+          Sprites.drawPortrait(pCtx, unit.charId, 64, 64);
+        } else if (Sprites.drawGenericPortrait) {
+          Sprites.drawGenericPortrait(pCtx, unit, 64, 64);
+        }
       }
     }
   },

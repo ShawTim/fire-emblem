@@ -156,10 +156,10 @@ body {
   margin: 4px 0;
 }
 
-.forecast-attacker { color: #4a9eff; }
-.forecast-defender { color: #ff4a4a; }
+.forecast-attacker { color: #4a9eff; flex: 1; text-align: left; }
+.forecast-defender { color: #ff4a4a; flex: 1; text-align: right; }
 .forecast-vs { color: #888; margin: 0 8px; }
-.forecast-label { color: #aaa; width: 60px; text-align: center; }
+.forecast-label { color: #aaa; width: 60px; text-align: center; flex-shrink: 0; }
 
 /* Dialogue box */
 #dialogue-box {

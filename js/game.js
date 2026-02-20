@@ -304,6 +304,10 @@ class Game {
       this.selectedUnit = unit;
       UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
       this.showUnitCommandMenu(unit);
+    } else if (unit && unit.faction === 'enemy') {
+      // Show enemy status screen
+      UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+      UI.showStatusScreen(unit, null);
     } else if (unit) {
       UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
     } else {
@@ -332,7 +336,10 @@ class Game {
     if (unit.canHeal()) {
       items.push({ label: '治療', action: 'cmd_heal' });
     }
-    items.push({ label: '裝備', action: 'cmd_equip' });
+    const cmdWeapons = unit.items.filter(it => it.type !== 'consumable' && it.type !== 'staff' && it.usesLeft > 0);
+    if (cmdWeapons.length > 0) {
+      items.push({ label: '裝備', action: 'cmd_equip' });
+    }
     items.push({ label: '道具', action: 'cmd_item' });
     items.push({ label: '狀態', action: 'cmd_status' });
 
@@ -453,8 +460,8 @@ class Game {
 
   showEquipMenu(unit) {
     const weapons = unit.items.filter(it => it.type !== 'consumable' && it.type !== 'staff' && it.usesLeft > 0);
-    if (weapons.length <= 1) {
-      // Only one weapon or none — nothing to swap
+    if (weapons.length === 0) {
+      // No weapons — return to command menu
       this.showUnitCommandMenu(unit);
       return;
     }
@@ -617,7 +624,10 @@ class Game {
       }
     }
 
-    items.push({ label: '裝備', action: 'equip' });
+    const postMoveWeapons = unit.items.filter(it => it.type !== 'consumable' && it.type !== 'staff' && it.usesLeft > 0);
+    if (postMoveWeapons.length > 0) {
+      items.push({ label: '裝備', action: 'equip' });
+    }
     items.push({ label: '待機', action: 'wait' });
     items.push({ label: '取消', action: 'cancel' });
 
@@ -653,8 +663,8 @@ class Game {
         const u = this.selectedUnit;
         const weapons = u.items.filter(it => it.type !== 'consumable' && it.type !== 'staff' && it.usesLeft > 0);
         const pos = this.getMenuPosForUnit(u);
-        if (weapons.length <= 1) {
-          // Only one or no weapon — return to action menu
+        if (weapons.length === 0) {
+          // No weapons — return to action menu
           this.state = 'unitMoved';
           this.showActionMenuForUnit(u, pos.x, pos.y);
           return;
@@ -1083,7 +1093,7 @@ class Game {
     if (key === 'r' || key === 'R') {
       if (UI.isStatusScreenOpen()) { UI.hideStatusScreen(); return; }
       const unit = this.units.find(u => u.x === Cursor.x && u.y === Cursor.y && u.hp > 0);
-      if (unit && unit.faction === 'player') { UI.showStatusScreen(unit); }
+      if (unit) { UI.showStatusScreen(unit); }
       return;
     }
 

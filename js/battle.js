@@ -227,8 +227,8 @@ class BattleScene {
     }
     if(this.panelAlpha>0){
       ctx.globalAlpha=this.panelAlpha;
-      this._drawHP(ctx,this.attacker,this.attackerHP,20,ch-135,false,cw);
-      this._drawHP(ctx,this.defender,this.defenderHP,cw-290,ch-135,true,cw);
+      this._drawHP(ctx,this.attacker,this.attackerHP,20,ch-150,false,cw);
+      this._drawHP(ctx,this.defender,this.defenderHP,cw-290,ch-150,true,cw);
       ctx.globalAlpha=1;
     }
     // VS display
@@ -388,7 +388,7 @@ class BattleScene {
   }
 
   _drawHP(ctx, unit, hp, px, py, isRight, cw) {
-    var pw=270, ph=110;
+    var pw=270, ph=130;
     ctx.fillStyle='rgba(10,10,30,0.85)';ctx.fillRect(px,py,pw,ph);
     ctx.strokeStyle='rgba(100,100,200,0.5)';ctx.lineWidth=2;ctx.strokeRect(px,py,pw,ph);
     ctx.strokeStyle='rgba(80,80,180,0.3)';ctx.strokeRect(px+3,py+3,pw-6,ph-6);
@@ -417,6 +417,18 @@ class BattleScene {
     ctx.fillStyle='#888';ctx.font='10px sans-serif';
     var durText=wpn?'\u8015:'+wpn.usesLeft+'/'+wpn.uses:'\u6c92\u6709\u6b66\u5668';
     ctx.fillText(durText,px+12,py+100);
+    // Hit rate & Crit rate from forecast
+    if(this.forecast){
+      var fc=isRight?(this.forecast.defender.canCounter?this.forecast.defender:null):this.forecast.attacker;
+      ctx.font='11px monospace';ctx.textAlign='left';
+      if(fc){
+        ctx.fillStyle='#8f8';ctx.fillText('命中:'+fc.hit+'%',px+12,py+116);
+        ctx.fillStyle='#ff8';ctx.fillText('必殺:'+fc.crit+'%',px+100,py+116);
+      } else {
+        ctx.fillStyle='#555';ctx.fillText('命中: -',px+12,py+116);
+        ctx.fillStyle='#555';ctx.fillText('必殺: -',px+100,py+116);
+      }
+    }
   }
 
   _renderFx(ctx,cw,ch){
