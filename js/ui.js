@@ -150,6 +150,11 @@ const UI = {
         <span class="forecast-label">HP</span>
         <span class="forecast-defender">${d.hp}</span>
       </div>
+      <div class="forecast-row" style="font-size:10px;color:#aaa">
+        <span class="forecast-attacker">${a.weapon || '-'}</span>
+        <span class="forecast-label">武器</span>
+        <span class="forecast-defender">${d.canCounter && d.weapon ? d.weapon : '-'}</span>
+      </div>
       <div class="forecast-row">
         <span class="forecast-attacker">${a.damage}${aDbl}</span>
         <span class="forecast-label">威力</span>

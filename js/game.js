@@ -617,6 +617,7 @@ class Game {
       }
     }
 
+    items.push({ label: '裝備', action: 'equip' });
     items.push({ label: '待機', action: 'wait' });
     items.push({ label: '取消', action: 'cancel' });
 
@@ -648,6 +649,42 @@ class Game {
       case 'seize':
         this.doSeize();
         break;
+      case 'equip': {
+        const u = this.selectedUnit;
+        const weapons = u.items.filter(it => it.type !== 'consumable' && it.type !== 'staff' && it.usesLeft > 0);
+        const pos = this.getMenuPosForUnit(u);
+        if (weapons.length <= 1) {
+          // Only one or no weapon — return to action menu
+          this.state = 'unitMoved';
+          this.showActionMenuForUnit(u, pos.x, pos.y);
+          return;
+        }
+        const equipItems = weapons.map((w, i) => ({
+          label: w.name + ' (' + w.usesLeft + '/' + w.uses + ')',
+          action: 'equip_post_' + i,
+          weaponIndex: i,
+        }));
+        equipItems.push({ label: '返回', action: 'equip_post_cancel' });
+        this.state = 'equipMenu';
+        UI.showActionMenu(equipItems, pos.x, pos.y, (action, idx) => {
+          UI.hideActionMenu();
+          this.state = 'unitMoved';
+          if (action === 'equip_post_cancel') {
+            this.showActionMenuForUnit(u, pos.x, pos.y);
+            return;
+          }
+          const wi = equipItems[idx].weaponIndex;
+          const weapon = weapons[wi];
+          const origIdx = u.items.indexOf(weapon);
+          if (origIdx > 0) {
+            u.items.splice(origIdx, 1);
+            u.items.unshift(weapon);
+          }
+          UI.showUnitPanel(u, GameMap.getTerrain(u.x, u.y));
+          this.showActionMenuForUnit(u, pos.x, pos.y);
+        });
+        break;
+      }
       case 'wait':
         this.doWait();
         break;

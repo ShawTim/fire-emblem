@@ -55,10 +55,12 @@ function calculateCombat(attacker, defender, map) {
   return {
     attacker: {
       name: attacker.name, hp: attacker.hp, maxHp: attacker.maxHp,
+      weapon: atkWpn.name,
       damage: Math.floor(atkDmg * atkEffMult), hit: atkHit, crit: atkCrit, doubleAttack: atkDouble
     },
     defender: {
       name: defender.name, hp: defender.hp, maxHp: defender.maxHp,
+      weapon: defWpn ? defWpn.name : null,
       damage: defDmg, hit: defHit, crit: defCrit, doubleAttack: defDouble, canCounter
     },
     weaponTriangle: triDir
