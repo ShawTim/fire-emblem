@@ -71,7 +71,7 @@ const UI = {
       ${td.def > 0 ? `<div class="stat-row"><span class="stat-label" style="color:#777">防＋</span><span class="stat-val" style="color:#8cf">${td.def}</span></div>` : ''}
       ${td.avo > 0 ? `<div class="stat-row"><span class="stat-label" style="color:#777">避＋</span><span class="stat-val" style="color:#8cf">${td.avo}</span></div>` : ''}
       </div>
-      ${unit.faction === 'player' ? '<div style="font-size:9px;color:#555;margin-top:4px;text-align:center">按 R 查看詳細</div>' : ''}
+      ${unit.faction === 'player' ? '<div style="font-size:9px;color:#555;margin-top:4px;text-align:center">按 R 開啟地圖選單</div>' : ''}
     `;
     this.unitPanel.classList.remove('hidden');
     // Draw portrait on panel canvas
@@ -559,9 +559,295 @@ const UI = {
   },
 
   clearOverlays() {
-    ['gameover-overlay', 'victory-overlay', 'ending-overlay', 'status-screen', 'exp-gain-overlay'].forEach(id => {
+    ['gameover-overlay', 'victory-overlay', 'ending-overlay', 'status-screen', 'exp-gain-overlay',
+     'map-menu-overlay', 'unit-list-overlay', 'map-browse-hint', 'settings-overlay', 'map-menu-msg'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.remove();
     });
-  }
+  },
+
+  // ============================================================
+  // MAP MENU  (press R during player phase)
+  // ============================================================
+  showMapMenu(options) {
+    this.hideMapMenu(); // remove any existing
+    const overlay = document.createElement('div');
+    overlay.id = 'map-menu-overlay';
+    overlay.style.cssText = [
+      'position:absolute;top:0;left:0;right:0;bottom:0',
+      'background:rgba(0,0,0,0.6)',
+      'display:flex;justify-content:center;align-items:center',
+      'z-index:160;pointer-events:auto',
+    ].join(';');
+
+    overlay.innerHTML = `
+      <div id="map-menu-box" style="
+        background:linear-gradient(160deg,#0d0d25,#11162b);
+        border:2px solid #4a9eff;border-radius:10px;
+        padding:28px 40px;min-width:260px;
+        font-family:inherit;font-size:16px;color:#fff;
+        box-shadow:0 0 40px rgba(74,158,255,0.3);">
+        <div style="text-align:center;font-size:20px;color:#4a9eff;font-weight:bold;margin-bottom:20px;letter-spacing:2px">
+          ── 地圖選單 ──
+        </div>
+        <div id="map-menu-items"></div>
+        <div style="text-align:center;margin-top:18px;font-size:11px;color:#555">
+          [Esc] 關閉
+        </div>
+      </div>
+    `;
+
+    const menuDefs = [
+      { label: '⚔ 部隊情報', desc: '查看我方所有角色的詳細狀態', key: 'onUnitList' },
+      { label: '💾 中斷存檔', desc: '儲存目前進度', key: 'onSave' },
+      { label: '🗺 地圖查看', desc: '自由移動鏡頭查看地圖', key: 'onMapBrowse' },
+      { label: '⚙ 設定',     desc: '音量等各項設定', key: 'onSettings' },
+      { label: '🚪 結束遊戲', desc: '返回標題畫面', key: 'onQuit' },
+    ];
+
+    const container = overlay.querySelector('#map-menu-items');
+    menuDefs.forEach(def => {
+      const btn = document.createElement('div');
+      btn.style.cssText = [
+        'padding:10px 16px;margin:5px 0;border-radius:6px',
+        'cursor:pointer;transition:background 0.15s',
+        'border:1px solid transparent',
+        'user-select:none',
+      ].join(';');
+      btn.innerHTML = `<span style="font-weight:bold">${def.label}</span>
+        <div style="font-size:11px;color:#778;margin-top:2px">${def.desc}</div>`;
+      btn.addEventListener('mouseenter', () => {
+        btn.style.background = 'rgba(74,158,255,0.18)';
+        btn.style.borderColor = '#4a9eff';
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.background = '';
+        btn.style.borderColor = 'transparent';
+      });
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.hideMapMenu();
+        if (options[def.key]) options[def.key]();
+      });
+      container.appendChild(btn);
+    });
+
+    // Click outside to close
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        this.hideMapMenu();
+        if (options.onClose) options.onClose();
+      }
+    });
+
+    document.getElementById('ui-overlay').appendChild(overlay);
+
+    // Keyboard Escape to close
+    this._mapMenuKeyHandler = (e) => {
+      if (e.key === 'Escape') {
+        this.hideMapMenu();
+        document.removeEventListener('keydown', this._mapMenuKeyHandler);
+        if (options.onClose) options.onClose();
+      }
+    };
+    document.addEventListener('keydown', this._mapMenuKeyHandler);
+  },
+
+  hideMapMenu() {
+    const el = document.getElementById('map-menu-overlay');
+    if (el) el.remove();
+    if (this._mapMenuKeyHandler) {
+      document.removeEventListener('keydown', this._mapMenuKeyHandler);
+      this._mapMenuKeyHandler = null;
+    }
+  },
+
+  showMapMenuMsg(msg, onDone) {
+    const el = document.createElement('div');
+    el.id = 'map-menu-msg';
+    el.style.cssText = [
+      'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)',
+      'background:rgba(0,10,30,0.95);border:2px solid #4f4',
+      'border-radius:8px;padding:20px 40px;z-index:180',
+      'font-size:18px;color:#4f4;text-align:center;pointer-events:auto',
+    ].join(';');
+    el.textContent = msg;
+    document.getElementById('ui-overlay').appendChild(el);
+    setTimeout(() => {
+      el.remove();
+      if (onDone) onDone();
+    }, 1200);
+  },
+
+  // ============================================================
+  // UNIT LIST  (部隊情報)
+  // ============================================================
+  showUnitList(units, onClose) {
+    const overlay = document.createElement('div');
+    overlay.id = 'unit-list-overlay';
+    overlay.style.cssText = [
+      'position:absolute;top:0;left:0;right:0;bottom:0',
+      'background:rgba(0,0,0,0.85)',
+      'display:flex;flex-direction:column;justify-content:center;align-items:center',
+      'z-index:165;pointer-events:auto;overflow-y:auto',
+    ].join(';');
+
+    let rowsHtml = '';
+    for (const u of units) {
+      const cls = getClassData(u.classId);
+      const wpn = u.getEquippedWeapon ? u.getEquippedWeapon() : null;
+      const hpPct = Math.round(u.hp / u.maxHp * 100);
+      const hpColor = hpPct > 50 ? '#4f4' : hpPct > 25 ? '#cc4' : '#c44';
+      const items = u.items.map(it => {
+        const isWpn = it === wpn;
+        return `<span style="color:${isWpn ? '#ffd700' : '#aaa'}">${it.name}<span style="color:#555">(${it.usesLeft})</span></span>`;
+      }).join(' ');
+      rowsHtml += `
+        <tr style="border-bottom:1px solid #222">
+          <td style="padding:6px 8px;color:#4a9eff;font-weight:bold;min-width:60px">${u.name}</td>
+          <td style="padding:6px 8px;color:#888;font-size:11px;min-width:80px">${cls.name} ${u.level}</td>
+          <td style="padding:6px 10px;min-width:80px">
+            <span style="color:${hpColor}">${u.hp}/${u.maxHp}</span>
+          </td>
+          <td style="padding:6px 8px;color:#8bf;font-size:11px">${u.exp}/100</td>
+          <td style="padding:6px 8px;font-size:11px">${items || '<span style="color:#555">—</span>'}</td>
+        </tr>`;
+    }
+
+    overlay.innerHTML = `
+      <div style="
+        background:#0d0d25;border:2px solid #4a9eff;border-radius:10px;
+        padding:24px;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;">
+        <div style="text-align:center;font-size:18px;color:#4a9eff;font-weight:bold;margin-bottom:16px">
+          ── 部隊情報 ──
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:2px solid #333;color:#aaa;font-size:11px">
+              <th style="padding:4px 8px;text-align:left">角色</th>
+              <th style="padding:4px 8px;text-align:left">職業/等級</th>
+              <th style="padding:4px 8px;text-align:left">HP</th>
+              <th style="padding:4px 8px;text-align:left">EXP</th>
+              <th style="padding:4px 8px;text-align:left">裝備</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+        <div style="text-align:center;margin-top:16px">
+          <button id="unit-list-close" style="
+            padding:8px 24px;font-size:14px;cursor:pointer;
+            background:#4a9eff;border:none;color:#fff;
+            border-radius:4px;font-family:inherit">
+            返回地圖選單
+          </button>
+        </div>
+      </div>
+    `;
+
+    overlay.querySelector('#unit-list-close').addEventListener('click', (e) => {
+      e.stopPropagation();
+      overlay.remove();
+      if (onClose) onClose();
+    });
+
+    document.getElementById('ui-overlay').appendChild(overlay);
+  },
+
+  // ============================================================
+  // SETTINGS MENU  (設定)
+  // ============================================================
+  showSettingsMenu(onClose) {
+    const overlay = document.createElement('div');
+    overlay.id = 'settings-overlay';
+    overlay.style.cssText = [
+      'position:absolute;top:0;left:0;right:0;bottom:0',
+      'background:rgba(0,0,0,0.75)',
+      'display:flex;justify-content:center;align-items:center',
+      'z-index:165;pointer-events:auto',
+    ].join(';');
+
+    const isMuted = typeof BGM !== 'undefined' && BGM.muted;
+    overlay.innerHTML = `
+      <div style="
+        background:#0d0d25;border:2px solid #4a9eff;border-radius:10px;
+        padding:28px 40px;min-width:300px;font-size:14px;color:#fff;">
+        <div style="text-align:center;font-size:18px;color:#4a9eff;font-weight:bold;margin-bottom:20px">
+          ── 設定 ──
+        </div>
+        <div style="margin:12px 0;display:flex;align-items:center;justify-content:space-between">
+          <span>背景音樂</span>
+          <button id="setting-mute" style="
+            padding:6px 18px;cursor:pointer;border:none;border-radius:4px;
+            background:${isMuted ? '#555' : '#4a9eff'};color:#fff;font-family:inherit">
+            ${isMuted ? '🔇 靜音' : '🔊 開啟'}
+          </button>
+        </div>
+        <div style="margin:12px 0;display:flex;align-items:center;justify-content:space-between">
+          <span>網格顯示</span>
+          <button id="setting-grid" style="
+            padding:6px 18px;cursor:pointer;border:none;border-radius:4px;
+            background:#4a9eff;color:#fff;font-family:inherit">
+            切換 [G]
+          </button>
+        </div>
+        <div style="margin:20px 0 0;text-align:center">
+          <button id="settings-close" style="
+            padding:8px 24px;font-size:14px;cursor:pointer;
+            background:#4a9eff;border:none;color:#fff;
+            border-radius:4px;font-family:inherit">
+            返回地圖選單
+          </button>
+        </div>
+      </div>
+    `;
+
+    overlay.querySelector('#setting-mute').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (typeof BGM !== 'undefined') {
+        const muted = BGM.toggleMute();
+        e.target.style.background = muted ? '#555' : '#4a9eff';
+        e.target.textContent = muted ? '🔇 靜音' : '🔊 開啟';
+        const btn = document.getElementById('btn-mute');
+        if (btn) btn.textContent = muted ? '🔇' : '🔊';
+      }
+    });
+
+    overlay.querySelector('#setting-grid').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (typeof GameMap !== 'undefined') GameMap.toggleGrid();
+    });
+
+    overlay.querySelector('#settings-close').addEventListener('click', (e) => {
+      e.stopPropagation();
+      overlay.remove();
+      if (onClose) onClose();
+    });
+
+    document.getElementById('ui-overlay').appendChild(overlay);
+  },
+
+  // ============================================================
+  // MAP BROWSE HINT  (地圖查看模式)
+  // ============================================================
+  showMapBrowseHint() {
+    let hint = document.getElementById('map-browse-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.id = 'map-browse-hint';
+      hint.style.cssText = [
+        'position:absolute;bottom:12px;left:50%;transform:translateX(-50%)',
+        'background:rgba(0,0,30,0.85);border:1px solid #4a9eff',
+        'border-radius:6px;padding:8px 20px;z-index:50',
+        'font-size:13px;color:#8bf;pointer-events:none',
+        'white-space:nowrap',
+      ].join(';');
+    }
+    hint.textContent = '📷 地圖查看模式：方向鍵移動鏡頭  |  [B] / [Esc] 離開';
+    document.getElementById('game-container').appendChild(hint);
+  },
+
+  hideMapBrowseHint() {
+    const hint = document.getElementById('map-browse-hint');
+    if (hint) hint.remove();
+  },
 };

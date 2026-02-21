@@ -251,7 +251,7 @@ class Game {
     GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
 
     // Cursor
-    if (['map', 'unitSelected', 'unitCommand', 'selectTarget'].includes(this.state)) {
+    if (['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state)) {
       Cursor.render(ctx, this.canvasW, this.canvasH);
     }
 
@@ -277,7 +277,8 @@ class Game {
   handleClick(screenX, screenY) {
     if (this.dialogue.isActive()) { this.dialogue.advance(); return; }
     if (this.state === 'title' || this.state === 'ending' || this.state === 'chapterTitle' ||
-        this.state === 'combatAnim' || this.state === 'enemyPhase' || this.state === 'gameOver') return;
+        this.state === 'combatAnim' || this.state === 'enemyPhase' || this.state === 'gameOver' ||
+        this.state === 'mapMenu' || this.state === 'mapBrowse') return;
 
     const tile = GameMap.screenToTile(screenX, screenY);
     Cursor.moveTo(tile.x, tile.y);
@@ -1089,6 +1090,47 @@ class Game {
     } catch (e) { return false; }
   }
 
+  openMapMenu() {
+    this.state = 'mapMenu';
+    const reopen = () => this.openMapMenu();
+    UI.showMapMenu({
+      onUnitList: () => {
+        const playerUnits = this.units.filter(u => u.faction === 'player' && u.hp > 0);
+        UI.showUnitList(playerUnits, reopen);
+      },
+      onSave: () => {
+        this.saveGame();
+        UI.showMapMenuMsg('已存檔！', reopen);
+      },
+      onMapBrowse: () => {
+        this.state = 'map';
+        this.enterMapBrowse();
+      },
+      onSettings: () => {
+        UI.showSettingsMenu(reopen);
+      },
+      onQuit: () => {
+        this.state = 'title';
+        UI.clearOverlays();
+        this.init();
+      },
+      onClose: () => {
+        this.state = 'map';
+      },
+    });
+  }
+
+  enterMapBrowse() {
+    this._browseState = this.state;
+    this.state = 'mapBrowse';
+    UI.showMapBrowseHint();
+  }
+
+  exitMapBrowse() {
+    this.state = this._browseState || 'map';
+    UI.hideMapBrowseHint();
+  }
+
   handleKey(key) {
     // M key: mute toggle (works in all states)
     if (key === 'm' || key === 'M') {
@@ -1101,7 +1143,7 @@ class Game {
       if (key === 'Enter' || key === ' ') this.dialogue.advance();
       return;
     }
-    if (this.state === 'combatAnim' || this.state === 'enemyPhase' || this.state === 'title' || this.state === 'ending') return;
+    if (this.state === 'combatAnim' || this.state === 'enemyPhase' || this.state === 'title' || this.state === 'ending' || this.state === 'mapMenu') return;
 
     const dirs = { ArrowUp: [0,-1], ArrowDown: [0,1], ArrowLeft: [-1,0], ArrowRight: [1,0],
                    w: [0,-1], s: [0,1], a: [-1,0], d: [1,0] };
@@ -1123,15 +1165,32 @@ class Game {
       return;
     }
 
-    // R key = status screen
+    // R key = map menu (when idle) or status screen
     if (key === 'r' || key === 'R') {
       if (UI.isStatusScreenOpen()) { UI.hideStatusScreen(); return; }
+      if (this.state === 'map' && this.phase === 'player') {
+        this.openMapMenu();
+        return;
+      }
       const unit = this.units.find(u => u.x === Cursor.x && u.y === Cursor.y && u.hp > 0);
       if (unit) { UI.showStatusScreen(unit); }
       return;
     }
 
+    // B key = map browse mode
+    if (key === 'b' || key === 'B') {
+      if (this.state === 'map' && this.phase === 'player') {
+        this.enterMapBrowse();
+        return;
+      }
+      if (this.state === 'mapBrowse') {
+        this.exitMapBrowse();
+        return;
+      }
+    }
+
     if (key === 'Enter' || key === 'z') {
+      if (this.state === 'mapBrowse') return; // no unit interaction in browse mode
       // Simulate click at cursor position
       const ts = GameMap.tileSize * GameMap.scale;
       const sx = Cursor.x * ts - GameMap.camX + ts / 2;
@@ -1142,6 +1201,7 @@ class Game {
 
     if (key === 'Escape' || key === 'x') {
       if (UI.isStatusScreenOpen()) { UI.hideStatusScreen(); return; }
+      if (this.state === 'mapBrowse') { this.exitMapBrowse(); return; }
       if (this.state === 'unitSelected') {
         this.cancelSelection();
       } else if (this.state === 'unitMoved') {
