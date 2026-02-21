@@ -1,18 +1,37 @@
 // chapters.js
 const CHAPTERS=[
 
-// ===== PROLOGUE (10x8) =====
-{id:0,title:'序章',subtitle:'墜落之夜',objective:'seize',objectiveDesc:'艾琳到達出口',seizePos:{x:8,y:6},width:10,height:8,
-terrain:['WWWWGWWWWW','WLPPPPPLWW','WPWWPPWWPW','WPPPLPPPPW','WPWWPPWWPW','WPPPPPPPPW','WLPPPPPLGW','WWWWWWWWWW'],
-playerUnits:[{charId:'eirine',x:1,y:1},{charId:'marcus',x:1,y:2}],
+// ===== PROLOGUE (18x12) =====
+{id:0,title:'序章',subtitle:'墜落之夜',objective:'seize',objectiveDesc:'艾琳到達出口',seizePos:{x:16,y:10},width:18,height:12,
+terrain:[
+'WWWWWWWWWWWWWWWWWW',
+'WPPPPPPPPPPPPPPPPW',
+'WPPPLPPPPPPPLPPPPW',
+'WPPWWPPPPPPPPWWPPW',
+'WPPPPFFFFFFFPPPPPW',
+'WLPPPFFFFPPFFFPPLW',
+'WPPPFFFFFPPFFFFPPW',
+'WPPPPPPPPPPPPPPPPW',
+'WMMPPWWPPPPWWPPMMW',
+'WPPPLPPPPPPPPPLPPW',
+'WPPPPPPPPPPPPPPPPW',
+'WWWWWWWWWWWWWWWWWW'],
+playerUnits:[{charId:'eirine',x:1,y:1},{charId:'marcus',x:2,y:1}],
 enemies:[
-{classId:'soldier',level:1,x:5,y:1,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:1,x:7,y:2,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:1,x:4,y:3,items:['slimLance'],ai:'defensive',name:'帝國兵'},
-{classId:'soldier',level:1,x:8,y:4,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:1,x:3,y:5,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:2,x:6,y:5,items:['slimLance'],ai:'defensive',name:'帝國兵'},
-{classId:'knight',level:2,x:8,y:6,items:['slimLance'],ai:'defensive',name:'守衛隊長'}],
+{classId:'soldier',level:1,x:6,y:2,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
+{classId:'soldier',level:1,x:5,y:3,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
+{classId:'soldier',level:1,x:11,y:3,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
+{classId:'soldier',level:2,x:5,y:5,items:['slimLance'],ai:'defensive',name:'帝國兵'},
+{classId:'soldier',level:2,x:12,y:5,items:['slimLance'],ai:'defensive',name:'帝國兵'},
+{classId:'soldier',level:2,x:7,y:6,items:['slimLance'],ai:'defensive',name:'帝國兵'},
+{classId:'soldier',level:2,x:10,y:6,items:['slimLance'],ai:'defensive',name:'帝國兵'},
+{classId:'soldier',level:3,x:8,y:7,items:['ironLance'],ai:'aggressive',name:'帝國士官'},
+{classId:'soldier',level:3,x:3,y:8,items:['ironLance'],ai:'aggressive',name:'帝國精兵'},
+{classId:'archer',level:3,x:9,y:8,items:['ironBow'],ai:'defensive',name:'帝國弓兵'},
+{classId:'soldier',level:3,x:13,y:8,items:['ironLance'],ai:'aggressive',name:'帝國精兵'},
+{classId:'knight',level:3,x:7,y:9,items:['ironLance'],ai:'defensive',name:'帝國重裝'},
+{classId:'knight',level:3,x:11,y:10,items:['ironLance'],ai:'defensive',name:'帝國重裝'},
+{classId:'knight',level:3,x:14,y:10,items:['ironLance'],ai:'defensive',name:'守衛隊長',isBoss:true,bonusStats:{hp:4,str:2,def:2}}],
 npcs:[],newRecruits:[],talkEvents:[],turnEvents:[],
 dialogues:{pre:[
 {speaker:'eirine',text:'父王……不！我不能離開你！'},
