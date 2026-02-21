@@ -4,7 +4,6 @@ function calculateCombat(attacker, defender, map) {
   const atkWpn = attacker.getEquippedWeapon();
   const defWpn = defender.getEquippedWeapon();
   if (!atkWpn) return null;
-
   const atkTerrain = map.getTerrain(attacker.x, attacker.y);
   const defTerrain = map.getTerrain(defender.x, defender.y);
   const dist = Math.abs(attacker.x - defender.x) + Math.abs(attacker.y - defender.y);
@@ -30,8 +29,7 @@ function calculateCombat(attacker, defender, map) {
   }
 
   // Defender counter
-  let canCounter = false;
-  let defDmg = 0, defHit = 0, defCrit = 0, defDouble = false;
+  let canCounter = false, defDmg = 0, defHit = 0, defCrit = 0, defDouble = false;
   if (defWpn && defWpn.type !== 'staff' && defWpn.range.includes(dist)) {
     canCounter = true;
     const defPow = (defWpn.magic ? defender.mag : defender.str) + defWpn.atk + triBonusDef.atk;
@@ -40,7 +38,6 @@ function calculateCombat(attacker, defender, map) {
     defHit = Math.max(0, Math.min(100, defender.getHit() + triBonusDef.hit - attacker.getAvo(atkTerrain)));
     defCrit = Math.max(0, defender.getCrit() - attacker.lck);
     defDouble = defender.spd - attacker.spd >= 5;
-
     // Effective for defender
     if (defWpn.effective && defWpn.effective.length > 0) {
       const atkCls = getClassData(attacker.classId);
@@ -51,18 +48,11 @@ function calculateCombat(attacker, defender, map) {
 
   // Weapon triangle direction: 1=advantage, -1=disadvantage, 0=neutral
   var triDir = triBonus.atk > 0 ? 1 : (triBonus.atk < 0 ? -1 : 0);
-
   return {
-    attacker: {
-      name: attacker.name, hp: attacker.hp, maxHp: attacker.maxHp,
-      weapon: atkWpn.name,
-      damage: Math.floor(atkDmg * atkEffMult), hit: atkHit, crit: atkCrit, doubleAttack: atkDouble
-    },
-    defender: {
-      name: defender.name, hp: defender.hp, maxHp: defender.maxHp,
-      weapon: defWpn ? defWpn.name : null,
-      damage: defDmg, hit: defHit, crit: defCrit, doubleAttack: defDouble, canCounter
-    },
+    attacker: { name: attacker.name, hp: attacker.hp, maxHp: attacker.maxHp, weapon: atkWpn.name,
+      damage: Math.floor(atkDmg * atkEffMult), hit: atkHit, crit: atkCrit, doubleAttack: atkDouble },
+    defender: { name: defender.name, hp: defender.hp, maxHp: defender.maxHp, weapon: defWpn ? defWpn.name : null,
+      damage: defDmg, hit: defHit, crit: defCrit, doubleAttack: defDouble, canCounter },
     weaponTriangle: triDir
   };
 }
@@ -70,7 +60,6 @@ function calculateCombat(attacker, defender, map) {
 function executeCombat(attacker, defender, map) {
   const forecast = calculateCombat(attacker, defender, map);
   if (!forecast) return { steps: [], exp: 0 };
-
   const steps = [];
   const atkWpn = attacker.getEquippedWeapon();
   const defWpn = defender.getEquippedWeapon();
@@ -85,11 +74,9 @@ function executeCombat(attacker, defender, map) {
     const isCrit = critRoll < fc.crit;
     const dmg = isCrit ? fc.damage * 3 : fc.damage;
     const killed = target.takeDamage(dmg);
-
     // Drain weapons
     if (actor === attacker && atkWpn && atkWpn.drain) actor.heal(dmg);
     if (actor === defender && defWpn && defWpn.drain) actor.heal(dmg);
-
     steps.push({ actor, target, damage: dmg, hit: true, crit: isCrit, killed });
     return killed;
   }
@@ -99,7 +86,6 @@ function executeCombat(attacker, defender, map) {
   if (doAttack(attacker, defender, forecast.attacker)) {
     return { steps, exp: calculateExp(attacker, defender, true) };
   }
-
   // Defender counters
   if (forecast.defender.canCounter && defender.hp > 0) {
     if (defWpn) defWpn.usesLeft = Math.max(0, defWpn.usesLeft - 1);
@@ -107,7 +93,6 @@ function executeCombat(attacker, defender, map) {
       return { steps, exp: 0 };
     }
   }
-
   // Attacker doubles
   if (forecast.attacker.doubleAttack && defender.hp > 0) {
     if (atkWpn) atkWpn.usesLeft = Math.max(0, atkWpn.usesLeft - 1);
@@ -115,7 +100,6 @@ function executeCombat(attacker, defender, map) {
       return { steps, exp: calculateExp(attacker, defender, true) };
     }
   }
-
   // Defender doubles
   if (forecast.defender.canCounter && forecast.defender.doubleAttack && attacker.hp > 0 && defender.hp > 0) {
     if (defWpn) defWpn.usesLeft = Math.max(0, defWpn.usesLeft - 1);
@@ -123,22 +107,24 @@ function executeCombat(attacker, defender, map) {
       return { steps, exp: 0 };
     }
   }
-
   return { steps, exp: calculateExp(attacker, defender, false) };
 }
 
 function calculateExp(attacker, defender, killed) {
   if (attacker.faction !== 'player') return 0;
+  
   // Effective level: promoted units count as level + 20
   const atkEffLevel = attacker.level + (attacker.promoted ? 20 : 0);
   const defEffLevel = defender.level + (defender.promoted ? 20 : 0);
   const levelDiff = defEffLevel - atkEffLevel;
-
+  
   let exp;
   if (killed) {
-    // Kill EXP: base depends on level difference
-    exp = Math.max(1, Math.floor((defEffLevel * 10) / atkEffLevel));
+    // Kill EXP: reworked formula for faster leveling
+    // Base: 20 + enemy effective level, roughly 22 EXP for same-level kill
+    exp = 20 + defEffLevel;
     if (levelDiff > 0) exp += levelDiff * 3;
+    else if (levelDiff < 0) exp = Math.max(10, 20 + levelDiff);
     if (defender.isBoss) exp += 40;
     exp = Math.max(1, Math.min(100, exp));
   } else {
