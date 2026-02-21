@@ -516,7 +516,7 @@ post:[
 // ===== CHARACTERS =====
 const CHARACTERS={
 eirine:{name:'艾琳',classId:'lord',level:1,isLord:true,portrait:{hair:'#c4a',eyes:'#48f',skin:'#fdb'},baseStats:{hp:19,str:4,mag:1,skl:7,spd:9,lck:9,def:4,res:3},growths:{hp:75,str:50,mag:15,skl:50,spd:60,lck:60,def:30,res:30},items:['rapier']},
-marcus:{name:'馬庫斯',classId:'paladin',level:1,portrait:{hair:'#666',eyes:'#432',skin:'#eca'},baseStats:{hp:28,str:10,mag:1,skl:12,spd:7,lck:8,def:9,res:6},growths:{hp:40,str:20,mag:5,skl:20,spd:10,lck:20,def:15,res:10},items:['steelSword','ironLance']},
+marcus:{name:'馬庫斯',classId:'paladin',level:1,portrait:{hair:'#666',eyes:'#432',skin:'#eca'},baseStats:{hp:28,str:10,mag:1,skl:12,spd:7,lck:8,def:9,res:6},growths:{hp:40,str:20,mag:5,skl:20,spd:10,lck:20,def:15,res:10},items:['steelSword','ironLance','vulnerary']},
 lina:{name:'莉娜',classId:'archer',level:1,portrait:{hair:'#6c4',eyes:'#4a4',skin:'#fdb'},baseStats:{hp:17,str:5,mag:0,skl:7,spd:7,lck:4,def:3,res:1},growths:{hp:55,str:40,mag:5,skl:55,spd:55,lck:35,def:20,res:20},items:['ironBow']},
 thor:{name:'托爾',classId:'fighter',level:3,portrait:{hair:'#d82',eyes:'#654',skin:'#dba'},baseStats:{hp:24,str:8,mag:0,skl:4,spd:4,lck:3,def:5,res:0},growths:{hp:80,str:55,mag:5,skl:30,spd:25,lck:25,def:35,res:10},items:['ironAxe','handAxe']},
 serra:{name:'賽拉',classId:'cleric',level:2,portrait:{hair:'#ffa',eyes:'#88f',skin:'#fed'},baseStats:{hp:16,str:1,mag:5,skl:4,spd:6,lck:7,def:1,res:7},growths:{hp:45,str:5,mag:55,skl:30,spd:35,lck:45,def:10,res:55},items:['heal']},

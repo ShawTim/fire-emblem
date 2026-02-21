@@ -493,42 +493,63 @@ class Game {
     });
   }
 
-  showItemMenu(unit) {
+  showItemMenu(unit, onReturn) {
+    const backFn = onReturn || (() => this.showUnitCommandMenu(unit));
     if (unit.items.length === 0) {
-      this.showUnitCommandMenu(unit);
+      backFn();
       return;
     }
-    const items = unit.items.map((it, i) => ({
-      label: it.name + (it.heals ? ' [回復]' : '') + ' (' + (it.usesLeft || 0) + '/' + (it.uses || 0) + ')',
+    const consumables = unit.items.filter(it => it.type === 'consumable' && it.usesLeft > 0);
+    if (consumables.length === 0) {
+      backFn();
+      return;
+    }
+    const menuItems = consumables.map((it, i) => ({
+      label: it.name + (it.heals ? ` [回復${it.heals}HP]` : '') + ' (' + (it.usesLeft || 0) + '/' + (it.uses || 0) + ')',
       action: 'item_' + i,
-      itemIndex: i,
+      itemRef: it,
     }));
-    items.push({ label: '返回', action: 'item_cancel' });
+    menuItems.push({ label: '返回', action: 'item_cancel' });
 
     this.state = 'itemMenu';
     const pos = this.getMenuPosForUnit(unit);
-    UI.showActionMenu(items, pos.x, pos.y, (action, idx) => {
+    UI.showActionMenu(menuItems, pos.x, pos.y, (action, idx) => {
       UI.hideActionMenu();
       if (action === 'item_cancel') {
-        this.showUnitCommandMenu(unit);
+        backFn();
         return;
       }
-      const itemIdx = items[idx].itemIndex;
-      const item = unit.items[itemIdx];
-      // Use consumable (vulnerary etc)
-      if (item.heals && unit.hp < unit.maxHp) {
-        const healAmt = Math.min(item.heals, unit.maxHp - unit.hp);
-        unit.hp += healAmt;
-        item.usesLeft--;
-        if (item.usesLeft <= 0) unit.items.splice(itemIdx, 1);
-        const ts = GameMap.tileSize * GameMap.scale;
-        const sx = unit.x * ts - GameMap.camX + ts / 2;
-        const sy = unit.y * ts - GameMap.camY;
-        UI.showDamagePopup(sx, sy, healAmt, 'heal');
-        if (typeof SFX !== 'undefined') SFX.heal();
-        UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+      const item = menuItems[idx].itemRef;
+      if (!item) { backFn(); return; }
+      // Use consumable (傷藥 / vulnerary etc)
+      if (item.type === 'consumable' && item.heals) {
+        if (unit.hp < unit.maxHp) {
+          const healAmt = Math.min(item.heals, unit.maxHp - unit.hp);
+          unit.hp += healAmt;
+          item.usesLeft--;
+          if (item.usesLeft <= 0) {
+            const realIdx = unit.items.indexOf(item);
+            if (realIdx >= 0) unit.items.splice(realIdx, 1);
+          }
+          const ts = GameMap.tileSize * GameMap.scale;
+          const sx = unit.x * ts - GameMap.camX + ts / 2;
+          const sy = unit.y * ts - GameMap.camY;
+          UI.showDamagePopup(sx, sy, healAmt, 'heal');
+          if (typeof SFX !== 'undefined') SFX.heal();
+          UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+          // Using item counts as action
+          unit.acted = true;
+          unit.moved = true;
+          this.selectedUnit = null;
+          this.state = 'map';
+          return;
+        } else {
+          // Already at full HP, go back to menu
+          backFn();
+          return;
+        }
       }
-      this.showUnitCommandMenu(unit);
+      backFn();
     });
   }
 
@@ -628,6 +649,10 @@ class Game {
     if (postMoveWeapons.length > 0) {
       items.push({ label: '裝備', action: 'equip' });
     }
+    const postMoveConsumables = unit.items.filter(it => it.type === 'consumable' && it.usesLeft > 0);
+    if (postMoveConsumables.length > 0) {
+      items.push({ label: '道具', action: 'item' });
+    }
     items.push({ label: '待機', action: 'wait' });
     items.push({ label: '取消', action: 'cancel' });
 
@@ -691,6 +716,15 @@ class Game {
             u.items.unshift(weapon);
           }
           UI.showUnitPanel(u, GameMap.getTerrain(u.x, u.y));
+          this.showActionMenuForUnit(u, pos.x, pos.y);
+        });
+        break;
+      }
+      case 'item': {
+        const u = this.selectedUnit;
+        const pos = this.getMenuPosForUnit(u);
+        this.showItemMenu(u, () => {
+          this.state = 'unitMoved';
           this.showActionMenuForUnit(u, pos.x, pos.y);
         });
         break;
