@@ -19,7 +19,7 @@ const UI = {
     if (!unit) { this.unitPanel.classList.add('hidden'); return; }
     const cls = getClassData(unit.classId);
     const terrain = terrainType || 'plain';
-    const td = { plain:{def:0,avo:0,name:'平原'}, forest:{def:1,avo:20,name:'森林'}, mountain:{def:2,avo:30,name:'山地'}, wall:{def:3,avo:20,name:'城牆'}, gate:{def:3,avo:30,name:'城門'}, river:{def:0,avo:0,name:'河川'}, village:{def:0,avo:10,name:'村莊'}, throne:{def:3,avo:30,name:'王座'}, pillar:{def:1,avo:15,name:'柱子'}, floor:{def:0,avo:0,name:'石板地板'} }[terrain] || {def:0,avo:0,name:terrain};
+    const td = { plain:{def:0,avo:0,name:'平原'}, forest:{def:1,avo:20,name:'森林'}, mountain:{def:2,avo:30,name:'山地'}, fort:{def:2,avo:20,name:'砦'}, wall:{def:3,avo:20,name:'城牆'}, gate:{def:3,avo:30,name:'城門'}, river:{def:0,avo:0,name:'河川'}, village:{def:0,avo:10,name:'村莊'}, throne:{def:3,avo:30,name:'王座'}, pillar:{def:1,avo:15,name:'柱子'}, floor:{def:0,avo:0,name:'石板地板'} }[terrain] || {def:0,avo:0,name:terrain};
     const hpPct = Math.round(unit.hp / unit.maxHp * 100);
     const hpColor = hpPct > 50 ? '#4f4' : (hpPct > 25 ? '#cc4' : '#c44');
     const expPct = unit.faction === 'player' ? unit.exp : 0;
@@ -96,7 +96,7 @@ const UI = {
       this.terrainInfo.style.cssText = 'position:absolute;bottom:8px;left:8px;background:rgba(10,10,30,0.88);border:1px solid #445;border-radius:4px;padding:4px 8px;font-size:11px;color:#ccd;pointer-events:none;z-index:20;font-family:monospace;min-width:80px';
       document.getElementById('game-container').appendChild(this.terrainInfo);
     }
-    const td = {plain:{def:0,avo:0,name:'平原'},forest:{def:1,avo:20,name:'森林'},mountain:{def:2,avo:30,name:'山地'},wall:{def:3,avo:20,name:'城牆'},gate:{def:3,avo:30,name:'城門'},river:{def:0,avo:0,name:'河川'},village:{def:0,avo:10,name:'村莊'},throne:{def:3,avo:30,name:'王座'},pillar:{def:1,avo:15,name:'柱子'},floor:{def:0,avo:0,name:'石板地板'}}[terrain] || {def:0,avo:0,name:terrain||'?'};
+    const td = {plain:{def:0,avo:0,name:'平原'},forest:{def:1,avo:20,name:'森林'},mountain:{def:2,avo:30,name:'山地'},fort:{def:2,avo:20,name:'砦'},wall:{def:3,avo:20,name:'城牆'},gate:{def:3,avo:30,name:'城門'},river:{def:0,avo:0,name:'河川'},village:{def:0,avo:10,name:'村莊'},throne:{def:3,avo:30,name:'王座'},pillar:{def:1,avo:15,name:'柱子'},floor:{def:0,avo:0,name:'石板地板'}}[terrain] || {def:0,avo:0,name:terrain||'?'};
     let html = '<span style="color:#bc9;font-weight:bold">' + td.name + '</span>';
     if (td.def > 0) html += ' <span style="color:#8cf">防+' + td.def + '</span>';
     if (td.avo > 0) html += ' <span style="color:#8cf">避+' + td.avo + '</span>';

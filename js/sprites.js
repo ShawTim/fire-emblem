@@ -12,7 +12,7 @@ var Sprites = {
 
   getTerrainColor: function(type) {
     return { plain:{base:"#58b848",dark:"#48a838",light:"#68c858"}, forest:{base:"#40a838",dark:"#309828",light:"#50b848"},
-      mountain:{base:"#a09880",dark:"#887868",light:"#b0a890"}, wall:{base:"#807870",dark:"#686060",light:"#989088"},
+      mountain:{base:"#a09880",dark:"#887868",light:"#b0a890"}, fort:{base:"#8a9a8a",dark:"#6a7a6a",light:"#aabaaa"}, wall:{base:"#807870",dark:"#686060",light:"#989088"},
       gate:{base:"#908880",dark:"#706858",light:"#a8a098"}, river:{base:"#3888d0",dark:"#2870b8",light:"#50a0e0"},
       village:{base:"#e0c898",dark:"#c8a878",light:"#ecd8a8"}, throne:{base:"#d83838",dark:"#c82020",light:"#e0b030"},
       pillar:{base:"#b0b0c0",dark:"#a8a8b8",light:"#c0c0d0"},
@@ -78,6 +78,22 @@ var Sprites = {
       R(x+8,y+16,3,1,'#706048');R(x+20,y+12,2,2,'#706048');R(x+17,y+2,1,8,'#b8a888');
       // Base grass
       R(x,y+26,s,6,'#58a848');R(x,y+24,s,3,'#80a870');
+
+    }else if(type==='fort'){
+      // GBA-style Fort / 砦
+      R(x,y,s,s,'#58b848'); // Base plain grass
+      // Stone foundation
+      R(x+4,y+8,24,20,'#8a9a8a');
+      // Inner courtyard
+      R(x+6,y+10,20,16,'#7a8a7a');
+      // Four corner towers
+      R(x+2,y+4,8,8,'#9aabaa'); R(x+2,y+4,8,1,'#bacaca'); R(x+2,y+11,8,1,'#5a6a5a');
+      R(x+22,y+4,8,8,'#9aabaa'); R(x+22,y+4,8,1,'#bacaca'); R(x+22,y+11,8,1,'#5a6a5a');
+      R(x+2,y+20,8,8,'#9aabaa'); R(x+2,y+20,8,1,'#bacaca'); R(x+2,y+27,8,1,'#5a6a5a');
+      R(x+22,y+20,8,8,'#9aabaa'); R(x+22,y+20,8,1,'#bacaca'); R(x+22,y+27,8,1,'#5a6a5a');
+      // Gate
+      R(x+12,y+20,8,8,'#3a2a1a');
+      R(x+12,y+20,8,1,'#2a1a0a');
 
     }else if(type==='wall'){
       // Stone bricks with clear mortar lines

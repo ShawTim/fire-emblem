@@ -9,10 +9,10 @@ terrain:[
 'WIIIIIIIIIIIIIIIIW',
 'WILIIIIIIIIIIIILIW',
 'WIIWWIIIIIIIIIWWIW',
-'WIIIIIIIIIIIIIIIIW',
+'WIOOIIIIIIIIIIIIIW',
 'WLIIIIIIIIIIIIIILW',
 'WIIWWIIIIIIIIIWWIW',
-'WIIIIIIIIIIIIIIIIW',
+'WIOOIIIIIIIIIIIIIW',
 'WILIIIIIIIIIIIILIW',
 'WIIIIIIIIIIIIIIIIW',
 'WIIIIIIIIIIIIIIITW',
@@ -532,7 +532,7 @@ morgane:{name:'莫爾甘',portrait:{hair:'#206',eyes:'#f0f',skin:'#baa'}}
 
 function parseTerrain(terrainStrings,w,h){
 const map=[];
-const L={P:'plain',F:'forest',M:'mountain',W:'wall',G:'gate',R:'river',V:'village',I:'floor',T:'throne',L:'pillar'};
+const L={P:'plain',F:'forest',M:'mountain',W:'wall',G:'gate',R:'river',V:'village',I:'floor',T:'throne',L:'pillar',O:'fort'};
 for(let y=0;y<h;y++){map[y]=[];const r=terrainStrings[y]||'';for(let x=0;x<w;x++)map[y][x]=L[r[x]]||'plain';}
 return map;
 }

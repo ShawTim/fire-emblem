@@ -3,6 +3,7 @@ const TERRAIN_DATA = {
   plain:    { def: 0, avo: 0, cost: 1 },
   forest:   { def: 1, avo: 20, cost: 2 },
   mountain: { def: 2, avo: 30, cost: 3 },
+  fort:     { def: 2, avo: 20, cost: 2 },
   wall:     { def: 3, avo: 20, cost: 999 },
   gate:     { def: 3, avo: 30, cost: 1 },
   river:    { def: 0, avo: 0, cost: 999 },

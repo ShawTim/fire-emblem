@@ -156,6 +156,33 @@ class Game {
     UI.hideActionMenu();
     UI.hideCombatForecast();
     BGM.play('playerPhase', true);
+    this.applyTerrainHealing('player');
+  }
+
+  applyTerrainHealing(faction) {
+    let hasHealed = false;
+    for (const u of this.units) {
+      if (u.faction === faction && u.hp > 0 && u.hp < u.maxHp) {
+        const terrain = GameMap.getTerrain(u.x, u.y);
+        if (terrain === 'fort' || terrain === 'gate' || terrain === 'throne') {
+          const healAmt = Math.min(u.maxHp - u.hp, Math.floor(u.maxHp * 0.2));
+          if (healAmt > 0) {
+            u.hp += healAmt;
+            // Delay slightly to ensure UI is ready, and sequence them visually
+            setTimeout(() => {
+              const ts = GameMap.tileSize * GameMap.scale;
+              const sx = u.x * ts - GameMap.camX + ts / 2;
+              const sy = u.y * ts - GameMap.camY;
+              UI.showDamagePopup(sx, sy, healAmt, 'heal');
+              if (typeof SFX !== 'undefined' && !hasHealed) {
+                SFX.heal();
+                hasHealed = true;
+              }
+            }, 500);
+          }
+        }
+      }
+    }
   }
 
   processTurnEvents() {
@@ -1012,6 +1039,7 @@ class Game {
     UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'enemy', this.chapterData.objective);
     UI.showPhaseBanner('enemy');
     BGM.play('enemyPhase', true);
+    this.applyTerrainHealing('enemy');
 
     for (const u of this.units) {
       if (u.faction === 'enemy' && u.hp > 0) u.reset();
