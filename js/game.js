@@ -312,8 +312,23 @@ class Game {
     } else if (unit) {
       UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
     } else {
+      // 點擊空格（無單位格）觸發地圖選單
       UI.hideUnitPanel();
+      if (this.state === 'map') {
+        this.openMapMenu();
+      }
     }
+  }
+
+  // 取得相鄰友方單位（用於交換系統）
+  getAdjacentFriendlyUnits(unit) {
+    const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+    return dirs
+      .map(([dx, dy]) => this.units.find(u =>
+        u.x === unit.x + dx && u.y === unit.y + dy &&
+        u.hp > 0 && u.faction === 'player' && u !== unit
+      ))
+      .filter(Boolean);
   }
 
   getMenuPosForUnit(unit) {
@@ -654,6 +669,13 @@ class Game {
     if (postMoveConsumables.length > 0) {
       items.push({ label: '道具', action: 'item' });
     }
+
+    // 交換系統：若有相鄰友方單位則顯示交換選項
+    const friendlyNeighbors = this.getAdjacentFriendlyUnits(unit);
+    if (friendlyNeighbors.length > 0) {
+      items.push({ label: '交換', action: 'trade', neighbors: friendlyNeighbors });
+    }
+
     items.push({ label: '待機', action: 'wait' });
     items.push({ label: '取消', action: 'cancel' });
 
@@ -728,6 +750,35 @@ class Game {
           this.state = 'unitMoved';
           this.showActionMenuForUnit(u, pos.x, pos.y);
         });
+        break;
+      }
+      case 'trade': {
+        // 交換系統
+        const u = this.selectedUnit;
+        const pos = this.getMenuPosForUnit(u);
+        const neighbors = menuItem.neighbors || this.getAdjacentFriendlyUnits(u);
+        const reopenAction = () => {
+          this.state = 'unitMoved';
+          this.showActionMenuForUnit(u, pos.x, pos.y);
+        };
+        if (neighbors.length === 1) {
+          // 只有一個相鄰友方，直接開啟交換畫面
+          UI.showTradeMenu(u, neighbors[0], reopenAction);
+        } else {
+          // 多個相鄰友方，先選擇要交換的對象
+          const neighborItems = neighbors.map((n, i) => ({
+            label: n.name + ' (' + getClassData(n.classId).name + ')',
+            action: 'trade_target_' + i,
+            targetUnit: n,
+          }));
+          neighborItems.push({ label: '取消', action: 'trade_cancel' });
+          this.state = 'unitCommand';
+          UI.showActionMenu(neighborItems, pos.x, pos.y, (action, idx) => {
+            UI.hideActionMenu();
+            if (action === 'trade_cancel') { reopenAction(); return; }
+            UI.showTradeMenu(u, neighborItems[idx].targetUnit, reopenAction);
+          });
+        }
         break;
       }
       case 'wait':
@@ -805,27 +856,35 @@ class Game {
     }
 
     // EXP — determine which player unit gets exp
+    // BUG FIX: 統一主動進攻與反擊殺敵的 EXP 公式
+    // executeCombat 現在在防守方殺敵時也會用 calculateExp(defender, attacker, true)
+    // 因此 combatResult.exp 對兩種情況都是正確的
     let expUnit = null;
     let expAmt = 0;
-    if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedUnit.hp > 0 && this.combatResult.exp > 0) {
-      // Player attacked enemy — attacker gets exp (already calculated)
-      expUnit = this.selectedUnit;
-      expAmt = this.combatResult.exp;
-    } else if (this.phase === 'enemy' && this.combatDefender && this.combatDefender.faction === 'player' && this.combatDefender.hp > 0) {
-      // Enemy attacked player — defender gets exp
-      const atk = this.combatAttacker;
-      const def = this.combatDefender;
-      const killed = atk.hp <= 0;
-      const atkEffLevel = atk.level + (atk.promoted ? 20 : 0);
-      const defEffLevel = def.level + (def.promoted ? 20 : 0);
-      const levelDiff = atkEffLevel - defEffLevel;
-      if (killed) {
-        expAmt = Math.max(1, Math.min(100, Math.floor((atkEffLevel * 10) / defEffLevel) + (levelDiff > 0 ? levelDiff * 3 : 0) + (atk.isBoss ? 40 : 0)));
-      } else {
-        expAmt = Math.max(1, Math.floor(1 + levelDiff));
-        if (levelDiff < -5) expAmt = 1;
+    if (this.phase === 'player') {
+      // 玩家回合：玩家是進攻方
+      if (this.selectedUnit && this.selectedUnit.faction === 'player' && this.selectedUnit.hp > 0 && this.combatResult.exp > 0) {
+        expUnit = this.selectedUnit;
+        expAmt = this.combatResult.exp;
       }
-      expUnit = def;
+    } else if (this.phase === 'enemy') {
+      // 敵軍回合：玩家是防守方
+      const def = this.combatDefender;
+      if (def && def.faction === 'player' && def.hp > 0) {
+        expUnit = def;
+        if (this.combatResult && this.combatResult.exp > 0) {
+          // 反擊殺敵：calculateExp(defender=player, attacker=enemy, true) 已正確計算
+          expAmt = this.combatResult.exp;
+        } else {
+          // 非殺敵情況：使用與 calculateExp 相同的公式計算防守 EXP
+          const atk = this.combatAttacker;
+          const atkEffLevel = atk.level + (atk.promoted ? 20 : 0);
+          const defEffLevel = def.level + (def.promoted ? 20 : 0);
+          const levelDiff = atkEffLevel - defEffLevel; // 敵方等級 - 我方等級
+          expAmt = Math.max(1, Math.floor(1 + levelDiff));
+          if (levelDiff < -5) expAmt = 1;
+        }
+      }
     }
 
     if (expUnit && expAmt > 0) {
@@ -986,6 +1045,24 @@ class Game {
 
     const doAfterMove = () => {
       if (action.type === 'attack') {
+        // BUG FIX: 遠程打擊修復 — 在實際攻擊前驗證目標仍在射程內
+        // 若因路徑被阻擋導致單位沒移動到預定位置，需確保攻擊仍有效
+        const target = action.target;
+        if (!target || target.hp <= 0) {
+          // 目標已死亡，取消攻擊
+          action.unit.acted = true;
+          setTimeout(() => this.processNextEnemyAction(), 100);
+          return;
+        }
+        const actualDist = Math.abs(action.unit.x - target.x) + Math.abs(action.unit.y - target.y);
+        const atkRange = action.unit.getAttackRange();
+        if (!atkRange.includes(actualDist)) {
+          // 目標超出實際射程（例如路徑被阻擋導致無法移動到位）
+          // 取消攻擊，改為待機，避免超遠距離打擊
+          action.unit.acted = true;
+          setTimeout(() => this.processNextEnemyAction(), 100);
+          return;
+        }
         GameMap.scrollToward(action.unit.x, action.unit.y, this.canvasW, this.canvasH);
         this.selectedUnit = action.unit;
         // Brief pause after move so player sees positioning before combat
@@ -1096,7 +1173,8 @@ class Game {
     UI.showMapMenu({
       onUnitList: () => {
         const playerUnits = this.units.filter(u => u.faction === 'player' && u.hp > 0);
-        UI.showUnitList(playerUnits, reopen);
+        const enemyUnits = this.units.filter(u => u.faction === 'enemy' && u.hp > 0);
+        UI.showUnitList(playerUnits, enemyUnits, reopen);
       },
       onSave: () => {
         this.saveGame();

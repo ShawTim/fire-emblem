@@ -2,19 +2,20 @@
 const CHAPTERS=[
 
 // ===== PROLOGUE (18x12) =====
-{id:0,title:'序章',subtitle:'墜落之夜',objective:'seize',objectiveDesc:'艾琳到達出口',seizePos:{x:16,y:10},width:18,height:12,
+// 場景：帝都王宮內部（宮殿走廊與大廳）
+{id:0,title:'序章',subtitle:'墜落之夜',objective:'seize',objectiveDesc:'艾琳到達暗門出口',seizePos:{x:16,y:10},width:18,height:12,
 terrain:[
 'WWWWWWWWWWWWWWWWWW',
-'WPPPPPPPPPPPPPPPPW',
-'WPPPLPPPPPPPLPPPPW',
-'WPPWWPPPPPPPPWWPPW',
-'WPPPPFFFFFFFPPPPPW',
-'WLPPPFFFFPPFFFPPLW',
-'WPPPFFFFFPPFFFFPPW',
-'WPPPPPPPPPPPPPPPPW',
-'WMMPPWWPPPPWWPPMMW',
-'WPPPLPPPPPPPPPLPPW',
-'WPPPPPPPPPPPPPPPPW',
+'WIIIIIIIIIIIIIIIIW',
+'WILIIIIIIIIIIIILIW',
+'WIIWWIIIIIIIIIWWIW',
+'WIIIIIIIIIIIIIIIIW',
+'WLIIIIIIIIIIIIIILW',
+'WIIWWIIIIIIIIIWWIW',
+'WIIIIIIIIIIIIIIIIW',
+'WILIIIIIIIIIIIILIW',
+'WIIIIIIIIIIIIIIIIW',
+'WIIIIIIIIIIIIIIITW',
 'WWWWWWWWWWWWWWWWWW'],
 playerUnits:[{charId:'eirine',x:1,y:1},{charId:'marcus',x:2,y:1}],
 enemies:[

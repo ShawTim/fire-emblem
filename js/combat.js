@@ -90,7 +90,9 @@ function executeCombat(attacker, defender, map) {
   if (forecast.defender.canCounter && defender.hp > 0) {
     if (defWpn) defWpn.usesLeft = Math.max(0, defWpn.usesLeft - 1);
     if (doAttack(defender, attacker, forecast.defender)) {
-      return { steps, exp: 0 };
+      // BUG FIX: 反擊殺敵時使用與主動進攻一致的 EXP 公式
+      // 若防守方（可能是玩家）殺死進攻方，使用相同的 calculateExp 公式
+      return { steps, exp: calculateExp(defender, attacker, true) };
     }
   }
   // Attacker doubles
@@ -104,7 +106,8 @@ function executeCombat(attacker, defender, map) {
   if (forecast.defender.canCounter && forecast.defender.doubleAttack && attacker.hp > 0 && defender.hp > 0) {
     if (defWpn) defWpn.usesLeft = Math.max(0, defWpn.usesLeft - 1);
     if (doAttack(defender, attacker, forecast.defender)) {
-      return { steps, exp: 0 };
+      // BUG FIX: 防守方二次攻擊殺敵，同樣使用一致的 EXP 公式
+      return { steps, exp: calculateExp(defender, attacker, true) };
     }
   }
   return { steps, exp: calculateExp(attacker, defender, false) };

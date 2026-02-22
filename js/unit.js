@@ -9,6 +9,7 @@ const TERRAIN_DATA = {
   village:  { def: 0, avo: 10, cost: 1 },
   throne:   { def: 3, avo: 30, cost: 1 },
   pillar:   { def: 1, avo: 15, cost: 2 },
+  floor:    { def: 0, avo: 0, cost: 1 },  // 室內宮殿地板
 };
 
 class Unit {

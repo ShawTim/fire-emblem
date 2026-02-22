@@ -15,7 +15,8 @@ var Sprites = {
       mountain:{base:"#a09880",dark:"#887868",light:"#b0a890"}, wall:{base:"#807870",dark:"#686060",light:"#989088"},
       gate:{base:"#908880",dark:"#706858",light:"#a8a098"}, river:{base:"#3888d0",dark:"#2870b8",light:"#50a0e0"},
       village:{base:"#e0c898",dark:"#c8a878",light:"#ecd8a8"}, throne:{base:"#d83838",dark:"#c82020",light:"#e0b030"},
-      pillar:{base:"#b0b0c0",dark:"#a8a8b8",light:"#c0c0d0"} }[type] || {base:"#58b848",dark:"#48a838",light:"#68c858"};
+      pillar:{base:"#b0b0c0",dark:"#a8a8b8",light:"#c0c0d0"},
+      floor:{base:"#c8c0b0",dark:"#b0a898",light:"#dcd4c4"} }[type] || {base:"#58b848",dark:"#48a838",light:"#68c858"};
   },
 
   drawTerrain: function(ctx, type, x, y) {
@@ -177,6 +178,22 @@ var Sprites = {
       // Capital and base
       R(x+8,y+2,16,3,'#a8a8b8');R(x+9,y+2,14,1,'#c0c0d0');
       R(x+8,y+27,16,3,'#a8a8b8');R(x+9,y+29,14,1,'#989898');
+
+    }else if(type==='floor'){
+      // 宮殿室內石板地板 — 大理石格紋
+      R(x,y,s,s,'#c8c0b0');
+      // 大理石方格紋（8x8 checkerboard）
+      for(var py=0;py<s;py+=8)for(var px=0;px<s;px+=8){
+        var chk=((px+py)/8)%2;
+        R(x+px,y+py,8,8,chk?'#c0b8a8':'#d0c8b8');
+      }
+      // 石板接縫線（水平）
+      for(var gy=8;gy<s;gy+=8){R(x,y+gy,s,1,'#a09888');}
+      // 石板接縫線（垂直）
+      for(var gx=8;gx<s;gx+=8){R(x+gx,y,1,s,'#a09888');}
+      // 輕微光澤（左上角高光）
+      R(x+1,y+1,4,1,'#ddd8cc');R(x+1,y+2,1,3,'#ddd8cc');
+      R(x+9,y+1,4,1,'#ddd8cc');R(x+17,y+9,4,1,'#ddd8cc');
 
     }else{R(x,y,s,s,'#58b848');}
     ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.strokeRect(x+0.5,y+0.5,s-1,s-1);

@@ -19,7 +19,7 @@ const UI = {
     if (!unit) { this.unitPanel.classList.add('hidden'); return; }
     const cls = getClassData(unit.classId);
     const terrain = terrainType || 'plain';
-    const td = { plain:{def:0,avo:0,name:'平原'}, forest:{def:1,avo:20,name:'森林'}, mountain:{def:2,avo:30,name:'山地'}, wall:{def:3,avo:20,name:'城牆'}, gate:{def:3,avo:30,name:'城門'}, river:{def:0,avo:0,name:'河川'}, village:{def:0,avo:10,name:'村莊'}, throne:{def:3,avo:30,name:'王座'}, pillar:{def:1,avo:15,name:'柱子'} }[terrain] || {def:0,avo:0,name:terrain};
+    const td = { plain:{def:0,avo:0,name:'平原'}, forest:{def:1,avo:20,name:'森林'}, mountain:{def:2,avo:30,name:'山地'}, wall:{def:3,avo:20,name:'城牆'}, gate:{def:3,avo:30,name:'城門'}, river:{def:0,avo:0,name:'河川'}, village:{def:0,avo:10,name:'村莊'}, throne:{def:3,avo:30,name:'王座'}, pillar:{def:1,avo:15,name:'柱子'}, floor:{def:0,avo:0,name:'石板地板'} }[terrain] || {def:0,avo:0,name:terrain};
     const hpPct = Math.round(unit.hp / unit.maxHp * 100);
     const hpColor = hpPct > 50 ? '#4f4' : (hpPct > 25 ? '#cc4' : '#c44');
     const expPct = unit.faction === 'player' ? unit.exp : 0;
@@ -71,7 +71,7 @@ const UI = {
       ${td.def > 0 ? `<div class="stat-row"><span class="stat-label" style="color:#777">防＋</span><span class="stat-val" style="color:#8cf">${td.def}</span></div>` : ''}
       ${td.avo > 0 ? `<div class="stat-row"><span class="stat-label" style="color:#777">避＋</span><span class="stat-val" style="color:#8cf">${td.avo}</span></div>` : ''}
       </div>
-      ${unit.faction === 'player' ? '<div style="font-size:9px;color:#555;margin-top:4px;text-align:center">按 R 開啟地圖選單</div>' : ''}
+      ${unit.faction === 'player' ? '<div style="font-size:9px;color:#555;margin-top:4px;text-align:center">按 R 或點擊空格 開啟地圖選單</div>' : ''}
     `;
     this.unitPanel.classList.remove('hidden');
     // Draw portrait on panel canvas
@@ -96,7 +96,7 @@ const UI = {
       this.terrainInfo.style.cssText = 'position:absolute;bottom:8px;left:8px;background:rgba(10,10,30,0.88);border:1px solid #445;border-radius:4px;padding:4px 8px;font-size:11px;color:#ccd;pointer-events:none;z-index:20;font-family:monospace;min-width:80px';
       document.getElementById('game-container').appendChild(this.terrainInfo);
     }
-    const td = {plain:{def:0,avo:0,name:'平原'},forest:{def:1,avo:20,name:'森林'},mountain:{def:2,avo:30,name:'山地'},wall:{def:3,avo:20,name:'城牆'},gate:{def:3,avo:30,name:'城門'},river:{def:0,avo:0,name:'河川'},village:{def:0,avo:10,name:'村莊'},throne:{def:3,avo:30,name:'王座'},pillar:{def:1,avo:15,name:'柱子'}}[terrain] || {def:0,avo:0,name:terrain||'?'};
+    const td = {plain:{def:0,avo:0,name:'平原'},forest:{def:1,avo:20,name:'森林'},mountain:{def:2,avo:30,name:'山地'},wall:{def:3,avo:20,name:'城牆'},gate:{def:3,avo:30,name:'城門'},river:{def:0,avo:0,name:'河川'},village:{def:0,avo:10,name:'村莊'},throne:{def:3,avo:30,name:'王座'},pillar:{def:1,avo:15,name:'柱子'},floor:{def:0,avo:0,name:'石板地板'}}[terrain] || {def:0,avo:0,name:terrain||'?'};
     let html = '<span style="color:#bc9;font-weight:bold">' + td.name + '</span>';
     if (td.def > 0) html += ' <span style="color:#8cf">防+' + td.def + '</span>';
     if (td.avo > 0) html += ' <span style="color:#8cf">避+' + td.avo + '</span>';
@@ -680,9 +680,9 @@ const UI = {
   },
 
   // ============================================================
-  // UNIT LIST  (部隊情報)
+  // UNIT LIST  (部隊情報) — 支援我方/敵方切換分頁
   // ============================================================
-  showUnitList(units, onClose) {
+  showUnitList(playerUnits, enemyUnits, onClose) {
     const overlay = document.createElement('div');
     overlay.id = 'unit-list-overlay';
     overlay.style.cssText = [
@@ -692,48 +692,78 @@ const UI = {
       'z-index:165;pointer-events:auto;overflow-y:auto',
     ].join(';');
 
-    let rowsHtml = '';
-    for (const u of units) {
-      const cls = getClassData(u.classId);
-      const wpn = u.getEquippedWeapon ? u.getEquippedWeapon() : null;
-      const hpPct = Math.round(u.hp / u.maxHp * 100);
-      const hpColor = hpPct > 50 ? '#4f4' : hpPct > 25 ? '#cc4' : '#c44';
-      const items = u.items.map(it => {
-        const isWpn = it === wpn;
-        return `<span style="color:${isWpn ? '#ffd700' : '#aaa'}">${it.name}<span style="color:#555">(${it.usesLeft})</span></span>`;
-      }).join(' ');
-      rowsHtml += `
-        <tr style="border-bottom:1px solid #222">
-          <td style="padding:6px 8px;color:#4a9eff;font-weight:bold;min-width:60px">${u.name}</td>
-          <td style="padding:6px 8px;color:#888;font-size:11px;min-width:80px">${cls.name} ${u.level}</td>
-          <td style="padding:6px 10px;min-width:80px">
-            <span style="color:${hpColor}">${u.hp}/${u.maxHp}</span>
-          </td>
-          <td style="padding:6px 8px;color:#8bf;font-size:11px">${u.exp}/100</td>
-          <td style="padding:6px 8px;font-size:11px">${items || '<span style="color:#555">—</span>'}</td>
-        </tr>`;
+    function buildRows(units, faction) {
+      const nameColor = faction === 'player' ? '#4a9eff' : '#ff6060';
+      let html = '';
+      if (!units || units.length === 0) {
+        html = `<tr><td colspan="5" style="padding:16px;text-align:center;color:#555">（無單位）</td></tr>`;
+        return html;
+      }
+      for (const u of units) {
+        const cls = getClassData(u.classId);
+        const wpn = u.getEquippedWeapon ? u.getEquippedWeapon() : null;
+        const hpPct = Math.round(u.hp / u.maxHp * 100);
+        const hpColor = hpPct > 50 ? '#4f4' : hpPct > 25 ? '#cc4' : '#c44';
+        const items = u.items.map(it => {
+          const isWpn = it === wpn;
+          return `<span style="color:${isWpn ? '#ffd700' : '#aaa'}">${it.name}<span style="color:#555">(${it.usesLeft})</span></span>`;
+        }).join(' ');
+        const expCell = faction === 'player'
+          ? `<td style="padding:6px 8px;color:#8bf;font-size:11px">${u.exp}/100</td>`
+          : `<td style="padding:6px 8px;color:#888;font-size:11px">—</td>`;
+        html += `
+          <tr style="border-bottom:1px solid #222">
+            <td style="padding:6px 8px;color:${nameColor};font-weight:bold;min-width:60px">${u.name}</td>
+            <td style="padding:6px 8px;color:#888;font-size:11px;min-width:80px">${cls.name} Lv.${u.level}</td>
+            <td style="padding:6px 10px;min-width:80px">
+              <span style="color:${hpColor}">${u.hp}/${u.maxHp}</span>
+            </td>
+            ${expCell}
+            <td style="padding:6px 8px;font-size:11px">${items || '<span style="color:#555">—</span>'}</td>
+          </tr>`;
+      }
+      return html;
     }
 
+    const playerRows = buildRows(playerUnits, 'player');
+    const enemyRows = buildRows(enemyUnits, 'enemy');
+
     overlay.innerHTML = `
-      <div style="
+      <div id="unit-list-box" style="
         background:#0d0d25;border:2px solid #4a9eff;border-radius:10px;
-        padding:24px;max-width:700px;width:95%;max-height:85vh;overflow-y:auto;">
-        <div style="text-align:center;font-size:18px;color:#4a9eff;font-weight:bold;margin-bottom:16px">
+        padding:24px;max-width:720px;width:95%;max-height:85vh;display:flex;flex-direction:column;">
+        <div style="text-align:center;font-size:18px;color:#4a9eff;font-weight:bold;margin-bottom:14px">
           ── 部隊情報 ──
         </div>
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead>
-            <tr style="border-bottom:2px solid #333;color:#aaa;font-size:11px">
-              <th style="padding:4px 8px;text-align:left">角色</th>
-              <th style="padding:4px 8px;text-align:left">職業/等級</th>
-              <th style="padding:4px 8px;text-align:left">HP</th>
-              <th style="padding:4px 8px;text-align:left">EXP</th>
-              <th style="padding:4px 8px;text-align:left">裝備</th>
-            </tr>
-          </thead>
-          <tbody>${rowsHtml}</tbody>
-        </table>
-        <div style="text-align:center;margin-top:16px">
+        <!-- 分頁標籤 -->
+        <div style="display:flex;margin-bottom:12px;border-bottom:2px solid #333;">
+          <button id="tab-player" style="
+            flex:1;padding:8px;font-size:13px;cursor:pointer;border:none;border-radius:4px 4px 0 0;
+            background:#4a9eff;color:#fff;font-family:inherit;font-weight:bold;margin-right:2px">
+            ⚔ 我方 (${(playerUnits||[]).length})
+          </button>
+          <button id="tab-enemy" style="
+            flex:1;padding:8px;font-size:13px;cursor:pointer;border:none;border-radius:4px 4px 0 0;
+            background:#333;color:#aaa;font-family:inherit;font-weight:bold">
+            💀 敵方 (${(enemyUnits||[]).length})
+          </button>
+        </div>
+        <!-- 表格區域 -->
+        <div style="overflow-y:auto;flex:1;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="border-bottom:2px solid #333;color:#aaa;font-size:11px">
+                <th style="padding:4px 8px;text-align:left">角色</th>
+                <th style="padding:4px 8px;text-align:left">職業/等級</th>
+                <th style="padding:4px 8px;text-align:left">HP</th>
+                <th style="padding:4px 8px;text-align:left">EXP</th>
+                <th style="padding:4px 8px;text-align:left">裝備</th>
+              </tr>
+            </thead>
+            <tbody id="unit-list-body">${playerRows}</tbody>
+          </table>
+        </div>
+        <div style="text-align:center;margin-top:14px">
           <button id="unit-list-close" style="
             padding:8px 24px;font-size:14px;cursor:pointer;
             background:#4a9eff;border:none;color:#fff;
@@ -744,6 +774,24 @@ const UI = {
       </div>
     `;
 
+    let currentTab = 'player';
+    const tabPlayer = overlay.querySelector('#tab-player');
+    const tabEnemy = overlay.querySelector('#tab-enemy');
+    const body = overlay.querySelector('#unit-list-body');
+
+    tabPlayer.addEventListener('click', () => {
+      currentTab = 'player';
+      body.innerHTML = playerRows;
+      tabPlayer.style.background = '#4a9eff'; tabPlayer.style.color = '#fff';
+      tabEnemy.style.background = '#333'; tabEnemy.style.color = '#aaa';
+    });
+    tabEnemy.addEventListener('click', () => {
+      currentTab = 'enemy';
+      body.innerHTML = enemyRows;
+      tabEnemy.style.background = '#ff6060'; tabEnemy.style.color = '#fff';
+      tabPlayer.style.background = '#333'; tabPlayer.style.color = '#aaa';
+    });
+
     overlay.querySelector('#unit-list-close').addEventListener('click', (e) => {
       e.stopPropagation();
       overlay.remove();
@@ -751,6 +799,117 @@ const UI = {
     });
 
     document.getElementById('ui-overlay').appendChild(overlay);
+  },
+
+  // ============================================================
+  // TRADE MENU  (交換道具)
+  // ============================================================
+  showTradeMenu(unitA, unitB, onDone) {
+    const MAX_ITEMS = 5;
+    const overlay = document.createElement('div');
+    overlay.id = 'trade-overlay';
+    overlay.style.cssText = [
+      'position:absolute;top:0;left:0;right:0;bottom:0',
+      'background:rgba(0,0,0,0.88)',
+      'display:flex;justify-content:center;align-items:center',
+      'z-index:170;pointer-events:auto',
+    ].join(';');
+
+    function renderTrade() {
+      const clsA = getClassData(unitA.classId);
+      const clsB = getClassData(unitB.classId);
+
+      function itemList(unit, side) {
+        let html = '';
+        const items = unit.items;
+        const other = side === 'A' ? unitB : unitA;
+        for (let i = 0; i < MAX_ITEMS; i++) {
+          const it = items[i];
+          if (it) {
+            const canGive = other.items.length < MAX_ITEMS;
+            const giveBtn = side === 'A'
+              ? `<button data-side="A" data-idx="${i}" data-action="give" style="
+                  padding:2px 8px;cursor:${canGive?'pointer':'not-allowed'};font-size:11px;
+                  background:${canGive?'#4a9eff':'#333'};border:none;color:#fff;border-radius:3px;font-family:inherit">
+                  →
+                </button>`
+              : `<button data-side="B" data-idx="${i}" data-action="give" style="
+                  padding:2px 8px;cursor:${canGive?'pointer':'not-allowed'};font-size:11px;
+                  background:${canGive?'#ff6060':'#333'};border:none;color:#fff;border-radius:3px;font-family:inherit">
+                  ←
+                </button>`;
+            const uses = it.usesLeft !== undefined ? it.usesLeft : it.uses;
+            html += `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #222">
+              ${side === 'A' ? giveBtn : ''}
+              <span style="flex:1;font-size:12px;color:#ddd">${it.name} <span style="color:#666">(${uses}/${it.uses})</span></span>
+              ${side === 'B' ? giveBtn : ''}
+            </div>`;
+          } else {
+            html += `<div style="padding:4px 0;border-bottom:1px solid #181818;color:#444;font-size:11px;height:24px">—</div>`;
+          }
+        }
+        return html;
+      }
+
+      overlay.innerHTML = `
+        <div style="background:#0d0d25;border:2px solid #4a9eff;border-radius:10px;padding:20px;min-width:480px;max-width:600px">
+          <div style="text-align:center;font-size:18px;color:#ffa500;font-weight:bold;margin-bottom:14px">
+            ── 交換道具 ──
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <!-- 單位 A -->
+            <div style="flex:1">
+              <div style="text-align:center;color:#4a9eff;font-weight:bold;margin-bottom:8px;font-size:13px">
+                ${unitA.name} <span style="color:#888;font-weight:normal">${clsA.name}</span>
+                <div style="color:#888;font-size:11px">${unitA.items.length}/${MAX_ITEMS} 道具</div>
+              </div>
+              <div id="trade-list-A">${itemList(unitA, 'A')}</div>
+            </div>
+            <!-- 中間箭頭 -->
+            <div style="width:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-top:40px;color:#555;font-size:20px">⇌</div>
+            <!-- 單位 B -->
+            <div style="flex:1">
+              <div style="text-align:center;color:#ff6060;font-weight:bold;margin-bottom:8px;font-size:13px">
+                ${unitB.name} <span style="color:#888;font-weight:normal">${clsB.name}</span>
+                <div style="color:#888;font-size:11px">${unitB.items.length}/${MAX_ITEMS} 道具</div>
+              </div>
+              <div id="trade-list-B">${itemList(unitB, 'B')}</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:16px;font-size:11px;color:#666">點擊 → 將道具給予右方單位；點擊 ← 給予左方單位</div>
+          <div style="text-align:center;margin-top:10px">
+            <button id="trade-done" style="padding:8px 28px;font-size:14px;cursor:pointer;background:#4a9eff;border:none;color:#fff;border-radius:4px;font-family:inherit">
+              完成
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Attach give-button handlers
+      overlay.querySelectorAll('[data-action="give"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const side = btn.dataset.side;
+          const idx = parseInt(btn.dataset.idx);
+          const giver = side === 'A' ? unitA : unitB;
+          const receiver = side === 'A' ? unitB : unitA;
+          if (receiver.items.length >= MAX_ITEMS) return; // Full
+          const [item] = giver.items.splice(idx, 1);
+          receiver.items.push(item);
+          // Re-render
+          renderTrade();
+        });
+      });
+
+      overlay.querySelector('#trade-done').addEventListener('click', (e) => {
+        e.stopPropagation();
+        overlay.remove();
+        if (onDone) onDone();
+      });
+    }
+
+    document.getElementById('ui-overlay').appendChild(overlay);
+    renderTrade();
   },
 
   // ============================================================
