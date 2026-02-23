@@ -99,20 +99,56 @@ canvas.addEventListener('mouseleave', (e) => {
 //   game.handleHover(pos.x, pos.y);
 // });
 
-// Touch input (prevent double-fire with mouse events)
+// Touch input (with drag vs tap differentiation)
 let touchHandled = false;
+let touchDragging = false;
+let touchStartX = 0;
+let touchStartY = 0;
+let touchStartCamX = 0;
+let touchStartCamY = 0;
+
 canvas.addEventListener('touchstart', (e) => {
   e.preventDefault();
   touchHandled = true;
+  touchDragging = false;
   const touch = e.touches[0];
   const pos = screenToCanvas(touch.clientX, touch.clientY);
-  game.handleClick(pos.x, pos.y);
+  touchStartX = pos.x;
+  touchStartY = pos.y;
+  touchStartCamX = GameMap.camX;
+  touchStartCamY = GameMap.camY;
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if (!touchHandled) return;
+  const touch = e.touches[0];
+  const pos = screenToCanvas(touch.clientX, touch.clientY);
+  const dx = touchStartX - pos.x;
+  const dy = touchStartY - pos.y;
+  const dragDistance = Math.abs(dx) + Math.abs(dy);
+  
+  // If moved more than 10px, treat as drag
+  if (dragDistance > 10) {
+    touchDragging = true;
+    GameMap.camX = touchStartCamX + dx;
+    GameMap.camY = touchStartCamY + dy;
+    GameMap.clampCamera(canvas.width, canvas.height);
+  }
 }, { passive: false });
 
 canvas.addEventListener('touchend', (e) => {
   e.preventDefault();
+  // Only handle click if it wasn't a drag
+  if (!touchDragging) {
+    const pos = { x: touchStartX, y: touchStartY };
+    game.handleClick(pos.x, pos.y);
+  }
   // Reset after a short delay
-  setTimeout(() => { touchHandled = false; }, 300);
+  setTimeout(() => { 
+    touchHandled = false; 
+    touchDragging = false;
+  }, 300);
 }, { passive: false });
 
 // Keyboard input
@@ -177,3 +213,30 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 */
+
+// === Mobile Fullscreen Toggle ===
+const mobileToggleBtn = document.getElementById('mobile-toggle');
+if (mobileToggleBtn) {
+  // Show button only on mobile
+  if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) {
+    mobileToggleBtn.style.display = 'block';
+  }
+  
+  mobileToggleBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.log('Fullscreen error:', err);
+      });
+      mobileToggleBtn.textContent = '退出全螢幕';
+    } else {
+      document.exitFullscreen();
+      mobileToggleBtn.textContent = '全螢幕';
+    }
+  });
+  
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      mobileToggleBtn.textContent = '全螢幕';
+    }
+  });
+}
