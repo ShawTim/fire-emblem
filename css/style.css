@@ -402,6 +402,13 @@ body {
     width: 100vw !important;
     height: 100dvh !important;
   }
+  /* Force show fullscreen button on mobile */
+  #mobile-toggle {
+    display: block !important;
+    top: 10px !important;
+    left: 10px !important;
+    right: auto !important;
+  }
 }
 
 /* Larger touch targets for menus */
