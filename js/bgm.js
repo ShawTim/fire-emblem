@@ -143,12 +143,12 @@ var BGM = {
 
   createVolumeControl: function() {
     var c = document.createElement('div'); c.id = 'bgm-controls';
-    c.style.cssText = 'position:fixed;top:4px;right:8px;z-index:1000;display:flex;align-items:center;gap:4px;font-size:11px;color:#aaa;';
+    c.style.cssText = 'margin-left:auto;display:flex;align-items:center;gap:4px;font-size:11px;color:#aaa;';
     c.innerHTML = '<span style="font-size:10px">🎵音量</span>'
       + '<button id="bgm-vol-down" style="background:none;border:1px solid #555;color:#aaa;width:20px;height:18px;cursor:pointer;font-size:10px;padding:0">−</button>'
       + '<span id="bgm-vol-display" style="min-width:28px;text-align:center;font-size:10px">' + Math.round(this.volume * 100) + '%</span>'
       + '<button id="bgm-vol-up" style="background:none;border:1px solid #555;color:#aaa;width:20px;height:18px;cursor:pointer;font-size:10px;padding:0">+</button>';
-    document.body.appendChild(c);
+    var topBar = document.getElementById('top-bar'); if (topBar) { topBar.appendChild(c); } else { document.body.appendChild(c); }
     var s = this;
     document.getElementById('bgm-vol-down').onclick = function(e) { e.stopPropagation(); s.setVolume(s.volume - 0.05); };
     document.getElementById('bgm-vol-up').onclick = function(e) { e.stopPropagation(); s.setVolume(s.volume + 0.05); };
