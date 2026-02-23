@@ -470,20 +470,6 @@ body {
 }
 
 /* Mobile fullscreen */
-#mobile-toggle {
-  display: none;
-  position: fixed;
-  bottom: 12px;
-  right: 12px;
-  z-index: 999;
-  background: rgba(0,0,40,0.9);
-  border: 2px solid #48f;
-  color: #fff;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 @media (max-width: 900px), (max-height: 600px) {
