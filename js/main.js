@@ -223,13 +223,22 @@ if (mobileToggleBtn) {
   }
   
   mobileToggleBtn.addEventListener('click', () => {
+    const container = document.getElementById('game-container');
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.log('Fullscreen error:', err);
-      });
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
+      } else if (container.msRequestFullscreen) {
+        container.msRequestFullscreen();
+      }
       mobileToggleBtn.textContent = '退出全螢幕';
     } else {
-      document.exitFullscreen();
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
       mobileToggleBtn.textContent = '全螢幕';
     }
   });
@@ -238,5 +247,7 @@ if (mobileToggleBtn) {
     if (!document.fullscreenElement) {
       mobileToggleBtn.textContent = '全螢幕';
     }
+    // Trigger a resize to ensure canvas fits
+    window.dispatchEvent(new Event('resize'));
   });
 }
