@@ -14,11 +14,13 @@ var game;
 preloadChapters().then(() => {
   game = new Game(canvas);
   game.init();
+  requestAnimationFrame(gameLoop);
 }).catch(err => {
   console.error('Failed to preload chapters:', err);
   // Start game anyway with fallback
   game = new Game(canvas);
   game.init();
+  requestAnimationFrame(gameLoop);
 });
 
 function gameLoop(timestamp) {
@@ -27,7 +29,6 @@ function gameLoop(timestamp) {
   game.render(ctx);
   requestAnimationFrame(gameLoop);
 }
-requestAnimationFrame(gameLoop);
 
 // Convert screen coords (mouse or touch) to canvas coords
 function screenToCanvas(clientX, clientY) {
