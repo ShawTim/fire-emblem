@@ -6,7 +6,7 @@ var Sprites = {
   _portraitCache: {},
   _mapIconCache: {},
   tick: function() { this._frameCounter++; },
-  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 9) % 5]; },
+  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 18) % 5]; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
   _seed: function(x, y) { return (x * 31 + y * 17) & 0xffff; },
 
@@ -80,26 +80,28 @@ var Sprites = {
       R(x,y+26,s,6,'#58a848');R(x,y+24,s,3,'#80a870');
 
     }else if(type==='fort'){
-      // GBA-style Fort / 砦 - fills entire tile, no grass visible
-      const stoneBase='#7a8a7a', stoneLight='#9aabaa', stoneDark='#5a6a5a';
-      // Fill entire tile with stone base
-      R(x,y,s,s,stoneBase);
-      // Inner courtyard (slightly lighter)
-      R(x+2,y+2,28,28,'#8a9a8a');
-      // Four corner towers (lighter stone)
-      R(x,y,10,10,stoneLight); R(x,y,10,1,'#bacaca'); R(x,y,1,10,'#bacaca');
-      R(x+22,y,10,10,stoneLight); R(x+22,y,10,1,'#bacaca'); R(x+22,y,1,10,'#bacaca');
-      R(x,y+22,10,10,stoneLight); R(x,y+22,1,10,'#bacaca'); R(x+22,y+22,10,10,stoneLight); R(x+22,y+22,1,10,'#bacaca');
-      // Tower shadows
-      R(x+10,y,2,10,stoneDark); R(x,y+10,10,2,stoneDark);
-      R(x+22,y,2,10,stoneDark); R(x+30,y,2,10,stoneDark); R(x+22,y+10,10,2,stoneDark);
-      R(x,y+22,10,2,stoneDark); R(x+10,y+22,2,10,stoneDark);
-      R(x+22,y+22,2,10,stoneDark); R(x+30,y+22,2,10,stoneDark);
-      // Central gate
-      R(x+11,y+11,10,10,'#4a3a2a');
-      R(x+12,y+12,8,8,'#3a2a1a');
-      R(x+11,y+11,10,1,'#6a5a4a');
-      R(x+11,y+11,1,10,'#6a5a4a');
+      // GBA-style Fort - central keep with flag
+      const stone='#7a8a7a', stoneLight='#9aabaa', stoneDark='#5a6a5a', roof='#8b4513';
+      // Stone pavement base
+      R(x,y,s,s,stone);
+      // Outer wall ring (8px thick)
+      R(x+4,y+4,24,24,stoneDark);
+      R(x+6,y+6,20,20,stone);
+      // Inner courtyard
+      R(x+8,y+8,16,16,'#6a7a6a');
+      // Central keep (square tower)
+      R(x+10,y+10,12,12,stoneLight);
+      R(x+12,y+12,8,8,'#5a6a5a');
+      // Roof
+      R(x+10,y+10,12,3,roof);
+      // Flag
+      R(x+15,y+4,1,6,'#8b4513');
+      R(x+16,y+4,4,3,'#4a9eff');
+      // Corner details
+      R(x+4,y+4,4,4,stoneLight);
+      R(x+24,y+4,4,4,stoneLight);
+      R(x+4,y+24,4,4,stoneLight);
+      R(x+24,y+24,4,4,stoneLight);
 
     }else if(type==='wall'){
       // Stone bricks with clear mortar lines
