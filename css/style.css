@@ -479,3 +479,22 @@ body {
   #gameCanvas { display: block; margin: 0 auto; }
 }
 
+
+/* Mobile landscape: compact map menu */
+@media (max-height: 500px) and (orientation: landscape) {
+  #map-menu-box {
+    padding: 12px 20px !important;
+    min-width: 200px !important;
+  }
+  #map-menu-box > div:first-child {
+    font-size: 16px !important;
+    margin-bottom: 10px !important;
+  }
+  #map-menu-items > div {
+    padding: 6px 10px !important;
+    margin: 3px 0 !important;
+  }
+  #map-menu-items > div > div {
+    font-size: 10px !important;
+  }
+}
