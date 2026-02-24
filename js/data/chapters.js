@@ -6,6 +6,13 @@ const CHAPTER_MANIFEST = [
   { id: 1, dir: 'ch1_wilderness', file: '第一章' },
   { id: 2, dir: 'ch2_village', file: '第二章' },
   { id: 3, dir: 'ch3_castle', file: '第三章' },
+  { id: 4, dir: 'ch4_church', file: '第四章' },
+  { id: 5, dir: 'ch5_river', file: '第五章' },
+  { id: 6, dir: 'ch6_forest', file: '第六章' },
+  { id: 7, dir: 'ch7_desert', file: '第七章' },
+  { id: 8, dir: 'ch8_mountain', file: '第八章' },
+  { id: 9, dir: 'ch9_castle', file: '第九章' },
+  { id: 10, dir: 'ch10_final', file: '最終章' },
 ];
 
 // Parse terrain codes

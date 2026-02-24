@@ -1,0 +1,24 @@
+{
+  "id": 4,
+  "title": "第四章",
+  "subtitle": "魔法塔",
+  "objective": "seize",
+  "objectiveDesc": "艾琳到達塔頂",
+  "seizePos": {"x": 6, "y": 0},
+  "width": 14,
+  "height": 18,
+  "playerUnits": [
+    {"charId": "eirine", "x": 6, "y": 17},
+    {"charId": "marcus", "x": 5, "y": 16},
+    {"charId": "lina", "x": 7, "y": 16},
+    {"charId": "thor", "x": 6, "y": 16},
+    {"charId": "serra", "x": 5, "y": 15},
+    {"charId": "cain", "x": 7, "y": 15}
+  ],
+  "newRecruits": [{"charId": "fran", "x": 7, "y": 1, "turnJoin": 1}],
+  "enemies": [],
+  "npcs": [],
+  "talkEvents": [],
+  "turnEvents": [],
+  "dialogues": {}
+}

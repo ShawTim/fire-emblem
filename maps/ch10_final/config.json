@@ -1,0 +1,11 @@
+{
+  "id": 10,
+  "title": "最終章",
+  "subtitle": "光與影的終焉",
+  "objective": "boss",
+  "width": 22,
+  "height": 18,
+  "playerUnits": [],
+  "enemies": [],
+  "dialogues": {}
+}

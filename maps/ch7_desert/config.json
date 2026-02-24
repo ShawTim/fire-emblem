@@ -1,0 +1,12 @@
+{
+  "id": 7,
+  "title": "第七章",
+  "subtitle": "沙漠風暴",
+  "objective": "survive",
+  "surviveTurns": 10,
+  "width": 20,
+  "height": 16,
+  "playerUnits": [],
+  "enemies": [],
+  "dialogues": {}
+}

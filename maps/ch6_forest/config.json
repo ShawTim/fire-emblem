@@ -1,0 +1,11 @@
+{
+  "id": 6,
+  "title": "第六章",
+  "subtitle": "森林迷宮",
+  "objective": "rout",
+  "width": 18,
+  "height": 16,
+  "playerUnits": [],
+  "enemies": [],
+  "dialogues": {}
+}

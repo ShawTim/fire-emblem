@@ -1,0 +1,12 @@
+{
+  "id": 5,
+  "title": "第五章",
+  "subtitle": "河道阻擊",
+  "objective": "rout",
+  "objectiveDesc": "殲滅所有敵人",
+  "width": 20,
+  "height": 18,
+  "playerUnits": [],
+  "enemies": [],
+  "dialogues": {}
+}
