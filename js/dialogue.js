@@ -37,6 +37,10 @@ class DialogueSystem {
     this.charTimer = 0;
     this.finished = false;
 
+    // Hide fullscreen button during dialogue to prevent overlap
+    const mobileBtn = document.getElementById('mobile-toggle');
+    if (mobileBtn) mobileBtn.style.display = 'none';
+
     // Speaker name
     if (line.speaker && CHARACTERS[line.speaker]) {
       this.nameEl.textContent = CHARACTERS[line.speaker].name;
@@ -85,6 +89,14 @@ class DialogueSystem {
   end() {
     this.active = false;
     this.box.classList.add('hidden');
+    
+    // Restore fullscreen button visibility (only on small screens)
+    const mobileBtn = document.getElementById('mobile-toggle');
+    if (mobileBtn) {
+      const isSmallScreen = window.innerWidth < 900 || window.innerHeight < 650;
+      if (isSmallScreen) mobileBtn.style.display = 'block';
+    }
+    
     if (this.onComplete) this.onComplete();
   }
 
