@@ -1,11 +1,27 @@
 {
   "id": 9,
   "title": "第九章",
-  "subtitle": "帝都決戰",
-  "objective": "seize",
+  "subtitle": "翠星之神殿",
+  "objective": "boss",
+  "objectiveDesc": "擊敗莫爾甘的副官",
   "width": 18,
   "height": 20,
-  "playerUnits": [],
-  "enemies": [],
+  "playerUnits": [
+    {"charId": "eirine", "x": 8, "y": 19},
+    {"charId": "marcus", "x": 7, "y": 19},
+    {"charId": "lina", "x": 9, "y": 19},
+    {"charId": "thor", "x": 8, "y": 18},
+    {"charId": "serra", "x": 7, "y": 18},
+    {"charId": "cain", "x": 9, "y": 18},
+    {"charId": "fran", "x": 10, "y": 19},
+    {"charId": "rex", "x": 6, "y": 19},
+    {"charId": "natasha", "x": 10, "y": 18},
+    {"charId": "olivier", "x": 11, "y": 19},
+    {"charId": "helga", "x": 12, "y": 18}
+  ],
+  "enemies": [
+    {"classId": "skeleton", "level": 10, "x": 5, "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "亡靈騎士"},
+    {"classId": "sage", "level": 5, "x": 8, "y": 1, "items": ["fenrir", "nosferatu"], "ai": "boss", "name": "祭司長ザルバ", "isBoss": true, "bonusStats": {"hp": 12, "mag": 6, "skl": 4, "spd": 3, "def": 3, "res": 6}}
+  ],
   "dialogues": {}
 }

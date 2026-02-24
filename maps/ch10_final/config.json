@@ -1,11 +1,27 @@
 {
   "id": 10,
   "title": "最終章",
-  "subtitle": "光與影的終焉",
+  "subtitle": "翠星之戰",
   "objective": "boss",
+  "objectiveDesc": "擊敗莫爾甘",
   "width": 22,
   "height": 18,
-  "playerUnits": [],
-  "enemies": [],
+  "playerUnits": [
+    {"charId": "eirine", "x": 10, "y": 17},
+    {"charId": "marcus", "x": 9, "y": 17},
+    {"charId": "lina", "x": 11, "y": 17},
+    {"charId": "thor", "x": 10, "y": 16},
+    {"charId": "serra", "x": 9, "y": 16},
+    {"charId": "cain", "x": 11, "y": 16},
+    {"charId": "fran", "x": 12, "y": 17},
+    {"charId": "rex", "x": 8, "y": 17},
+    {"charId": "natasha", "x": 12, "y": 16},
+    {"charId": "olivier", "x": 13, "y": 17},
+    {"charId": "helga", "x": 8, "y": 16}
+  ],
+  "enemies": [
+    {"classId": "knight", "level": 12, "x": 8, "y": 10, "items": ["silverLance"], "ai": "aggressive", "name": "帝國近衛"},
+    {"classId": "knight", "level": 12, "x": 13, "y": 10, "items": ["silverLance"], "ai": "aggressive", "name": "帝國近衛"}
+  ],
   "dialogues": {}
 }

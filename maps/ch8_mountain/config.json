@@ -1,11 +1,26 @@
 {
   "id": 8,
   "title": "第八章",
-  "subtitle": "山嶺突圍",
+  "subtitle": "鋼鉄之要塞",
   "objective": "boss",
+  "objectiveDesc": "擊敗要塞司令官",
   "width": 20,
   "height": 18,
-  "playerUnits": [],
-  "enemies": [],
+  "playerUnits": [
+    {"charId": "eirine", "x": 9, "y": 17},
+    {"charId": "marcus", "x": 8, "y": 17},
+    {"charId": "lina", "x": 10, "y": 17},
+    {"charId": "thor", "x": 9, "y": 16},
+    {"charId": "serra", "x": 8, "y": 16},
+    {"charId": "cain", "x": 10, "y": 16},
+    {"charId": "fran", "x": 11, "y": 17},
+    {"charId": "rex", "x": 7, "y": 17},
+    {"charId": "natasha", "x": 11, "y": 16},
+    {"charId": "olivier", "x": 12, "y": 17}
+  ],
+  "enemies": [
+    {"classId": "knight", "level": 10, "x": 7, "y": 14, "items": ["steelLance"], "ai": "defensive", "name": "要塞重裝兵"},
+    {"classId": "greatKnight", "level": 3, "x": 9, "y": 1, "items": ["silverLance", "silverSword"], "ai": "boss", "name": "要塞司令官ゲルハルト", "isBoss": true, "bonusStats": {"hp": 12, "str": 5, "skl": 3, "spd": 2, "def": 6, "res": 2}}
+  ],
   "dialogues": {}
 }
