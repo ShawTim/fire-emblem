@@ -6,7 +6,7 @@ var Sprites = {
   _portraitCache: {},
   _mapIconCache: {},
   tick: function() { this._frameCounter++; },
-  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 18) % 5]; },
+  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 14) % 5]; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
   _seed: function(x, y) { return (x * 31 + y * 17) & 0xffff; },
 

@@ -433,7 +433,7 @@ const UI = {
     const nameColor = isPlayer ? '#4a9eff' : '#ff4a4a';
 
     overlay.innerHTML = `
-      <div style="background:#111;border:2px solid ${borderColor};border-radius:8px;padding:24px;min-width:550px;max-width:650px;font-size:13px">
+      <div style="background:#111;border:2px solid ${borderColor};border-radius:8px;padding:16px;max-width:95vw;max-height:90vh;overflow-y:auto;font-size:13px;box-sizing:border-box">
         <div style="display:flex;gap:24px;margin-bottom:16px;align-items:flex-start">
           <div>
             <canvas id="status-portrait" width="64" height="64" style="image-rendering:pixelated;width:96px;height:96px;border:2px solid ${borderColor}"></canvas>
