@@ -80,20 +80,26 @@ var Sprites = {
       R(x,y+26,s,6,'#58a848');R(x,y+24,s,3,'#80a870');
 
     }else if(type==='fort'){
-      // GBA-style Fort / 砦
-      R(x,y,s,s,'#58b848'); // Base plain grass
-      // Stone foundation
-      R(x+4,y+8,24,20,'#8a9a8a');
-      // Inner courtyard
-      R(x+6,y+10,20,16,'#7a8a7a');
-      // Four corner towers
-      R(x+2,y+4,8,8,'#9aabaa'); R(x+2,y+4,8,1,'#bacaca'); R(x+2,y+11,8,1,'#5a6a5a');
-      R(x+22,y+4,8,8,'#9aabaa'); R(x+22,y+4,8,1,'#bacaca'); R(x+22,y+11,8,1,'#5a6a5a');
-      R(x+2,y+20,8,8,'#9aabaa'); R(x+2,y+20,8,1,'#bacaca'); R(x+2,y+27,8,1,'#5a6a5a');
-      R(x+22,y+20,8,8,'#9aabaa'); R(x+22,y+20,8,1,'#bacaca'); R(x+22,y+27,8,1,'#5a6a5a');
-      // Gate
-      R(x+12,y+20,8,8,'#3a2a1a');
-      R(x+12,y+20,8,1,'#2a1a0a');
+      // GBA-style Fort / 砦 - fills entire tile, no grass visible
+      const stoneBase='#7a8a7a', stoneLight='#9aabaa', stoneDark='#5a6a5a';
+      // Fill entire tile with stone base
+      R(x,y,s,s,stoneBase);
+      // Inner courtyard (slightly lighter)
+      R(x+2,y+2,28,28,'#8a9a8a');
+      // Four corner towers (lighter stone)
+      R(x,y,10,10,stoneLight); R(x,y,10,1,'#bacaca'); R(x,y,1,10,'#bacaca');
+      R(x+22,y,10,10,stoneLight); R(x+22,y,10,1,'#bacaca'); R(x+22,y,1,10,'#bacaca');
+      R(x,y+22,10,10,stoneLight); R(x,y+22,1,10,'#bacaca'); R(x+22,y+22,10,10,stoneLight); R(x+22,y+22,1,10,'#bacaca');
+      // Tower shadows
+      R(x+10,y,2,10,stoneDark); R(x,y+10,10,2,stoneDark);
+      R(x+22,y,2,10,stoneDark); R(x+30,y,2,10,stoneDark); R(x+22,y+10,10,2,stoneDark);
+      R(x,y+22,10,2,stoneDark); R(x+10,y+22,2,10,stoneDark);
+      R(x+22,y+22,2,10,stoneDark); R(x+30,y+22,2,10,stoneDark);
+      // Central gate
+      R(x+11,y+11,10,10,'#4a3a2a');
+      R(x+12,y+12,8,8,'#3a2a1a');
+      R(x+11,y+11,10,1,'#6a5a4a');
+      R(x+11,y+11,1,10,'#6a5a4a');
 
     }else if(type==='wall'){
       // Stone bricks with clear mortar lines

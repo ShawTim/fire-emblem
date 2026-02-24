@@ -46,24 +46,46 @@ post:[
 {speaker:'eirine',text:'……是的。我會變強的。為了父王，為了這個國家。'},
 {speaker:null,text:'夜色中，兩個身影消失在帝都的城牆之外——'}]}},
 
-// ===== CHAPTER 1 (16x14) =====
+// ===== CHAPTER 1 (16x14) - Redesigned with corridors and strategic fort positions =====
+// 場景：隘口防線（帝國追兵設下埋伏，玩家需要突破防線或固守待援）
 {id:1,title:'第一章',subtitle:'荒野的邂逅',objective:'rout',objectiveDesc:'殲滅所有敵人',width:16,height:14,
-terrain:['PPFFPPPPPPFFPPPP','PPFPPPPPPPFPPPPP','PPPPPFFPPPPPPFFP','FFPPPFFPPPPPPFPP','PPPPPPPPPFFFPPPP','PPPPVPPPPFPPPPPF','PPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPP','PPFFFPPPPPPPPPPP','PPFPPPPPPPPFFFPP','PPPPPPPPPPPPFPPP','PPPPPPRRRRPPPPPP','PPPPPPRRRPPPPPPP','PPPPPPPPPPPPPPPP'],
-playerUnits:[{charId:'eirine',x:1,y:11},{charId:'marcus',x:0,y:12}],
-newRecruits:[{charId:'lina',x:4,y:5,turnJoin:1}],
+terrain:[
+'FFFFFFFFFFFFFFFF',  // 北邊山脈（敵人營地後方）
+'FFPPR++++++++RPP',  // 敵人主防線（雙砦陣地）
+'FFPPPRRRRRRRPPPF',  // 道路走廊
+'FFPPPPPPPPPPPPPF',  // 過渡帶
+'PFPFFFFFFPFFPPPP',  // 森林屏障（左翼掩護）
+'PFPFPPPPPFPPVPPP',  // 隘口 + 村莊（支線目標）
+'PFPFPPPPPFPPPPPP',  // 隘口通道
+'PFFFFFFPPFPPPPPP',  // 狹窄通道（瓶頸位）
+'PPPPPPPPPFPPPPPP',  // 開闊地
+'PPPRRRRRRRPPPPPP',  // 中央道路
+'PPPR++++++++RPPP',  // 指揮中心（雙砦防線）
+'PPPRRRRRRRPPPPPP',  // 後方道路
+'PPPPPPPPPPPPPPPP',  // 玩家起始區
+'PPPPPPPPPPPPPPPP'], // 玩家起始區
+playerUnits:[{charId:'eirine',x:1,y:12},{charId:'marcus',x:2,y:13}],
+newRecruits:[{charId:'lina',x:5,y:5,turnJoin:1}],
 enemies:[
-{classId:'soldier',level:2,x:10,y:1,items:['ironLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:2,x:12,y:2,items:['ironLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:2,x:14,y:3,items:['ironLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:3,x:13,y:5,items:['ironLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'fighter',level:2,x:11,y:6,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
-{classId:'fighter',level:2,x:10,y:8,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
-{classId:'archer',level:2,x:14,y:4,items:['ironBow'],ai:'defensive',name:'弓兵'},
-{classId:'archer',level:2,x:12,y:7,items:['ironBow'],ai:'defensive',name:'弓兵'},
-{classId:'soldier',level:3,x:13,y:9,items:['steelLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'fighter',level:3,x:9,y:4,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
-{classId:'soldier',level:3,x:15,y:6,items:['ironLance'],ai:'defensive',name:'帝國兵'},
-{classId:'soldier',level:4,x:14,y:1,items:['steelLance'],ai:'aggressive',name:'追兵隊長',isBoss:true,bonusStats:{hp:3,str:2,def:2}}],
+// 北邊防線（砦陣地）
+{classId:'soldier',level:2,x:6,y:1,items:['ironLance'],ai:'defensive',name:'帝國前哨'},
+{classId:'archer',level:2,x:9,y:1,items:['ironBow'],ai:'defensive',name:'帝國弓兵'},
+{classId:'soldier',level:3,x:7,y:1,items:['ironLance'],ai:'defensive',name:'帝國隊長'},
+{classId:'soldier',level:3,x:8,y:1,items:['ironLance'],ai:'defensive',name:'帝國隊長'},
+// 左翼巡邏隊
+{classId:'fighter',level:2,x:3,y:3,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
+{classId:'fighter',level:2,x:4,y:4,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
+// 隘口守衛
+{classId:'soldier',level:2,x:5,y:5,items:['ironLance'],ai:'defensive',name:'帝國兵'},
+{classId:'archer',level:2,x:11,y:5,items:['ironBow'],ai:'defensive',name:'帝國弓兵'},
+// 中央機動隊
+{classId:'soldier',level:3,x:10,y:7,items:['steelLance'],ai:'aggressive',name:'帝國兵'},
+{classId:'fighter',level:3,x:6,y:8,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
+// 指揮中心（雙砦）
+{classId:'knight',level:3,x:6,y:10,items:['ironLance'],ai:'defensive',name:'帝國重裝'},
+{classId:'knight',level:3,x:9,y:10,items:['ironLance'],ai:'defensive',name:'帝國重裝'},
+{classId:'archer',level:3,x:7,y:10,items:['ironBow'],ai:'defensive',name:'帝國狙擊手'},
+{classId:'soldier',level:4,x:8,y:10,items:['steelLance'],ai:'aggressive',name:'追兵隊長',isBoss:true,bonusStats:{hp:3,str:2,def:2}}],
 npcs:[],talkEvents:[],
 turnEvents:[{turn:1,type:'recruit',text:[
 {speaker:'lina',text:'喂！你們是被帝國追殺的人吧？追兵已經從北邊來了。'},
@@ -532,7 +554,7 @@ morgane:{name:'莫爾甘',portrait:{hair:'#206',eyes:'#f0f',skin:'#baa'}}
 
 function parseTerrain(terrainStrings,w,h){
 const map=[];
-const L={P:'plain',F:'forest',M:'mountain',W:'wall',G:'gate',R:'river',V:'village',I:'floor',T:'throne',L:'pillar',O:'fort'};
+const L={P:'plain',F:'forest',M:'mountain',W:'wall',G:'gate',R:'river',V:'village',I:'floor',T:'throne',L:'pillar',O:'fort','+':'fort'};
 for(let y=0;y<h;y++){map[y]=[];const r=terrainStrings[y]||'';for(let x=0;x<w;x++)map[y][x]=L[r[x]]||'plain';}
 return map;
 }
