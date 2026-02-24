@@ -584,7 +584,7 @@ const UI = {
       <div id="map-menu-box" style="
         background:linear-gradient(160deg,#0d0d25,#11162b);
         border:2px solid #4a9eff;border-radius:10px;
-        padding:28px 40px;min-width:260px;
+        padding:20px 30px;min-width:240px;
         font-family:inherit;font-size:16px;color:#fff;
         box-shadow:0 0 40px rgba(74,158,255,0.3);">
         <div style="text-align:center;font-size:20px;color:#4a9eff;font-weight:bold;margin-bottom:20px;letter-spacing:2px">
@@ -609,7 +609,7 @@ const UI = {
     menuDefs.forEach(def => {
       const btn = document.createElement('div');
       btn.style.cssText = [
-        'padding:10px 16px;margin:5px 0;border-radius:6px',
+        'padding:6px 12px;margin:2px 0;border-radius:6px',
         'cursor:pointer;transition:background 0.15s',
         'border:1px solid transparent',
         'user-select:none',
