@@ -62,7 +62,7 @@ async function loadChapter(chapterId) {
     return null;
   }
 
-  const basePath = `maps/${manifest.dir}`;
+  const basePath = `./maps/${manifest.dir}`;
 
   try {
     // Load config.json
