@@ -11,7 +11,8 @@ const GameMap = {
   init(chapter) {
     this.width = chapter.width;
     this.height = chapter.height;
-    this.terrain = parseTerrain(chapter.terrain, this.width, this.height);
+    // terrain is already parsed by loadChapter
+    this.terrain = chapter.terrain;
     this.camX = 0;
     this.camY = 0;
   },
