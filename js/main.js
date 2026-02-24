@@ -217,10 +217,13 @@ window.addEventListener('resize', resizeCanvas);
 // === Mobile Fullscreen Toggle ===
 const mobileToggleBtn = document.getElementById('mobile-toggle');
 if (mobileToggleBtn) {
-  // Show button only on mobile
-  if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) {
-    mobileToggleBtn.style.display = 'block';
+  // Only show fullscreen button on small screens (mobile/tablet)
+  function checkMobileFullscreen() {
+    const isSmallScreen = window.innerWidth < 900 || window.innerHeight < 650;
+    mobileToggleBtn.style.display = isSmallScreen ? 'block' : 'none';
   }
+  checkMobileFullscreen();
+  window.addEventListener('resize', checkMobileFullscreen);
   
   mobileToggleBtn.addEventListener('click', () => {
     const container = document.getElementById('game-container');
