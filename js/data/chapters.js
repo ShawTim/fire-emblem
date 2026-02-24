@@ -1,560 +1,132 @@
-// chapters.js
-const CHAPTERS=[
+// chapters.js — Dynamic chapter loader
+// Each chapter loads from maps/ch{X}_{name}/terrain.txt + config.json
 
-// ===== PROLOGUE (18x12) =====
-// 場景：帝都王宮內部（宮殿走廊與大廳）
-{id:0,title:'序章',subtitle:'墜落之夜',objective:'seize',objectiveDesc:'艾琳到達暗門出口',seizePos:{x:16,y:10},width:18,height:12,
-terrain:[
-'WWWWWWWWWWWWWWWWWW',
-'WIIIIIIIIIIIIIIIIW',
-'WILIIIIIIIIIIIILIW',
-'WIIWWIIIIIIIIIWWIW',
-'WIIOIIIIIIIIIIIIIW',
-'WLIIIIIIIIIIIIIILW',
-'WIIWWIIIIIIIIIWWIW',
-'WIIIIIIIIIIIIIIIIW',
-'WILIIIIIIIIIIIILIW',
-'WIIIIIIIIIIIIIIIIW',
-'WIIIIIIIIIIIIIIITW',
-'WWWWWWWWWWWWWWWWWW'],
-playerUnits:[{charId:'eirine',x:1,y:1},{charId:'marcus',x:2,y:1}],
-enemies:[
-{classId:'soldier',level:1,x:6,y:2,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:1,x:5,y:3,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:1,x:11,y:3,items:['slimLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:2,x:5,y:5,items:['slimLance'],ai:'defensive',name:'帝國兵'},
-{classId:'soldier',level:2,x:12,y:5,items:['slimLance'],ai:'defensive',name:'帝國兵'},
-{classId:'soldier',level:2,x:7,y:6,items:['slimLance'],ai:'defensive',name:'帝國兵'},
-{classId:'soldier',level:2,x:10,y:6,items:['slimLance'],ai:'defensive',name:'帝國兵'},
-{classId:'soldier',level:3,x:8,y:7,items:['ironLance'],ai:'aggressive',name:'帝國士官'},
-{classId:'soldier',level:3,x:3,y:8,items:['ironLance'],ai:'aggressive',name:'帝國精兵'},
-{classId:'archer',level:3,x:9,y:8,items:['ironBow'],ai:'defensive',name:'帝國弓兵'},
-{classId:'soldier',level:3,x:13,y:8,items:['ironLance'],ai:'aggressive',name:'帝國精兵'},
-{classId:'knight',level:3,x:7,y:9,items:['ironLance'],ai:'defensive',name:'帝國重裝'},
-{classId:'knight',level:3,x:11,y:10,items:['ironLance'],ai:'defensive',name:'帝國重裝'},
-{classId:'knight',level:3,x:14,y:10,items:['ironLance'],ai:'defensive',name:'守衛隊長',isBoss:true,bonusStats:{hp:4,str:2,def:2}}],
-npcs:[],newRecruits:[],talkEvents:[],turnEvents:[],
-dialogues:{pre:[
-{speaker:'eirine',text:'父王……不！我不能離開你！'},
-{speaker:null,text:'國王將星印交到艾琳手中，眼中滿是悲傷與決心——'},
-{speaker:'marcus',text:'殿下，我們必須離開！宰相莫爾甘的軍隊已經攻入王宮了！'},
-{speaker:'eirine',text:'……我明白了。馬庫斯，帶我衝出去！'},
-{speaker:'marcus',text:'遵命！請跟緊我，走廊盡頭有一道暗門！'}],
-post:[
-{speaker:'eirine',text:'我們逃出來了……但父王他……'},
-{speaker:'marcus',text:'殿下，先王將一切託付給了您。他的犧牲不能白費。'},
-{speaker:'eirine',text:'……是的。我會變強的。為了父王，為了這個國家。'},
-{speaker:null,text:'夜色中，兩個身影消失在帝都的城牆之外——'}]}},
-
-// ===== CHAPTER 1 (16x14) - Redesigned with corridors and strategic fort positions =====
-// 場景：隘口防線（帝國追兵設下埋伏，玩家需要突破防線或固守待援）
-{id:1,title:'第一章',subtitle:'荒野的邂逅',objective:'rout',objectiveDesc:'殲滅所有敵人',width:16,height:14,
-terrain:[
-'FFFFFFFFFFFFFFFF',  // 北邊山脈（敵人營地後方）
-'FFPPR++++++++RPP',  // 敵人主防線（雙砦陣地）
-'FFPPPRRRRRRRPPPF',  // 道路走廊
-'FFPPPPPPPPPPPPPF',  // 過渡帶
-'PFPFFFFFFPFFPPPP',  // 森林屏障（左翼掩護）
-'PFPFPPPPPFPPVPPP',  // 隘口 + 村莊（支線目標）
-'PFPFPPPPPFPPPPPP',  // 隘口通道
-'PFFFFFFPPFPPPPPP',  // 狹窄通道（瓶頸位）
-'PPPPPPPPPFPPPPPP',  // 開闊地
-'PPPRRRRRRRPPPPPP',  // 中央道路
-'PPPR++++++++RPPP',  // 指揮中心（雙砦防線）
-'PPPRRRRRRRPPPPPP',  // 後方道路
-'PPPPPPPPPPPPPPPP',  // 玩家起始區
-'PPPPPPPPPPPPPPPP'], // 玩家起始區
-playerUnits:[{charId:'eirine',x:1,y:12},{charId:'marcus',x:2,y:13}],
-newRecruits:[{charId:'lina',x:5,y:5,turnJoin:1}],
-enemies:[
-// 北邊防線（砦陣地）
-{classId:'soldier',level:2,x:6,y:1,items:['ironLance'],ai:'defensive',name:'帝國前哨'},
-{classId:'archer',level:2,x:9,y:1,items:['ironBow'],ai:'defensive',name:'帝國弓兵'},
-{classId:'soldier',level:3,x:7,y:1,items:['ironLance'],ai:'defensive',name:'帝國隊長'},
-{classId:'soldier',level:3,x:8,y:1,items:['ironLance'],ai:'defensive',name:'帝國隊長'},
-// 左翼巡邏隊
-{classId:'fighter',level:2,x:3,y:3,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
-{classId:'fighter',level:2,x:4,y:4,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
-// 隘口守衛
-{classId:'soldier',level:2,x:5,y:5,items:['ironLance'],ai:'defensive',name:'帝國兵'},
-{classId:'archer',level:2,x:11,y:5,items:['ironBow'],ai:'defensive',name:'帝國弓兵'},
-// 中央機動隊
-{classId:'soldier',level:3,x:10,y:7,items:['steelLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'fighter',level:3,x:6,y:8,items:['ironAxe'],ai:'aggressive',name:'傭兵'},
-// 指揮中心（雙砦）
-{classId:'knight',level:3,x:6,y:10,items:['ironLance'],ai:'defensive',name:'帝國重裝'},
-{classId:'knight',level:3,x:9,y:10,items:['ironLance'],ai:'defensive',name:'帝國重裝'},
-{classId:'archer',level:3,x:7,y:10,items:['ironBow'],ai:'defensive',name:'帝國狙擊手'},
-{classId:'soldier',level:4,x:8,y:10,items:['steelLance'],ai:'aggressive',name:'追兵隊長',isBoss:true,bonusStats:{hp:3,str:2,def:2}}],
-npcs:[],talkEvents:[],
-turnEvents:[{turn:1,type:'recruit',text:[
-{speaker:'lina',text:'喂！你們是被帝國追殺的人吧？追兵已經從北邊來了。'},
-{speaker:'eirine',text:'你是……？'},
-{speaker:'lina',text:'叫我莉娜就好。少廢話，先解決眼前的敵人再說。'}]}],
-dialogues:{pre:[
-{speaker:'marcus',text:'殿下，前方有追兵的蹤跡。我們被跟上了。'},
-{speaker:'eirine',text:'……到處都是帝國的人。我們該怎麼辦？'},
-{speaker:'marcus',text:'不必慌張。利用森林的掩護，我們可以各個擊破。'},
-{speaker:'eirine',text:'好。我不會再逃避了——迎戰！'}],
-post:[
-{speaker:'lina',text:'解決了。你們還挺能打的嘛。'},
-{speaker:'eirine',text:'謝謝你的幫助，莉娜。'},
-{speaker:'lina',text:'別謝我。反正我也跟帝國有仇。走吧，這裡不安全。'},
-{speaker:'marcus',text:'往北方走。聽說那裡有個村莊可以暫時落腳。'}]}},
-
-// ===== CHAPTER 2 (18x16) =====
-{id:2,title:'第二章',subtitle:'北境之村',objective:'survive',objectiveDesc:'堅持8回合',surviveTurns:8,width:18,height:16,
-terrain:['MMPPPPPPPPPPPPFFMM','MPPPPPPPPPPPPPFFMM','PPPPPPVPPPVPPPPPPP','PPPPPPPPPPPPPPPPPP','PPFFFPPPPPPPFFFPPP','PPFPPPPPPPPPPFPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPVPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPFFPPPP','PPPPPPPPPPPPFFPPPP','RRRRRRRRRRRRRRRRPP','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','MMPPPPPPPPPPPPFFMM'],
-playerUnits:[{charId:'eirine',x:8,y:5},{charId:'marcus',x:7,y:5},{charId:'lina',x:9,y:5}],
-newRecruits:[{charId:'thor',x:6,y:7,turnJoin:1},{charId:'serra',x:7,y:7,turnJoin:1}],
-enemies:[
-{classId:'brigand',level:3,x:0,y:0,items:['ironAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:3,x:1,y:0,items:['ironAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:4,x:17,y:0,items:['ironAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:3,x:17,y:1,items:['ironAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:3,x:0,y:3,items:['ironAxe'],ai:'aggressive',name:'山賊'},
-{classId:'fighter',level:4,x:16,y:3,items:['steelAxe'],ai:'aggressive',name:'山賊頭目'},
-{classId:'brigand',level:3,x:3,y:0,items:['handAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:3,x:14,y:0,items:['ironAxe'],ai:'aggressive',name:'山賊'}],
-npcs:[],talkEvents:[],
-turnEvents:[
-{turn:1,type:'recruit',text:[
-{speaker:'thor',text:'哈哈哈！你們來得正好！我正愁沒人幫忙呢！'},
-{speaker:'serra',text:'請幫幫這個村莊的人們……我是賽拉，教會的修女。'},
-{speaker:'eirine',text:'當然！我們一起保護村莊！'}]},
-{turn:3,type:'reinforce',enemies:[
-{classId:'brigand',level:3,x:0,y:15,items:['ironAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:4,x:1,y:15,items:['steelAxe'],ai:'aggressive',name:'山賊頭目'},
-{classId:'brigand',level:3,x:17,y:15,items:['ironAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:3,x:16,y:15,items:['handAxe'],ai:'aggressive',name:'山賊'}]},
-{turn:5,type:'reinforce',enemies:[
-{classId:'brigand',level:4,x:0,y:0,items:['steelAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:4,x:17,y:0,items:['handAxe'],ai:'aggressive',name:'山賊'},
-{classId:'fighter',level:5,x:0,y:15,items:['steelAxe'],ai:'aggressive',name:'山賊頭領'},
-{classId:'fighter',level:5,x:17,y:15,items:['steelAxe'],ai:'aggressive',name:'山賊頭領'}]},
-{turn:7,type:'reinforce',enemies:[
-{classId:'brigand',level:4,x:0,y:8,items:['ironAxe'],ai:'aggressive',name:'山賊'},
-{classId:'brigand',level:4,x:17,y:8,items:['ironAxe'],ai:'aggressive',name:'山賊'}]}],
-dialogues:{pre:[
-{speaker:'eirine',text:'前方的村莊——有人在呼救！'},
-{speaker:'marcus',text:'山賊正在包圍村莊。殿下，我們必須守住。'},
-{speaker:'eirine',text:'那裡的人們……我們一定要保護他們！'},
-{speaker:'lina',text:'敵人從四面八方來。集中在村莊附近防守比較好。'},
-{speaker:'marcus',text:'同意。利用河流作為天然屏障，守住北岸。'}],
-post:[
-{speaker:'thor',text:'哈哈！打得痛快！你們真不錯！算我一個！'},
-{speaker:'serra',text:'殿下……您為了素昧平生的人而戰，真是高尚。請讓我跟隨您。'},
-{speaker:'eirine',text:'謝謝你們。只要大家團結，一定能度過難關。'}]}},
-
-// ===== CHAPTER 3 (16x14) =====
-{id:3,title:'第三章',subtitle:'傭兵的代價',objective:'rout',objectiveDesc:'說服凱恩並殲滅敵人',width:16,height:14,
-terrain:['MMPPPPPPPPPPMMPP','MPPPPPPPPPPPMMPF','PPPPPPPPPPPPPPPP','PPPPRRRPPPPPPPPP','PPPPRRRPPPPPPPPP','PPPPRRPPPPPPFFPP','PPPGGGPPPPPPPFPP','PPPPPPPPPPPPPPPP','PPPPPPPPFFPPPPPP','PPPPPPPPFFPPPPPP','PPPPPPPPPPPPPPPP','PPFPPPPPPPPPPFPP','PPFFPPPPPPPPPFPP','PPPPPPPPPPPPPPPP'],
-playerUnits:[{charId:'eirine',x:1,y:12},{charId:'marcus',x:0,y:12},{charId:'lina',x:2,y:13},{charId:'thor',x:1,y:13},{charId:'serra',x:0,y:13}],
-newRecruits:[],
-enemies:[
-{classId:'mercenary',level:5,x:8,y:1,items:['ironSword'],ai:'aggressive',name:'凱恩',isCain:true,recruitableBy:'eirine'},
-{classId:'soldier',level:4,x:10,y:0,items:['ironLance'],ai:'aggressive',name:'傭兵團員'},
-{classId:'soldier',level:4,x:12,y:1,items:['ironLance'],ai:'aggressive',name:'傭兵團員'},
-{classId:'fighter',level:4,x:14,y:2,items:['ironAxe'],ai:'aggressive',name:'傭兵團員'},
-{classId:'fighter',level:4,x:13,y:3,items:['ironAxe'],ai:'aggressive',name:'傭兵團員'},
-{classId:'archer',level:4,x:15,y:1,items:['ironBow'],ai:'defensive',name:'傭兵弓手'},
-{classId:'archer',level:4,x:11,y:3,items:['ironBow'],ai:'defensive',name:'傭兵弓手'},
-{classId:'soldier',level:5,x:10,y:4,items:['steelLance'],ai:'aggressive',name:'傭兵隊長'},
-{classId:'soldier',level:4,x:13,y:5,items:['ironLance'],ai:'aggressive',name:'傭兵團員'},
-{classId:'fighter',level:4,x:12,y:6,items:['ironAxe'],ai:'aggressive',name:'傭兵團員'},
-{classId:'soldier',level:4,x:15,y:5,items:['ironLance'],ai:'aggressive',name:'傭兵團員'},
-{classId:'fighter',level:5,x:14,y:7,items:['steelAxe'],ai:'aggressive',name:'傭兵精銳'},
-{classId:'soldier',level:4,x:11,y:8,items:['ironLance'],ai:'aggressive',name:'傭兵團員'}],
-npcs:[],
-talkEvents:[{from:'eirine',target:'cain',dialogue:[
-{speaker:'eirine',text:'凱恩！停手！你不必為帝國賣命！'},
-{speaker:'cain',text:'哦？帝國公主殿下……你知道我多少錢一天嗎？'},
-{speaker:'eirine',text:'我出不起錢，但我能給你一個值得為之戰鬥的理由。'},
-{speaker:'cain',text:'……哈，有意思。好吧，就陪你玩玩看。反正那個僱主也欠了我三個月薪水了。'}]}],
-turnEvents:[],
-dialogues:{pre:[
-{speaker:'marcus',text:'殿下，前方峽谷有一隊傭兵擋路。他們似乎是受僱來截殺我們的。'},
-{speaker:'eirine',text:'傭兵……也許我可以跟他們的首領談談。'},
-{speaker:'lina',text:'跟傭兵講道理？你真是天真。'},
-{speaker:'eirine',text:'不試試怎麼知道呢？有時候，劍解決不了的事，言語可以。'},
-{speaker:'thor',text:'嘿，如果談不攏，就用斧頭說話！'}],
-post:[
-{speaker:'cain',text:'哼，正義什麼的……可不能當飯吃。不過……你的眼神倒是不像在說謊。'},
-{speaker:'eirine',text:'歡迎加入，凱恩。'},
-{speaker:'lina',text:'切，又多了一個吃飯的嘴。'},
-{speaker:'cain',text:'放心，我的劍比我的飯量值錢得多。'}]}},
-
-// ===== CHAPTER 4 (14x18) =====
-{id:4,title:'第四章',subtitle:'魔法塔',objective:'seize',objectiveDesc:'艾琳到達塔頂',seizePos:{x:6,y:0},width:14,height:18,
-terrain:['WWWWWWGWWWWWWW','WLPPPPPPPPPLWW','WPWWWPPWWWPPWW','WPPPPPPPPPPPWW','WWPPWWWWPPWWWW','WLPPPPPPPPPLWW','WPWWWPPWWWPPWW','WPPPPPPPPPPPWW','WWPPWWWWPPWWWW','WLPPPPPPPPPLWW','WPWWWPPWWWPPWW','WPPPPPPPPPPPWW','WWPPWWWWPPWWWW','WLPPPPPPPPPLWW','WPPPPPPPPPPPWW','WPWWWPPWWWPPWW','WPPPPPPPPPPPWW','WWWWWWGWWWWWWW'],
-playerUnits:[{charId:'eirine',x:6,y:17},{charId:'marcus',x:5,y:16},{charId:'lina',x:7,y:16},{charId:'thor',x:6,y:16},{charId:'serra',x:5,y:15},{charId:'cain',x:7,y:15}],
-newRecruits:[{charId:'fran',x:7,y:1,turnJoin:1}],
-enemies:[
-{classId:'mage',level:6,x:3,y:14,items:['fire'],ai:'defensive',name:'魔法師'},
-{classId:'mage',level:6,x:10,y:14,items:['thunder'],ai:'defensive',name:'魔法師'},
-{classId:'skeleton',level:5,x:1,y:13,items:['ironLance'],ai:'aggressive',name:'骷髏兵'},
-{classId:'skeleton',level:5,x:12,y:13,items:['ironAxe'],ai:'aggressive',name:'骷髏兵'},
-{classId:'mage',level:6,x:3,y:11,items:['wind'],ai:'defensive',name:'魔法師'},
-{classId:'mage',level:7,x:10,y:11,items:['fire'],ai:'aggressive',name:'魔法師'},
-{classId:'skeleton',level:5,x:1,y:9,items:['ironAxe'],ai:'aggressive',name:'骷髏兵'},
-{classId:'skeleton',level:6,x:12,y:9,items:['ironLance'],ai:'aggressive',name:'骷髏兵'},
-{classId:'mage',level:7,x:3,y:7,items:['elfire'],ai:'defensive',name:'上級魔法師'},
-{classId:'mage',level:7,x:10,y:7,items:['elthunder'],ai:'defensive',name:'上級魔法師'},
-{classId:'mage',level:7,x:1,y:5,items:['fire'],ai:'aggressive',name:'魔法師'},
-{classId:'mage',level:7,x:12,y:5,items:['thunder'],ai:'aggressive',name:'魔法師'},
-{classId:'skeleton',level:6,x:3,y:3,items:['ironAxe'],ai:'defensive',name:'骷髏兵'},
-{classId:'skeleton',level:6,x:10,y:3,items:['ironLance'],ai:'defensive',name:'骷髏兵'},
-{classId:'mage',level:7,x:4,y:1,items:['fire'],ai:'defensive',name:'魔法師'},
-{classId:'darkMage',level:8,x:6,y:1,items:['flux'],ai:'boss',name:'暗黑祭司',isBoss:true,bonusStats:{hp:8,mag:4,skl:3,spd:2,def:3,res:4}}],
-npcs:[],talkEvents:[],
-turnEvents:[
-{turn:1,type:'recruit',text:[
-{speaker:'fran',text:'哈哈哈！又有人闖進本天才的塔了？'},
-{speaker:'eirine',text:'我們不是敵人！我是——'},
-{speaker:'fran',text:'帝國公主艾琳？有意思！好吧，讓本天才來助你一臂之力！'}]},
-{turn:4,type:'reinforce',enemies:[
-{classId:'skeleton',level:6,x:1,y:17,items:['ironAxe'],ai:'aggressive',name:'骷髏兵'},
-{classId:'skeleton',level:6,x:12,y:17,items:['ironLance'],ai:'aggressive',name:'骷髏兵'}]}],
-dialogues:{pre:[
-{speaker:'eirine',text:'這就是傳說中的魔法塔……據說裡面住著一位天才魔法師。'},
-{speaker:'marcus',text:'這座塔被暗黑魔物佔據了。殿下，請小心。'},
-{speaker:'lina',text:'裡面到處都是魔法師和亡靈……真是個鬼地方。'},
-{speaker:'thor',text:'哼！不管是鬼還是骷髏，一斧頭下去都一樣！'},
-{speaker:'cain',text:'魔法攻擊無視物理防禦，注意走位。'}],
-post:[
-{speaker:'fran',text:'不錯嘛，能打到這裡。我是法蘭，史上最強的年輕天才魔法師！'},
-{speaker:'lina',text:'……自稱天才的人通常不是天才。'},
-{speaker:'fran',text:'什麼！？你——'},
-{speaker:'eirine',text:'好了好了。法蘭，謝謝你的幫助。一起走吧。'}]}},
-
-// ===== CHAPTER 5 (20x18) =====
-{id:5,title:'第五章',subtitle:'星辰要塞',objective:'boss',objectiveDesc:'擊敗要塞守將',width:20,height:18,
-terrain:['PPPPPPPPPPPPPPPPPPPP','PPPPFFPPPPPPFFPPPPPP','PPPPFFPPPPPPFFPPPPPP','PPPPPPPPPPPPPPPPPPPP','PPPPPPPPVPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPP','PPRRRRRRRRRRRRRRRRPP','PPRRRRRRRRRRRRRRRRPP','PPPPPPPPGGPPPPPPPPPP','PPPPPPWWWWWWPPPPPPPP','PPPPWWWLPPWWWWPPPPPP','PPPPWPPPPPPPPWPPPPPP','PPPPWPLPPPPLPWPPPPPP','PPPPWPPPPPPPPWPPPPPP','PPPPWWPPPPPPWWPPPPPP','PPPPPWWLTTLWWPPPPPPP','PPPPPWWWWWWWWPPPPPPP','PPPPPPPPPPPPPPPPPPPP'],
-playerUnits:[{charId:'eirine',x:9,y:0},{charId:'marcus',x:8,y:0},{charId:'lina',x:10,y:0},{charId:'thor',x:9,y:1},{charId:'serra',x:8,y:1},{charId:'cain',x:10,y:1},{charId:'fran',x:11,y:1}],
-newRecruits:[{charId:'rex',x:15,y:3,turnJoin:2}],
-enemies:[
-{classId:'soldier',level:7,x:8,y:8,items:['steelLance'],ai:'defensive',name:'要塞守兵'},
-{classId:'soldier',level:7,x:11,y:8,items:['steelLance'],ai:'defensive',name:'要塞守兵'},
-{classId:'knight',level:7,x:6,y:10,items:['steelLance'],ai:'defensive',name:'重裝兵'},
-{classId:'knight',level:7,x:13,y:10,items:['steelLance'],ai:'defensive',name:'重裝兵'},
-{classId:'archer',level:7,x:5,y:9,items:['steelBow'],ai:'defensive',name:'要塞弓兵'},
-{classId:'archer',level:7,x:14,y:9,items:['steelBow'],ai:'defensive',name:'要塞弓兵'},
-{classId:'mage',level:7,x:7,y:12,items:['elfire'],ai:'defensive',name:'要塞魔法師'},
-{classId:'mage',level:7,x:12,y:12,items:['elthunder'],ai:'defensive',name:'要塞魔法師'},
-{classId:'soldier',level:8,x:5,y:11,items:['steelLance'],ai:'aggressive',name:'要塞守兵'},
-{classId:'soldier',level:8,x:14,y:11,items:['steelLance'],ai:'aggressive',name:'要塞守兵'},
-{classId:'knight',level:8,x:8,y:14,items:['steelLance'],ai:'defensive',name:'近衛兵'},
-{classId:'knight',level:8,x:11,y:14,items:['steelLance'],ai:'defensive',name:'近衛兵'},
-{classId:'fighter',level:7,x:3,y:7,items:['steelAxe'],ai:'aggressive',name:'守衛'},
-{classId:'fighter',level:7,x:16,y:7,items:['steelAxe'],ai:'aggressive',name:'守衛'},
-{classId:'archer',level:8,x:9,y:13,items:['steelBow'],ai:'defensive',name:'精銳弓兵'},
-{classId:'paladin',level:1,x:9,y:15,items:['silverLance','javelin'],ai:'boss',name:'要塞守將格倫',isBoss:true,bonusStats:{hp:10,str:3,skl:2,spd:2,def:4,res:2}},
-{classId:'soldier',level:8,x:10,y:15,items:['steelLance'],ai:'defensive',name:'護衛兵'}],
-npcs:[],talkEvents:[],
-turnEvents:[
-{turn:2,type:'recruit',text:[
-{speaker:'rex',text:'艾琳殿下！我是飛龍騎士團副團長雷克斯！帝國的暴行我再也看不下去了！'},
-{speaker:'eirine',text:'雷克斯……太好了，有你的幫助，我們一定能攻下這座要塞！'}]},
-{turn:4,type:'reinforce',enemies:[
-{classId:'soldier',level:7,x:0,y:9,items:['ironLance'],ai:'aggressive',name:'增援兵'},
-{classId:'soldier',level:7,x:19,y:9,items:['ironLance'],ai:'aggressive',name:'增援兵'},
-{classId:'archer',level:7,x:0,y:10,items:['ironBow'],ai:'aggressive',name:'增援弓兵'}]}],
-dialogues:{pre:[
-{speaker:'eirine',text:'這座要塞擋住了我們前進的道路。必須攻下它。'},
-{speaker:'marcus',text:'要塞前有一條河流，只有中央的橋門可以通過。正面突破會有不少損傷。'},
-{speaker:'cain',text:'別衝太快，裡面的守軍不是省油的燈。'},
-{speaker:'serra',text:'我會在後方治療大家。請注意安全。'},
-{speaker:'fran',text:'哈，區區一座要塞，看本天才怎麼用魔法轟開它！'}],
-post:[
-{speaker:'eirine',text:'要塞……攻下來了。'},
-{speaker:'marcus',text:'殿下的指揮越來越出色了。先王在天之靈一定很欣慰。'},
-{speaker:'rex',text:'格倫將軍……他其實也不想為莫爾甘效命。只是軍人的職責……'},
-{speaker:'eirine',text:'我理解。戰爭讓每個人都身不由己。但我們必須繼續前進。'}]}},
-
-// ===== CHAPTER 6 (18x16) =====
-{id:6,title:'第六章',subtitle:'裏切之港',objective:'seize',objectiveDesc:'佔領港口',seizePos:{x:8,y:1},width:18,height:16,
-terrain:['WWWWWWWWWWWWWWWWWW','WWWWPPPPGPPPPPWWWW','WWWPPPPPPPPPPPWWWW','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','PPPPWWPPPPPWWPPPPP','PPPPWWPPPPPWWPPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPVPPPPVPPPPPP','PPPPPPPPPPPPPPPPPP','RRRRRRRRRRRRRRRRPP','RRRRRRRRRRRRRRRRRR','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPP'],
-playerUnits:[{charId:'eirine',x:4,y:14},{charId:'marcus',x:3,y:14},{charId:'lina',x:5,y:14},{charId:'thor',x:4,y:15},{charId:'serra',x:3,y:15},{charId:'cain',x:5,y:15},{charId:'fran',x:6,y:15},{charId:'rex',x:7,y:14}],
-newRecruits:[{charId:'natasha',x:14,y:8,turnJoin:3}],
-enemies:[
-{classId:'brigand',level:8,x:3,y:3,items:['steelAxe'],ai:'aggressive',name:'海賊'},
-{classId:'brigand',level:8,x:14,y:3,items:['steelAxe'],ai:'aggressive',name:'海賊'},
-{classId:'brigand',level:7,x:7,y:4,items:['ironAxe'],ai:'aggressive',name:'海賊'},
-{classId:'brigand',level:7,x:10,y:4,items:['handAxe'],ai:'aggressive',name:'海賊'},
-{classId:'soldier',level:8,x:6,y:5,items:['steelLance'],ai:'defensive',name:'港口守兵'},
-{classId:'soldier',level:8,x:11,y:5,items:['steelLance'],ai:'defensive',name:'港口守兵'},
-{classId:'archer',level:8,x:5,y:6,items:['steelBow'],ai:'defensive',name:'港口弓兵'},
-{classId:'archer',level:8,x:12,y:6,items:['steelBow'],ai:'defensive',name:'港口弓兵'},
-{classId:'soldier',level:8,x:8,y:7,items:['steelLance'],ai:'aggressive',name:'港口守兵'},
-{classId:'soldier',level:8,x:10,y:7,items:['ironLance'],ai:'aggressive',name:'港口守兵'},
-{classId:'knight',level:8,x:7,y:2,items:['steelLance'],ai:'defensive',name:'港口重裝兵'},
-{classId:'knight',level:8,x:11,y:2,items:['steelLance'],ai:'defensive',name:'港口重裝兵'},
-{classId:'mage',level:8,x:9,y:3,items:['elfire'],ai:'defensive',name:'港口魔法師'},
-{classId:'archer',level:9,x:9,y:1,items:['killerBow'],ai:'boss',name:'提督巴爾薩',isBoss:true,bonusStats:{hp:8,str:4,skl:5,spd:3,def:3,res:2}},
-{classId:'soldier',level:8,x:8,y:1,items:['steelLance'],ai:'defensive',name:'提督護衛'},
-{classId:'soldier',level:8,x:10,y:1,items:['steelLance'],ai:'defensive',name:'提督護衛'}],
-npcs:[],talkEvents:[],
-turnEvents:[
-{turn:3,type:'recruit',text:[
-{speaker:'natasha',text:'你們是反抗軍嗎？我是天馬騎士ナターシャ！讓我加入你們！'},
-{speaker:'eirine',text:'從天而降的援軍……太好了！歡迎！'}]},
-{turn:5,type:'reinforce',enemies:[
-{classId:'brigand',level:8,x:0,y:12,items:['steelAxe'],ai:'aggressive',name:'海賊增援'},
-{classId:'brigand',level:8,x:17,y:12,items:['handAxe'],ai:'aggressive',name:'海賊增援'},
-{classId:'brigand',level:8,x:0,y:13,items:['ironAxe'],ai:'aggressive',name:'海賊增援'}]}],
-dialogues:{pre:[
-{speaker:'eirine',text:'我們需要一艘船渡過內海。這座港口是唯一的選擇。'},
-{speaker:'marcus',text:'但港口被莫爾甘的部下——提督巴爾薩控制著。'},
-{speaker:'lina',text:'海賊和帝國軍混在一起……真是一群烏合之眾。'},
-{speaker:'cain',text:'烏合之眾？別小看他們。海賊可比正規軍難纏得多。'},
-{speaker:'thor',text:'管他是海賊還是帝國軍，擋路的全部砍倒就是了！'}],
-post:[
-{speaker:'eirine',text:'港口拿下了。巴爾薩提督……你為什麼要替莫爾甘做事？'},
-{speaker:null,text:'巴爾薩沉默不語，最終嘆了口氣——'},
-{speaker:'eirine',text:'算了。我們拿到船了。下一站，越過內海，直搗帝都。'},
-{speaker:'natasha',text:'ナターシャ在此，天馬的翅膀將為你們開路！'}]}},
-
-// ===== CHAPTER 7 (20x16) =====
-{id:7,title:'第七章',subtitle:'深淵之森',objective:'rout',objectiveDesc:'殲滅所有敵人',width:20,height:16,
-terrain:['FFPFFFPPPFFFPFFFPPFF','FPFFPFFPPFPFPFFPPPFP','PPPFFPPPPPPPPFFPPPPP','FFPPPPVPPPPPPPPPPFFF','FPPPPPPPPPPPPPPPPPFP','PPPPFFPPPFFFPPPFFPPP','FFPPFFPPPFVFPPPFFPFF','PPPPPPPPPPPPPPPPPPPP','PPFFPPPPPPPPPPPPFFPP','PFFFPPPFFFPPPFFFPFFP','PPPPPPPPFPPPPPPPPPPP','FFPPPPPPPPPPPFFPPFFF','FPPPFFPPPPPPPFPPPFPP','PPPPFFPPPPVPPPPPPPPF','PPPPPPPPPPPPPPPPPPPF','FFPFFFPPPFFFPPFFFPFF'],
-playerUnits:[{charId:'eirine',x:2,y:14},{charId:'marcus',x:1,y:14},{charId:'lina',x:3,y:14},{charId:'thor',x:2,y:15},{charId:'serra',x:1,y:15},{charId:'cain',x:3,y:15},{charId:'fran',x:4,y:14},{charId:'rex',x:4,y:15},{charId:'natasha',x:5,y:14}],
-newRecruits:[{charId:'olivier',x:10,y:6,turnJoin:2}],
-enemies:[
-{classId:'brigand',level:9,x:8,y:2,items:['steelAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'brigand',level:9,x:14,y:2,items:['handAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'brigand',level:9,x:5,y:5,items:['steelAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'brigand',level:9,x:16,y:5,items:['ironAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'darkMage',level:9,x:10,y:3,items:['flux'],ai:'aggressive',name:'暗黑術士'},
-{classId:'darkMage',level:9,x:15,y:4,items:['flux'],ai:'aggressive',name:'暗黑術士'},
-{classId:'darkMage',level:10,x:12,y:7,items:['dark'],ai:'aggressive',name:'暗黑術士'},
-{classId:'brigand',level:9,x:3,y:7,items:['steelAxe'],ai:'aggressive',name:'狂獸'},
-{classId:'brigand',level:9,x:17,y:8,items:['steelAxe'],ai:'aggressive',name:'狂獸'},
-{classId:'brigand',level:10,x:7,y:9,items:['steelAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'brigand',level:9,x:13,y:10,items:['handAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'mage',level:9,x:9,y:8,items:['elfire'],ai:'aggressive',name:'術士'},
-{classId:'archer',level:9,x:11,y:5,items:['steelBow'],ai:'defensive',name:'獵人'},
-{classId:'archer',level:9,x:6,y:8,items:['steelBow'],ai:'defensive',name:'獵人'},
-{classId:'brigand',level:10,x:18,y:1,items:['steelAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'fighter',level:10,x:15,y:9,items:['steelAxe'],ai:'aggressive',name:'盜賊頭領'},
-{classId:'darkMage',level:11,x:10,y:0,items:['dark','nosferatu'],ai:'boss',name:'咒術師沃爾夫',isBoss:true,bonusStats:{hp:10,mag:5,skl:3,spd:2,def:4,res:5}},
-{classId:'brigand',level:10,x:9,y:1,items:['steelAxe'],ai:'defensive',name:'護衛'},
-{classId:'brigand',level:10,x:11,y:1,items:['handAxe'],ai:'defensive',name:'護衛'}],
-npcs:[],
-talkEvents:[],
-turnEvents:[
-{turn:2,type:'recruit',text:[
-{speaker:'olivier',text:'……你們是反抗帝國的人嗎？我一直在這片森林裡躲藏……'},
-{speaker:'eirine',text:'你是誰？'},
-{speaker:'olivier',text:'叫我オリヴィエ就好。讓我跟你們一起戰鬥吧。'}]},
-{turn:4,type:'reinforce',enemies:[
-{classId:'brigand',level:9,x:0,y:7,items:['ironAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'brigand',level:9,x:19,y:7,items:['ironAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'darkMage',level:9,x:0,y:8,items:['flux'],ai:'aggressive',name:'暗黑術士'}]},
-{turn:6,type:'reinforce',enemies:[
-{classId:'brigand',level:10,x:19,y:0,items:['steelAxe'],ai:'aggressive',name:'森林盜賊'},
-{classId:'brigand',level:10,x:0,y:0,items:['steelAxe'],ai:'aggressive',name:'森林盜賊'}]}],
-dialogues:{pre:[
-{speaker:'eirine',text:'這片森林……空氣中瀰漫著不祥的氣息。'},
-{speaker:'serra',text:'我感受到了黑暗的力量。這片森林被詛咒了。'},
-{speaker:'fran',text:'有趣。這種濃度的魔力……一定有人在操控。'},
-{speaker:'lina',text:'樹太密了，視線很差。小心埋伏。'},
-{speaker:'cain',text:'保持隊形，別讓人各個擊破。'},
-{speaker:'natasha',text:'ナターシャ從空中偵察過了，敵人散布在整片森林中！'}],
-post:[
-{speaker:'eirine',text:'詛咒解除了……森林恢復了原本的模樣。'},
-{speaker:'olivier',text:'……謝謝你們。我叫オリヴィエ。在這片森林裡躲藏了很久。'},
-{speaker:'lina',text:'盜賊？'},
-{speaker:'olivier',text:'……以前是。但現在，我想為正確的事而戰。'},
-{speaker:'eirine',text:'歡迎你，オリヴィエ。每個人都值得第二次機會。'}]}},
-
-// ===== CHAPTER 8 (20x18) =====
-{id:8,title:'第八章',subtitle:'鋼鉄之要塞',objective:'boss',objectiveDesc:'擊敗要塞司令官',width:20,height:18,
-terrain:['WWWWWWWWWWWWWWWWWWWW','WWPPLPPPPPPPPPLPPWW','WWPPPPPPPPPPPPPPWWWW','WWWWWWPPPPPPWWWWWWWW','WWPPPPPPLPPPPPPPPWWW','WWPPPPPPPPPPPPPPWWWW','WWWWWGPPPPPPGWWWWWWW','WWPPPPPPPPPPPPPPPWWW','WWPLPPPPPPPPPPLPPWWW','WWPPPPPPPPPPPPPPPWWW','WWWWWGPPPPPPGWWWWWWW','WWPPPPPPPPPPPPPPPWWW','WWPLPPPPPPPPPPPLWWWW','WWPPPPPPPPPPPPPPPWWW','WWWWWWWGPPGWWWWWWWWW','WWWPPPPPPPPPPPPPWWWW','WWWPLPPPTTPPPPLPWWWW','WWWWWWWWWWWWWWWWWWWW'],
-playerUnits:[{charId:'eirine',x:9,y:17},{charId:'marcus',x:8,y:17},{charId:'lina',x:10,y:17},{charId:'thor',x:9,y:16},{charId:'serra',x:8,y:16},{charId:'cain',x:10,y:16},{charId:'fran',x:11,y:17},{charId:'rex',x:7,y:17},{charId:'natasha',x:11,y:16},{charId:'olivier',x:12,y:17}],
-newRecruits:[],
-enemies:[
-{classId:'knight',level:10,x:7,y:14,items:['steelLance'],ai:'defensive',name:'要塞重裝兵'},
-{classId:'knight',level:10,x:12,y:14,items:['steelLance'],ai:'defensive',name:'要塞重裝兵'},
-{classId:'soldier',level:10,x:5,y:12,items:['steelLance'],ai:'aggressive',name:'要塞守兵'},
-{classId:'soldier',level:10,x:14,y:12,items:['steelLance'],ai:'aggressive',name:'要塞守兵'},
-{classId:'archer',level:10,x:4,y:8,items:['steelBow'],ai:'defensive',name:'要塞弓兵'},
-{classId:'archer',level:10,x:15,y:8,items:['steelBow'],ai:'defensive',name:'要塞弓兵'},
-{classId:'mage',level:10,x:6,y:7,items:['elfire'],ai:'defensive',name:'要塞魔法師'},
-{classId:'mage',level:10,x:13,y:7,items:['elthunder'],ai:'defensive',name:'要塞魔法師'},
-{classId:'soldier',level:10,x:8,y:10,items:['steelLance'],ai:'defensive',name:'要塞守兵'},
-{classId:'soldier',level:10,x:11,y:10,items:['steelLance'],ai:'defensive',name:'要塞守兵'},
-{classId:'knight',level:10,x:8,y:6,items:['steelLance'],ai:'defensive',name:'要塞重裝兵'},
-{classId:'knight',level:10,x:11,y:6,items:['steelLance'],ai:'defensive',name:'要塞重裝兵'},
-{classId:'soldier',level:10,x:5,y:4,items:['steelLance'],ai:'aggressive',name:'要塞守兵'},
-{classId:'soldier',level:10,x:14,y:4,items:['steelLance'],ai:'aggressive',name:'要塞守兵'},
-{classId:'archer',level:10,x:3,y:1,items:['killerBow'],ai:'defensive',name:'精銳弓兵'},
-{classId:'archer',level:10,x:16,y:1,items:['killerBow'],ai:'defensive',name:'精銳弓兵'},
-{classId:'mage',level:10,x:6,y:2,items:['elfire'],ai:'defensive',name:'要塞魔法師'},
-{classId:'mage',level:10,x:13,y:2,items:['elthunder'],ai:'defensive',name:'要塞魔法師'},
-{classId:'general',level:1,x:4,y:8,items:['silverLance','javelin'],ai:'defensive',name:'ヘルガ',charId:'helga',isHelga:true,recruitableBy:'eirine'},
-{classId:'greatKnight',level:3,x:9,y:1,items:['silverLance','silverSword'],ai:'boss',name:'要塞司令官ゲルハルト',isBoss:true,bonusStats:{hp:12,str:5,skl:3,spd:2,def:6,res:2}}],
-npcs:[],talkEvents:[{from:'eirine',target:'helga',dialogue:[
-{speaker:'eirine',text:'ヘルガ將軍！我是艾琳。你還記得我父王嗎？'},
-{speaker:'helga',text:'……公主殿下。我當然記得先王。他是我見過最仁慈的君主。'},
-{speaker:'eirine',text:'那你為什麼還要為莫爾甘效命？'},
-{speaker:'helga',text:'……軍人的職責是服從命令。但……你說得對。先王不會希望我為暴政而戰。'},
-{speaker:'eirine',text:'跟我們一起吧，ヘルガ。'},
-{speaker:'helga',text:'……好。從今天起，我的槍只為正義而戰。'}]}],
-turnEvents:[{turn:3,type:'reinforce',enemies:[
-{classId:'soldier',level:10,x:2,y:17,items:['steelLance'],ai:'aggressive',name:'增援兵'},
-{classId:'soldier',level:10,x:17,y:17,items:['steelLance'],ai:'aggressive',name:'增援兵'}]},
-{turn:6,type:'reinforce',enemies:[
-{classId:'knight',level:10,x:2,y:17,items:['steelLance'],ai:'aggressive',name:'增援重裝'},
-{classId:'archer',level:10,x:17,y:17,items:['steelBow'],ai:'aggressive',name:'增援弓兵'}]}],
-dialogues:{pre:[
-{speaker:'eirine',text:'帝都前最後一座要塞……攻下它，我們就能直搗莫爾甘。'},
-{speaker:'marcus',text:'這座鋼鉄要塞固若金湯。殿下，務必小心。'},
-{speaker:'cain',text:'聽說裡面有個女將軍——ヘルガ。她以前好像跟先王有交情。'},
-{speaker:'eirine',text:'如果能說服她……'},
-{speaker:'thor',text:'走廊太窄，我的斧頭施展不開啊！'},
-{speaker:'fran',text:'狹窄的走廊正適合魔法轟炸。交給本天才吧。'}],
-post:[
-{speaker:'eirine',text:'要塞攻下了。ゲルハルト司令官……真是個頑強的敵人。'},
-{speaker:'helga',text:'他是個好軍人，只是選錯了效忠的對象。'},
-{speaker:'marcus',text:'殿下，帝都就在前方。但在那之前，我們需要翠星的力量。'},
-{speaker:'serra',text:'古老的神殿裡封印著一件神器。也許那就是我們需要的。'}]}},
-
-// ===== CHAPTER 9 (18x20) =====
-{id:9,title:'第九章',subtitle:'翠星之神殿',objective:'boss',objectiveDesc:'擊敗莫爾甘的副官',width:18,height:20,
-terrain:['WWWWWWWWWWWWWWWWWW','WWWWWWPPTPPWWWWWWW','WWWWPPPPPPPPWWWWWW','WWWPPLPPPPPLPPWWWW','WWWPPPPPPPPPPPWWWW','WWWWWGPPPPGWWWWWWW','WWWPPPPPPPPPPPWWWW','WWWPLPPPPPPLPPWWWW','WWWPPPPPPPPPPPWWWW','WWWWWGPPPPGWWWWWWW','WWWPPPPPPPPPPPWWWW','WWWPLPPPPPPPLPWWWW','WWWPPPPPPPPPPPWWWW','WWWWWGPPPPGWWWWWWW','WWWPPPPPPPPPPPWWWW','WWWPLPPPPPPPLPWWWW','WWWPPPPPPPPPPPWWWW','WWWWWWPPPPWWWWWWWW','WWWWPPPPPPPPWWWWWW','WWWWWWWGGWWWWWWWWW'],
-playerUnits:[{charId:'eirine',x:8,y:19},{charId:'marcus',x:7,y:19},{charId:'lina',x:9,y:19},{charId:'thor',x:8,y:18},{charId:'serra',x:7,y:18},{charId:'cain',x:9,y:18},{charId:'fran',x:10,y:19},{charId:'rex',x:6,y:19},{charId:'natasha',x:10,y:18},{charId:'olivier',x:11,y:19},{charId:'helga',x:12,y:18}],
-newRecruits:[],
-enemies:[
-{classId:'skeleton',level:10,x:5,y:16,items:['steelLance'],ai:'aggressive',name:'亡靈騎士'},
-{classId:'skeleton',level:10,x:12,y:16,items:['steelAxe'],ai:'aggressive',name:'亡靈戰士'},
-{classId:'darkMage',level:10,x:7,y:15,items:['dark'],ai:'defensive',name:'暗黑祭司'},
-{classId:'darkMage',level:10,x:10,y:15,items:['flux'],ai:'defensive',name:'暗黑祭司'},
-{classId:'skeleton',level:10,x:4,y:14,items:['steelLance'],ai:'aggressive',name:'亡靈騎士'},
-{classId:'skeleton',level:10,x:13,y:14,items:['steelAxe'],ai:'aggressive',name:'亡靈戰士'},
-{classId:'darkMage',level:11,x:6,y:12,items:['dark'],ai:'defensive',name:'上級暗黑祭司'},
-{classId:'darkMage',level:11,x:11,y:12,items:['nosferatu'],ai:'defensive',name:'上級暗黑祭司'},
-{classId:'paladin',level:3,x:5,y:10,items:['silverLance'],ai:'aggressive',name:'闇騎士'},
-{classId:'paladin',level:3,x:12,y:10,items:['silverLance'],ai:'aggressive',name:'闇騎士'},
-{classId:'skeleton',level:11,x:7,y:8,items:['steelLance'],ai:'defensive',name:'精銳亡靈'},
-{classId:'skeleton',level:11,x:10,y:8,items:['steelAxe'],ai:'defensive',name:'精銳亡靈'},
-{classId:'darkMage',level:11,x:5,y:7,items:['dark'],ai:'defensive',name:'暗黑祭司'},
-{classId:'darkMage',level:11,x:12,y:7,items:['dark'],ai:'defensive',name:'暗黑祭司'},
-{classId:'mage',level:11,x:6,y:4,items:['elfire'],ai:'defensive',name:'護殿魔法師'},
-{classId:'mage',level:11,x:11,y:4,items:['elthunder'],ai:'defensive',name:'護殿魔法師'},
-{classId:'knight',level:11,x:7,y:3,items:['silverLance'],ai:'defensive',name:'護殿重裝'},
-{classId:'knight',level:11,x:10,y:3,items:['silverLance'],ai:'defensive',name:'護殿重裝'},
-{classId:'sage',level:5,x:8,y:1,items:['fenrir','nosferatu'],ai:'boss',name:'祭司長ザルバ',isBoss:true,bonusStats:{hp:12,mag:6,skl:4,spd:3,def:3,res:6}},
-{classId:'darkMage',level:11,x:7,y:2,items:['dark'],ai:'defensive',name:'護衛祭司'},
-{classId:'darkMage',level:11,x:10,y:2,items:['dark'],ai:'defensive',name:'護衛祭司'}],
-npcs:[],talkEvents:[],
-turnEvents:[{turn:3,type:'reinforce',enemies:[
-{classId:'skeleton',level:10,x:3,y:19,items:['ironAxe'],ai:'aggressive',name:'亡靈兵'},
-{classId:'skeleton',level:10,x:14,y:19,items:['ironLance'],ai:'aggressive',name:'亡靈兵'}]},
-{turn:5,type:'reinforce',enemies:[
-{classId:'skeleton',level:11,x:3,y:19,items:['steelAxe'],ai:'aggressive',name:'精銳亡靈'},
-{classId:'skeleton',level:11,x:14,y:19,items:['steelLance'],ai:'aggressive',name:'精銳亡靈'},
-{classId:'darkMage',level:10,x:4,y:19,items:['flux'],ai:'aggressive',name:'暗黑術士'}]},
-{turn:8,type:'reinforce',enemies:[
-{classId:'skeleton',level:11,x:3,y:19,items:['steelAxe'],ai:'aggressive',name:'精銳亡靈'},
-{classId:'skeleton',level:11,x:14,y:19,items:['steelLance'],ai:'aggressive',name:'精銳亡靈'}]}],
-dialogues:{pre:[
-{speaker:'eirine',text:'這就是翠星神殿……封印著古代神器的地方。'},
-{speaker:'serra',text:'我感受到了強大的黑暗力量。莫爾甘的手下已經先我們一步到了。'},
-{speaker:'fran',text:'嘖，這股魔力比魔法塔還要強。有意思。'},
-{speaker:'marcus',text:'殿下，神殿內部通道狹窄。善用柱子作為掩護。'},
-{speaker:'helga',text:'讓我走在前面。我的鎧甲可以擋住大部分攻擊。'},
-{speaker:'olivier',text:'……我去偵察側翼。暗處是我的主場。'}],
-post:[
-{speaker:'eirine',text:'ザルバ……他口中的「主人」果然是莫爾甘。'},
-{speaker:null,text:'祭壇上，一顆翠色的寶石散發出柔和的光芒——'},
-{speaker:'serra',text:'這就是……翠星之印。殿下，請拿起它。'},
-{speaker:'eirine',text:'有了這個，我們就能對抗莫爾甘的力量了。'},
-{speaker:'marcus',text:'最後的戰鬥就在眼前。帝都……我們來了。'}]}},
-
-// ===== CHAPTER 10 / FINAL (22x18) =====
-{id:10,title:'最終章',subtitle:'翠星之戰',objective:'boss',objectiveDesc:'擊敗莫爾甘',width:22,height:18,
-terrain:['WWWWWWWWWWGWWWWWWWWWWW','WWWPPPPPPPPPPPPPPPWWW','WWPPPPPPPPPPPPPPPPWWW','WWPPWWWPPPPPWWWPPPWWW','PPPPPPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPPFFFFPPPPFFFFPPPPPP','PPPPFFFFPPPPFFFFPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPFFFPPPPPPPFFFPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPPPP','PPPPPPPPPPPPPPPPPPPPPP'],
-playerUnits:[{charId:'eirine',x:10,y:17},{charId:'marcus',x:9,y:17},{charId:'lina',x:11,y:17},{charId:'thor',x:10,y:16},{charId:'serra',x:9,y:16},{charId:'cain',x:11,y:16},{charId:'fran',x:12,y:17},{charId:'rex',x:8,y:17},{charId:'natasha',x:12,y:16},{charId:'olivier',x:13,y:17},{charId:'helga',x:8,y:16}],
-newRecruits:[],
-enemies:[
-{classId:'knight',level:12,x:8,y:10,items:['silverLance'],ai:'aggressive',name:'帝國近衛'},
-{classId:'knight',level:12,x:13,y:10,items:['silverLance'],ai:'aggressive',name:'帝國近衛'},
-{classId:'soldier',level:11,x:5,y:11,items:['steelLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'soldier',level:11,x:16,y:11,items:['steelLance'],ai:'aggressive',name:'帝國兵'},
-{classId:'archer',level:11,x:10,y:9,items:['killerBow'],ai:'defensive',name:'帝國弓兵'},
-{classId:'archer',level:11,x:11,y:9,items:['killerBow'],ai:'defensive',name:'帝國弓兵'},
-{classId:'fighter',level:11,x:6,y:8,items:['steelAxe'],ai:'aggressive',name:'帝國戰士'},
-{classId:'fighter',level:11,x:15,y:8,items:['steelAxe'],ai:'aggressive',name:'帝國戰士'},
-{classId:'mage',level:11,x:8,y:6,items:['elfire'],ai:'defensive',name:'帝國魔法師'},
-{classId:'mage',level:11,x:13,y:6,items:['elthunder'],ai:'defensive',name:'帝國魔法師'},
-{classId:'paladin',level:3,x:4,y:5,items:['silverLance','silverSword'],ai:'aggressive',name:'帝國聖騎士'},
-{classId:'paladin',level:3,x:17,y:5,items:['silverLance','silverSword'],ai:'aggressive',name:'帝國聖騎士'},
-{classId:'soldier',level:11,x:6,y:4,items:['steelLance'],ai:'defensive',name:'帝國兵'},
-{classId:'soldier',level:11,x:15,y:4,items:['steelLance'],ai:'defensive',name:'帝國兵'},
-{classId:'knight',level:12,x:8,y:3,items:['silverLance'],ai:'defensive',name:'精銳近衛'},
-{classId:'knight',level:12,x:13,y:3,items:['silverLance'],ai:'defensive',name:'精銳近衛'},
-{classId:'mage',level:12,x:9,y:2,items:['bolting'],ai:'defensive',name:'宮廷魔法師'},
-{classId:'mage',level:12,x:12,y:2,items:['elfire'],ai:'defensive',name:'宮廷魔法師'},
-{classId:'soldier',level:12,x:10,y:3,items:['silverLance'],ai:'defensive',name:'近衛兵'},
-{classId:'soldier',level:12,x:11,y:3,items:['silverLance'],ai:'defensive',name:'近衛兵'},
-{classId:'archer',level:12,x:7,y:1,items:['killerBow'],ai:'defensive',name:'精銳弓兵'},
-{classId:'archer',level:12,x:14,y:1,items:['killerBow'],ai:'defensive',name:'精銳弓兵'},
-{classId:'darkMage',level:15,x:10,y:0,items:['eclipse','nosferatu'],ai:'boss',name:'莫爾甘',isBoss:true,bonusStats:{hp:15,mag:5,skl:5,spd:3,lck:5,def:5,res:5}},
-{classId:'darkMage',level:12,x:9,y:1,items:['dark'],ai:'defensive',name:'暗黑護衛'},
-{classId:'darkMage',level:12,x:12,y:1,items:['dark'],ai:'defensive',name:'暗黑護衛'}],
-npcs:[],talkEvents:[],
-turnEvents:[{turn:3,type:'reinforce',enemies:[
-{classId:'soldier',level:11,x:0,y:9,items:['steelLance'],ai:'aggressive',name:'增援兵'},
-{classId:'soldier',level:11,x:21,y:9,items:['steelLance'],ai:'aggressive',name:'增援兵'},
-{classId:'archer',level:11,x:0,y:10,items:['steelBow'],ai:'aggressive',name:'增援弓兵'},
-{classId:'archer',level:11,x:21,y:10,items:['steelBow'],ai:'aggressive',name:'增援弓兵'}]},
-{turn:5,type:'reinforce',enemies:[
-{classId:'knight',level:12,x:0,y:4,items:['silverLance'],ai:'aggressive',name:'增援重裝'},
-{classId:'knight',level:12,x:21,y:4,items:['silverLance'],ai:'aggressive',name:'增援重裝'},
-{classId:'mage',level:11,x:0,y:5,items:['elfire'],ai:'aggressive',name:'增援魔法師'}]},
-{turn:7,type:'reinforce',enemies:[
-{classId:'paladin',level:3,x:0,y:9,items:['silverLance'],ai:'aggressive',name:'增援騎兵'},
-{classId:'paladin',level:3,x:21,y:9,items:['silverLance'],ai:'aggressive',name:'增援騎兵'}]}],
-dialogues:{pre:[
-{speaker:'eirine',text:'帝都……我終於回來了。今天，我們要奪回這個國家！'},
-{speaker:'marcus',text:'這是最後的戰鬥了。殿下，請堅定您的信念。'},
-{speaker:'lina',text:'莫爾甘那個混蛋……今天就讓他付出代價。'},
-{speaker:'thor',text:'哈哈！最終決戰！讓我的斧頭喝個痛快！'},
-{speaker:'cain',text:'……我從沒想過會免費為人賣命。但這一次……值得。'},
-{speaker:'serra',text:'願星辰的光輝引導我們走向勝利。'}],
-post:[
-{speaker:'eirine',text:'結束了……莫爾甘。'},
-{speaker:null,text:'莫爾甘的身體化為黑霧消散。翠星之光照亮了整座帝都——'},
-{speaker:'marcus',text:'殿下……您做到了。先王一定很驕傲。'},
-{speaker:'eirine',text:'不。是我們所有人一起做到的。'},
-{speaker:'lina',text:'切。別這麼肉麻。'},
-{speaker:'thor',text:'哈哈哈！搞了個大的！今晚喝酒！'},
-{speaker:'cain',text:'……不壞。'},
-{speaker:'serra',text:'和平……終於回來了。'},
-{speaker:'fran',text:'哼，本天才的活躍功不可沒！'},
-{speaker:'eirine',text:'父王……我做到了。從今以後，我會守護這片大陸的和平。'},
-{speaker:null,text:'—— 火炎之紋章：翠星之影 ——  完 ——'}]}},
+const CHAPTER_MANIFEST = [
+  { id: 0, dir: 'ch0_prologue', file: '序章' },
+  { id: 1, dir: 'ch1_wilderness', file: '第一章' },
+  { id: 2, dir: 'ch2_village', file: '第二章' },
+  { id: 3, dir: 'ch3_castle', file: '第三章' },
 ];
 
-// ===== CHARACTERS =====
-const CHARACTERS={
-eirine:{name:'艾琳',classId:'lord',level:1,isLord:true,portrait:{hair:'#c4a',eyes:'#48f',skin:'#fdb'},baseStats:{hp:19,str:4,mag:1,skl:7,spd:9,lck:9,def:4,res:3},growths:{hp:75,str:50,mag:15,skl:50,spd:60,lck:60,def:30,res:30},items:['rapier']},
-marcus:{name:'馬庫斯',classId:'paladin',level:1,portrait:{hair:'#666',eyes:'#432',skin:'#eca'},baseStats:{hp:28,str:10,mag:1,skl:12,spd:7,lck:8,def:9,res:6},growths:{hp:40,str:20,mag:5,skl:20,spd:10,lck:20,def:15,res:10},items:['steelSword','ironLance','vulnerary']},
-lina:{name:'莉娜',classId:'archer',level:1,portrait:{hair:'#6c4',eyes:'#4a4',skin:'#fdb'},baseStats:{hp:17,str:5,mag:0,skl:7,spd:7,lck:4,def:3,res:1},growths:{hp:55,str:40,mag:5,skl:55,spd:55,lck:35,def:20,res:20},items:['ironBow']},
-thor:{name:'托爾',classId:'fighter',level:3,portrait:{hair:'#d82',eyes:'#654',skin:'#dba'},baseStats:{hp:24,str:8,mag:0,skl:4,spd:4,lck:3,def:5,res:0},growths:{hp:80,str:55,mag:5,skl:30,spd:25,lck:25,def:35,res:10},items:['ironAxe','handAxe']},
-serra:{name:'賽拉',classId:'cleric',level:2,portrait:{hair:'#ffa',eyes:'#88f',skin:'#fed'},baseStats:{hp:16,str:1,mag:5,skl:4,spd:6,lck:7,def:1,res:7},growths:{hp:45,str:5,mag:55,skl:30,spd:35,lck:45,def:10,res:55},items:['heal']},
-cain:{name:'凱恩',classId:'mercenary',level:5,portrait:{hair:'#444',eyes:'#a44',skin:'#dba'},baseStats:{hp:22,str:8,mag:0,skl:9,spd:10,lck:5,def:6,res:1},growths:{hp:65,str:45,mag:5,skl:45,spd:45,lck:30,def:30,res:15},items:['ironSword','vulnerary']},
-fran:{name:'法蘭',classId:'mage',level:5,portrait:{hair:'#88f',eyes:'#f44',skin:'#fdb'},baseStats:{hp:18,str:1,mag:9,skl:6,spd:8,lck:4,def:2,res:6},growths:{hp:40,str:5,mag:65,skl:40,spd:45,lck:25,def:10,res:40},items:['fire','thunder']},
-rex:{name:'雷克斯',classId:'wyvernRider',level:7,portrait:{hair:'#854',eyes:'#484',skin:'#dba'},baseStats:{hp:26,str:10,mag:0,skl:8,spd:7,lck:4,def:10,res:1},growths:{hp:60,str:45,mag:5,skl:35,spd:35,lck:20,def:40,res:10},items:['steelLance','javelin']},
-natasha:{name:'ナターシャ',classId:'pegasusKnight',level:8,portrait:{hair:'#f8a',eyes:'#4cf',skin:'#fdb'},baseStats:{hp:20,str:7,mag:3,skl:9,spd:13,lck:8,def:4,res:8},growths:{hp:50,str:35,mag:20,skl:45,spd:60,lck:40,def:15,res:45},items:['ironLance','javelin']},
-olivier:{name:'オリヴィエ',classId:'thief',level:8,portrait:{hair:'#555',eyes:'#a8a',skin:'#ecb'},baseStats:{hp:21,str:6,mag:0,skl:12,spd:15,lck:5,def:4,res:2},growths:{hp:50,str:30,mag:5,skl:55,spd:65,lck:30,def:20,res:15},items:['ironSword']},
-helga:{name:'ヘルガ',classId:'general',level:1,portrait:{hair:'#964',eyes:'#644',skin:'#d9b'},baseStats:{hp:30,str:14,mag:0,skl:7,spd:3,lck:2,def:16,res:4},growths:{hp:60,str:40,mag:0,skl:20,spd:15,lck:15,def:50,res:20},items:['steelLance','javelin']},
-morgane:{name:'莫爾甘',portrait:{hair:'#206',eyes:'#f0f',skin:'#baa'}}
+// Parse terrain codes
+const TERRAIN_CODES = {
+  P: 'plain', F: 'forest', M: 'mountain',
+  W: 'wall', G: 'gate', R: 'river',
+  V: 'village', I: 'floor', T: 'throne',
+  L: 'pillar', O: 'fort', '+': 'fort',
+  '.': 'plain', ' ': 'plain'
 };
 
-function parseTerrain(terrainStrings,w,h){
-const map=[];
-const L={P:'plain',F:'forest',M:'mountain',W:'wall',G:'gate',R:'river',V:'village',I:'floor',T:'throne',L:'pillar',O:'fort','+':'fort'};
-for(let y=0;y<h;y++){map[y]=[];const r=terrainStrings[y]||'';for(let x=0;x<w;x++)map[y][x]=L[r[x]]||'plain';}
-return map;
+function parseTerrain(text, w, h) {
+  const lines = text.trim().split('\n');
+  const map = [];
+  for (let y = 0; y < h; y++) {
+    map[y] = [];
+    const row = lines[y] || '';
+    for (let x = 0; x < w; x++) {
+      const code = row[x] || '.';
+      map[y][x] = TERRAIN_CODES[code] || 'plain';
+    }
+  }
+  return map;
+}
+
+// Load chapter data dynamically
+async function loadChapter(chapterId) {
+  const manifest = CHAPTER_MANIFEST.find(c => c.id === chapterId);
+  if (!manifest) {
+    console.error('Chapter not found:', chapterId);
+    return null;
+  }
+
+  const basePath = `maps/${manifest.dir}`;
+
+  try {
+    // Load config.json
+    const configRes = await fetch(`${basePath}/config.json`);
+    if (!configRes.ok) throw new Error(`Failed to load config for chapter ${chapterId}`);
+    const config = await configRes.json();
+
+    // Load terrain.txt
+    const terrainRes = await fetch(`${basePath}/terrain.txt`);
+    if (!terrainRes.ok) throw new Error(`Failed to load terrain for chapter ${chapterId}`);
+    const terrainText = await terrainRes.text();
+
+    // Parse terrain
+    const terrain = parseTerrain(terrainText, config.width, config.height);
+
+    // Merge everything
+    return {
+      ...config,
+      terrain: terrain,
+      _loaded: true
+    };
+
+  } catch (err) {
+    console.error('Error loading chapter:', err);
+    // Fallback: return minimal chapter data
+    return {
+      id: chapterId,
+      title: manifest.file,
+      subtitle: '載入失敗',
+      objective: 'rout',
+      width: 10,
+      height: 10,
+      terrain: parseTerrain('.'.repeat(10).repeat(10), 10, 10),
+      playerUnits: [],
+      enemies: [],
+      dialogues: {}
+    };
+  }
+}
+
+// Cache for loaded chapters
+const chapterCache = {};
+
+// Get chapter (async)
+async function getChapter(chapterId) {
+  if (chapterCache[chapterId]) {
+    return chapterCache[chapterId];
+  }
+  const chapter = await loadChapter(chapterId);
+  chapterCache[chapterId] = chapter;
+  return chapter;
+}
+
+// Preload all chapters
+async function preloadChapters() {
+  const promises = CHAPTER_MANIFEST.map(c => loadChapter(c.id));
+  const chapters = await Promise.all(promises);
+  chapters.forEach(c => {
+    if (c) chapterCache[c.id] = c;
+  });
+  return chapters;
+}
+
+// Export for compatibility with old code
+// This creates a proxy that loads chapters on demand
+const CHAPTERS = new Proxy([], {
+  get(target, prop) {
+    if (prop === 'length') return CHAPTER_MANIFEST.length;
+    if (typeof prop === 'string' && !isNaN(prop)) {
+      const id = parseInt(prop);
+      const chapter = chapterCache[id];
+      if (chapter) return chapter;
+      console.warn('Chapter not preloaded:', id);
+      return null;
+    }
+    return target[prop];
+  }
+});
+
+// Export globals for use in other modules
+window.CHAPTER_MANIFEST = CHAPTER_MANIFEST;
+window.getChapter = getChapter;
+window.preloadChapters = preloadChapters;
+
+// For backward compatibility - load all chapters synchronously (deprecated)
+// Use async getChapter() or preloadChapters() instead
+function loadAllChaptersSync() {
+  console.warn('loadAllChaptersSync is deprecated. Use preloadChapters() instead.');
+  return CHAPTERS;
 }

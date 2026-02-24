@@ -1,0 +1,21 @@
+{
+  "id": 1,
+  "title": "第一章",
+  "subtitle": "荒野的邂逅",
+  "objective": "rout",
+  "objectiveDesc": "殲滅所有敵人",
+  "width": 16,
+  "height": 14,
+  "playerUnits": [
+    {"charId": "eirine", "x": 1, "y": 12},
+    {"charId": "marcus", "x": 2, "y": 13}
+  ],
+  "newRecruits": [
+    {"charId": "lina", "x": 5, "y": 5, "turnJoin": 1}
+  ],
+  "enemies": [],
+  "npcs": [],
+  "talkEvents": [],
+  "turnEvents": [],
+  "dialogues": {}
+}

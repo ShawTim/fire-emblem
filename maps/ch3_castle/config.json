@@ -1,0 +1,22 @@
+{
+  "id": 3,
+  "title": "第三章",
+  "subtitle": "傭兵的試煉",
+  "objective": "rout",
+  "objectiveDesc": "殲滅所有敵人或說服凱恩",
+  "width": 16,
+  "height": 14,
+  "playerUnits": [
+    {"charId": "eirine", "x": 1, "y": 12},
+    {"charId": "marcus", "x": 0, "y": 12},
+    {"charId": "lina", "x": 2, "y": 13},
+    {"charId": "thor", "x": 1, "y": 13},
+    {"charId": "serra", "x": 0, "y": 13}
+  ],
+  "newRecruits": [],
+  "enemies": [],
+  "npcs": [],
+  "talkEvents": [],
+  "turnEvents": [],
+  "dialogues": {}
+}

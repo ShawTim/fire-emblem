@@ -1,0 +1,49 @@
+{
+  "id": 0,
+  "title": "序章",
+  "subtitle": "墜落之夜",
+  "objective": "seize",
+  "objectiveDesc": "艾琳到達暗門出口",
+  "seizePos": {"x": 16, "y": 10},
+  "width": 18,
+  "height": 12,
+  "playerUnits": [
+    {"charId": "eirine", "x": 1, "y": 1},
+    {"charId": "marcus", "x": 2, "y": 1}
+  ],
+  "enemies": [
+    {"classId": "soldier", "level": 1, "x": 6, "y": 2, "items": ["slimLance"], "ai": "aggressive", "name": "帝國兵"},
+    {"classId": "soldier", "level": 1, "x": 5, "y": 3, "items": ["slimLance"], "ai": "aggressive", "name": "帝國兵"},
+    {"classId": "soldier", "level": 1, "x": 11, "y": 3, "items": ["slimLance"], "ai": "aggressive", "name": "帝國兵"},
+    {"classId": "soldier", "level": 2, "x": 5, "y": 5, "items": ["slimLance"], "ai": "defensive", "name": "帝國兵"},
+    {"classId": "soldier", "level": 2, "x": 12, "y": 5, "items": ["slimLance"], "ai": "defensive", "name": "帝國兵"},
+    {"classId": "soldier", "level": 2, "x": 7, "y": 6, "items": ["slimLance"], "ai": "defensive", "name": "帝國兵"},
+    {"classId": "soldier", "level": 2, "x": 10, "y": 6, "items": ["slimLance"], "ai": "defensive", "name": "帝國兵"},
+    {"classId": "soldier", "level": 3, "x": 8, "y": 7, "items": ["ironLance"], "ai": "aggressive", "name": "帝國士官"},
+    {"classId": "soldier", "level": 3, "x": 3, "y": 8, "items": ["ironLance"], "ai": "aggressive", "name": "帝國精兵"},
+    {"classId": "archer", "level": 3, "x": 9, "y": 8, "items": ["ironBow"], "ai": "defensive", "name": "帝國弓兵"},
+    {"classId": "soldier", "level": 3, "x": 13, "y": 8, "items": ["ironLance"], "ai": "aggressive", "name": "帝國精兵"},
+    {"classId": "knight", "level": 3, "x": 7, "y": 9, "items": ["ironLance"], "ai": "defensive", "name": "帝國重裝"},
+    {"classId": "knight", "level": 3, "x": 11, "y": 10, "items": ["ironLance"], "ai": "defensive", "name": "帝國重裝"},
+    {"classId": "knight", "level": 3, "x": 14, "y": 10, "items": ["ironLance"], "ai": "defensive", "name": "守衛隊長", "isBoss": true, "bonusStats": {"hp": 4, "str": 2, "def": 2}}
+  ],
+  "npcs": [],
+  "newRecruits": [],
+  "talkEvents": [],
+  "turnEvents": [],
+  "dialogues": {
+    "pre": [
+      {"speaker": "eirine", "text": "父王……不！我不能離開你！"},
+      {"speaker": null, "text": "國王將星印交到艾琳手中，眼中滿是悲傷與決心——"},
+      {"speaker": "marcus", "text": "殿下，我們必須離開！宰相莫爾甘的軍隊已經攻入王宮了！"},
+      {"speaker": "eirine", "text": "……我明白了。馬庫斯，帶我衝出去！"},
+      {"speaker": "marcus", "text": "遵命！請跟緊我，走廊盡頭有一道暗門！"}
+    ],
+    "post": [
+      {"speaker": "eirine", "text": "我們逃出來了……但父王他……"},
+      {"speaker": "marcus", "text": "殿下，先王將一切託付給了您。他的犧牲不能白費。"},
+      {"speaker": "eirine", "text": "……是的。我會變強的。為了父王，為了這個國家。"},
+      {"speaker": null, "text": "夜色中，兩個身影消失在帝都的城牆之外——"}
+    ]
+  }
+}

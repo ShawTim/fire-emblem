@@ -9,8 +9,17 @@ SFX.init();
 BGM.init();
 BGM.createVolumeControl();
 
-var game = new Game(canvas);
-game.init();
+// Preload chapters before starting game
+var game;
+preloadChapters().then(() => {
+  game = new Game(canvas);
+  game.init();
+}).catch(err => {
+  console.error('Failed to preload chapters:', err);
+  // Start game anyway with fallback
+  game = new Game(canvas);
+  game.init();
+});
 
 function gameLoop(timestamp) {
   Sprites.tick();

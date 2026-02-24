@@ -1,0 +1,24 @@
+{
+  "id": 2,
+  "title": "第二章",
+  "subtitle": "北境之村",
+  "objective": "survive",
+  "objectiveDesc": "堅持8回合",
+  "surviveTurns": 8,
+  "width": 18,
+  "height": 16,
+  "playerUnits": [
+    {"charId": "eirine", "x": 8, "y": 5},
+    {"charId": "marcus", "x": 7, "y": 5},
+    {"charId": "lina", "x": 9, "y": 5}
+  ],
+  "newRecruits": [
+    {"charId": "thor", "x": 6, "y": 7, "turnJoin": 1},
+    {"charId": "serra", "x": 7, "y": 7, "turnJoin": 1}
+  ],
+  "enemies": [],
+  "npcs": [],
+  "talkEvents": [],
+  "turnEvents": [],
+  "dialogues": {}
+}

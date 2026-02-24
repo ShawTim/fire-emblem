@@ -41,21 +41,21 @@ class Game {
     this.currentChapter = 0;
     UI.hideTitleScreen();
     UI.clearOverlays();
-    this.startChapter(0);
+    this.startChapter(0).catch(console.error);
   }
 
   continueGame() {
     if (this.loadGame()) {
       UI.hideTitleScreen();
       UI.clearOverlays();
-      this.startChapter(this.currentChapter);
+      this.startChapter(this.currentChapter).catch(console.error);
     } else {
       this.startNewGame();
     }
   }
 
-  startChapter(id) {
-    const chapter = CHAPTERS[id];
+  async startChapter(id) {
+    const chapter = await getChapter(id);
     if (!chapter) {
       this.state = 'ending';
       UI.showEnding();
@@ -1149,7 +1149,7 @@ class Game {
     UI.hideEndTurnBtn();
     BGM.play('victory', true);
     const postDialogue = this.chapterData.dialogues && this.chapterData.dialogues.post;
-    const isLast = this.currentChapter >= CHAPTERS.length - 1;
+    const isLast = this.currentChapter >= CHAPTER_MANIFEST.length - 1;
 
     const afterDialogue = () => {
       if (isLast) {
@@ -1173,7 +1173,7 @@ class Game {
     this.currentChapter++;
     this.saveGame();
     UI.clearOverlays();
-    this.startChapter(this.currentChapter);
+    this.startChapter(this.currentChapter).catch(console.error);
   }
 
   saveGame() {
