@@ -1,0 +1,42 @@
+{
+  "background": "prologue_bg.png",
+  "lines": [
+    {
+      "text": "傳說，當翠星失去光芒之時，",
+      "duration": 2000
+    },
+    {
+      "text": "虛偽的王將戴上荊棘之冠。",
+      "duration": 2000
+    },
+    {
+      "text": "鮮血會染紅大地，謊言會掩蓋真相。",
+      "duration": 2500
+    },
+    {
+      "text": "曾經，艾爾法利亞王國因『星印』的加護而繁榮。",
+      "duration": 2500
+    },
+    {
+      "text": "但當國王沉醉於虛幻的和平時，陰影已在腳下滋生。",
+      "duration": 3000
+    },
+    {
+      "text": "今夜，星芒熄滅。",
+      "duration": 2000
+    },
+    {
+      "text": "一位公主的逃亡，將拉開漫長戰禍的序幕——",
+      "duration": 3000
+    },
+    {
+      "text": "這不僅是復仇的故事，",
+      "duration": 2000
+    },
+    {
+      "text": "更是關於『救贖』的史詩。",
+      "duration": 2500
+    }
+  ],
+  "onComplete": "startChapter0"
+}

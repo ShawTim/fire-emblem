@@ -75,6 +75,12 @@ async function loadChapter(chapterId) {
       const dialoguesRes = await fetch(`${basePath}/dialogues.json`);
       if (dialoguesRes.ok) dialogues = await dialoguesRes.json();
     } catch (e) { /* ignore */ }
+    // Load prologue.json (optional)
+    let prologue = null;
+    try {
+      const prologueRes = await fetch(`${basePath}/prologue.json`);
+      if (prologueRes.ok) prologue = await prologueRes.json();
+    } catch (e) { /* ignore */ }
 
     // Load terrain.txt
     const terrainRes = await fetch(`${basePath}/terrain.txt`);
@@ -85,7 +91,7 @@ async function loadChapter(chapterId) {
     const terrain = parseTerrain(terrainText, config.width, config.height);
 
     // Merge everything
-  return { ...config, dialogues, terrain: terrain, _loaded: true };
+  return { ...config, dialogues, prologue, terrain: terrain, _loaded: true };
 
   } catch (err) {
     console.error('Error loading chapter:', err);

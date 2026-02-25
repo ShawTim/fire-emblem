@@ -54,12 +54,44 @@ class Game {
     }
   }
 
+
+  // === Prologue Display (Cinematic Text) ===
+  showPrologue(prologueData) {
+    return new Promise((resolve) => {
+      const overlay = document.createElement("div");
+      overlay.id = "prologue-overlay";
+      overlay.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:200;display:flex;flex-direction:column;justify-content:center;align-items:center;pointer-events:auto;";
+      if (prologueData.background) { overlay.style.backgroundImage = "url(\ + prologueData.background + "; overlay.style.backgroundSize = "cover"; overlay.style.backgroundPosition = "center"; }
+      const textContainer = document.createElement("div");
+      textContainer.id = "prologue-text";
+      textContainer.style.cssText = "color:#fff;font-size:18px;font-weight:bold;text-align:center;max-width:70%;text-shadow:2px 2px 4px #000;opacity:0;transition:opacity 1s;";
+      overlay.appendChild(textContainer);
+      document.getElementById("ui-overlay").appendChild(overlay);
+      let lineIndex = 0;
+      const showLine = () => {
+        if (lineIndex >= prologueData.lines.length) { overlay.style.transition = "opacity 1s"; overlay.style.opacity = "0"; setTimeout(() => { overlay.remove(); resolve(); }, 1000); return; }
+        const line = prologueData.lines[lineIndex];
+        textContainer.style.opacity = "0";
+        setTimeout(() => {
+          textContainer.textContent = line.text;
+          textContainer.style.opacity = "1";
+          setTimeout(() => { lineIndex++; showLine(); }, line.duration || 2000);
+        }, 1000);
+      };
+      overlay.addEventListener("click", () => { overlay.remove(); resolve(); });
+      showLine();
+    });
+  }
   async startChapter(id) {
     const chapter = await getChapter(id);
     if (!chapter) {
       this.state = 'ending';
       UI.showEnding();
       return;
+    }
+    // Check for prologue and play it first
+    if (chapter.prologue) {
+      await this.showPrologue(chapter.prologue);
     }
     this.chapterData = chapter;
     this.currentChapter = id;
