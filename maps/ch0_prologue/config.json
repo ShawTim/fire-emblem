@@ -30,20 +30,5 @@
   "npcs": [],
   "newRecruits": [],
   "talkEvents": [],
-  "turnEvents": [],
-  "dialogues": {
-    "pre": [
-      {"speaker": "eirine", "text": "父王……不！我不能離開你！"},
-      {"speaker": null, "text": "國王將星印交到艾琳手中，眼中滿是悲傷與決心——"},
-      {"speaker": "marcus", "text": "殿下，我們必須離開！宰相莫爾甘的軍隊已經攻入王宮了！"},
-      {"speaker": "eirine", "text": "……我明白了。馬庫斯，帶我衝出去！"},
-      {"speaker": "marcus", "text": "遵命！請跟緊我，走廊盡頭有一道暗門！"}
-    ],
-    "post": [
-      {"speaker": "eirine", "text": "我們逃出來了……但父王他……"},
-      {"speaker": "marcus", "text": "殿下，先王將一切託付給了您。他的犧牲不能白費。"},
-      {"speaker": "eirine", "text": "……是的。我會變強的。為了父王，為了這個國家。"},
-      {"speaker": null, "text": "夜色中，兩個身影消失在帝都的城牆之外——"}
-    ]
-  }
+  "turnEvents": []
 }

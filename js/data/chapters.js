@@ -69,6 +69,12 @@ async function loadChapter(chapterId) {
     const configRes = await fetch(`${basePath}/config.json`);
     if (!configRes.ok) throw new Error(`Failed to load config for chapter ${chapterId}`);
     const config = await configRes.json();
+    // Load dialogues.json (optional)
+    let dialogues = {};
+    try {
+      const dialoguesRes = await fetch(`${basePath}/dialogues.json`);
+      if (dialoguesRes.ok) dialogues = await dialoguesRes.json();
+    } catch (e) { /* ignore */ }
 
     // Load terrain.txt
     const terrainRes = await fetch(`${basePath}/terrain.txt`);
@@ -79,10 +85,7 @@ async function loadChapter(chapterId) {
     const terrain = parseTerrain(terrainText, config.width, config.height);
 
     // Merge everything
-    return {
-      ...config,
-      terrain: terrain,
-      _loaded: true
+  return { ...config, dialogues, terrain: terrain, _loaded: true };
     };
 
   } catch (err) {
