@@ -86,7 +86,6 @@ async function loadChapter(chapterId) {
 
     // Merge everything
   return { ...config, dialogues, terrain: terrain, _loaded: true };
-    };
 
   } catch (err) {
     console.error('Error loading chapter:', err);
