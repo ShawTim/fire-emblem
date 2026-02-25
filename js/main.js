@@ -70,7 +70,7 @@ canvas.addEventListener('mousemove', (e) => {
     GameMap.clampCamera(canvas.width, canvas.height);
   } else {
     // Normal hover behavior
-    game.handleHover(pos.x, pos.y);
+    if (game) game.handleHover(pos.x, pos.y);
   }
 });
 
@@ -106,7 +106,7 @@ canvas.addEventListener('mouseleave', (e) => {
 // Old mousemove handler - now integrated above
 // canvas.addEventListener('mousemove', (e) => {
 //   const pos = screenToCanvas(e.clientX, e.clientY);
-//   game.handleHover(pos.x, pos.y);
+//   if (game) game.handleHover(pos.x, pos.y);
 // });
 
 // Touch input (with drag vs tap differentiation)
