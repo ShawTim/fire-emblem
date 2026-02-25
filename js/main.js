@@ -245,7 +245,7 @@ if (mobileToggleBtn) {
       } else if (container.msRequestFullscreen) {
         container.msRequestFullscreen();
       }
-      mobileToggleBtn.textContent = '退出全螢幕';
+      mobileToggleBtn.textContent = '退出全螢幕'; if (screen.orientation && screen.orientation.lock) { try { screen.orientation.lock('landscape'); } catch(e) { console.log('Orientation lock not supported'); } }
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();

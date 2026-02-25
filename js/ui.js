@@ -433,7 +433,19 @@ const UI = {
     const nameColor = isPlayer ? '#4a9eff' : '#ff4a4a';
 
     overlay.innerHTML = `
-      <div style="background:#111;border:2px solid ${borderColor};border-radius:8px;padding:16px;max-width:95vw;max-height:90vh;overflow-y:auto;font-size:13px;box-sizing:border-box">
+      <div style="background:#111;border:2px solid ${borderColor};border-radius:8px;padding:16px;max-width:min(650px,95vw);max-height:90vh;overflow-y:auto;font-size:13px;box-sizing:border-box">
+  <style>
+    @media (orientation: portrait) {
+      #status-screen > div {
+        display: block !important;
+      }
+      #status-screen .stat-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin: 6px 0 !important;
+      }
+    }
+  </style>
         <div style="display:flex;gap:24px;margin-bottom:16px;align-items:flex-start">
           <div>
             <canvas id="status-portrait" width="64" height="64" style="image-rendering:pixelated;width:96px;height:96px;border:2px solid ${borderColor}"></canvas>
