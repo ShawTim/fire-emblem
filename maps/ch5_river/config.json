@@ -7,55 +7,302 @@
   "width": 20,
   "height": 18,
   "playerUnits": [
-    {"charId": "eirine", "x": 9, "y": 0},
-    {"charId": "marcus", "x": 8, "y": 0},
-    {"charId": "lina", "x": 10, "y": 0},
-    {"charId": "thor", "x": 9, "y": 1},
-    {"charId": "serra", "x": 8, "y": 1},
-    {"charId": "cain", "x": 10, "y": 1},
-    {"charId": "fran", "x": 11, "y": 1}
+    {
+      "charId": "eirine",
+      "x": 9,
+      "y": 0
+    },
+    {
+      "charId": "marcus",
+      "x": 8,
+      "y": 0
+    },
+    {
+      "charId": "lina",
+      "x": 10,
+      "y": 0
+    },
+    {
+      "charId": "thor",
+      "x": 9,
+      "y": 1
+    },
+    {
+      "charId": "serra",
+      "x": 8,
+      "y": 1
+    },
+    {
+      "charId": "cain",
+      "x": 10,
+      "y": 1
+    },
+    {
+      "charId": "fran",
+      "x": 11,
+      "y": 1
+    }
   ],
-  "newRecruits": [{"charId": "rex", "x": 15, "y": 3, "turnJoin": 2}],
+  "newRecruits": [
+    {
+      "charId": "rex",
+      "x": 15,
+      "y": 3,
+      "turnJoin": 2
+    }
+  ],
   "enemies": [
-    {"classId": "soldier", "level": 7, "x": 8, "y": 8, "items": ["steelLance"], "ai": "defensive", "name": "要塞守兵"},
-    {"classId": "soldier", "level": 7, "x": 11, "y": 8, "items": ["steelLance"], "ai": "defensive", "name": "要塞守兵"},
-    {"classId": "knight", "level": 7, "x": 6, "y": 10, "items": ["steelLance"], "ai": "defensive", "name": "重裝兵"},
-    {"classId": "knight", "level": 7, "x": 13, "y": 10, "items": ["steelLance"], "ai": "defensive", "name": "重裝兵"},
-    {"classId": "archer", "level": 7, "x": 5, "y": 9, "items": ["steelBow"], "ai": "defensive", "name": "要塞弓兵"},
-    {"classId": "archer", "level": 7, "x": 14, "y": 9, "items": ["steelBow"], "ai": "defensive", "name": "要塞弓兵"},
-    {"classId": "mage", "level": 7, "x": 7, "y": 12, "items": ["elfire"], "ai": "defensive", "name": "要塞魔法師"},
-    {"classId": "mage", "level": 7, "x": 12, "y": 12, "items": ["elthunder"], "ai": "defensive", "name": "要塞魔法師"},
-    {"classId": "soldier", "level": 8, "x": 5, "y": 11, "items": ["steelLance"], "ai": "aggressive", "name": "要塞守兵"},
-    {"classId": "soldier", "level": 8, "x": 14, "y": 11, "items": ["steelLance"], "ai": "aggressive", "name": "要塞守兵"},
-    {"classId": "knight", "level": 8, "x": 8, "y": 14, "items": ["steelLance"], "ai": "defensive", "name": "近衛兵"},
-    {"classId": "knight", "level": 8, "x": 11, "y": 14, "items": ["steelLance"], "ai": "defensive", "name": "近衛兵"},
-    {"classId": "fighter", "level": 7, "x": 3, "y": 7, "items": ["steelAxe"], "ai": "aggressive", "name": "守衛"},
-    {"classId": "fighter", "level": 7, "x": 16, "y": 7, "items": ["steelAxe"], "ai": "aggressive", "name": "守衛"},
-    {"classId": "archer", "level": 8, "x": 9, "y": 13, "items": ["steelBow"], "ai": "defensive", "name": "精銳弓兵"},
-    {"classId": "paladin", "level": 1, "x": 9, "y": 15, "items": ["silverLance", "javelin"], "ai": "boss", "name": "要塞守將格倫", "isBoss": true, "bonusStats": {"hp": 10, "str": 3, "skl": 2, "spd": 2, "def": 4, "res": 2}},
-    {"classId": "soldier", "level": 8, "x": 10, "y": 15, "items": ["steelLance"], "ai": "defensive", "name": "護衛兵"}
+    {
+      "classId": "soldier",
+      "level": 7,
+      "x": 8,
+      "y": 8,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "要塞守兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 7,
+      "x": 11,
+      "y": 8,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "要塞守兵"
+    },
+    {
+      "classId": "knight",
+      "level": 7,
+      "x": 6,
+      "y": 10,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "重裝兵"
+    },
+    {
+      "classId": "knight",
+      "level": 7,
+      "x": 13,
+      "y": 10,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "重裝兵"
+    },
+    {
+      "classId": "archer",
+      "level": 7,
+      "x": 5,
+      "y": 9,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "要塞弓兵"
+    },
+    {
+      "classId": "archer",
+      "level": 7,
+      "x": 14,
+      "y": 9,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "要塞弓兵"
+    },
+    {
+      "classId": "mage",
+      "level": 7,
+      "x": 7,
+      "y": 12,
+      "items": [
+        "elfire"
+      ],
+      "ai": "defensive",
+      "name": "要塞魔法師"
+    },
+    {
+      "classId": "mage",
+      "level": 7,
+      "x": 12,
+      "y": 12,
+      "items": [
+        "elthunder"
+      ],
+      "ai": "defensive",
+      "name": "要塞魔法師"
+    },
+    {
+      "classId": "soldier",
+      "level": 8,
+      "x": 5,
+      "y": 11,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "要塞守兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 8,
+      "x": 14,
+      "y": 11,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "要塞守兵"
+    },
+    {
+      "classId": "knight",
+      "level": 8,
+      "x": 8,
+      "y": 14,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "近衛兵"
+    },
+    {
+      "classId": "knight",
+      "level": 8,
+      "x": 11,
+      "y": 14,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "近衛兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 7,
+      "x": 3,
+      "y": 7,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "守衛"
+    },
+    {
+      "classId": "fighter",
+      "level": 7,
+      "x": 16,
+      "y": 7,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "守衛"
+    },
+    {
+      "classId": "archer",
+      "level": 8,
+      "x": 9,
+      "y": 13,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "精銳弓兵"
+    },
+    {
+      "classId": "paladin",
+      "level": 1,
+      "x": 9,
+      "y": 15,
+      "items": [
+        "silverLance",
+        "javelin"
+      ],
+      "ai": "boss",
+      "name": "要塞守將格倫",
+      "isBoss": true,
+      "bonusStats": {
+        "hp": 10,
+        "str": 3,
+        "skl": 2,
+        "spd": 2,
+        "def": 4,
+        "res": 2
+      }
+    },
+    {
+      "classId": "soldier",
+      "level": 8,
+      "x": 10,
+      "y": 15,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "護衛兵"
+    }
   ],
   "turnEvents": [
-    {"turn": 2, "type": "recruit", "text": [{"speaker": "rex", "text": "艾琳殿下！我是飛龍騎士團副團長雷克斯！帝國的暴行我再也看不下去了！"}, {"speaker": "eirine", "text": "雷克斯……太好了，有你的幫助，我們一定能攻下這座要塞！"}]},
-    {"turn": 4, "type": "reinforce", "enemies": [
-      {"classId": "soldier", "level": 7, "x": 0, "y": 9, "items": ["ironLance"], "ai": "aggressive", "name": "增援兵"},
-      {"classId": "soldier", "level": 7, "x": 19, "y": 9, "items": ["ironLance"], "ai": "aggressive", "name": "增援兵"},
-      {"classId": "archer", "level": 7, "x": 0, "y": 10, "items": ["ironBow"], "ai": "aggressive", "name": "增援弓兵"}
-    ]}
-  ],
-  "dialogues": {
-    "pre": [
-      {"speaker": "eirine", "text": "這座要塞擋住了我們前進的道路。必須攻下它。"},
-      {"speaker": "marcus", "text": "要塞前有一條河流，只有中央的橋門可以通過。正面突破會有不少損傷。"},
-      {"speaker": "cain", "text": "別衝太快，裡面的守軍不是省油的燈。"},
-      {"speaker": "serra", "text": "我會在後方治療大家。請注意安全。"},
-      {"speaker": "fran", "text": "哈，區區一座要塞，看本天才怎麼用魔法轟開它！"}
-    ],
-    "post": [
-      {"speaker": "eirine", "text": "要塞……攻下來了。"},
-      {"speaker": "marcus", "text": "殿下的指揮越來越出色了。先王在天之靈一定很欣慰。"},
-      {"speaker": "rex", "text": "格倫將軍……他其實也不想為莫爾甘效命。只是軍人的職責……"},
-      {"speaker": "eirine", "text": "我理解。戰爭讓每個人都身不由己。但我們必須繼續前進。"}
-    ]
-  }
+    {
+      "turn": 2,
+      "type": "recruit",
+      "text": [
+        {
+          "speaker": "rex",
+          "text": "艾琳殿下！我是飛龍騎士團副團長雷克斯！帝國的暴行我再也看不下去了！"
+        },
+        {
+          "speaker": "eirine",
+          "text": "雷克斯……太好了，有你的幫助，我們一定能攻下這座要塞！"
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "soldier",
+          "level": 7,
+          "x": 0,
+          "y": 9,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "增援兵"
+        },
+        {
+          "classId": "soldier",
+          "level": 7,
+          "x": 19,
+          "y": 9,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "增援兵"
+        },
+        {
+          "classId": "archer",
+          "level": 7,
+          "x": 0,
+          "y": 10,
+          "items": [
+            "ironBow"
+          ],
+          "ai": "aggressive",
+          "name": "增援弓兵"
+        }
+      ]
+    }
+  ]
 }
