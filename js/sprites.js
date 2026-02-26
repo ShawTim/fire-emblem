@@ -4,7 +4,6 @@ var Sprites = {
   TILE: 32,
   _frameCounter: 0,
   _portraitCache: {},
-  _mapIconCache: {},
   tick: function() { this._frameCounter++; },
   _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 14) % 5]; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
@@ -633,15 +632,6 @@ var Sprites = {
           cache[pid].img.onload = function() { cache[pid].loaded = true; };
           cache[pid].img.onerror = function() { cache[pid].failed = true; };
         })(this._portraitCache, id);
-      }
-      if (!this._mapIconCache[id]) {
-        var mimg = new Image();
-        mimg.src = 'portraits/' + id + '_map.png';
-        this._mapIconCache[id] = { img: mimg, loaded: false };
-        (function(cache, pid) {
-          cache[pid].img.onload = function() { cache[pid].loaded = true; };
-          cache[pid].img.onerror = function() { cache[pid].loaded = false; };
-        })(this._mapIconCache, id);
       }
     }
   },

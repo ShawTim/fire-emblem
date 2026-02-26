@@ -95,7 +95,6 @@ class Game {
       const contentHeight = rect.height;
       const viewportHeight = window.innerHeight;
       
-      console.log(`[Prologue QA] Content Height: ${contentHeight}, Viewport: ${viewportHeight}`);
 
       // 動畫
       // 初始位置：絕對在視窗底部之下 (Viewport Height + 50px buffer)
@@ -108,10 +107,8 @@ class Game {
       textContainer.style.transition = `transform ${Math.max(10, lines.length * 3)}s linear`;
 
       // QA: 確認初始位置是否正確 (應該看不見文字)
-      console.log(`[Prologue QA] Initial Y: ${startY}px (Should be off-screen bottom)`);
 
       setTimeout(() => {
-        console.log(`[Prologue QA] Animating to Y: ${endY}px`);
         textContainer.style.transform = `translateY(${endY}px)`;
       }, 100); // 增加延遲確保初始幀已渲染
 
