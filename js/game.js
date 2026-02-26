@@ -75,9 +75,9 @@ class Game {
       root.appendChild(textContainer);
 
       // 3. 遮罩層 (z-index: 20, 中間透明，四周黑)
-      // 關鍵：遮罩層必須在文字層之上，但中間要是透明的，讓文字透出
+      // 加厚遮罩：透明圈縮小到 20%，50% 處開始完全變黑
       const mask = document.createElement("div");
-      mask.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, transparent 35%, rgba(0,0,0,0.95) 70%);z-index:20;pointer-events:none;";
+      mask.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, transparent 0%, transparent 20%, rgba(0,0,0,0.95) 50%);z-index:20;pointer-events:none;";
       root.appendChild(mask);
 
       document.getElementById("ui-overlay").appendChild(root);
@@ -90,17 +90,30 @@ class Game {
         textContainer.appendChild(lineEl);
       });
 
-      // 動畫
+      // QA: 強制重繪以獲取準確高度
+      const rect = textContainer.getBoundingClientRect();
+      const contentHeight = rect.height;
       const viewportHeight = window.innerHeight;
-      const totalHeight = textContainer.scrollHeight + (lines.length * 20);
-      const moveDistance = totalHeight + viewportHeight;
       
-      textContainer.style.transform = `translateY(${viewportHeight + 50}px)`;
+      console.log(`[Prologue QA] Content Height: ${contentHeight}, Viewport: ${viewportHeight}`);
+
+      // 動畫
+      // 初始位置：絕對在視窗底部之下 (Viewport Height + 50px buffer)
+      const startY = viewportHeight + 50;
+      // 結束位置：向上移動，直到所有內容都滾出視窗頂部
+      // 需要移動的距離 = 內容總高度 + 視窗高度 (確保完全滾出去)
+      const endY = -(contentHeight + viewportHeight); 
+
+      textContainer.style.transform = `translateY(${startY}px)`;
       textContainer.style.transition = `transform ${Math.max(10, lines.length * 3)}s linear`;
 
+      // QA: 確認初始位置是否正確 (應該看不見文字)
+      console.log(`[Prologue QA] Initial Y: ${startY}px (Should be off-screen bottom)`);
+
       setTimeout(() => {
-        textContainer.style.transform = `translateY(-${moveDistance}px)`;
-      }, 50);
+        console.log(`[Prologue QA] Animating to Y: ${endY}px`);
+        textContainer.style.transform = `translateY(${endY}px)`;
+      }, 100); // 增加延遲確保初始幀已渲染
 
       root.addEventListener("click", () => {
         root.remove();
