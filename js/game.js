@@ -55,115 +55,65 @@ class Game {
   }
 
 
-  // === Prologue Display (Continuous Scrolling Subtitle) ===
+  // === Prologue Display (Simple Scrolling Container) ===
   showPrologue(prologueData) {
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
       overlay.id = "prologue-overlay";
-      // 改為固定高度容器，文字由底向上流動
-      overlay.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:200;display:flex;flex-direction:column;justify-content:flex-end;padding:0 0 60px 0;pointer-events:auto;overflow:hidden;";
+      // 1. Overlay: 背景由中間向四周漸變透明 (Radial Gradient)
+      overlay.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.9) 90%);z-index:200;display:flex;justify-content:center;align-items:center;pointer-events:auto;overflow:hidden;";
       if (prologueData.background) {
-        overlay.style.backgroundImage = "url(" + prologueData.background + ")";
+        overlay.style.backgroundImage = `radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.9) 90%), url("${prologueData.background}")`;
         overlay.style.backgroundSize = "cover";
         overlay.style.backgroundPosition = "center";
       }
 
+      // 2. Container: Flexbox 居中，Gap 間距
       const container = document.createElement("div");
-      container.style.cssText = "width:100%;display:flex;flex-direction:column;align-items:center;";
+      container.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:15px;will-change:transform;";
       overlay.appendChild(container);
       document.getElementById("ui-overlay").appendChild(overlay);
 
       const lines = prologueData.lines || [];
-      let lineIndex = 0;
-      const activeLines = []; // { el, startY, endY, duration, startTime }
-
-      const finishPrologue = () => {
-        overlay.style.transition = "opacity 1s";
-        overlay.style.opacity = "0";
-        setTimeout(() => { overlay.remove(); resolve(); }, 1000);
-      };
-
-      // 動畫循環：每幀更新所有文字的位置和透明度
-      const animate = () => {
-        const now = Date.now();
-        let needsUpdate = false;
-
-        for (let i = activeLines.length - 1; i >= 0; i--) {
-          const line = activeLines[i];
-          const elapsed = now - line.startTime;
-          const progress = Math.min(elapsed / line.duration, 1);
-
-          // 計算 Y 位置：由底部 (100%) 移動到頂部 (-20%)
-          // 使用線性插值
-          const yStart = line.startY;
-          const yEnd = line.endY;
-          const currentY = yStart + (yEnd - yStart) * progress;
-          
-          // 計算透明度：Fade In (0-0.2), Full (0.2-0.8), Fade Out (0.8-1)
-          let opacity = 1;
-          if (progress < 0.2) opacity = progress / 0.2;
-          else if (progress > 0.8) opacity = (1 - progress) / 0.2;
-
-          line.el.style.transform = `translateY(${currentY}px)`;
-          line.el.style.opacity = opacity;
-
-          if (progress < 1) needsUpdate = true;
-          else {
-            // 動畫結束，移除元素
-            line.el.remove();
-            activeLines.splice(i, 1);
-          }
-        }
-
-        if (needsUpdate || activeLines.length > 0 || lineIndex < lines.length) {
-          requestAnimationFrame(animate);
-        }
-      };
-
-      const addNextLine = () => {
-        if (lineIndex >= lines.length && activeLines.length === 0) {
-          setTimeout(finishPrologue, 2000);
-          return;
-        }
-
-        if (lineIndex < lines.length) {
-          const lineData = lines[lineIndex];
-          const lineEl = document.createElement("div");
-          lineEl.textContent = lineData.text;
-          lineEl.style.cssText = "color:#fff;font-size:18px;font-weight:bold;text-align:center;max-width:600px;text-shadow:2px 2px 4px #000;position:absolute;white-space:pre-wrap;";
-          
-          container.appendChild(lineEl);
-          
-          // 計算高度以確定起始位置 (從底部外開始)
-          const rect = lineEl.getBoundingClientRect();
-          const containerRect = container.getBoundingClientRect();
-          const lineHeight = rect.height;
-          const startY = containerRect.height; // 從底部外開始
-          const endY = -lineHeight - 20; // 移動到頂部外
-
-          activeLines.push({
-            el: lineEl,
-            startY: startY,
-            endY: endY,
-            duration: lineData.duration || 4000, // 移動時間
-            startTime: Date.now()
-          });
-
-          lineIndex++;
-        }
-
-        // 間隔時間後加入下一句 (重疊效果)
-        setTimeout(addNextLine, 1200); // 每 1.2 秒出現一句
-      };
-
-      overlay.addEventListener("click", () => {
-        finishPrologue();
+      
+      // 3. 生成所有文字行
+      lines.forEach((lineData) => {
+        const lineEl = document.createElement("div");
+        lineEl.textContent = lineData.text;
+        lineEl.style.cssText = "color:#fff;font-size:18px;font-weight:bold;text-align:center;max-width:600px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;";
+        container.appendChild(lineEl);
       });
 
-      // 開始動畫循環
-      requestAnimationFrame(animate);
-      // 開始加入第一句
-      addNextLine();
+      // 4. 動畫：整個 Container 由底部勻速移動到頂部
+      // 計算總高度以確定移動距離
+      const totalHeight = container.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      const moveDistance = totalHeight + viewportHeight / 2; // 確保完全移出畫面
+
+      // 初始位置：底部外
+      container.style.transform = `translateY(${viewportHeight}px)`;
+      container.style.transition = `transform ${lines.length * 2.5}s linear`; // 每句約 2.5 秒
+
+      // 強制瀏覽器重繪後開始動畫
+      requestAnimationFrame(() => {
+        container.style.transform = `translateY(-${moveDistance}px)`;
+      });
+
+      // 點擊跳過
+      overlay.addEventListener("click", () => {
+        overlay.remove();
+        resolve();
+      });
+
+      // 動畫結束後清理
+      const totalDuration = lines.length * 2500 + 1000;
+      setTimeout(() => {
+        if (overlay.parentNode) {
+            overlay.style.transition = "opacity 1s";
+            overlay.style.opacity = "0";
+            setTimeout(() => { overlay.remove(); resolve(); }, 1000);
+        }
+      }, totalDuration);
     });
   }
   async startChapter(id) {
