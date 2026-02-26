@@ -55,19 +55,76 @@ class Game {
   }
 
 
-  // === Prologue Display (Correct Layering) ===
+  // === Prologue Display (Pure CSS Scrolling) ===
   showPrologue(prologueData) {
     return new Promise((resolve) => {
       const root = document.createElement("div");
       root.id = "prologue-root";
       root.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;z-index:300;overflow:hidden;";
-      
+
       // 1. 背景層 (可選)
       if (prologueData.background) {
         const bg = document.createElement("div");
         bg.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background-image:url('" + prologueData.background + "');background-size:cover;background-position:center;z-index:1;";
         root.appendChild(bg);
       }
+
+      // 2. 文字層 (z-index: 10)
+      // 初始位置：translateY(100vh) (屏幕底部外)
+      // 動畫：translateY(-100%) (向上滾出屏幕頂部)
+      const lines = prologueData.lines || [];
+      const duration = Math.max(10, lines.length * 3);
+      
+      const textContainer = document.createElement("div");
+      textContainer.style.cssText = `
+        position:absolute;
+        top:0; left:0; right:0; bottom:0;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:20px;
+        z-index:10;
+        transform: translateY(100vh);
+        transition: transform ${duration}s linear;
+      `;
+      root.appendChild(textContainer);
+
+      // 3. 遮罩層 (z-index: 20)
+      const mask = document.createElement("div");
+      mask.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, transparent 0%, transparent 20%, rgba(0,0,0,0.95) 50%);z-index:20;pointer-events:none;";
+      root.appendChild(mask);
+
+      document.getElementById("ui-overlay").appendChild(root);
+
+      // 生成文字
+      lines.forEach((lineData) => {
+        const lineEl = document.createElement("div");
+        lineEl.textContent = lineData.text;
+        lineEl.style.cssText = "color:#fff;font-size:20px;font-weight:bold;text-align:center;max-width:700px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;line-height:1.4;";
+        textContainer.appendChild(lineEl);
+      });
+
+      // 啟動動畫
+      requestAnimationFrame(() => {
+        textContainer.style.transform = "translateY(calc(-100% - 100vh))";
+      });
+
+      // 點擊跳過
+      root.addEventListener("click", () => {
+        root.remove();
+        resolve();
+      });
+
+      // 清理
+      setTimeout(() => {
+        if (root.parentNode) {
+          root.style.transition = "opacity 0.5s";
+          root.style.opacity = "0";
+          setTimeout(() => { root.remove(); resolve(); }, 500);
+        }
+      }, duration * 1000 + 1000);
+    });
+  }
 
       // 2. 文字層 (z-index: 10)
       const textContainer = document.createElement("div");
