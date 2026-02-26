@@ -55,67 +55,64 @@ class Game {
   }
 
 
-  // === Prologue Display (Simple Scrolling Container) ===
+  // === Prologue Display (Correct Layering) ===
   showPrologue(prologueData) {
     return new Promise((resolve) => {
-      const overlay = document.createElement("div");
-      overlay.id = "prologue-overlay";
+      const root = document.createElement("div");
+      root.id = "prologue-root";
+      root.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;z-index:300;overflow:hidden;";
       
-      // 1. Overlay: 確保 z-index 最高 (300)，Radial Gradient 由中心 (0% 處透明) 向外 (70% 處不透明)
-      // 使用 rgba(0,0,0,0.95) 確保外圍足夠黑
-      overlay.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.95) 100%);z-index:300;display:flex;justify-content:center;align-items:center;pointer-events:auto;overflow:hidden;";
-      
+      // 1. 背景層 (可選)
       if (prologueData.background) {
-        // 背景圖放在最底層，遮罩在上層
-        overlay.style.backgroundImage = `url("${prologueData.background}"), radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.95) 100%)`;
-        overlay.style.backgroundSize = "cover, cover";
-        overlay.style.backgroundPosition = "center, center";
+        const bg = document.createElement("div");
+        bg.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background-image:url('" + prologueData.background + "');background-size:cover;background-position:center;z-index:1;";
+        root.appendChild(bg);
       }
 
-      // 2. Container: Flexbox 居中，Gap 間距
-      const container = document.createElement("div");
-      container.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:20px;will-change:transform;";
-      overlay.appendChild(container);
-      document.getElementById("ui-overlay").appendChild(overlay);
+      // 2. 文字層 (z-index: 10)
+      const textContainer = document.createElement("div");
+      textContainer.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:20px;will-change:transform;z-index:10;";
+      root.appendChild(textContainer);
+
+      // 3. 遮罩層 (z-index: 20, 中間透明，四周黑)
+      // 關鍵：遮罩層必須在文字層之上，但中間要是透明的，讓文字透出
+      const mask = document.createElement("div");
+      mask.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, transparent 35%, rgba(0,0,0,0.95) 70%);z-index:20;pointer-events:none;";
+      root.appendChild(mask);
+
+      document.getElementById("ui-overlay").appendChild(root);
 
       const lines = prologueData.lines || [];
-      
-      // 3. 生成所有文字行
       lines.forEach((lineData) => {
         const lineEl = document.createElement("div");
         lineEl.textContent = lineData.text;
         lineEl.style.cssText = "color:#fff;font-size:20px;font-weight:bold;text-align:center;max-width:700px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;line-height:1.4;";
-        container.appendChild(lineEl);
+        textContainer.appendChild(lineEl);
       });
 
-      // 4. 動畫：整個 Container 由底部勻速移動到頂部
+      // 動畫
       const viewportHeight = window.innerHeight;
-      const totalHeight = container.scrollHeight + (lines.length * 20); // 估算總高度
-      const moveDistance = totalHeight + viewportHeight; 
+      const totalHeight = textContainer.scrollHeight + (lines.length * 20);
+      const moveDistance = totalHeight + viewportHeight;
+      
+      textContainer.style.transform = `translateY(${viewportHeight + 50}px)`;
+      textContainer.style.transition = `transform ${Math.max(10, lines.length * 3)}s linear`;
 
-      // 初始位置：畫面底部外 (確保完全看不見)
-      // 使用 translateY(100vh) 確保從視窗底部之下開始
-      container.style.transform = `translateY(${viewportHeight + 50}px)`; 
-      container.style.transition = `transform ${Math.max(10, lines.length * 3)}s linear`; // 最少 10 秒，或每句 3 秒
-
-      // 強制瀏覽器重繪後開始動畫 (延遲一幀以確保初始位置已渲染)
       setTimeout(() => {
-        container.style.transform = `translateY(-${moveDistance}px)`;
+        textContainer.style.transform = `translateY(-${moveDistance}px)`;
       }, 50);
 
-      // 點擊跳過
-      overlay.addEventListener("click", () => {
-        overlay.remove();
+      root.addEventListener("click", () => {
+        root.remove();
         resolve();
       });
 
-      // 動畫結束後清理
       const totalDuration = (Math.max(10, lines.length * 3) * 1000) + 2000;
       setTimeout(() => {
-        if (overlay.parentNode) {
-            overlay.style.transition = "opacity 0.5s";
-            overlay.style.opacity = "0";
-            setTimeout(() => { overlay.remove(); resolve(); }, 500);
+        if (root.parentNode) {
+            root.style.transition = "opacity 0.5s";
+            root.style.opacity = "0";
+            setTimeout(() => { root.remove(); resolve(); }, 500);
         }
       }, totalDuration);
     });
