@@ -69,16 +69,16 @@ class Game {
         root.appendChild(bg);
       }
 
-      // 2. 文字層 (z-index: 10)
+      // 2. 文字層 — 不設 bottom，讓高度由內容決定
       const lines = prologueData.lines || [];
       const duration = Math.max(10, lines.length * 3);
       const textContainer = document.createElement("div");
-      textContainer.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:20px;z-index:10;transform:translateY(100vh);transition:transform " + duration + "s linear;";
+      textContainer.style.cssText = "position:absolute;top:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:24px;padding:40px 60px;z-index:10;transform:translateY(600px);transition:transform " + duration + "s linear;";
       root.appendChild(textContainer);
 
-      // 3. 遮罩層 (z-index: 20)
+      // 3. 遮罩層 (z-index: 20)：中間透明，向外漸變至背景黑色
       const mask = document.createElement("div");
-      mask.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, transparent 0%, transparent 20%, rgba(0,0,0,0.95) 50%);z-index:20;pointer-events:none;";
+      mask.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.92) 70%);z-index:20;pointer-events:none;";
       root.appendChild(mask);
 
       document.getElementById("ui-overlay").appendChild(root);
@@ -87,14 +87,14 @@ class Game {
       lines.forEach((lineData) => {
         const lineEl = document.createElement("div");
         lineEl.textContent = lineData.text;
-        lineEl.style.cssText = "color:#fff;font-size:20px;font-weight:bold;text-align:center;max-width:700px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;line-height:1.4;";
+        lineEl.style.cssText = "color:#fff;font-size:20px;font-weight:bold;text-align:center;max-width:700px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;line-height:1.6;";
         textContainer.appendChild(lineEl);
       });
 
-      // 啟動動畫
-      requestAnimationFrame(() => {
-        textContainer.style.transform = "translateY(calc(-100% - 100vh))";
-      });
+      // 啟動動畫：用 setTimeout 確保瀏覽器先渲染初始狀態再觸發 transition
+      setTimeout(() => {
+        textContainer.style.transform = "translateY(calc(-100% - 600px))";
+      }, 50);
 
       // 點擊跳過
       root.addEventListener("click", () => {
@@ -113,64 +113,6 @@ class Game {
     });
   }
 
-      // 2. 文字層 (z-index: 10)
-      const textContainer = document.createElement("div");
-      textContainer.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:20px;will-change:transform;z-index:10;";
-      root.appendChild(textContainer);
-
-      // 3. 遮罩層 (z-index: 20, 中間透明，四周黑)
-      // 加厚遮罩：透明圈縮小到 20%，50% 處開始完全變黑
-      const mask = document.createElement("div");
-      mask.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, transparent 0%, transparent 20%, rgba(0,0,0,0.95) 50%);z-index:20;pointer-events:none;";
-      root.appendChild(mask);
-
-      document.getElementById("ui-overlay").appendChild(root);
-
-      const lines = prologueData.lines || [];
-      lines.forEach((lineData) => {
-        const lineEl = document.createElement("div");
-        lineEl.textContent = lineData.text;
-        lineEl.style.cssText = "color:#fff;font-size:20px;font-weight:bold;text-align:center;max-width:700px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;line-height:1.4;";
-        textContainer.appendChild(lineEl);
-      });
-
-      // QA: 強制重繪以獲取準確高度
-      const rect = textContainer.getBoundingClientRect();
-      const contentHeight = rect.height;
-      const viewportHeight = window.innerHeight;
-      
-
-      // 動畫
-      // 初始位置：絕對在視窗底部之下 (Viewport Height + 50px buffer)
-      const startY = viewportHeight + 50;
-      // 結束位置：向上移動，直到所有內容都滾出視窗頂部
-      // 需要移動的距離 = 內容總高度 + 視窗高度 (確保完全滾出去)
-      const endY = -(contentHeight + viewportHeight); 
-
-      textContainer.style.transform = `translateY(${startY}px)`;
-      textContainer.style.transition = `transform ${Math.max(10, lines.length * 3)}s linear`;
-
-      // QA: 確認初始位置是否正確 (應該看不見文字)
-
-      setTimeout(() => {
-        textContainer.style.transform = `translateY(${endY}px)`;
-      }, 100); // 增加延遲確保初始幀已渲染
-
-      root.addEventListener("click", () => {
-        root.remove();
-        resolve();
-      });
-
-      const totalDuration = (Math.max(10, lines.length * 3) * 1000) + 2000;
-      setTimeout(() => {
-        if (root.parentNode) {
-            root.style.transition = "opacity 0.5s";
-            root.style.opacity = "0";
-            setTimeout(() => { root.remove(); resolve(); }, 500);
-        }
-      }, totalDuration);
-    });
-  }
   async startChapter(id) {
     const chapter = await getChapter(id);
     if (!chapter) {
