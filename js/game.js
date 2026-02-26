@@ -60,17 +60,21 @@ class Game {
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
       overlay.id = "prologue-overlay";
-      // 1. Overlay: 背景由中間向四周漸變透明 (Radial Gradient)
-      overlay.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.9) 90%);z-index:200;display:flex;justify-content:center;align-items:center;pointer-events:auto;overflow:hidden;";
+      
+      // 1. Overlay: 確保 z-index 最高 (300)，Radial Gradient 由中心 (0% 處透明) 向外 (70% 處不透明)
+      // 使用 rgba(0,0,0,0.95) 確保外圍足夠黑
+      overlay.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.95) 100%);z-index:300;display:flex;justify-content:center;align-items:center;pointer-events:auto;overflow:hidden;";
+      
       if (prologueData.background) {
-        overlay.style.backgroundImage = `radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.9) 90%), url("${prologueData.background}")`;
-        overlay.style.backgroundSize = "cover";
-        overlay.style.backgroundPosition = "center";
+        // 背景圖放在最底層，遮罩在上層
+        overlay.style.backgroundImage = `url("${prologueData.background}"), radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.95) 100%)`;
+        overlay.style.backgroundSize = "cover, cover";
+        overlay.style.backgroundPosition = "center, center";
       }
 
       // 2. Container: Flexbox 居中，Gap 間距
       const container = document.createElement("div");
-      container.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:15px;will-change:transform;";
+      container.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:20px;will-change:transform;";
       overlay.appendChild(container);
       document.getElementById("ui-overlay").appendChild(overlay);
 
@@ -80,24 +84,24 @@ class Game {
       lines.forEach((lineData) => {
         const lineEl = document.createElement("div");
         lineEl.textContent = lineData.text;
-        lineEl.style.cssText = "color:#fff;font-size:18px;font-weight:bold;text-align:center;max-width:600px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;";
+        lineEl.style.cssText = "color:#fff;font-size:20px;font-weight:bold;text-align:center;max-width:700px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;line-height:1.4;";
         container.appendChild(lineEl);
       });
 
       // 4. 動畫：整個 Container 由底部勻速移動到頂部
-      // 計算總高度以確定移動距離
-      const totalHeight = container.scrollHeight;
       const viewportHeight = window.innerHeight;
-      const moveDistance = totalHeight + viewportHeight / 2; // 確保完全移出畫面
+      const totalHeight = container.scrollHeight + (lines.length * 20); // 估算總高度
+      const moveDistance = totalHeight + viewportHeight; 
 
-      // 初始位置：底部外
-      container.style.transform = `translateY(${viewportHeight}px)`;
-      container.style.transition = `transform ${lines.length * 2.5}s linear`; // 每句約 2.5 秒
+      // 初始位置：畫面底部外 (確保完全看不見)
+      // 使用 translateY(100vh) 確保從視窗底部之下開始
+      container.style.transform = `translateY(${viewportHeight + 50}px)`; 
+      container.style.transition = `transform ${Math.max(10, lines.length * 3)}s linear`; // 最少 10 秒，或每句 3 秒
 
-      // 強制瀏覽器重繪後開始動畫
-      requestAnimationFrame(() => {
+      // 強制瀏覽器重繪後開始動畫 (延遲一幀以確保初始位置已渲染)
+      setTimeout(() => {
         container.style.transform = `translateY(-${moveDistance}px)`;
-      });
+      }, 50);
 
       // 點擊跳過
       overlay.addEventListener("click", () => {
@@ -106,12 +110,12 @@ class Game {
       });
 
       // 動畫結束後清理
-      const totalDuration = lines.length * 2500 + 1000;
+      const totalDuration = (Math.max(10, lines.length * 3) * 1000) + 2000;
       setTimeout(() => {
         if (overlay.parentNode) {
-            overlay.style.transition = "opacity 1s";
+            overlay.style.transition = "opacity 0.5s";
             overlay.style.opacity = "0";
-            setTimeout(() => { overlay.remove(); resolve(); }, 1000);
+            setTimeout(() => { overlay.remove(); resolve(); }, 500);
         }
       }, totalDuration);
     });
