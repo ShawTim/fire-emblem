@@ -55,31 +55,78 @@ class Game {
   }
 
 
-  // === Prologue Display (Cinematic Text) ===
+  // === Prologue Display (Cinematic Scrolling Queue) ===
   showPrologue(prologueData) {
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
       overlay.id = "prologue-overlay";
-      overlay.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:200;display:flex;flex-direction:column;justify-content:center;align-items:center;pointer-events:auto;";
-      if (prologueData.background) { overlay.style.backgroundImage = "url(\ + prologueData.background + "; overlay.style.backgroundSize = "cover"; overlay.style.backgroundPosition = "center"; }
-      const textContainer = document.createElement("div");
-      textContainer.id = "prologue-text";
-      textContainer.style.cssText = "color:#fff;font-size:18px;font-weight:bold;text-align:center;max-width:70%;text-shadow:2px 2px 4px #000;opacity:0;transition:opacity 1s;";
-      overlay.appendChild(textContainer);
+      overlay.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:200;display:flex;flex-direction:column;justify-content:flex-end;padding:40px;pointer-events:auto;";
+      if (prologueData.background) {
+        overlay.style.backgroundImage = "url(" + prologueData.background + ")";
+        overlay.style.backgroundSize = "cover";
+        overlay.style.backgroundPosition = "center";
+      }
+
+      // 容器：所有文字行都在這裡排隊
+      const queueContainer = document.createElement("div");
+      queueContainer.style.cssText = "display:flex;flex-direction:column;gap:10px;align-items:center;transition:transform 0.5s ease-in-out;";
+      overlay.appendChild(queueContainer);
       document.getElementById("ui-overlay").appendChild(overlay);
+
+      const lines = prologueData.lines || [];
       let lineIndex = 0;
-      const showLine = () => {
-        if (lineIndex >= prologueData.lines.length) { overlay.style.transition = "opacity 1s"; overlay.style.opacity = "0"; setTimeout(() => { overlay.remove(); resolve(); }, 1000); return; }
-        const line = prologueData.lines[lineIndex];
-        textContainer.style.opacity = "0";
-        setTimeout(() => {
-          textContainer.textContent = line.text;
-          textContainer.style.opacity = "1";
-          setTimeout(() => { lineIndex++; showLine(); }, line.duration || 2000);
-        }, 1000);
+      const displayedElements = []; // 存儲已顯示的元素 { el, height }
+
+      const finishPrologue = () => {
+        overlay.style.transition = "opacity 1s";
+        overlay.style.opacity = "0";
+        setTimeout(() => { overlay.remove(); resolve(); }, 1000);
       };
-      overlay.addEventListener("click", () => { overlay.remove(); resolve(); });
-      showLine();
+
+      const addNextLine = () => {
+        if (lineIndex >= lines.length) {
+          // 所有台詞播完，等待 2 秒後結束
+          setTimeout(finishPrologue, 2000);
+          return;
+        }
+
+        const lineData = lines[lineIndex];
+        const lineEl = document.createElement("div");
+        lineEl.textContent = lineData.text;
+        lineEl.style.cssText = "color:#fff;font-size:18px;font-weight:bold;text-align:center;max-width:600px;text-shadow:2px 2px 4px #000;opacity:0;transform:translateY(20px);transition:opacity 0.8s, transform 0.8s;";
+        
+        // 先加入 DOM (隱藏狀態) 以計算高度
+        queueContainer.appendChild(lineEl);
+        
+        // 強制瀏覽器渲染一次以獲取高度
+        setTimeout(() => {
+            lineEl.style.opacity = "1";
+            lineEl.style.transform = "translateY(0)";
+            
+            // 記錄這一行的高度 (包含 gap)
+            const rect = lineEl.getBoundingClientRect();
+            displayedElements.push({ el: lineEl, height: rect.height + 10 }); // 10px gap
+
+            // 如果超過 3 行，開始移除最舊的行
+            if (displayedElements.length > 3) {
+                const toRemove = displayedElements.shift(); // 移除第一個
+                toRemove.el.style.opacity = "0";
+                toRemove.el.style.transform = "translateY(-40px)";
+                setTimeout(() => toRemove.el.remove(), 500);
+            }
+
+            lineIndex++;
+            // 間隔時間後播下一句
+            setTimeout(addNextLine, lineData.duration || 2000);
+        }, 50); // 短延遲以確保 DOM 渲染
+      };
+
+      // 點擊跳過
+      overlay.addEventListener("click", () => {
+        finishPrologue();
+      });
+
+      addNextLine();
     });
   }
   async startChapter(id) {
