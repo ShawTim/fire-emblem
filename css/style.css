@@ -25,21 +25,9 @@ body {
   height: 600px;
 }
 
-/* 對話框頭像像素化 */
-/* 1. 針對特定 class */
-.portrait-img, .dialogue-portrait, .character-portrait {
-  image-rendering: pixelated; /* 標準 */
-  image-rendering: -moz-crisp-edges; /* Firefox */
-  image-rendering: crisp-edges; /* 舊版標準 */
-  transform: translateZ(0); /* 強制硬體加速 */
-}
-
-/* 2. 通用規則：如果圖片在 #ui-overlay 內，也強制像素化 (保險起見) */
-#ui-overlay img {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-}
+/* CSS Pixelation fix removed. 
+   Reason: Source images were too high-res/detailed. 
+   Solution: Fix the generation prompt to enforce 16-bit style at source. */
 
 #ui-overlay {
   position: absolute;

@@ -24,8 +24,14 @@ OUTPUT_FILE.parent.mkdir(exist_ok=True)
 CHARACTERS_PROMPT = """
 Fire Emblem GBA style character sprite sheet containing EXACTLY 16 distinct character portraits arranged in a 4x4 grid (4 rows, 4 columns).
 IMPORTANT: Generate ONLY these 16 portraits. Do NOT add extra characters, duplicates, or decorative elements. Just the 16 portraits in a clean grid.
-All characters must share the EXACT same art style: 16-bit pixel art, anime style, crisp edges, vibrant colors, white background.
-Each portrait is a head-and-shoulders shot, facing forward, consistent size and lighting.
+
+STYLE REQUIREMENTS (CRITICAL):
+- 16-bit pixel art style, low resolution appearance.
+- THICK, BOLD black outlines for all characters (strong silhouette).
+- Simple, chunky details. NO fine lines, NO thin details, NO realistic shading.
+- Vibrant, flat colors. High contrast.
+- White background. Sharp edges.
+- Faces should be clear and readable even at small sizes (32x32).
 
 Characters (Row by Row, Left to Right):
 Row 1:
