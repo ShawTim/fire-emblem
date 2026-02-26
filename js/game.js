@@ -70,23 +70,10 @@ class Game {
       }
 
       // 2. 文字層 (z-index: 10)
-      // 初始位置：translateY(100vh) (屏幕底部外)
-      // 動畫：translateY(-100%) (向上滾出屏幕頂部)
       const lines = prologueData.lines || [];
       const duration = Math.max(10, lines.length * 3);
-      
       const textContainer = document.createElement("div");
-      textContainer.style.cssText = `
-        position:absolute;
-        top:0; left:0; right:0; bottom:0;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        gap:20px;
-        z-index:10;
-        transform: translateY(100vh);
-        transition: transform ${duration}s linear;
-      `;
+      textContainer.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:20px;z-index:10;transform:translateY(100vh);transition:transform " + duration + "s linear;";
       root.appendChild(textContainer);
 
       // 3. 遮罩層 (z-index: 20)
