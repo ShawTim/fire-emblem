@@ -22,8 +22,8 @@ OUTPUT_FILE.parent.mkdir(exist_ok=True)
 # 統一 Prompt：強調網格排列與風格一致性
 # 使用「Character Sheet」或「Sprite Sheet」關鍵字有助於 AI 理解佈局
 CHARACTERS_PROMPT = """
-Fire Emblem GBA style character sprite sheet containing EXACTLY 18 distinct character portraits arranged in a 4x5 grid (4 rows, 5 columns, total 20 slots, 2 empty).
-IMPORTANT: Generate ONLY these 18 portraits. Do NOT add extra characters, duplicates, or decorative elements. Just the 18 portraits in a clean grid.
+Fire Emblem GBA style character sprite sheet containing EXACTLY 16 distinct character portraits arranged in a 4x4 grid (4 rows, 4 columns).
+IMPORTANT: Generate ONLY these 16 portraits. Do NOT add extra characters, duplicates, or decorative elements. Just the 16 portraits in a clean grid.
 All characters must share the EXACT same art style: 16-bit pixel art, anime style, crisp edges, vibrant colors, white background.
 Each portrait is a head-and-shoulders shot, facing forward, consistent size and lighting.
 
@@ -51,10 +51,8 @@ Row 4:
 14. Dark Lieutenant: Morgane's ruthless right-hand man, wearing a dark hooded cloak and silver mask, cold eyes, holding a dark dagger, silent assassin vibe.
 15. Cursed Dragon: Ancient black dragon with glowing red eyes, dark scales, breathing purple smoke, terrifying and majestic, ultimate evil beast.
 16. The King (國王): Elderly king, white hair and beard, wearing a golden crown and royal purple robes, majestic and fatherly, Eirine's deceased father.
-17. Reserve 1: A generic villager or soldier, simple clothes, neutral expression, placeholder for future character.
-18. Reserve 2: A generic villager or soldier, simple clothes, neutral expression, placeholder for future character.
 
-Layout: 4 rows x 5 columns grid (4x5). Equal spacing. No overlapping. NO EXTRA IMAGES. The last 2 slots (Row 4, Col 4-5) are reserved for future characters.
+Layout: 4 rows x 4 columns grid (4x4). Equal spacing. No overlapping. NO EXTRA IMAGES.
 Style: Fire Emblem GBA style, 16-bit pixel art, anime, white background, high contrast, sharp edges.
 """
 

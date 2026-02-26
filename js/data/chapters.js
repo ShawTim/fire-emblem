@@ -14,7 +14,8 @@ const CHARACTERS = {
   natasha: { name: 'ナターシャ', classId: 'pegasusKnight', level: 8, portrait: { hair: '#f8a', eyes: '#4cf', skin: '#fdb' }, baseStats: { hp: 20, str: 7, mag: 3, skl: 9, spd: 13, lck: 8, def: 4, res: 8 }, growths: { hp: 50, str: 35, mag: 20, skl: 45, spd: 60, lck: 40, def: 15, res: 45 }, items: ['ironLance', 'javelin'] },
   olivier: { name: 'オリヴィエ', classId: 'thief', level: 8, portrait: { hair: '#555', eyes: '#a8a', skin: '#ecb' }, baseStats: { hp: 21, str: 6, mag: 0, skl: 12, spd: 15, lck: 5, def: 4, res: 2 }, growths: { hp: 50, str: 30, mag: 5, skl: 55, spd: 65, lck: 30, def: 20, res: 15 }, items: ['ironSword'] },
   helga: { name: 'ヘルガ', classId: 'general', level: 1, portrait: { hair: '#964', eyes: '#644', skin: '#d9b' }, baseStats: { hp: 30, str: 14, mag: 0, skl: 7, spd: 3, lck: 2, def: 16, res: 4 }, growths: { hp: 60, str: 40, mag: 0, skl: 20, spd: 15, lck: 15, def: 50, res: 20 }, items: ['steelLance', 'javelin'] },
-  morgane: { name: '莫爾甘', portrait: { hair: '#206', eyes: '#f0f', skin: '#baa' } }
+  morgane: { name: '莫爾甘', portrait: { hair: '#206', eyes: '#f0f', skin: '#baa' } },
+  king: { name: '國王', portrait: { hair: '#fff', eyes: '#432', skin: '#fec' } }
 };
 
 const CHAPTER_MANIFEST = [

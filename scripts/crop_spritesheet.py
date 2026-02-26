@@ -11,16 +11,16 @@ INPUT_FILE = "portraits/spritesheet_all.png"
 OUTPUT_DIR = "portraits"
 
 # 角色 ID 列表 (必須與生成時的順序一致：由上至下，由左至右)
-# 4 行 5 列 (4x5) = 20 格，我們有 18 個角色
+# 4 行 4 列 (4x4) = 16 格
 CHARACTERS = [
-    # Row 1 (1-5)
-    "eirine", "marcus", "morgane", "lina", "thor", 
-    # Row 2 (6-10)
-    "serra", "cain", "fran", "rex", "natasha",
-    # Row 3 (11-15)
-    "olivier", "helga", "anna", "dark_lieutenant", "cursed_dragon",
-    # Row 4 (16-18, 後兩格留空)
-    "king", "reserve_1", "reserve_2"
+    # Row 1
+    "eirine", "marcus", "morgane", "lina",
+    # Row 2
+    "thor", "serra", "cain", "fran",
+    # Row 3
+    "rex", "natasha", "olivier", "helga",
+    # Row 4
+    "anna", "dark_lieutenant", "cursed_dragon", "king"
 ]
 
 def main():
@@ -34,7 +34,7 @@ def main():
     print(f"Spritesheet 尺寸：{w}x{h}")
 
     # 計算每個單元格的大小 (4列 x 3行)
-    cols = 5
+    cols = 4
     rows = 4
     cell_w = w / cols
     cell_h = h / rows
