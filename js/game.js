@@ -71,9 +71,10 @@ class Game {
 
       // 2. 文字層 — 不設 bottom，讓高度由內容決定
       const lines = prologueData.lines || [];
-      const duration = Math.max(10, lines.length * 3);
+      const scrollDuration = Math.max(10, lines.length * 3); // 文字速度固定，與 duration 無關
+      const totalDuration = prologueData.duration || scrollDuration + 2;
       const textContainer = document.createElement("div");
-      textContainer.style.cssText = "position:absolute;top:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:24px;padding:40px 60px;z-index:10;transform:translateY(600px);transition:transform " + duration + "s linear;";
+      textContainer.style.cssText = "position:absolute;top:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:24px;padding:40px 60px;z-index:10;transform:translateY(600px);transition:transform " + scrollDuration + "s linear;";
       root.appendChild(textContainer);
 
       // 3. 遮罩層 (z-index: 20)：中間透明，向外漸變至背景黑色
@@ -86,7 +87,7 @@ class Game {
       // 生成文字
       lines.forEach((lineData) => {
         const lineEl = document.createElement("div");
-        lineEl.textContent = lineData.text;
+        lineEl.textContent = typeof lineData === 'string' ? lineData : lineData.text;
         lineEl.style.cssText = "color:#fff;font-size:20px;font-weight:bold;text-align:center;max-width:700px;text-shadow:2px 2px 4px #000;white-space:pre-wrap;line-height:1.6;";
         textContainer.appendChild(lineEl);
       });
@@ -96,20 +97,22 @@ class Game {
         textContainer.style.transform = "translateY(calc(-100% - 600px))";
       }, 50);
 
-      // 點擊跳過
-      root.addEventListener("click", () => {
-        root.remove();
-        resolve();
-      });
+      // 共用結束函數：淡出後 resolve
+      let finished = false;
+      const finish = () => {
+        if (finished || !root.parentNode) return;
+        finished = true;
+        clearTimeout(autoTimer);
+        root.style.transition = "opacity 0.5s";
+        root.style.opacity = "0";
+        setTimeout(() => { root.remove(); resolve(); }, 500);
+      };
 
-      // 清理
-      setTimeout(() => {
-        if (root.parentNode) {
-          root.style.transition = "opacity 0.5s";
-          root.style.opacity = "0";
-          setTimeout(() => { root.remove(); resolve(); }, 500);
-        }
-      }, duration * 1000 + 1000);
+      // Event 1: duration 夠鐘自動結束
+      const autoTimer = setTimeout(finish, totalDuration * 1000);
+
+      // Event 2: 用戶點擊跳過
+      root.addEventListener("click", () => { root.remove(); clearTimeout(autoTimer); resolve(); });
     });
   }
 
