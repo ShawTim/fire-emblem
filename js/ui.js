@@ -28,12 +28,14 @@ const UI = {
     const hitRate = weapon ? (unit.skl * 2 + unit.lck + weapon.hit) : 0;
     const avoRate = unit.spd * 2 + unit.lck;
     const critRate = weapon ? Math.floor(unit.skl / 2) + weapon.crit : 0;
-    // Portrait
-    const portraitId = unit.charId || ('_enemy_' + unit.classId);
+    // Portrait: use <img> if available, fallback to canvas
     const hasPortrait = unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded;
+    const portraitHtml = hasPortrait
+      ? `<img src="portraits/${unit.charId}.png" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;flex-shrink:0;object-fit:cover;object-position:center 30%">`
+      : `<canvas id="panel-portrait" width="40" height="40" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;flex-shrink:0"></canvas>`;
     this.unitInfo.innerHTML = `
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
-        <canvas id="panel-portrait" width="40" height="40" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;flex-shrink:0"></canvas>
+        ${portraitHtml}
         <div>
           <div class="stat-name">${unit.name}</div>
           <div class="stat-class">${cls.name} Lv.${unit.level}</div>
@@ -74,15 +76,17 @@ const UI = {
       ${unit.faction === 'player' ? '<div style="font-size:9px;color:#555;margin-top:4px;text-align:center">按 R 或點擊空格 開啟地圖選單</div>' : ''}
     `;
     this.unitPanel.classList.remove('hidden');
-    // Draw portrait on panel canvas
-    const pCanvas = document.getElementById('panel-portrait');
-    if (pCanvas) {
-      const pCtx = pCanvas.getContext('2d');
-      pCtx.clearRect(0, 0, 40, 40);
-      if (unit.charId) {
-        Sprites.drawPortrait(pCtx, unit.charId, 40, 40);
-      } else {
-        Sprites.drawGenericPortrait(pCtx, unit, 40, 40);
+    // Draw portrait on canvas only if fallback is used
+    if (!hasPortrait) {
+      const pCanvas = document.getElementById('panel-portrait');
+      if (pCanvas) {
+        const pCtx = pCanvas.getContext('2d');
+        pCtx.clearRect(0, 0, 40, 40);
+        if (unit.charId) {
+          Sprites.drawPortrait(pCtx, unit.charId, 40, 40);
+        } else {
+          Sprites.drawGenericPortrait(pCtx, unit, 40, 40);
+        }
       }
     }
   },
@@ -431,6 +435,10 @@ const UI = {
 
     const borderColor = isPlayer ? '#4a9eff' : '#ff4a4a';
     const nameColor = isPlayer ? '#4a9eff' : '#ff4a4a';
+    const hasStatusPortrait = unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded;
+    const statusPortraitHtml = hasStatusPortrait
+      ? `<img src="portraits/${unit.charId}.png" style="width:96px;height:96px;border:2px solid ${borderColor};border-radius:4px;object-fit:cover;object-position:center 30%">`
+      : `<canvas id="status-portrait" width="96" height="96" style="width:96px;height:96px;border:2px solid ${borderColor};border-radius:4px"></canvas>`;
 
     overlay.innerHTML = `
       <div style="background:#111;border:2px solid ${borderColor};border-radius:8px;padding:16px;max-width:min(650px,95vw);max-height:90vh;overflow-y:auto;font-size:13px;box-sizing:border-box">
@@ -448,7 +456,7 @@ const UI = {
   </style>
         <div style="display:flex;gap:24px;margin-bottom:16px;align-items:flex-start">
           <div>
-            <canvas id="status-portrait" width="96" height="96" style="width:96px;height:96px;border:2px solid ${borderColor}"></canvas>
+            ${statusPortraitHtml}
           </div>
           <div style="flex:1">
             <div style="font-size:20px;color:${nameColor};font-weight:bold">${unit.name}</div>
@@ -501,8 +509,8 @@ const UI = {
     overlay.addEventListener('click', () => { overlay.remove(); const cb = this._statusOnClose; this._statusOnClose = null; if (cb) cb(); });
     document.getElementById('ui-overlay').appendChild(overlay);
 
-    // Draw portrait
-    if (typeof Sprites !== 'undefined') {
+    // Draw portrait on canvas only if fallback is used
+    if (!hasStatusPortrait && typeof Sprites !== 'undefined') {
       const pCanvas = document.getElementById('status-portrait');
       if (pCanvas) {
         const pCtx = pCanvas.getContext('2d');
