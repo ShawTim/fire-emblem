@@ -33,7 +33,7 @@ const UI = {
     const hasPortrait = unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded;
     this.unitInfo.innerHTML = `
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
-        <canvas id="panel-portrait" width="32" height="32" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;image-rendering:pixelated;flex-shrink:0"></canvas>
+        <canvas id="panel-portrait" width="40" height="40" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;flex-shrink:0"></canvas>
         <div>
           <div class="stat-name">${unit.name}</div>
           <div class="stat-class">${cls.name} Lv.${unit.level}</div>
@@ -78,11 +78,11 @@ const UI = {
     const pCanvas = document.getElementById('panel-portrait');
     if (pCanvas) {
       const pCtx = pCanvas.getContext('2d');
-      pCtx.clearRect(0, 0, 32, 32);
+      pCtx.clearRect(0, 0, 40, 40);
       if (unit.charId) {
-        Sprites.drawPortrait(pCtx, unit.charId, 32, 32);
+        Sprites.drawPortrait(pCtx, unit.charId, 40, 40);
       } else {
-        Sprites.drawGenericPortrait(pCtx, unit, 32, 32);
+        Sprites.drawGenericPortrait(pCtx, unit, 40, 40);
       }
     }
   },
@@ -448,7 +448,7 @@ const UI = {
   </style>
         <div style="display:flex;gap:24px;margin-bottom:16px;align-items:flex-start">
           <div>
-            <canvas id="status-portrait" width="64" height="64" style="image-rendering:pixelated;width:96px;height:96px;border:2px solid ${borderColor}"></canvas>
+            <canvas id="status-portrait" width="96" height="96" style="width:96px;height:96px;border:2px solid ${borderColor}"></canvas>
           </div>
           <div style="flex:1">
             <div style="font-size:20px;color:${nameColor};font-weight:bold">${unit.name}</div>
@@ -507,9 +507,9 @@ const UI = {
       if (pCanvas) {
         const pCtx = pCanvas.getContext('2d');
         if (unit.charId && Sprites.drawPortrait) {
-          Sprites.drawPortrait(pCtx, unit.charId, 64, 64);
+          Sprites.drawPortrait(pCtx, unit.charId, 96, 96);
         } else if (Sprites.drawGenericPortrait) {
-          Sprites.drawGenericPortrait(pCtx, unit, 64, 64);
+          Sprites.drawGenericPortrait(pCtx, unit, 96, 96);
         }
       }
     }

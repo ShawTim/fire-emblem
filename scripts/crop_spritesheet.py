@@ -41,7 +41,7 @@ def main():
     print(f"每個單元格尺寸：{cell_w:.1f}x{cell_h:.1f}")
 
     # 目標尺寸 (與現有角色頭像一致)
-    TARGET_W, TARGET_H = 231, 240
+    TARGET_W, TARGET_H = 240, 240
 
     # 逐個切割並保存
     idx = 0
@@ -54,9 +54,10 @@ def main():
             top = int(row * cell_h)
             right = int((col + 1) * cell_w)
             bottom = int((row + 1) * cell_h)
+            diff = int(cell_w - cell_h) / 2
 
             # 裁剪
-            cell = img.crop((left, top, right, bottom))
+            cell = img.crop((left + diff, top + 2, right - diff, bottom - 2))
             
             # 縮放並居中到目標尺寸
             scaled = Image.new('RGBA', (TARGET_W, TARGET_H), (0, 0, 0, 0))

@@ -46,8 +46,8 @@ class DialogueSystem {
       this.nameEl.textContent = CHARACTERS[line.speaker].name;
       this.nameEl.style.display = 'block';
       // Draw portrait (redraw when image loads)
-      this.portraitCtx.clearRect(0, 0, 64, 64);
-      Sprites.drawPortrait(this.portraitCtx, line.speaker, 64, 64);
+      this.portraitCtx.clearRect(0, 0, 80, 80);
+      Sprites.drawPortrait(this.portraitCtx, line.speaker, 80, 80);
       this.portraitCanvas.style.display = 'block';
       // Re-draw if portrait image loads after initial draw
       const _speaker = line.speaker;

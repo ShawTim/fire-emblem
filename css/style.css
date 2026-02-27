@@ -20,7 +20,6 @@ body {
 #gameCanvas {
   display: block;
   background: #000;
-  image-rendering: pixelated;
   width: 800px;
   height: 600px;
 }
@@ -83,7 +82,6 @@ body {
 }
 
 #unit-portrait canvas {
-  image-rendering: pixelated;
   width: 48px;
   height: 48px;
 }
@@ -182,7 +180,6 @@ body {
 #dialogue-box.hidden { display: none; }
 
 #portrait-canvas {
-  image-rendering: pixelated;
   width: 80px;
   height: 80px;
   border: 2px solid #4a9eff;

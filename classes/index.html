@@ -15,7 +15,7 @@ h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
   text-align:center; transition:border-color 0.2s;
 }
 .card:hover { border-color:#e8d080; }
-.card canvas { image-rendering:pixelated; display:block; margin:0 auto 10px; }
+.card canvas { display:block; margin:0 auto 10px; }
 .class-name { color:#e8d080; font-size:16px; font-weight:bold; margin-bottom:4px; }
 .class-id { color:#666; font-size:11px; margin-bottom:6px; }
 .weapons { color:#8ab; font-size:12px; margin-bottom:4px; }
@@ -102,7 +102,6 @@ function renderAll() {
     canvas.height = 40 * scale;
     canvas.style.width = (40 * scale) + 'px';
     canvas.style.height = (40 * scale) + 'px';
-    canvas.style.imageRendering = 'pixelated';
     
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;

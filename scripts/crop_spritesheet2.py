@@ -13,13 +13,13 @@ OUTPUT_DIR = "portraits"
 # 角色 ID 列表 (必須與生成時的順序一致：由上至下，由左至右)
 CHARACTERS = [
     # Row 1
-    "eirine", "marcus", "morgane", "lina", "knight1", "knight2",
+    "eirine", "marcus", "morgane", "lina", "char1", "char2",
     # Row 2
-    "thor", "serra", "cain", "fran", "knight3", "knight4",
+    "thor", "serra", "cain", "fran", "char3", "char4",
     # Row 3
-    "rex", "natasha", "olivier", "helga", "knight5", "knight6",
+    "rex", "natasha", "olivier", "helga", "char5", "char6",
     # Row 4
-    "anna", "lieutenant", "dragon", "king", "a", "b"
+    "anna", "lieutenant", "dragon", "king", "char7", "char8"
 ]
 
 def main():
@@ -53,9 +53,10 @@ def main():
             top = int(row * cell_h)
             right = int((col + 1) * cell_w)
             bottom = int((row + 1) * cell_h)
+            diff = int(cell_w - cell_h) / 2
 
             # 裁剪
-            cell = img.crop((left, top, right, bottom))
+            cell = img.crop((left + diff, top + 2, right - diff, bottom - 2))
             
             # 縮放並居中到目標尺寸
             scaled = Image.new('RGBA', (TARGET_W, TARGET_H), (0, 0, 0, 0))
