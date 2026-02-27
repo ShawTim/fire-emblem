@@ -96,7 +96,7 @@ def main():
                 if part.inline_data is not None:
                     # 找到圖片，直接保存
                     image = part.as_image()
-                    image.save(OUTPUT_FILE, "PNG")
+                    image.save(OUTPUT_FILE)
                     print(f"\n✅ 成功！Spritesheet 已保存至：{OUTPUT_FILE}")
                     print("下一步：")
                     print("1. 檢查圖片是否滿意 (16 個角色，風格統一，背景透明)。")
