@@ -7,17 +7,19 @@ crop_spritesheet.py
 from PIL import Image
 import os
 
-INPUT_FILE = "portraits/spritesheet_all3.png"
+INPUT_FILE = "portraits/spritesheet_all_v2.png"
 OUTPUT_DIR = "portraits"
 
 # 角色 ID 列表 (必須與生成時的順序一致：由上至下，由左至右)
 CHARACTERS = [
     # Row 1
-    "eirine", "marcus", "morgane", "lina", "knight1", "monk1",
+    "eirine", "marcus", "morgane", "lina", "knight1", "knight2",
     # Row 2
-    "thor", "serra", "cain", "fran", "rex", "natasha",
+    "thor", "serra", "cain", "fran", "knight3", "knight4",
     # Row 3
-    "olivier", "helga", "anna", "lieutenant", "dragon", "king"
+    "rex", "natasha", "olivier", "helga", "knight5", "knight6",
+    # Row 4
+    "anna", "lieutenant", "dragon", "king", "a", "b"
 ]
 
 def main():
@@ -32,7 +34,7 @@ def main():
 
     # 計算每個單元格的大小 (4列 x 3行)
     cols = 6
-    rows = 3
+    rows = 4
     cell_w = w / cols
     cell_h = h / rows
     print(f"每個單元格尺寸：{cell_w:.1f}x{cell_h:.1f}")

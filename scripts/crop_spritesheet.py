@@ -7,7 +7,7 @@ crop_spritesheet.py
 from PIL import Image
 import os
 
-INPUT_FILE = "portraits/spritesheet_all.png"
+INPUT_FILE = "portraits/spritesheet_all_v2.png"
 OUTPUT_DIR = "portraits"
 
 # 角色 ID 列表 (必須與生成時的順序一致：由上至下，由左至右)
