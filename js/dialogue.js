@@ -53,15 +53,15 @@ class DialogueSystem {
       const _speaker = line.speaker;
       const _ctx = this.portraitCtx;
       Sprites.onPortraitReady(() => {
-        _ctx.clearRect(0, 0, 64, 64);
-        Sprites.drawPortrait(_ctx, _speaker, 64, 64);
+        _ctx.clearRect(0, 0, 80, 80);
+        Sprites.drawPortrait(_ctx, _speaker, 80, 80);
       });
     } else {
       this.nameEl.textContent = line.speaker ? line.speaker : '';
       this.nameEl.style.display = line.speaker ? 'block' : 'none';
-      this.portraitCtx.clearRect(0, 0, 64, 64);
+      this.portraitCtx.clearRect(0, 0, 80, 80);
       this.portraitCtx.fillStyle = '#223';
-      this.portraitCtx.fillRect(0, 0, 64, 64);
+      this.portraitCtx.fillRect(0, 0, 80, 80);
       this.portraitCanvas.style.display = line.speaker ? 'block' : 'block';
     }
 

@@ -48,7 +48,7 @@ STYLE REQUIREMENTS (CRITICAL for Nano Banana Pro 2):
 
 Characters (Row by Row, Left to Right):
 Row 1:
-1. Eirine: Young princess, long pinkish-purple hair, blue eyes, elegant, white/gold dress, star pendant.
+1. Eirine: Young princess, brave and heroic, long pinkish-purple hair, blue eyes, elegant, white/gold dress, star pendant.
 2. Marcus: Older knight, short silver-gray hair, beard, blue/silver armor, red scarf, stern.
 3. Morgane: Main antagonist, chaotic male boss, deep purple slicked-back hair, glowing menacing purple eyes, pale cold skin, ornate black armor with thorn motifs, dark red cape, evil regal presence.
 4. Lina: Archer girl, brown ponytail, green eyes, tanned skin, green sleeveless top, leaf accessory.
