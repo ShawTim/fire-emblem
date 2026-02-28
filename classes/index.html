@@ -17,39 +17,42 @@ th { background: #111827; color: #e8d080; font-weight: bold; white-space: nowrap
 tr:hover { background: #1e293b; }
 tr:last-child td { border-bottom: none; }
 
-.sprite-col { width: 44px; min-width: 44px; text-align: center; }
-.sprite-col canvas { display: inline-block; vertical-align: middle; max-width: 40px; max-height: 40px; }
+.sprite-col { min-width: 44px; text-align: center; }
+.sprite-col canvas { display: inline-block; vertical-align: middle; }
 
 .class-name { color: #e8d080; font-size: 18px; font-weight: bold; }
 .class-id { color: #666; font-size: 11px; }
 
 .tags { display: inline-flex; gap: 4px; flex-wrap: wrap; }
-.tag { background: #334; color: #aaa; padding: 1px 5px; border-radius: 4px; font-size: 10px; }
+.tag { background: #334; color: #aaa; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
 
-.weapons { color: #8ab; font-size: 12px; }
-.mov { color: #ccc; font-weight: bold; font-size: 12px; }
+.weapons { color: #8ab; font-size: 16px; }
+.mov { color: #ccc; font-weight: bold; font-size: 16px; }
 
 .stats { font-size: 13px; color: #aaa; white-space: nowrap; }
-.stats span { display: inline-block; width: 27px; text-align: right; }
+.stats div { display: inline-block; width: 27px; text-align: right; margin-right: 10px; }
 .stats .lbl { color: #666; width: auto; margin-right: 2px; }
 
-.promo { font-size: 10px; color: #ffa500; }
+.promo { font-size: 13px; color: #ffa500; }
 .promo-list { color: #8ab; }
 
 @media (max-width: 700px) {
   h1 { font-size: 18px; }
   .subtitle { font-size: 11px; margin-bottom: 16px; }
   .table-container { padding: 0; max-width: 100vw; }
-  table { min-width: 480px; font-size: 12px; }
+  table { min-width: 400px; font-size: 12px; }
   th, td { padding: 5px 4px 5px 4px; font-size: 11px; }
-  .sprite-col { width: 28px; min-width: 28px; }
-  .stats { font-size: 9px; display: flex; flex-direction: column; white-space: normal; }
-  .stats span { width: auto !important; text-align: left !important; display: inline-block !important; }
-  .tags { display: flex; flex-direction: column; gap: 0; align-items: flex-start; }
-  .tag { font-size: 9px; margin-bottom: 1px; }
-  .weapons { display: flex; flex-direction: column; font-size: 10px; }
-  .promo, .promo-list { font-size: 9px; }
+  .sprite-col { width: 64px; }
+  .sprite-col canvas { max-width: 40px; max-height: 40px; }
   .class-name { font-size: 11px; }
+  .stats { font-size: 9px; display: flex; flex-direction: column; white-space: normal; }
+  .stats div { width: auto !important; text-align: left !important; display: block !important; }
+  .tags { display: flex; flex-direction: column; gap: 0; align-items: flex-start; max-width: 60px; }
+  .tag { font-size: 9px; margin-bottom: 1px; }
+  .weapons { display: flex; flex-direction: column; font-size: 13px; }
+  .mov { font-size: 13px; }
+  .mov span { display: none; }
+  .promo, .promo-list { font-size: 9px; display: flex; flex-direction: column; }
 }
 
 </style>
@@ -62,8 +65,7 @@ tr:last-child td { border-bottom: none; }
   <table>
     <thead>
       <tr>
-        <th class="sprite-col"></th>
-        <th>職業</th>
+        <th class="sprite-col">職業</th>
         <th>武器</th>
         <th>MOV</th>
         <th>類型</th>
@@ -84,6 +86,7 @@ tr:last-child td { border-bottom: none; }
 const GameMap = { tileSize:32, scale:2, width:20, height:15, terrain:[], getTerrain:()=>'plain', screenToTile:()=>({x:0,y:0}), camX:0, camY:0 };
 
 const WEAPON_NAMES = { sword:'劍', lance:'槍', axe:'斧', bow:'弓', staff:'杖', fire:'火', thunder:'雷', wind:'風', dark:'暗' };
+const WEAPON_EMOJI = { sword: '🗡️', lance: '🔱', axe: '🪓', bow: '🏹', staff: '🪄', fire: '🔥', thunder: '⚡', wind: '💨', dark: '🌑' };
 const TAG_NAMES = { armored:'🛡️ 重裝', cavalry:'🐎 騎兵', flying:'🦅 飛行', mounted:'🐴 乘騎', undead:'💀 不死族' };
 
 function renderList() {
@@ -98,7 +101,7 @@ function renderList() {
     const tr = document.createElement('tr');
     
     // 1+2. Merge Sprite + Class Name (mobile: vertical stack)
-    const tdSpriteName = document.createElement('td'); tdSpriteName.style.display = 'flex'; tdSpriteName.style.flexDirection = 'column'; tdSpriteName.style.alignItems = 'center'; tdSpriteName.style.justifyContent = 'center';
+    const tdSpriteName = document.createElement('td');
     tdSpriteName.className = 'sprite-col';
     const canvas = document.createElement('canvas');
     const scale = 2;
@@ -127,19 +130,16 @@ function renderList() {
     canvas.dataset.hairIndex = i % 8;
     
     const nameDiv = document.createElement('div'); nameDiv.className = 'class-name'; nameDiv.style.textAlign = 'center'; nameDiv.textContent = cls.name; tdSpriteName.appendChild(nameDiv); tr.appendChild(tdSpriteName); canvas.dataset.classId = classId; canvas.dataset.hairIndex = i % 8; // REMOVED:
-    const tdName = document.createElement('td');
-    tdName.innerHTML = `<div class="class-name">${cls.name}</div>`;
-    tr.appendChild(tdName);
     
     // 3. Weapons
     const tdWpn = document.createElement('td');
-    const wpnList = (cls.weapons || []).map(w => `<span>${WEAPON_NAMES[w] || w}</span>`).join('');
-    tdWpn.innerHTML = `<div class="weapons">🗡️${wpnList}</div>`;
+    const wpnList = (cls.weapons || []).map(w => `<span>${WEAPON_EMOJI[w] || w}</span>`).join('');
+    tdWpn.innerHTML = `<div class="weapons">${wpnList}</div>`;
     tr.appendChild(tdWpn);
     
     // 4. MOV
     const tdMov = document.createElement('td');
-    tdMov.innerHTML = `<div class="mov">🏃 ${cls.mov || 5}</div>`;
+    tdMov.innerHTML = `<div class="mov"><span>🏃 </span>${cls.mov || 5}</div>`;
     tr.appendChild(tdMov);
     
     // 5. Tags
@@ -157,14 +157,14 @@ function renderList() {
     const bns = cls.bonus || {};
     tdStats.innerHTML = `
       <div class="stats">
-        <span class="lbl">HP</span><span>+${bns.hp ?? 0}</span>
-        <span class="lbl">力</span><span>+${bns.str ?? 0}</span>
-        <span class="lbl">魔</span><span>+${bns.mag ?? 0}</span>
-        <span class="lbl">技</span><span>+${bns.skl ?? 0}</span>
-        <span class="lbl">速</span><span>+${bns.spd ?? 0}</span>
-        <span class="lbl">運</span><span>+${bns.lck ?? 0}</span>
-        <span class="lbl">防</span><span>+${bns.def ?? 0}</span>
-        <span class="lbl">魔防</span><span>+${bns.res ?? 0}</span>
+	<div><span class="lbl">HP</span><span>+${bns.hp ?? 0}</span></div>
+        <div><span class="lbl">力</span><span>+${bns.str ?? 0}</span></div>
+        <div><span class="lbl">魔</span><span>+${bns.mag ?? 0}</span></div>
+        <div><span class="lbl">技</span><span>+${bns.skl ?? 0}</span></div>
+        <div><span class="lbl">速</span><span>+${bns.spd ?? 0}</span></div>
+        <div><span class="lbl">運</span><span>+${bns.lck ?? 0}</span></div>
+        <div><span class="lbl">防</span><span>+${bns.def ?? 0}</span></div>
+        <div><span class="lbl">魔防</span><span>+${bns.res ?? 0}</span></div>
       </div>
     `;
     tr.appendChild(tdStats);
@@ -172,8 +172,8 @@ function renderList() {
     // 7. Promotion
     const tdPromo = document.createElement('td');
     if (cls.promo && cls.promo.length > 0) {
-      const pNames = cls.promo.map(p => CLASSES[p.to] ? CLASSES[p.to].name : p.to).join(', ');
-      tdPromo.innerHTML = `<div class="promo">可轉職: <span class="promo-list">${pNames}</span></div>`;
+    const pNames = cls.promo.map(p => CLASSES[p.to] ? CLASSES[p.to].name : p.to).map(p => `<span class="promo-list">${p}</span>`).join("");
+      tdPromo.innerHTML = `<div class="promo">可轉職: ${pNames}</div>`;
     } else if (cls.promoted) {
       tdPromo.innerHTML = `<div class="promo" style="color:#e8d080">⭐ 上級職</div>`;
       
