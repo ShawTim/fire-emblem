@@ -97,9 +97,9 @@ function renderList() {
     // 原本分敵我，現在全部都出
     const tr = document.createElement('tr');
     
-    // 1. Sprite
-    const tdSprite = document.createElement('td');
-    tdSprite.className = 'sprite-col';
+    // 1+2. Merge Sprite + Class Name (mobile: vertical stack)
+    const tdSpriteName = document.createElement('td'); tdSpriteName.style.display = 'flex'; tdSpriteName.style.flexDirection = 'column'; tdSpriteName.style.alignItems = 'center'; tdSpriteName.style.justifyContent = 'center';
+    tdSpriteName.className = 'sprite-col';
     const canvas = document.createElement('canvas');
     const scale = 2;
     canvas.width = 40 * scale;
@@ -120,13 +120,13 @@ function renderList() {
     };
     Sprites.drawUnit(ctx, unit, 4, 4, false);
     tdSprite.appendChild(canvas);
-    tr.appendChild(tdSprite);
+    tdSpriteName.appendChild(canvas);
     
     // Save for animation loop
     canvas.dataset.classId = classId;
     canvas.dataset.hairIndex = i % 8;
     
-    // 2. Class Name
+    const nameDiv = document.createElement('div'); nameDiv.className = 'class-name'; nameDiv.style.textAlign = 'center'; nameDiv.textContent = cls.name; tdSpriteName.appendChild(nameDiv); tr.appendChild(tdSpriteName); canvas.dataset.classId = classId; canvas.dataset.hairIndex = i % 8; // REMOVED:
     const tdName = document.createElement('td');
     tdName.innerHTML = `<div class="class-name">${cls.name}</div>`;
     tr.appendChild(tdName);
