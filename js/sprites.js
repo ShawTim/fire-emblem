@@ -263,13 +263,7 @@ var Sprites = {
       if (!this._imgCache[sKey]) {
         var img = new Image();
         
-        // Handle path resolution for subdirectories like classes/index.html
-        if (sKey.startsWith('assets/')) {
-          var isSubDir = window.location.pathname.includes('/classes/');
-          img.src = (isSubDir ? '../' : '') + sKey;
-        } else {
-          img.src = sKey;
-        }
+        img.src = '/' + sKey.replace(/^\/?/, '');
 
         this._imgCache[sKey] = { img: img, loaded: false };
         img.onload = function() { Sprites._imgCache[sKey].loaded = true; };
