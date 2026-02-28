@@ -12,27 +12,56 @@ function calculateCombat(attacker, defender, map) {
   const triBonus = defWpn ? getTriangleBonus(atkWpn.type, defWpn.type) : { hit: 0, atk: 0 };
   const triBonusDef = defWpn ? getTriangleBonus(defWpn.type, atkWpn.type) : { hit: 0, atk: 0 };
 
+  // Effective bonus (Attacker)
+  let atkEffMult = 1;
+  const defCls = getClassData(defender.classId);
+  const defTags = defCls.tags || [];
+  if (atkWpn.effective) {
+    if (atkWpn.effective[defender.classId]) {
+      atkEffMult = atkWpn.effective[defender.classId];
+    } else {
+      for (const tag of defTags) {
+        if (atkWpn.effective[tag]) {
+          atkEffMult = atkWpn.effective[tag];
+          break;
+        }
+      }
+    }
+  }
+
   // Attacker stats
-  const atkPow = (atkWpn.magic ? attacker.mag : attacker.str) + atkWpn.atk + triBonus.atk;
+  const atkWeaponPower = (atkWpn.atk * atkEffMult) + triBonus.atk;
+  const atkPow = (atkWpn.magic ? attacker.mag : attacker.str) + atkWeaponPower;
   const defStat = defender.getDefAt(defTerrain, atkWpn.magic);
-  const atkDmg = Math.max(0, atkPow - defStat);
+  let atkDmg = Math.max(0, atkPow - defStat);
   const atkHit = Math.max(0, Math.min(100, attacker.getHit() + triBonus.hit - defender.getAvo(defTerrain)));
   const atkCrit = Math.max(0, attacker.getCrit() - defender.lck);
   const atkDouble = attacker.spd - defender.spd >= 5;
-
-  // Effective bonus
-  let atkEffMult = 1;
-  if (atkWpn.effective && atkWpn.effective.length > 0) {
-    const defCls = getClassData(defender.classId);
-    const defTags = defCls.tags || [];
-    if (atkWpn.effective.some(t => defTags.includes(t))) atkEffMult = 3;
-  }
 
   // Defender counter
   let canCounter = false, defDmg = 0, defHit = 0, defCrit = 0, defDouble = false;
   if (defWpn && defWpn.type !== 'staff' && defWpn.range.includes(dist)) {
     canCounter = true;
-    const defPow = (defWpn.magic ? defender.mag : defender.str) + defWpn.atk + triBonusDef.atk;
+    
+    // Effective bonus (Defender)
+    let defEffMult = 1;
+    const atkCls = getClassData(attacker.classId);
+    const atkTags = atkCls.tags || [];
+    if (defWpn.effective) {
+      if (defWpn.effective[attacker.classId]) {
+        defEffMult = defWpn.effective[attacker.classId];
+      } else {
+        for (const tag of atkTags) {
+          if (defWpn.effective[tag]) {
+            defEffMult = defWpn.effective[tag];
+            break;
+          }
+        }
+      }
+    }
+
+    const defWeaponPower = (defWpn.atk * defEffMult) + triBonusDef.atk;
+    const defPow = (defWpn.magic ? defender.mag : defender.str) + defWeaponPower;
     const atkDefStat = attacker.getDefAt(atkTerrain, defWpn.magic);
     defDmg = Math.max(0, defPow - atkDefStat);
     defHit = Math.max(0, Math.min(100, defender.getHit() + triBonusDef.hit - attacker.getAvo(atkTerrain)));
