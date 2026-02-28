@@ -162,22 +162,18 @@ function renderList() {
     // 6. Bonus Stats
     const tdStats = document.createElement('td');
     const bns = cls.bonus || {};
-    if (Object.keys(bns).length > 0) {
-      tdStats.innerHTML = `
-        <div class="stats">
-          <span class="lbl">HP</span><span>+${bns.hp||0}</span>
-          <span class="lbl">力</span><span>+${bns.str||0}</span>
-          <span class="lbl">魔</span><span>+${bns.mag||0}</span>
-          <span class="lbl">技</span><span>+${bns.skl||0}</span><br>
-          <span class="lbl">速</span><span>+${bns.spd||0}</span>
-          <span class="lbl">運</span><span>+${bns.lck||0}</span>
-          <span class="lbl">防</span><span>+${bns.def||0}</span>
-          <span class="lbl">魔防</span><span>+${bns.res||0}</span>
-        </div>
-      `;
-    } else {
-      tdStats.innerHTML = '<span style="color:#555">-</span>';
-    }
+    tdStats.innerHTML = `
+      <div class="stats">
+        <span class="lbl">HP</span><span>+${bns.hp ?? 0}</span>
+        <span class="lbl">力</span><span>+${bns.str ?? 0}</span>
+        <span class="lbl">魔</span><span>+${bns.mag ?? 0}</span>
+        <span class="lbl">技</span><span>+${bns.skl ?? 0}</span>
+        <span class="lbl">速</span><span>+${bns.spd ?? 0}</span>
+        <span class="lbl">運</span><span>+${bns.lck ?? 0}</span>
+        <span class="lbl">防</span><span>+${bns.def ?? 0}</span>
+        <span class="lbl">魔防</span><span>+${bns.res ?? 0}</span>
+      </div>
+    `;
     tr.appendChild(tdStats);
     
     // 7. Promotion
