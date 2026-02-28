@@ -164,7 +164,4 @@ function getClassDef(classId) {
 // Alias for compatibility
 function getClassData(classId) {
   return getClassDef(classId);
-},
-    sprites: { stand: 'assets/sprites/map/lord_f_stand.png', move: 'assets/sprites/map/lord_f_move.png', frames: 3 },
-    sprites: { stand: 'assets/sprites/map/cavalier_stand.png', move: 'assets/sprites/map/cavalier_move.png', frames: 3 },
-    sprites: { stand: 'assets/sprites/map/fighter_stand.png', move: 'assets/sprites/map/fighter_move.png', frames: 3 }
+}
