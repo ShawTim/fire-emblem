@@ -9,17 +9,33 @@
 body { background:#1a1a2e; color:#ccc; font-family:'Segoe UI',sans-serif; padding:20px; }
 h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
 .subtitle { text-align:center; color:#888; font-size:13px; margin-bottom:24px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; max-width:1200px; margin:0 auto; }
-.card {
-  background:#16213e; border:2px solid #334; border-radius:8px; padding:16px;
-  text-align:center; transition:border-color 0.2s;
-}
-.card:hover { border-color:#e8d080; }
-.card canvas { display:block; margin:0 auto 10px; }
-.class-name { color:#e8d080; font-size:16px; font-weight:bold; margin-bottom:4px; }
-.class-id { color:#666; font-size:11px; margin-bottom:6px; }
-.weapons { color:#8ab; font-size:12px; margin-bottom:4px; }
-.stats { color:#999; font-size:11px; line-height:1.5; }
+
+.table-container { overflow-x: auto; max-width: 1200px; margin: 0 auto; }
+table { width: 100%; border-collapse: collapse; background: #16213e; border: 2px solid #334; border-radius: 8px; overflow: hidden; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334; }
+th { background: #111827; color: #e8d080; font-weight: bold; white-space: nowrap; position: sticky; top: 0; }
+tr:hover { background: #1e293b; }
+tr:last-child td { border-bottom: none; }
+
+.sprite-col { width: 60px; text-align: center; }
+.sprite-col canvas { display: inline-block; vertical-align: middle; }
+
+.class-name { color: #e8d080; font-size: 15px; font-weight: bold; }
+.class-id { color: #666; font-size: 11px; }
+
+.tags { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.tag { background: #334; color: #aaa; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+
+.weapons { color: #8ab; font-size: 12px; }
+.mov { color: #ccc; font-weight: bold; }
+
+.stats { font-size: 11px; color: #aaa; white-space: nowrap; }
+.stats span { display: inline-block; width: 32px; text-align: right; }
+.stats .lbl { color: #666; width: auto; margin-right: 2px; }
+
+.promo { font-size: 11px; color: #ffa500; }
+.promo-list { color: #8ab; }
+
 .faction-toggle { text-align:center; margin-bottom:20px; }
 .faction-toggle button {
   background:#16213e; color:#ccc; border:2px solid #334; padding:8px 16px;
@@ -37,7 +53,22 @@ h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
   <button id="btn-enemy" onclick="setFaction('enemy')">敵方</button>
 </div>
 
-<div class="grid" id="class-grid"></div>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th class="sprite-col"></th>
+        <th>職業</th>
+        <th>武器</th>
+        <th>MOV</th>
+        <th>類型</th>
+        <th>基礎數值</th>
+        <th>轉職</th>
+      </tr>
+    </thead>
+    <tbody id="class-list"></tbody>
+  </table>
+</div>
 
 <script src="../js/data/items.js"></script>
 <script src="../js/data/classes.js"></script>
@@ -45,64 +76,43 @@ h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
 <script src="../js/sprites.js"></script>
 <script>
 // Minimal GameMap stub for sprites
-const GameMap = { tileSize:32, scale:2, width:20, height:15, terrain:[], getTerrain:()=>'plain',
-  screenToTile:()=>({x:0,y:0}), camX:0, camY:0 };
-
-const CLASS_INFO = {
-  lord:       { name:'領主', nameEn:'Lord', weapons:'劍', desc:'王族血統，振奮士氣' },
-  paladin:    { name:'聖騎士', nameEn:'Paladin', weapons:'劍/槍', desc:'騎馬重裝，機動力強' },
-  cavalier:   { name:'騎士', nameEn:'Cavalier', weapons:'劍/槍', desc:'輕騎兵，攻守兼備' },
-  archer:     { name:'弓箭手', nameEn:'Archer', weapons:'弓', desc:'遠程攻擊，剋飛行' },
-  sniper:     { name:'狙擊手', nameEn:'Sniper', weapons:'弓', desc:'弓箭手上位職' },
-  fighter:    { name:'戰士', nameEn:'Fighter', weapons:'斧', desc:'高攻擊力，力量型' },
-  warrior:    { name:'勇者', nameEn:'Warrior', weapons:'斧/弓', desc:'戰士上位職' },
-  mercenary:  { name:'傭兵', nameEn:'Mercenary', weapons:'劍', desc:'均衡型，速度優秀' },
-  swordmaster:{ name:'劍聖', nameEn:'Swordmaster', weapons:'劍', desc:'傭兵上位職，必殺高' },
-  hero:       { name:'勇士', nameEn:'Hero', weapons:'劍/斧', desc:'傭兵上位職，攻守均衡' },
-  mage:       { name:'魔法師', nameEn:'Mage', weapons:'魔法', desc:'魔法攻擊，無視防禦' },
-  sage:       { name:'賢者', nameEn:'Sage', weapons:'魔法/杖', desc:'魔法師上位職' },
-  darkMage:   { name:'暗黑法師', nameEn:'Dark Mage', weapons:'暗魔法', desc:'操縱黑暗之力' },
-  cleric:     { name:'僧侶', nameEn:'Cleric', weapons:'杖', desc:'回復支援，不能攻擊' },
-  bishop:     { name:'司祭', nameEn:'Bishop', weapons:'杖/魔法', desc:'僧侶上位職' },
-  knight:     { name:'重騎士', nameEn:'Knight', weapons:'槍', desc:'高防禦，移動力低' },
-  general:    { name:'將軍', nameEn:'General', weapons:'槍/劍', desc:'重騎士上位職，鐵壁' },
-  thief:      { name:'盜賊', nameEn:'Thief', weapons:'劍', desc:'開鎖/偷竊，速度高' },
-  assassin:   { name:'刺客', nameEn:'Assassin', weapons:'劍', desc:'盜賊上位職，必殺高' },
-  wyvernRider:{ name:'飛龍騎士', nameEn:'Wyvern Rider', weapons:'槍', desc:'飛行重裝，弱弓箭' },
-  wyvernLord: { name:'飛龍將軍', nameEn:'Wyvern Lord', weapons:'槍/劍', desc:'飛龍上位職' },
-  pegasusKnight:{ name:'天馬騎士', nameEn:'Pegasus Knight', weapons:'槍', desc:'飛行輕裝，弱弓箭' },
-  falconKnight:{ name:'隼騎士', nameEn:'Falcon Knight', weapons:'槍/劍', desc:'天馬上位職' },
-  brigand:    { name:'山賊', nameEn:'Brigand', weapons:'斧', desc:'粗暴蠻力型敵兵' },
-  skeleton:   { name:'骷髏兵', nameEn:'Skeleton', weapons:'劍/槍', desc:'不死族敵兵' },
-  soldier:    { name:'士兵', nameEn:'Soldier', weapons:'槍', desc:'基本敵兵' },
-};
+const GameMap = { tileSize:32, scale:2, width:20, height:15, terrain:[], getTerrain:()=>'plain', screenToTile:()=>({x:0,y:0}), camX:0, camY:0 };
 
 let currentFaction = 'player';
+
+const WEAPON_NAMES = { sword:'劍', lance:'槍', axe:'斧', bow:'弓', staff:'杖', fire:'火', thunder:'雷', wind:'風', dark:'暗' };
+const TAG_NAMES = { armored:'🛡️ 重裝', cavalry:'🐎 騎兵', flying:'🦅 飛行', mounted:'🐴 乘騎', undead:'💀 不死族' };
 
 function setFaction(f) {
   currentFaction = f;
   document.getElementById('btn-player').className = f==='player'?'active':'';
   document.getElementById('btn-enemy').className = f==='enemy'?'active':'';
-  renderAll();
+  renderList();
 }
 
-function renderAll() {
-  const grid = document.getElementById('class-grid');
-  grid.innerHTML = '';
-  const classIds = Object.keys(CLASS_INFO);
+function renderList() {
+  const tbody = document.getElementById('class-list');
+  tbody.innerHTML = '';
+  
+  const classIds = Object.keys(CLASSES);
   
   classIds.forEach((classId, i) => {
-    const info = CLASS_INFO[classId];
-    const card = document.createElement('div');
-    card.className = 'card';
+    const cls = CLASSES[classId];
+    // Simple filter: if enemy-only classes, only show in enemy tab
+    const isEnemyOnly = ['soldier', 'knight', 'darkMage', 'brigand', 'skeleton'].includes(classId);
+    if (currentFaction === 'player' && isEnemyOnly) return;
     
+    const tr = document.createElement('tr');
+    
+    // 1. Sprite
+    const tdSprite = document.createElement('td');
+    tdSprite.className = 'sprite-col';
     const canvas = document.createElement('canvas');
-    const scale = 4;
+    const scale = 2;
     canvas.width = 40 * scale;
     canvas.height = 40 * scale;
     canvas.style.width = (40 * scale) + 'px';
     canvas.style.height = (40 * scale) + 'px';
-    
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
     ctx.scale(scale, scale);
@@ -115,58 +125,102 @@ function renderAll() {
       portrait: currentFaction === 'player' ? { hair: hairColors[i%8], skin:'#fdb', eyes:'#222' } : null,
       isBoss: false,
     };
-    
     Sprites.drawUnit(ctx, unit, 4, 4, false);
+    tdSprite.appendChild(canvas);
+    tr.appendChild(tdSprite);
     
-    card.appendChild(canvas);
+    // Save for animation loop
+    canvas.dataset.classId = classId;
+    canvas.dataset.hairIndex = i % 8;
     
-    const nameDiv = document.createElement('div');
-    nameDiv.className = 'class-name';
-    nameDiv.textContent = info.name;
-    card.appendChild(nameDiv);
+    // 2. Class Name
+    const tdName = document.createElement('td');
+    tdName.innerHTML = `<div class="class-name">${cls.name}</div><div class="class-id">${classId}</div>`;
+    tr.appendChild(tdName);
     
-    const idDiv = document.createElement('div');
-    idDiv.className = 'class-id';
-    idDiv.textContent = info.nameEn + ' (' + classId + ')';
-    card.appendChild(idDiv);
+    // 3. Weapons
+    const tdWpn = document.createElement('td');
+    const wpnNames = (cls.weapons || []).map(w => WEAPON_NAMES[w] || w).join(' / ');
+    tdWpn.innerHTML = `<div class="weapons">🗡️ ${wpnNames}</div>`;
+    tr.appendChild(tdWpn);
     
-    const weapDiv = document.createElement('div');
-    weapDiv.className = 'weapons';
-    weapDiv.textContent = '🗡️ ' + info.weapons;
-    card.appendChild(weapDiv);
+    // 4. MOV
+    const tdMov = document.createElement('td');
+    tdMov.innerHTML = `<div class="mov">🏃 ${cls.mov || 5}</div>`;
+    tr.appendChild(tdMov);
     
-    const descDiv = document.createElement('div');
-    descDiv.className = 'stats';
-    descDiv.textContent = info.desc;
-    card.appendChild(descDiv);
+    // 5. Tags
+    const tdTags = document.createElement('td');
+    if (cls.tags && cls.tags.length > 0) {
+      const tagsHtml = cls.tags.map(t => `<span class="tag">${TAG_NAMES[t] || t}</span>`).join('');
+      tdTags.innerHTML = `<div class="tags">${tagsHtml}</div>`;
+    } else {
+      tdTags.innerHTML = `<div class="tags"><span class="tag" style="background:transparent;border:1px solid #445;">步兵</span></div>`;
+    }
+    tr.appendChild(tdTags);
     
-    grid.appendChild(card);
+    // 6. Base Stats
+    const tdStats = document.createElement('td');
+    const bs = cls.baseStats || {};
+    tdStats.innerHTML = `
+      <div class="stats">
+        <span class="lbl">HP</span><span>${bs.hp||0}</span>
+        <span class="lbl">力</span><span>${bs.str||0}</span>
+        <span class="lbl">魔</span><span>${bs.mag||0}</span>
+        <span class="lbl">技</span><span>${bs.skl||0}</span><br>
+        <span class="lbl">速</span><span>${bs.spd||0}</span>
+        <span class="lbl">運</span><span>${bs.lck||0}</span>
+        <span class="lbl">防</span><span>${bs.def||0}</span>
+        <span class="lbl">魔防</span><span>${bs.res||0}</span>
+      </div>
+    `;
+    tr.appendChild(tdStats);
+    
+    // 7. Promotion
+    const tdPromo = document.createElement('td');
+    if (cls.promo && cls.promo.length > 0) {
+      const pNames = cls.promo.map(p => CLASSES[p.to] ? CLASSES[p.to].name : p.to).join(', ');
+      tdPromo.innerHTML = `<div class="promo">可轉職: <span class="promo-list">${pNames}</span></div>`;
+    } else if (cls.promoted) {
+      tdPromo.innerHTML = `<div class="promo" style="color:#e8d080">⭐ 上級職</div>`;
+      if (cls.bonus) {
+        let bHtml = Object.entries(cls.bonus).map(([k,v]) => `${k.toUpperCase()}+${v}`).join(' ');
+        tdPromo.innerHTML += `<div style="font-size:10px;color:#888;margin-top:4px;">加成: ${bHtml}</div>`;
+      }
+    } else {
+      tdPromo.innerHTML = `<div class="promo" style="color:#666">無法轉職</div>`;
+    }
+    tr.appendChild(tdPromo);
+    
+    tbody.appendChild(tr);
   });
 }
 
-// Init
-Sprites._frameCounter = 0;
-renderAll();
+window.onload = function() {
+  Sprites.init();
+  setTimeout(renderList, 100);
+};
 
-// Animation loop — re-render all canvases every 200ms
+// Animation loop
 setInterval(function() {
   Sprites.tick();
-  Sprites.tick();
-  Sprites.tick();
-  var canvases = document.querySelectorAll('.card canvas');
-  var classIds = Object.keys(CLASS_INFO);
-  var hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
-  canvases.forEach(function(canvas, i) {
-    var ctx = canvas.getContext('2d');
+  const canvases = document.querySelectorAll('.sprite-col canvas');
+  const hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
+  
+  canvases.forEach(canvas => {
+    const ctx = canvas.getContext('2d');
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.scale(4, 4);
-    var classId = classIds[i];
-    var unit = {
+    ctx.scale(2, 2);
+    
+    const classId = canvas.dataset.classId;
+    const hIndex = parseInt(canvas.dataset.hairIndex) || 0;
+    
+    const unit = {
       classId: classId,
       faction: currentFaction,
       hp: 20, maxHp: 20,
-      portrait: currentFaction === 'player' ? { hair: hairColors[i%8], skin:'#fdb', eyes:'#222' } : null,
+      portrait: currentFaction === 'player' ? { hair: hairColors[hIndex], skin:'#fdb', eyes:'#222' } : null,
       isBoss: false,
     };
     Sprites.drawUnit(ctx, unit, 4, 4, false);
