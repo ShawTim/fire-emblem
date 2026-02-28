@@ -37,16 +37,15 @@ class Unit {
 
     // Stats
     const bs = data.baseStats || data.stats || {};
-    const clsStats = getClassData(this.classId).baseStats || {};
-    this.maxHp = (bs.hp || 0) + (clsStats.hp || 0) || 20;
+    this.maxHp = bs.hp || 20;
     this.hp = this.maxHp;
-    this.str = (bs.str || 0) + (clsStats.str || 0);
-    this.mag = (bs.mag || 0) + (clsStats.mag || 0);
-    this.skl = (bs.skl || 0) + (clsStats.skl || 0);
-    this.spd = (bs.spd || 0) + (clsStats.spd || 0);
-    this.lck = (bs.lck || 0) + (clsStats.lck || 0);
-    this.def = (bs.def || 0) + (clsStats.def || 0);
-    this.res = (bs.res || 0) + (clsStats.res || 0);
+    this.str = bs.str || 0;
+    this.mag = bs.mag || 0;
+    this.skl = bs.skl || 0;
+    this.spd = bs.spd || 0;
+    this.lck = bs.lck || 0;
+    this.def = bs.def || 0;
+    this.res = bs.res || 0;
 
     // Apply bonus stats (for bosses)
     if (data.bonusStats) {

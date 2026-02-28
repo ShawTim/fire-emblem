@@ -62,7 +62,7 @@ tr:last-child td { border-bottom: none; }
         <th>武器</th>
         <th>MOV</th>
         <th>類型</th>
-        <th>基礎數值</th>
+        <th>加成</th>
         <th>轉職</th>
       </tr>
     </thead>
@@ -135,7 +135,7 @@ function renderList() {
     
     // 2. Class Name
     const tdName = document.createElement('td');
-    tdName.innerHTML = `<div class="class-name">${cls.name}</div><div class="class-id">${classId}</div>`;
+    tdName.innerHTML = `<div class="class-name">${cls.name}</div>`;
     tr.appendChild(tdName);
     
     // 3. Weapons
@@ -155,25 +155,29 @@ function renderList() {
       const tagsHtml = cls.tags.map(t => `<span class="tag">${TAG_NAMES[t] || t}</span>`).join('');
       tdTags.innerHTML = `<div class="tags">${tagsHtml}</div>`;
     } else {
-      tdTags.innerHTML = `<div class="tags"><span class="tag" style="background:transparent;border:1px solid #445;">步兵</span></div>`;
+      tdTags.innerHTML = ``;
     }
     tr.appendChild(tdTags);
     
-    // 6. Base Stats
+    // 6. Bonus Stats
     const tdStats = document.createElement('td');
-    const bs = cls.baseStats || {};
-    tdStats.innerHTML = `
-      <div class="stats">
-        <span class="lbl">HP</span><span>${bs.hp||0}</span>
-        <span class="lbl">力</span><span>${bs.str||0}</span>
-        <span class="lbl">魔</span><span>${bs.mag||0}</span>
-        <span class="lbl">技</span><span>${bs.skl||0}</span><br>
-        <span class="lbl">速</span><span>${bs.spd||0}</span>
-        <span class="lbl">運</span><span>${bs.lck||0}</span>
-        <span class="lbl">防</span><span>${bs.def||0}</span>
-        <span class="lbl">魔防</span><span>${bs.res||0}</span>
-      </div>
-    `;
+    const bns = cls.bonus || {};
+    if (Object.keys(bns).length > 0) {
+      tdStats.innerHTML = `
+        <div class="stats">
+          <span class="lbl">HP</span><span>+${bns.hp||0}</span>
+          <span class="lbl">力</span><span>+${bns.str||0}</span>
+          <span class="lbl">魔</span><span>+${bns.mag||0}</span>
+          <span class="lbl">技</span><span>+${bns.skl||0}</span><br>
+          <span class="lbl">速</span><span>+${bns.spd||0}</span>
+          <span class="lbl">運</span><span>+${bns.lck||0}</span>
+          <span class="lbl">防</span><span>+${bns.def||0}</span>
+          <span class="lbl">魔防</span><span>+${bns.res||0}</span>
+        </div>
+      `;
+    } else {
+      tdStats.innerHTML = '<span style="color:#555">-</span>';
+    }
     tr.appendChild(tdStats);
     
     // 7. Promotion
@@ -183,10 +187,7 @@ function renderList() {
       tdPromo.innerHTML = `<div class="promo">可轉職: <span class="promo-list">${pNames}</span></div>`;
     } else if (cls.promoted) {
       tdPromo.innerHTML = `<div class="promo" style="color:#e8d080">⭐ 上級職</div>`;
-      if (cls.bonus) {
-        let bHtml = Object.entries(cls.bonus).map(([k,v]) => `${k.toUpperCase()}+${v}`).join(' ');
-        tdPromo.innerHTML += `<div style="font-size:10px;color:#888;margin-top:4px;">加成: ${bHtml}</div>`;
-      }
+      
     } else {
       tdPromo.innerHTML = `<div class="promo" style="color:#666">無法轉職</div>`;
     }
