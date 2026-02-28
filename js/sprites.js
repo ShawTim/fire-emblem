@@ -5,7 +5,7 @@ var Sprites = {
   _frameCounter: 0,
   _portraitCache: {},
   tick: function() { this._frameCounter++; },
-  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 14) % 5]; },
+  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 2) % 5]; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
   _seed: function(x, y) { return (x * 31 + y * 17) & 0xffff; },
 
@@ -263,7 +263,7 @@ var Sprites = {
       if (!this._imgCache[sKey]) {
         var img = new Image();
         
-        img.src = '/' + sKey.replace(/^\/?/, '');
+        img.src = sKey;
 
         this._imgCache[sKey] = { img: img, loaded: false };
         img.onload = function() { Sprites._imgCache[sKey].loaded = true; };
@@ -271,16 +271,15 @@ var Sprites = {
       
       var sData = this._imgCache[sKey];
       if (sData && sData.loaded) {
-        var frames = classDef.sprites.frames || 3;
         // Moving sheets usually have 4 columns (frames) and 4 rows (dirs: down, left, right, up)
-        // Standing sheets usually have 3 frames and 1 row.
-        var cols = isMoving ? 4 : frames;
-        var rows = isMoving ? 4 : 1;
+        // Standing sheets usually have 3 frames and 1 column.
+        var cols = 1;
+        var rows = isMoving ? 4 : 3;
         
         var sw = sData.img.width / cols;
         var sh = sData.img.height / rows;
         
-        var frame = isMoving ? Math.floor(this._frameCounter / 8) % cols : Math.floor(this._frameCounter / 14) % cols;
+        var frame = isMoving ? Math.floor(this._frameCounter / 8) % rows : this._idleFrame();
         var dirRow = 0; // default down or standing
         
         if (isMoving) {
@@ -294,16 +293,14 @@ var Sprites = {
         ctx.save();
         if (grayed) ctx.filter = 'grayscale(100%)';
         
-        // Scale to 32x32 bounding box, keeping aspect ratio
-        var scale = Math.min(this.TILE / sw, this.TILE / sh);
         // Map sprites usually don't need scaling down if they are 16x32, we just draw them centered
-        var drawW = sw;
-        var drawH = sh;
+        var drawW = sw * 1.5;
+        var drawH = sh * 1.5;
         var dx = x + (this.TILE - drawW) / 2;
         var dy = y + (this.TILE - drawH) - 4;
         
         ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(sData.img, frame * sw, dirRow * sh, sw, sh, dx, dy, drawW, drawH);
+        ctx.drawImage(sData.img, 0, frame * sh, sw, sh, dx, dy, drawW, drawH);
         ctx.restore();
         
         // Draw HP bar
