@@ -4,8 +4,8 @@ var Sprites = {
   TILE: 32,
   _frameCounter: 0,
   _portraitCache: {},
-  tick: function() { this._frameCounter++; },
-  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 2) % 5]; },
+  tick: function(frame = 1) { this._frameCounter += frame; },
+  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 14) % 5]; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
   _seed: function(x, y) { return (x * 31 + y * 17) & 0xffff; },
 
@@ -263,7 +263,12 @@ var Sprites = {
       if (!this._imgCache[sKey]) {
         var img = new Image();
         
-        img.src = sKey;
+        // Handle path resolution for subdirectories like classes/index.html
+        if (['/classes/', '/characters/'].some(sub => window.location.pathname.includes(sub))) {
+          img.src = '../assets/sprites/map/' + sKey;
+        } else {
+          img.src = 'assets/sprites/map/' + sKey;
+        }
 
         this._imgCache[sKey] = { img: img, loaded: false };
         img.onload = function() { Sprites._imgCache[sKey].loaded = true; };
