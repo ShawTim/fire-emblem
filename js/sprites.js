@@ -249,7 +249,131 @@ var Sprites = {
     ctx.fillStyle='#ff3030';ctx.fillRect(x+15,y,1,1);
   },
 
+  
   drawUnit: function(ctx,unit,x,y,grayed,sc){
+    sc=sc||1;
+    var cls=unit.classId||'soldier';
+    var classDef=getClassData(cls);
+    
+    // Check if new sprite system is defined
+    if (classDef && classDef.sprites) {
+      if (!this._imgCache) this._imgCache = {};
+      var isMoving = (unit.vx || unit.vy);
+      var sKey = isMoving ? classDef.sprites.move : classDef.sprites.stand;
+      if (!this._imgCache[sKey]) {
+        var img = new Image();
+        img.src = sKey;
+        this._imgCache[sKey] = { img: img, loaded: false };
+        img.onload = function() { Sprites._imgCache[sKey].loaded = true; };
+      }
+      
+      var sData = this._imgCache[sKey];
+      if (sData && sData.loaded) {
+        var frames = classDef.sprites.frames || 3;
+        // Moving sheets usually have 4 columns (frames) and 4 rows (dirs: down, left, right, up)
+        // Standing sheets usually have 3 frames and 1 row.
+        var cols = isMoving ? 4 : frames;
+        var rows = isMoving ? 4 : 1;
+        
+        var sw = sData.img.width / cols;
+        var sh = sData.img.height / rows;
+        
+        var frame = isMoving ? Math.floor(this._frameCounter / 8) % cols : Math.floor(this._frameCounter / 14) % cols;
+        var dirRow = 0; // default down or standing
+        
+        if (isMoving) {
+          // dir mapping: 0=down, 1=left, 2=right, 3=up
+          if (unit.vy > 0) dirRow = 0;
+          else if (unit.vx < 0) dirRow = 1;
+          else if (unit.vx > 0) dirRow = 2;
+          else if (unit.vy < 0) dirRow = 3;
+        }
+        
+        ctx.save();
+        if (grayed) ctx.filter = 'grayscale(100%)';
+        
+        // Scale to 32x32 bounding box, keeping aspect ratio
+        var scale = Math.min(this.TILE / sw, this.TILE / sh);
+        // Map sprites usually don't need scaling down if they are 16x32, we just draw them centered
+        var drawW = sw;
+        var drawH = sh;
+        var dx = x + (this.TILE - drawW) / 2;
+        var dy = y + (this.TILE - drawH) - 4;
+        
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(sData.img, frame * sw, dirRow * sh, sw, sh, dx, dy, drawW, drawH);
+        ctx.restore();
+        
+        // Draw HP bar
+        if (unit.hp !== undefined && unit.maxHp) {
+            var ratio = unit.hp / unit.maxHp;
+            ctx.fillStyle = '#000'; ctx.fillRect(x + 3, y + 30, 26, 3);
+            ctx.fillStyle = ratio > 0.5 ? '#40c040' : ratio > 0.25 ? '#c0c040' : '#c04040';
+            ctx.fillRect(x + 4, y + 31, Math.floor(24 * ratio), 1);
+        }
+        if (unit.isBoss) {
+            ctx.fillStyle = '#fc0';
+            ctx.fillRect(x + 10, y - 2, 12, 2);
+        }
+        return; // Skip procedural drawing
+      }
+    }
+
+    sc=sc||1;
+    var cls=unit.classId||'soldier';
+    var classDef=getClassData(cls);
+    
+    // Use new image sprite sheet if available
+    if (classDef && classDef.sprites) {
+      if (!this._imgCache) this._imgCache = {};
+      var sKey = unit._moving ? classDef.sprites.move : classDef.sprites.stand;
+      if (!this._imgCache[sKey]) {
+        var img = new Image();
+        img.src = sKey;
+        this._imgCache[sKey] = { img: img, loaded: false };
+        img.onload = function() { Sprites._imgCache[sKey].loaded = true; };
+      }
+      
+      var sData = this._imgCache[sKey];
+      var frameCount = classDef.sprites.frames || 3;
+      var frame = unit._moving ? Math.floor(this._frameCounter / 8) % 4 : Math.floor(this._frameCounter / 14) % frameCount;
+      
+      if (sData && sData.loaded) {
+        var sw = sData.img.width / (unit._moving ? 4 : frameCount); // assumption based on common sheets
+        var sh = unit._moving ? sData.img.height / 4 : sData.img.height; // if moving, assume 4 rows (dirs)
+        
+        // Very basic direction fallback
+        var dirRow = 0;
+        if (unit._moving) {
+            // map simple dir: 0:down, 1:left, 2:right, 3:up
+            dirRow = unit._dir || 0; 
+        }
+        
+        ctx.save();
+        if (grayed) {
+          ctx.filter = 'grayscale(100%)';
+        }
+        // FE GBA map sprites are typically 16x32 or 32x32, we scale them to fit or center
+        var drawW = sw > this.TILE ? sw : this.TILE;
+        var drawH = sh > this.TILE ? sh : this.TILE;
+        var dx = x + (this.TILE - drawW) / 2;
+        var dy = y + (this.TILE - drawH) - 4; // Align to bottom
+        
+        ctx.drawImage(sData.img, frame * sw, dirRow * sh, sw, sh, dx, dy, drawW, drawH);
+        ctx.restore();
+        
+        // Draw HP bar
+        this._drawHP(ctx, unit, x, y);
+        if (unit.isBoss) {
+            ctx.fillStyle = '#fc0';
+            ctx.fillRect(x + 10, y - 2, 12, 2);
+        }
+        return;
+      }
+    }
+    
+    // Fallback to old procedural drawing
+
     sc=sc||1;
     var c=this.getUnitColors(unit.faction);
     var hair=(unit.portrait&&unit.portrait.hair)?unit.portrait.hair:c.accent;

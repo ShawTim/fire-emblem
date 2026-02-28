@@ -4,7 +4,8 @@ const CLASSES = {
   lord: {
     name: '領主', weapons: ['sword'], mov: 5,
     promo: [{ to: 'masterLord', item: 'starCrest' }],
-    caps: { hp:60, str:20, mag:15, skl:20, spd:20, lck:30, def:20, res:20 }
+    caps: { hp:60, str:20, mag:15, skl:20, spd:20, lck:30, def:20, res:20 },
+    sprites: { stand: 'assets/sprites/map/lord_f_stand.png', move: 'assets/sprites/map/lord_f_move.png', frames: 3 }
   },
   masterLord: {
     name: '聖王', weapons: ['sword','lance'], mov: 6, promoted: true,
@@ -14,7 +15,8 @@ const CLASSES = {
   cavalier: {
     name: '騎士', weapons: ['sword','lance'], mov: 7, tags: ['cavalry','mounted'],
     promo: [{ to: 'paladin' }, { to: 'greatKnight' }],
-    caps: { hp:60, str:20, mag:5, skl:20, spd:20, lck:30, def:20, res:20 }
+    caps: { hp:60, str:20, mag:5, skl:20, spd:20, lck:30, def:20, res:20 },
+    sprites: { stand: 'assets/sprites/map/cavalier_stand.png', move: 'assets/sprites/map/cavalier_move.png', frames: 3 }
   },
   paladin: {
     name: '聖騎士', weapons: ['sword','lance'], mov: 8, promoted: true, tags: ['cavalry','mounted'],
@@ -44,7 +46,8 @@ const CLASSES = {
   fighter: {
     name: '戰士', weapons: ['axe'], mov: 5,
     promo: [{ to: 'warrior' }, { to: 'hero' }],
-    caps: { hp:60, str:22, mag:5, skl:18, spd:18, lck:30, def:18, res:15 }
+    caps: { hp:60, str:22, mag:5, skl:18, spd:18, lck:30, def:18, res:15 },
+    sprites: { stand: 'assets/sprites/map/fighter_stand.png', move: 'assets/sprites/map/fighter_move.png', frames: 3 }
   },
   warrior: {
     name: '勇者', weapons: ['axe','bow'], mov: 6, promoted: true,
@@ -161,4 +164,7 @@ function getClassDef(classId) {
 // Alias for compatibility
 function getClassData(classId) {
   return getClassDef(classId);
-}
+},
+    sprites: { stand: 'assets/sprites/map/lord_f_stand.png', move: 'assets/sprites/map/lord_f_move.png', frames: 3 },
+    sprites: { stand: 'assets/sprites/map/cavalier_stand.png', move: 'assets/sprites/map/cavalier_move.png', frames: 3 },
+    sprites: { stand: 'assets/sprites/map/fighter_stand.png', move: 'assets/sprites/map/fighter_move.png', frames: 3 }
