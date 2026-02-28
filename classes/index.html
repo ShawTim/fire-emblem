@@ -11,47 +11,47 @@ h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
 .subtitle { text-align:center; color:#888; font-size:13px; margin-bottom:24px; }
 
 .table-container { overflow-x: auto; max-width: 1200px; margin: 0 auto; }
-table { width: 100%; border-collapse: collapse; background: #16213e; border: 2px solid #334; border-radius: 8px; overflow: hidden; }
-th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334; }
-th { background: #111827; color: #e8d080; font-weight: bold; white-space: nowrap; position: sticky; top: 0; }
+table { width: 100%; border-collapse: collapse; background: #16213e; border: 2px solid #334; border-radius: 8px; overflow: hidden; min-width: 620px; }
+th, td { padding: 8px; text-align: left; border-bottom: 1px solid #334; font-size: 13px; }
+th { background: #111827; color: #e8d080; font-weight: bold; white-space: nowrap; position: sticky; top: 0; font-size: 14px; }
 tr:hover { background: #1e293b; }
 tr:last-child td { border-bottom: none; }
 
-.sprite-col { width: 60px; text-align: center; }
-.sprite-col canvas { display: inline-block; vertical-align: middle; }
+.sprite-col { width: 44px; min-width: 44px; text-align: center; }
+.sprite-col canvas { display: inline-block; vertical-align: middle; max-width: 40px; max-height: 40px; }
 
-.class-name { color: #e8d080; font-size: 15px; font-weight: bold; }
+.class-name { color: #e8d080; font-size: 14px; font-weight: bold; }
 .class-id { color: #666; font-size: 11px; }
 
 .tags { display: inline-flex; gap: 4px; flex-wrap: wrap; }
-.tag { background: #334; color: #aaa; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+.tag { background: #334; color: #aaa; padding: 1px 5px; border-radius: 4px; font-size: 10px; }
 
 .weapons { color: #8ab; font-size: 12px; }
-.mov { color: #ccc; font-weight: bold; }
+.mov { color: #ccc; font-weight: bold; font-size: 12px; }
 
-.stats { font-size: 11px; color: #aaa; white-space: nowrap; }
-.stats span { display: inline-block; width: 32px; text-align: right; }
+.stats { font-size: 10px; color: #aaa; white-space: nowrap; }
+.stats span { display: inline-block; width: 27px; text-align: right; }
 .stats .lbl { color: #666; width: auto; margin-right: 2px; }
 
-.promo { font-size: 11px; color: #ffa500; }
+.promo { font-size: 10px; color: #ffa500; }
 .promo-list { color: #8ab; }
 
-.faction-toggle { text-align:center; margin-bottom:20px; }
-.faction-toggle button {
-  background:#16213e; color:#ccc; border:2px solid #334; padding:8px 16px;
-  margin:0 4px; cursor:pointer; border-radius:4px; font-size:13px;
+@media (max-width: 700px) {
+  h1 { font-size: 18px; }
+  .subtitle { font-size: 11px; margin-bottom: 16px; }
+  .table-container { padding: 0; max-width: 100vw; }
+  table { min-width: 480px; font-size: 12px; }
+  th, td { padding: 5px 4px 5px 4px; font-size: 11px; }
+  .sprite-col { width: 28px; min-width: 28px; }
+  .stats { font-size: 9px; }
+  .promo, .promo-list { font-size: 9px; }
+  .class-name { font-size: 11px; }
 }
-.faction-toggle button.active { border-color:#e8d080; color:#e8d080; }
 </style>
 </head>
 <body>
 <h1>⚔️ 職業圖鑑</h1>
 <p class="subtitle">翠星之影 — 全職業一覽</p>
-
-<div class="faction-toggle">
-  <button id="btn-player" class="active" onclick="setFaction('player')">我方</button>
-  <button id="btn-enemy" onclick="setFaction('enemy')">敵方</button>
-</div>
 
 <div class="table-container">
   <table>
@@ -78,17 +78,8 @@ tr:last-child td { border-bottom: none; }
 // Minimal GameMap stub for sprites
 const GameMap = { tileSize:32, scale:2, width:20, height:15, terrain:[], getTerrain:()=>'plain', screenToTile:()=>({x:0,y:0}), camX:0, camY:0 };
 
-let currentFaction = 'player';
-
 const WEAPON_NAMES = { sword:'劍', lance:'槍', axe:'斧', bow:'弓', staff:'杖', fire:'火', thunder:'雷', wind:'風', dark:'暗' };
 const TAG_NAMES = { armored:'🛡️ 重裝', cavalry:'🐎 騎兵', flying:'🦅 飛行', mounted:'🐴 乘騎', undead:'💀 不死族' };
-
-function setFaction(f) {
-  currentFaction = f;
-  document.getElementById('btn-player').className = f==='player'?'active':'';
-  document.getElementById('btn-enemy').className = f==='enemy'?'active':'';
-  renderList();
-}
 
 function renderList() {
   const tbody = document.getElementById('class-list');
@@ -98,10 +89,7 @@ function renderList() {
   
   classIds.forEach((classId, i) => {
     const cls = CLASSES[classId];
-    // Simple filter: if enemy-only classes, only show in enemy tab
-    const isEnemyOnly = ['soldier', 'knight', 'darkMage', 'brigand', 'skeleton'].includes(classId);
-    if (currentFaction === 'player' && isEnemyOnly) return;
-    
+    // 原本分敵我，現在全部都出
     const tr = document.createElement('tr');
     
     // 1. Sprite
