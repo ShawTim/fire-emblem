@@ -12,15 +12,15 @@ h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
 
 .table-container { overflow-x: auto; max-width: 1200px; margin: 0 auto; }
 table { width: 100%; border-collapse: collapse; background: #16213e; border: 2px solid #334; border-radius: 8px; overflow: hidden; min-width: 620px; }
-th, td { padding: 8px; text-align: left; border-bottom: 1px solid #334; font-size: 13px; }
-th { background: #111827; color: #e8d080; font-weight: bold; white-space: nowrap; position: sticky; top: 0; font-size: 14px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #334; font-size: 15px; }
+th { background: #111827; color: #e8d080; font-weight: bold; white-space: nowrap; position: sticky; top: 0; font-size: 16px; }
 tr:hover { background: #1e293b; }
 tr:last-child td { border-bottom: none; }
 
 .sprite-col { width: 44px; min-width: 44px; text-align: center; }
 .sprite-col canvas { display: inline-block; vertical-align: middle; max-width: 40px; max-height: 40px; }
 
-.class-name { color: #e8d080; font-size: 14px; font-weight: bold; }
+.class-name { color: #e8d080; font-size: 18px; font-weight: bold; }
 .class-id { color: #666; font-size: 11px; }
 
 .tags { display: inline-flex; gap: 4px; flex-wrap: wrap; }
@@ -29,7 +29,7 @@ tr:last-child td { border-bottom: none; }
 .weapons { color: #8ab; font-size: 12px; }
 .mov { color: #ccc; font-weight: bold; font-size: 12px; }
 
-.stats { font-size: 10px; color: #aaa; white-space: nowrap; }
+.stats { font-size: 13px; color: #aaa; white-space: nowrap; }
 .stats span { display: inline-block; width: 27px; text-align: right; }
 .stats .lbl { color: #666; width: auto; margin-right: 2px; }
 
@@ -133,8 +133,8 @@ function renderList() {
     
     // 3. Weapons
     const tdWpn = document.createElement('td');
-    const wpnNames = (cls.weapons || []).map(w => WEAPON_NAMES[w] || w).join(' / ');
-    tdWpn.innerHTML = `<div class="weapons">🗡️ ${wpnNames}</div>`;
+    const wpnList = (cls.weapons || []).map(w => `<span>${WEAPON_NAMES[w] || w}</span>`).join('');
+    tdWpn.innerHTML = `<div class="weapons">🗡️${wpnList}</div>`;
     tr.appendChild(tdWpn);
     
     // 4. MOV
