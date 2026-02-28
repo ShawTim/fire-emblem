@@ -1,0 +1,25 @@
+{
+  "name": "fire-emblem",
+  "version": "1.0.0",
+  "description": "> Fire Emblem: Shadow of the Emerald Star",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server -c-1 -o"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShawTim/fire-emblem.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ShawTim/fire-emblem/issues"
+  },
+  "homepage": "https://github.com/ShawTim/fire-emblem#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
