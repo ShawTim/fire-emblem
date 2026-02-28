@@ -108,9 +108,9 @@ function renderList() {
     const hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
     const unit = {
       classId: classId,
-      faction: currentFaction,
+      faction: 'player',
       hp: 20, maxHp: 20,
-      portrait: currentFaction === 'player' ? { hair: hairColors[i%8], skin:'#fdb', eyes:'#222' } : null,
+      portrait: { hair: hairColors[i%8], skin:'#fdb', eyes:'#222' },
       isBoss: false,
     };
     Sprites.drawUnit(ctx, unit, 4, 4, false);
@@ -202,9 +202,9 @@ setInterval(function() {
     
     const unit = {
       classId: classId,
-      faction: currentFaction,
+      faction: 'player',
       hp: 20, maxHp: 20,
-      portrait: currentFaction === 'player' ? { hair: hairColors[hIndex], skin:'#fdb', eyes:'#222' } : null,
+      portrait: { hair: hairColors[hIndex], skin:'#fdb', eyes:'#222' },
       isBoss: false,
     };
     Sprites.drawUnit(ctx, unit, 4, 4, false);
