@@ -1,4 +1,11 @@
 // sprites.js - SNES Fire Emblem style procedural pixel art (32x32)
+// 
+// Rendering modes:
+//   window.RENDER_MODE = 'sprite' (default) - Use PNG sprites from assets/sprites/map/
+//   window.RENDER_MODE = 'procedural' - Use canvas-drawn pixel art units
+//
+// To toggle at runtime: window.RENDER_MODE = 'procedural'; // or 'sprite'
+
 var Sprites = {
   cache: {},
   TILE: 32,
@@ -253,6 +260,16 @@ var Sprites = {
   drawUnit: function(ctx,unit,x,y,grayed,sc,faction){
     sc=sc||1;
     faction=faction||'player'; // 'player', 'enemy', 'ally'
+    
+    // Check rendering mode: 'sprite' (default) or 'procedural'
+    var mode = window.RENDER_MODE || 'sprite';
+    
+    // Force procedural mode if explicitly set
+    if (mode === 'procedural') {
+      this._drawProceduralUnit(ctx,unit,x,y,grayed,sc,faction);
+      return;
+    }
+    
     var cls=unit.classId||'soldier';
     var classDef=getClassData(cls);
     
@@ -431,10 +448,13 @@ var Sprites = {
       }
     }
     
-    // Fallback to old procedural drawing
+    // Fallback to procedural drawing
+    this._drawProceduralUnit(ctx,unit,x,y,grayed,sc,faction);
+  },
 
+  _drawProceduralUnit: function(ctx,unit,x,y,grayed,sc,faction){
     sc=sc||1;
-    var c=this.getUnitColors(unit.faction);
+    var c=this.getUnitColors(faction);
     var hair=(unit.portrait&&unit.portrait.hair)?unit.portrait.hair:c.accent;
     var skin=(unit.portrait&&unit.portrait.skin)?unit.portrait.skin:c.skin;
     var eyes=(unit.portrait&&unit.portrait.eyes)?unit.portrait.eyes:'#222';
