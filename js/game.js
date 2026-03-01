@@ -154,6 +154,7 @@ class Game {
           level: charData.level || 1, faction: 'player', x: pu.x, y: pu.y,
           isLord: charData.isLord || false, portrait: charData.portrait,
           growths: charData.growths || {}, baseStats: charData.baseStats, items: charData.items,
+          gender: charData.gender || 'm',
         });
         this.playerRoster.push(unit);
       }
@@ -268,6 +269,7 @@ class Game {
               level: charData.level || 1, faction: 'player', x: nr.x, y: nr.y,
               isLord: charData.isLord || false, portrait: charData.portrait,
               growths: charData.growths || {}, baseStats: charData.baseStats, items: charData.items,
+              gender: charData.gender || 'm',
             });
             this.playerRoster.push(unit);
           } else {

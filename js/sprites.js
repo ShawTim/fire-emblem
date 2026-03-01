@@ -260,10 +260,22 @@ var Sprites = {
       if (!this._imgCache) this._imgCache = {};
       var isMoving = (unit.vx || unit.vy);
       
-      // Get sprite key with fallback (male -> female -> empty)
-      var sKey = isMoving 
-        ? (classDef.sprites.walk_m || classDef.sprites.move_m || classDef.sprites.walk_f || classDef.sprites.move_f || '')
-        : (classDef.sprites.stand_m || classDef.sprites.stand_f || '');
+      // Get gender (default to 'm' if not specified)
+      var gender = unit.gender || 'm';
+      
+      // Get sprite key based on gender with cross-gender fallback
+      var sKey;
+      if (gender === 'f') {
+        // Female first, fallback to male
+        sKey = isMoving 
+          ? (classDef.sprites.walk_f || classDef.sprites.move_f || classDef.sprites.walk_m || classDef.sprites.move_m || '')
+          : (classDef.sprites.stand_f || classDef.sprites.stand_m || '');
+      } else {
+        // Male first, fallback to female
+        sKey = isMoving 
+          ? (classDef.sprites.walk_m || classDef.sprites.move_m || classDef.sprites.walk_f || classDef.sprites.move_f || '')
+          : (classDef.sprites.stand_m || classDef.sprites.stand_f || '');
+      }
       
       // Skip if no valid sprite path
       if (!sKey) {
