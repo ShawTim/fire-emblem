@@ -9,7 +9,6 @@ const UI = {
   levelUpScreen: document.getElementById('level-up-screen'),
   topBar: document.getElementById('top-bar'),
   terrainInfo: null,
-  endTurnBtn: document.getElementById('btn-end-turn'),
   titleScreen: document.getElementById('title-screen'),
   chapterCard: document.getElementById('chapter-title-card'),
   chapterText: document.getElementById('chapter-title-text'),
@@ -264,9 +263,6 @@ const UI = {
       objEl.textContent = '目標：' + (objNames[objective] || objective);
     }
   },
-
-  showEndTurnBtn() { this.endTurnBtn.classList.remove('hidden'); },
-  hideEndTurnBtn() { this.endTurnBtn.classList.add('hidden'); },
 
   showTitleScreen(hasSave) {
     this.titleScreen.classList.remove('hidden');
@@ -622,6 +618,7 @@ const UI = {
       { label: '💾 中斷存檔', desc: '儲存目前進度', key: 'onSave' },
       { label: '🗺 地圖查看', desc: '自由移動鏡頭查看地圖', key: 'onMapBrowse' },
       { label: '⚙ 設定',     desc: '音量等各項設定', key: 'onSettings' },
+      { label: '⏭ 結束回合', desc: '結束我方回合，進入敵軍回合', key: 'onEndTurn' },
       { label: '🚪 結束遊戲', desc: '返回標題畫面', key: 'onQuit' },
     ];
 

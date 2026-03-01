@@ -170,10 +170,6 @@ document.addEventListener('keydown', (e) => {
 });
 
 // UI buttons
-document.getElementById('btn-end-turn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  game.endTurn();
-});
 document.getElementById('btn-new-game').addEventListener('click', (e) => {
   e.stopPropagation();
   game.startNewGame();

@@ -219,7 +219,6 @@ class Game {
     this.processTurnEvents();
     UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'player', this.chapterData.objective);
     UI.showPhaseBanner('player');
-    UI.showEndTurnBtn();
     UI.hideActionMenu();
     UI.hideCombatForecast();
     BGM.play('playerPhase', true);
@@ -1100,7 +1099,6 @@ class Game {
 
   endTurn() {
     if (this.state !== 'map' || this.phase !== 'player') return;
-    UI.hideEndTurnBtn();
     UI.hideActionMenu();
     UI.hideUnitPanel();
     this.cancelSelection();
@@ -1220,7 +1218,6 @@ class Game {
 
   onChapterClear() {
     this.state = 'chapterClear';
-    UI.hideEndTurnBtn();
     BGM.play('victory', true);
     const postDialogue = this.chapterData.dialogues && this.chapterData.dialogues.post;
     const isLast = this.currentChapter >= CHAPTER_MANIFEST.length - 1;
@@ -1288,6 +1285,9 @@ class Game {
       },
       onSettings: () => {
         UI.showSettingsMenu(reopen);
+      },
+      onEndTurn: () => {
+        this.endTurn();
       },
       onQuit: () => {
         this.state = 'title';
