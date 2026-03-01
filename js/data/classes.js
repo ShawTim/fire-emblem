@@ -7,9 +7,9 @@ const CLASSES = {
     caps: { hp:60, str:20, mag:15, skl:20, spd:20, lck:30, def:20, res:20 },
     sprites: { stand: 'lord_f_stand.png', move: 'lord_f_move.png' }
   },
-  masterLord: {
+  masterLord: { 
     name: '聖王', weapons: ['sword','lance'], mov: 6, promoted: true,
-    caps: { hp:60, str:25, mag:20, skl:25, spd:25, lck:30, def:25, res:25 },
+    caps: { hp:60, str:25, mag:20, skl:25, spd:25, lck:30, def:25, res:25 }, sprites: { stand_m: 'masterLord_M_stand.png', stand_f: 'masterLord_F_stand.png', walk_m: 'masterLord_M_walk.png', walk_f: 'masterLord_F_walk.png' },
     bonus: { hp:3, str:2, mag:1, skl:2, spd:2, def:2, res:3 }
   },
   cavalier: {
@@ -18,14 +18,14 @@ const CLASSES = {
     caps: { hp:60, str:20, mag:5, skl:20, spd:20, lck:30, def:20, res:20 },
     sprites: { stand: 'cavalier_stand.png', move: 'cavalier_move.png' }
   },
-  paladin: {
+  paladin: { 
     name: '聖騎士', weapons: ['sword','lance'], mov: 8, promoted: true, tags: ['cavalry','mounted'],
-    caps: { hp:60, str:25, mag:10, skl:25, spd:25, lck:30, def:25, res:25 },
+    caps: { hp:60, str:25, mag:10, skl:25, spd:25, lck:30, def:25, res:25 }, sprites: { stand_m: 'paladin_M_stand.png', stand_f: 'paladin_F_stand.png', walk_m: 'paladin_M_walk.png', walk_f: 'paladin_F_walk.png' },
     bonus: { hp:3, str:2, skl:2, spd:2, def:2, res:2 }
   },
-  greatKnight: {
+  greatKnight: { 
     name: '大騎士', weapons: ['sword','lance','axe'], mov: 6, promoted: true, tags: ['cavalry','mounted','armored'],
-    caps: { hp:60, str:28, mag:5, skl:20, spd:18, lck:30, def:28, res:15 },
+    caps: { hp:60, str:28, mag:5, skl:20, spd:18, lck:30, def:28, res:15 }, sprites: { stand_m: 'greatKnight_M_stand.png', stand_f: 'greatKnight_F_stand.png', walk_m: 'greatKnight_M_walk.png', walk_f: 'greatKnight_F_walk.png' },
     bonus: { hp:4, str:3, skl:1, spd:1, def:4, res:1 }
   },
   archer: {
@@ -40,9 +40,9 @@ const CLASSES = {
     caps: { hp:60, str:25, mag:5, skl:30, spd:25, lck:30, def:20, res:20 },
     bonus: { hp:3, str:2, skl:3, spd:2, def:2, res:1 }
   },
-  ranger: {
+  ranger: { 
     name: '遊俠', weapons: ['bow','sword'], mov: 7, promoted: true, tags: ['mounted'],
-    caps: { hp:60, str:22, mag:5, skl:25, spd:25, lck:30, def:22, res:22 },
+    caps: { hp:60, str:22, mag:5, skl:25, spd:25, lck:30, def:22, res:22 }, sprites: { stand_m: 'ranger_M_stand.png', stand_f: 'ranger_F_stand.png', walk_m: 'ranger_M_walk.png', walk_f: 'ranger_F_walk.png' },
     bonus: { hp:3, str:2, skl:2, spd:2, def:2, res:2 }
   },
   fighter: {
@@ -56,10 +56,10 @@ const CLASSES = {
     caps: { hp:60, str:30, mag:5, skl:24, spd:22, lck:30, def:22, res:15 },
     bonus: { hp:4, str:3, skl:1, spd:1, def:2, res:1 }
   },
-  hero: {
+  hero: { 
     name: '英雄', weapons: ['sword','axe'], mov: 6, promoted: true,
-    sprites: { stand: 'hero_stand.png', move: 'hero_move.png', frames: 3 },
-    caps: { hp:60, str:25, mag:5, skl:28, spd:26, lck:30, def:22, res:18 },
+    sprites: { stand_m: 'hero_M_stand.png', stand_f: 'hero_F_stand.png', walk_m: 'hero_M_walk.png', walk_f: 'hero_F_walk.png' },
+    caps: { hp:60, str:25, mag:5, skl:28, spd:26, lck:30, def:22, res:18  },
     bonus: { hp:3, str:2, skl:2, spd:2, def:2, res:2 }
   },
   mercenary: {
@@ -86,9 +86,9 @@ const CLASSES = {
     caps: { hp:60, str:5, mag:28, skl:25, spd:22, lck:30, def:15, res:30 },
     bonus: { hp:3, mag:3, skl:2, spd:1, def:2, res:3 }
   },
-  valkyrie: {
+  valkyrie: { 
     name: '聖女騎士', weapons: ['staff','fire'], mov: 7, promoted: true, tags: ['mounted'],
-    caps: { hp:60, str:5, mag:25, skl:22, spd:25, lck:30, def:12, res:28 },
+    caps: { hp:60, str:5, mag:25, skl:22, spd:25, lck:30, def:12, res:28 }, sprites: { stand_m: 'valkyrie_M_stand.png', stand_f: 'valkyrie_F_stand.png', walk_m: 'valkyrie_M_walk.png', walk_f: 'valkyrie_F_walk.png' },
     bonus: { hp:2, mag:2, skl:2, spd:3, def:1, res:3 }
   },
   mage: {
@@ -103,9 +103,9 @@ const CLASSES = {
     caps: { hp:60, str:5, mag:28, skl:25, spd:24, lck:30, def:18, res:25 },
     bonus: { hp:3, mag:3, skl:2, spd:2, def:2, res:2 }
   },
-  mageKnight: {
+  mageKnight: { 
     name: '魔法騎士', weapons: ['fire','thunder','wind'], mov: 7, promoted: true, tags: ['mounted'],
-    caps: { hp:60, str:5, mag:25, skl:22, spd:25, lck:30, def:18, res:22 },
+    caps: { hp:60, str:5, mag:25, skl:22, spd:25, lck:30, def:18, res:22 }, sprites: { stand_m: 'mageKnight_M_stand.png', stand_f: 'mageKnight_F_stand.png', walk_m: 'mageKnight_M_walk.png', walk_f: 'mageKnight_F_walk.png' },
     bonus: { hp:3, mag:2, skl:2, spd:3, def:2, res:2 }
   },
   wyvernRider: {
@@ -113,9 +113,9 @@ const CLASSES = {
     promo: [{ to: 'wyvernLord' }],
     caps: { hp:60, str:22, mag:5, skl:18, spd:18, lck:30, def:22, res:10 }
   },
-  wyvernLord: {
+  wyvernLord: { 
     name: '飛龍將', weapons: ['lance','sword'], mov: 8, promoted: true, tags: ['flying','mounted'],
-    caps: { hp:60, str:28, mag:5, skl:24, spd:22, lck:30, def:28, res:15 },
+    caps: { hp:60, str:28, mag:5, skl:24, spd:22, lck:30, def:28, res:15 }, sprites: { stand_m: 'wyvernLord_M_stand.png', stand_f: 'wyvernLord_F_stand.png', walk_m: 'wyvernLord_M_walk.png', walk_f: 'wyvernLord_F_walk.png' },
     bonus: { hp:4, str:2, skl:2, spd:2, def:3, res:2 }
   },
   pegasusKnight: {
@@ -123,9 +123,9 @@ const CLASSES = {
     promo: [{ to: 'falconKnight' }],
     caps: { hp:60, str:18, mag:10, skl:22, spd:24, lck:30, def:16, res:22 }
   },
-  falconKnight: {
+  falconKnight: { 
     name: '隼騎士', weapons: ['lance','sword'], mov: 8, promoted: true, tags: ['flying','mounted'],
-    caps: { hp:60, str:22, mag:15, skl:26, spd:28, lck:30, def:20, res:28 },
+    caps: { hp:60, str:22, mag:15, skl:26, spd:28, lck:30, def:20, res:28 }, sprites: { stand_m: 'falconKnight_M_stand.png', stand_f: 'falconKnight_F_stand.png', walk_m: 'falconKnight_M_walk.png', walk_f: 'falconKnight_F_walk.png' },
     bonus: { hp:3, str:2, skl:2, spd:2, def:2, res:3 }
   },
   thief: {
