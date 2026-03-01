@@ -3,14 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>職業圖鑑 — 翠星之影</title>
+<title>職業圖鑑 — 火炎之紋章：翠星之影</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:#1a1a2e; color:#ccc; font-family:'Segoe UI',sans-serif; padding:20px; }
-h1 { text-align:center; color:#e8d080; font-size:24px; margin-bottom:8px; }
-.subtitle { text-align:center; color:#888; font-size:13px; margin-bottom:24px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a1a;
+  color: #e8e8f0;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+header {
+  background: linear-gradient(135deg, #1a1a3a 0%, #0a0a2a 100%);
+  border-bottom: 2px solid #4a4a8a;
+  padding: 24px;
+  text-align: center;
+}
+header h1 {
+  font-size: 28px;
+  color: #aac;
+  letter-spacing: 2px;
+}
+header p { color: #88a; margin-top: 6px; font-size: 14px; }
+header a { color: #8af; text-decoration: none; }
+header a:hover { text-decoration: underline; }
 
-.table-container { overflow-x: auto; max-width: 1200px; margin: 0 auto; }
+.subtitle { text-align:center; color:#888; font-size:13px; margin: 16px 0 24px; }
+
+.table-container { overflow-x: auto; max-width: 1200px; margin: 0 auto; padding: 0 16px; }
 table { width: 100%; border-collapse: collapse; background: #16213e; border: 2px solid #334; border-radius: 8px; overflow: hidden; min-width: 620px; }
 th, td { padding: 10px; text-align: left; border-bottom: 1px solid #334; font-size: 15px; }
 th { background: #111827; color: #e8d080; font-weight: bold; white-space: nowrap; position: sticky; top: 0; font-size: 16px; }
@@ -58,8 +77,12 @@ tr:last-child td { border-bottom: none; }
 </style>
 </head>
 <body>
-<h1>⚔️ 職業圖鑑</h1>
-<p class="subtitle">翠星之影 — 全職業一覽</p>
+<header>
+  <h1>⚔️ 職業圖鑑</h1>
+  <p>翠星之影 — 全職業一覽 | <a href="../">← 返回遊戲</a></p>
+</header>
+
+<p class="subtitle">所有職業的屬性、武器適性與轉職路線</p>
 
 <div class="table-container">
   <table>
@@ -79,142 +102,109 @@ tr:last-child td { border-bottom: none; }
 
 <script src="../js/data/items.js"></script>
 <script src="../js/data/classes.js"></script>
-<script src="../js/data/chapters.js"></script>
 <script src="../js/sprites.js"></script>
 <script>
-// Minimal GameMap stub for sprites
-const GameMap = { tileSize:32, scale:2, width:20, height:15, terrain:[], getTerrain:()=>'plain', screenToTile:()=>({x:0,y:0}), camX:0, camY:0 };
+const canvas = document.createElement('canvas');
+canvas.width = 32; canvas.height = 32;
+const ctx = canvas.getContext('2d');
+Sprites._frameCounter = 0;
 
-const WEAPON_NAMES = { sword:'劍', lance:'槍', axe:'斧', bow:'弓', staff:'杖', fire:'火', thunder:'雷', wind:'風', dark:'暗' };
-const WEAPON_EMOJI = { sword: '🗡️', lance: '🔱', axe: '🪓', bow: '🏹', staff: '🪄', fire: '🔥', thunder: '⚡', wind: '💨', dark: '🌑' };
-const TAG_NAMES = { armored:'🛡️ 重裝', cavalry:'🐎 騎兵', flying:'🦅 飛行', mounted:'🐴 乘騎', undead:'💀 不死族' };
+function getStatAbbr(stat) {
+  const map = { str:'力', mag:'魔', skl:'技', spd:'速', lck:'運', def:'防', res:'抗' };
+  return map[stat] || stat;
+}
 
-function renderList() {
+function renderClasses() {
   const tbody = document.getElementById('class-list');
-  tbody.innerHTML = '';
+  const entries = Object.entries(CLASSES);
   
-  const classIds = Object.keys(CLASSES);
-  
-  classIds.forEach((classId, i) => {
-    const cls = CLASSES[classId];
-    // 原本分敵我，現在全部都出
+  entries.forEach(([id, cls]) => {
     const tr = document.createElement('tr');
     
-    // 1+2. Merge Sprite + Class Name (mobile: vertical stack)
-    const tdSpriteName = document.createElement('td');
-    tdSpriteName.className = 'sprite-col';
-    const canvas = document.createElement('canvas');
-    const scale = 2;
-    canvas.width = 40 * scale;
-    canvas.height = 40 * scale;
-    canvas.style.width = (40 * scale) + 'px';
-    canvas.style.height = (40 * scale) + 'px';
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-    ctx.scale(scale, scale);
+    // Sprite cell
+    const spriteTd = document.createElement('td');
+    spriteTd.className = 'sprite-col';
+    const spriteCvs = document.createElement('canvas');
+    spriteCvs.width = 32; spriteCvs.height = 32;
+    const sctx = spriteCvs.getContext('2d');
     
-    const hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
-    const unit = {
-      classId: classId,
-      faction: 'player',
-      hp: 20, maxHp: 20,
-      portrait: { hair: hairColors[i%8], skin:'#fdb', eyes:'#222' },
-      isBoss: false,
-    };
-    Sprites.drawUnit(ctx, unit, 4, 4, false);
-    ;
-    tdSpriteName.appendChild(canvas);
+    const mockUnit = { classId: id, faction: 'player', portrait: null };
+    sctx.save();
+    sctx.translate(0, -2);
+    Sprites._drawProceduralUnit(sctx, mockUnit, 0, 0, false, 1, 'player');
+    sctx.restore();
     
-    // Save for animation loop
-    canvas.dataset.classId = classId;
-    canvas.dataset.hairIndex = i % 8;
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'class-name';
+    nameDiv.textContent = cls.name;
+    const idDiv = document.createElement('div');
+    idDiv.className = 'class-id';
+    idDiv.textContent = id;
     
-    const nameDiv = document.createElement('div'); nameDiv.className = 'class-name'; nameDiv.style.textAlign = 'center'; nameDiv.textContent = cls.name; tdSpriteName.appendChild(nameDiv); tr.appendChild(tdSpriteName); canvas.dataset.classId = classId; canvas.dataset.hairIndex = i % 8; // REMOVED:
+    spriteTd.appendChild(spriteCvs);
+    spriteTd.appendChild(nameDiv);
+    spriteTd.appendChild(idDiv);
+    tr.appendChild(spriteTd);
     
-    // 3. Weapons
-    const tdWpn = document.createElement('td');
-    const wpnList = (cls.weapons || []).map(w => `<span>${WEAPON_EMOJI[w] || w}</span>`).join('');
-    tdWpn.innerHTML = `<div class="weapons">${wpnList}</div>`;
-    tr.appendChild(tdWpn);
+    // Weapons
+    const weaponTd = document.createElement('td');
+    weaponTd.className = 'weapons';
+    const weaponIcons = { sword:'🗡️', lance:'🔱', axe:'🪓', bow:'🏹', 
+                         fire:'🔥', thunder:'⚡', wind:'🌪️', dark:'🌑', staff:'🪄' };
+    weaponTd.innerHTML = cls.weapons.map(w => `<span>${weaponIcons[w] || w} ${w}</span>`).join('<br>');
+    tr.appendChild(weaponTd);
     
-    // 4. MOV
-    const tdMov = document.createElement('td');
-    tdMov.innerHTML = `<div class="mov"><span>🏃 </span>${cls.mov || 5}</div>`;
-    tr.appendChild(tdMov);
+    // Movement
+    const movTd = document.createElement('td');
+    movTd.className = 'mov';
+    movTd.innerHTML = `<span>🏃</span> ${cls.mov}`;
+    tr.appendChild(movTd);
     
-    // 5. Tags
-    const tdTags = document.createElement('td');
-    if (cls.tags && cls.tags.length > 0) {
-      const tagsHtml = cls.tags.map(t => `<span class="tag">${TAG_NAMES[t] || t}</span>`).join('');
-      tdTags.innerHTML = `<div class="tags">${tagsHtml}</div>`;
+    // Tags
+    const tagTd = document.createElement('td');
+    const tagMap = { mounted:'🏇 騎乘', flying:'🦅 飛行', armored:'🛡️ 重甲', cavalry:'🐴 騎兵' };
+    tagTd.innerHTML = (cls.tags || []).map(t => `<span class="tag">${tagMap[t] || t}</span>`).join(' ');
+    if (!cls.tags || cls.tags.length === 0) tagTd.innerHTML = '<span class="tag">-</span>';
+    tr.appendChild(tagTd);
+    
+    // Bonus stats
+    const bonusTd = document.createElement('td');
+    bonusTd.className = 'stats';
+    if (cls.bonus) {
+      bonusTd.innerHTML = Object.entries(cls.bonus)
+        .filter(([k,v]) => v > 0)
+        .map(([k,v]) => `<div><span class="lbl">${getStatAbbr(k)}</span>+${v}</div>`)
+        .join('');
     } else {
-      tdTags.innerHTML = ``;
+      bonusTd.innerHTML = '<div>-</div>';
     }
-    tr.appendChild(tdTags);
+    tr.appendChild(bonusTd);
     
-    // 6. Bonus Stats
-    const tdStats = document.createElement('td');
-    const bns = cls.bonus || {};
-    tdStats.innerHTML = `
-      <div class="stats">
-	<div><span class="lbl">HP</span><span>+${bns.hp ?? 0}</span></div>
-        <div><span class="lbl">力</span><span>+${bns.str ?? 0}</span></div>
-        <div><span class="lbl">魔</span><span>+${bns.mag ?? 0}</span></div>
-        <div><span class="lbl">技</span><span>+${bns.skl ?? 0}</span></div>
-        <div><span class="lbl">速</span><span>+${bns.spd ?? 0}</span></div>
-        <div><span class="lbl">運</span><span>+${bns.lck ?? 0}</span></div>
-        <div><span class="lbl">防</span><span>+${bns.def ?? 0}</span></div>
-        <div><span class="lbl">魔防</span><span>+${bns.res ?? 0}</span></div>
-      </div>
-    `;
-    tr.appendChild(tdStats);
-    
-    // 7. Promotion
-    const tdPromo = document.createElement('td');
+    // Promotions
+    const promoTd = document.createElement('td');
+    promoTd.className = 'promo';
     if (cls.promo && cls.promo.length > 0) {
-    const pNames = cls.promo.map(p => CLASSES[p.to] ? CLASSES[p.to].name : p.to).map(p => `<span class="promo-list">${p}</span>`).join("");
-      tdPromo.innerHTML = `<div class="promo">可轉職: ${pNames}</div>`;
+      const names = cls.promo.map(p => CLASSES[p.to]?.name || p.to).filter(n => n);
+      promoTd.innerHTML = '<span class="promo-list">' + names.join('<br>→ ') + '</span>';
     } else if (cls.promoted) {
-      tdPromo.innerHTML = `<div class="promo" style="color:#e8d080">⭐ 上級職</div>`;
-      
+      promoTd.innerHTML = '<span class="promo-list">（上位職）</span>';
     } else {
-      tdPromo.innerHTML = `<div class="promo" style="color:#666">無法轉職</div>`;
+      promoTd.innerHTML = '<span class="promo-list">-</span>';
     }
-    tr.appendChild(tdPromo);
+    tr.appendChild(promoTd);
     
     tbody.appendChild(tr);
   });
 }
 
-window.onload = function() {
-  setTimeout(renderList, 100);
+// Patch Sprites to use faction-based drawing
+const origDrawUnit = Sprites.drawUnit;
+Sprites.drawUnit = function(ctx, unit, x, y, grayed, sc, faction) {
+  faction = faction || 'player';
+  this._drawProceduralUnit(ctx, unit, x, y, grayed, sc, faction);
 };
 
-// Animation loop
-setInterval(function() {
-  Sprites.tick(200);
-  const canvases = document.querySelectorAll('.sprite-col canvas');
-  const hairColors = ['#8040a0','#c04040','#4060c0','#40a040','#a08040','#d08050','#606060','#d0a030'];
-  
-  canvases.forEach(canvas => {
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.scale(2, 2);
-    
-    const classId = canvas.dataset.classId;
-    const hIndex = parseInt(canvas.dataset.hairIndex) || 0;
-    
-    const unit = {
-      classId: classId,
-      faction: 'player',
-      hp: 20, maxHp: 20,
-      portrait: { hair: hairColors[hIndex], skin:'#fdb', eyes:'#222' },
-      isBoss: false,
-    };
-    Sprites.drawUnit(ctx, unit, 4, 4, false);
-  });
-}, 200);
+renderClasses();
 </script>
 </body>
 </html>
