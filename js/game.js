@@ -426,13 +426,16 @@ class Game {
       .filter(Boolean);
   }
 
-  getMenuPosForUnit(unit) {
+  getMenuPosForUnit(unit, itemCount = 4) {
     const ts = GameMap.tileSize * GameMap.scale;
     let mx = unit.x * ts - GameMap.camX + ts + 8;
     let my = unit.y * ts - GameMap.camY;
-    // Keep menu on screen
+    // Keep menu on screen (use viewport height for mobile fullscreen support)
+    const viewportH = window.innerHeight || this.canvasH;
+    const mobileBuffer = 60;
+    const menuHeight = itemCount * 32 + 20; // estimate menu height
     if (mx > this.canvasW - 130) mx = unit.x * ts - GameMap.camX - 130;
-    if (my > this.canvasH - 200) my = this.canvasH - 200;
+    if (my > viewportH - menuHeight - mobileBuffer) my = viewportH - menuHeight - mobileBuffer;
     if (mx < 4) mx = 4;
     if (my < 32) my = 32;
     return { x: mx, y: my };
@@ -775,7 +778,10 @@ class Game {
     items.push({ label: '取消', action: 'cancel' });
 
     const menuX = Math.min(screenX, this.canvasW - 120);
-    const menuY = Math.min(screenY, this.canvasH - items.length * 32 - 10);
+    // Use window.innerHeight for mobile fullscreen support, with buffer for mobile UI
+    const viewportH = window.innerHeight || this.canvasH;
+    const mobileBuffer = 60; // Space for "exit fullscreen" button etc.
+    const menuY = Math.min(screenY, viewportH - items.length * 32 - mobileBuffer);
     UI.showActionMenu(items, menuX, menuY, (action, idx) => this.onActionMenuSelect(action, items[idx]));
   }
 
