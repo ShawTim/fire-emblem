@@ -614,12 +614,12 @@ const UI = {
     `;
 
     const menuDefs = [
-      { label: '⚔ 部隊情報', desc: '查看我方所有角色的詳細狀態', key: 'onUnitList' },
-      { label: '💾 中斷存檔', desc: '儲存目前進度', key: 'onSave' },
-      { label: '🗺 地圖查看', desc: '自由移動鏡頭查看地圖', key: 'onMapBrowse' },
-      { label: '⚙ 設定',     desc: '音量等各項設定', key: 'onSettings' },
-      { label: '⏭ 結束回合', desc: '結束我方回合，進入敵軍回合', key: 'onEndTurn' },
-      { label: '🚪 結束遊戲', desc: '返回標題畫面', key: 'onQuit' },
+      { icon: '⚔', label: '部隊情報', desc: '查看我方所有角色的詳細狀態', key: 'onUnitList' },
+      { icon: '💾', label: '中斷存檔', desc: '儲存目前進度', key: 'onSave' },
+      { icon: '🗺', label: '地圖查看', desc: '自由移動鏡頭查看地圖', key: 'onMapBrowse' },
+      { icon: '⚙', label: '設定',     desc: '音量等各項設定', key: 'onSettings' },
+      { icon: '⏭', label: '結束回合', desc: '結束我方回合，進入敵軍回合', key: 'onEndTurn' },
+      { icon: '🚪', label: '結束遊戲', desc: '返回標題畫面', key: 'onQuit' },
     ];
 
     const container = overlay.querySelector('#map-menu-items');
@@ -630,9 +630,14 @@ const UI = {
         'cursor:pointer;transition:background 0.15s',
         'border:1px solid transparent',
         'user-select:none',
+        'display:flex;align-items:center;gap:8px'
       ].join(';');
-      btn.innerHTML = `<span style="font-weight:bold">${def.label}</span>
-        <div style="font-size:11px;color:#778;margin-top:2px">${def.desc}</div>`;
+      btn.innerHTML = `
+        <span style="display:inline-block;width:24px;text-align:center;font-size:18px">${def.icon}</span>
+        <div style="flex:1">
+          <div style="font-weight:bold">${def.label}</div>
+          <div style="font-size:11px;color:#778;margin-top:2px">${def.desc}</div>
+        </div>`;
       btn.addEventListener('mouseenter', () => {
         btn.style.background = 'rgba(74,158,255,0.18)';
         btn.style.borderColor = '#4a9eff';
