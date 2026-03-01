@@ -394,9 +394,16 @@ class Game {
 
   onMapClick(x, y, screenX, screenY) {
     if (this.phase !== 'player') return;
+    
+    // Clear previous selection
+    if (this.selectedUnit) {
+      this.selectedUnit._selected = false;
+    }
+    
     const unit = this.units.find(u => u.x === x && u.y === y && u.hp > 0);
     if (unit && unit.faction === 'player' && !unit.acted) {
       this.selectedUnit = unit;
+      unit._selected = true;  // Mark as selected for sprite rendering
       UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
       this.showUnitCommandMenu(unit);
     } else if (unit && unit.faction === 'enemy') {
@@ -408,6 +415,10 @@ class Game {
     } else {
       // 點擊空格（無單位格）觸發地圖選單
       UI.hideUnitPanel();
+      if (this.selectedUnit) {
+        this.selectedUnit._selected = false;
+      }
+      this.selectedUnit = null;
       if (this.state === 'map') {
         this.openMapMenu();
       }
@@ -653,6 +664,9 @@ class Game {
           // Using item counts as action
           unit.acted = true;
           unit.moved = true;
+          if (this.selectedUnit) {
+            this.selectedUnit._selected = false;
+          }
           this.selectedUnit = null;
           this.state = 'map';
           return;
@@ -670,11 +684,26 @@ class Game {
     if (!path || path.length <= 1) { if (onDone) onDone(); return; }
     if (this.state !== 'enemyPhase') this.state = 'animating';
     let step = 1;
+    
+    // Helper to determine direction from path delta
+    const getDirection = (from, to) => {
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      if (dx > 0) return 'right';
+      if (dx < 0) return 'left';
+      if (dy > 0) return 'down';
+      if (dy < 0) return 'up';
+      return unit._direction || 'down';
+    };
+    
     const advance = () => {
       if (step >= path.length) {
+        unit._direction = null; // Clear direction when done
         if (onDone) onDone();
         return;
       }
+      // Set direction before moving
+      unit._direction = getDirection(path[step - 1], path[step]);
       unit.x = path[step].x;
       unit.y = path[step].y;
       GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
@@ -1005,6 +1034,7 @@ class Game {
     if (this.selectedUnit) {
       this.selectedUnit.acted = true;
       this.selectedUnit.moved = true;
+      this.selectedUnit._selected = false;
     }
     this.selectedUnit = null;
     this.combatResult = null;
@@ -1074,6 +1104,7 @@ class Game {
     if (this.selectedUnit) {
       this.selectedUnit.acted = true;
       this.selectedUnit.moved = true;
+      this.selectedUnit._selected = false;
     }
     this.selectedUnit = null;
     this.moveRange = [];
@@ -1087,6 +1118,9 @@ class Game {
   }
 
   cancelSelection() {
+    if (this.selectedUnit) {
+      this.selectedUnit._selected = false;
+    }
     this.selectedUnit = null;
     this.moveRange = [];
     this.attackRange = [];

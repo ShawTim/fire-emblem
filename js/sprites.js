@@ -322,23 +322,49 @@ var Sprites = {
       
       var sData = sKey ? this._imgCache[sKey] : null;
       if (sData && sData.loaded && !sData.error) {
-        // Moving sheets usually have 4 columns (frames) and 4 rows (dirs: down, left, right, up)
-        // Standing sheets usually have 3 frames and 1 column.
-        var cols = 1;
-        var rows = isMoving ? 4 : 3;
+        // Walk sprites: 15 frames in a single column
+        // 0-3: Left, 4-7: Down, 8-11: Up, 12-14: Selected (no direction)
+        // Stand sprites: 3 frames in a single column
         
-        var sw = sData.img.width / cols;
-        var sh = sData.img.height / rows;
+        var isWalkSheet = isMoving && (sKey.includes('walk') || sKey.includes('move'));
+        var totalFrames = isWalkSheet ? 15 : 3;
+        var sw = sData.img.width;
+        var sh = sData.img.height / totalFrames;
         
-        var frame = isMoving ? Math.floor(this._frameCounter / 8) % rows : this._idleFrame();
-        var dirRow = 0; // default down or standing
+        var frame, flipX = false;
         
-        if (isMoving) {
-          // dir mapping: 0=down, 1=left, 2=right, 3=up
-          if (unit.vy > 0) dirRow = 0;
-          else if (unit.vx < 0) dirRow = 1;
-          else if (unit.vx > 0) dirRow = 2;
-          else if (unit.vy < 0) dirRow = 3;
+        if (isWalkSheet) {
+          // Determine direction and base frame
+          var direction = unit._direction || 'down';
+          var baseFrame;
+          
+          if (unit._selected) {
+            // Selected state - use frames 12-14
+            baseFrame = 12;
+          } else {
+            // Determine base frame based on direction
+            if (direction === 'left') {
+              baseFrame = 0;
+            } else if (direction === 'right') {
+              baseFrame = 0;  // Use left frames but flip
+              flipX = true;
+            } else if (direction === 'down') {
+              baseFrame = 4;
+            } else if (direction === 'up') {
+              baseFrame = 8;
+            } else {
+              baseFrame = 4;  // Default to down
+            }
+          }
+          
+          // Animate through 4 frames for each direction
+          var animFrame = Math.floor(this._frameCounter / 8) % 4;
+          // For selected state (3 frames), cap at 2
+          if (unit._selected && animFrame > 2) animFrame = 2;
+          frame = baseFrame + animFrame;
+        } else {
+          // Stand animation - simple idle frames
+          frame = this._idleFrame();
         }
         
         ctx.save();
@@ -359,7 +385,16 @@ var Sprites = {
         var dy = y + (this.TILE - drawH) - 4;
         
         ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(sData.img, 0, frame * sh, sw, sh, dx, dy, drawW, drawH);
+        
+        // Handle horizontal flip for right direction
+        if (flipX) {
+          ctx.translate(dx + drawW, dy);
+          ctx.scale(-1, 1);
+          ctx.drawImage(sData.img, 0, frame * sh, sw, sh, 0, 0, drawW, drawH);
+        } else {
+          ctx.drawImage(sData.img, 0, frame * sh, sw, sh, dx, dy, drawW, drawH);
+        }
+        
         ctx.restore();
         
         // Draw HP bar
