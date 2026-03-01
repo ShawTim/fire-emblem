@@ -40,16 +40,16 @@ download() {
 # =============================
 echo "=== Lords ==="
 # Male Lord (Eliwood style)
-download "$BASE_URL/Male%20Lords/Lord%20(Eliwood)%20(M)%20%7BIS%7D-stand.png" "lord_M_stand.png"
-download "$BASE_URL/Male%20Lords/Lord%20(Eliwood)%20(M)%20%7BIS%7D-walk.png" "lord_M_walk.png"
+download "$BASE_URL/Lords%20-%20Vanilla%20and%20Custom/Lord%20(M)%20Ephraim%20Sword%20%7BTeraspark%7D-stand.png" "lord_M_stand.png"
+download "$BASE_URL/Lords%20-%20Vanilla%20and%20Custom/Lord%20(M)%20Ephraim%20Sword%20%7BTeraspark%7D-walk.png" "lord_M_walk.png"
 # Female Lord (Eirika style)
-download "$BASE_URL/Female%20Lords/Lord%20(Eirika)%20(F)%20%7BIS%7D-stand.png" "lord_F_stand.png"
-download "$BASE_URL/Female%20Lords/Lord%20(Eirika)%20(F)%20%7BIS%7D-walk.png" "lord_F_walk.png"
+download "$BASE_URL/Lords%20-%20Vanilla%20and%20Custom/Lord%20(F)%20Eirika%20Sword%20%7BIS%7D-stand.png" "lord_F_stand.png"
+download "$BASE_URL/Lords%20-%20Vanilla%20and%20Custom/Lord%20(F)%20Eirika%20Sword%20%7BIS%7D-walk.png" "lord_F_walk.png"
 # Master Lord (promoted)
-download "$BASE_URL/Male%20Lords/Master%20Lord%20(Eliwood)%20(M)%20%7BIS%7D-stand.png" "masterLord_M_stand.png"
-download "$BASE_URL/Male%20Lords/Master%20Lord%20(Eliwood)%20(M)%20%7BIS%7D-walk.png" "masterLord_M_walk.png"
-download "$BASE_URL/Female%20Lords/Master%20Lord%20(Eirika)%20(F)%20%7BIS%7D-stand.png" "masterLord_F_stand.png"
-download "$BASE_URL/Female%20Lords/Master%20Lord%20(Eirika)%20(F)%20%7BIS%7D-walk.png" "masterLord_F_walk.png"
+download "$BASE_URL/Lords%20-%20Vanilla%20and%20Custom/Great%20Lord%20(M)%20Ephraim%20Sword%20%7Bmilom%7D-stand.png" "masterLord_M_stand.png"
+download "$BASE_URL/Lords%20-%20Vanilla%20and%20Custom/Great%20Lord%20(M)%20Ephraim%20Sword%20%7Bmilom%7D-walk.png" "masterLord_M_walk.png"
+download "$BASE_URL/Lords%20-%20Vanilla%20and%20Custom/Great%20Lord%20(F)%20Eirika%20Sword%20%7BIS%7D-stand.png" "masterLord_F_stand.png"
+download "$BASE_URL/Lords%20-%20Vanilla%20and%20Custom/Great%20Lord%20(F)%20Eirika%20Sword%20%7BIS%7D-walk.png" "masterLord_F_walk.png"
 
 # =============================
 # CAVALIER / PALADIN / GREAT KNIGHT / RANGER
@@ -82,31 +82,31 @@ download "$BASE_URL/Mounted%20-%20Cavs,%20Paladins,%20Rangers/Ranger%20(F)%20Imp
 # ARCHER / SNIPER
 # =============================
 echo "=== Archer ==="
-download "$BASE_URL/Infantry%20-%20(Bow)%20Archers/Archer%20(M)%20%7BIS%7D-stand.png" "archer_M_stand.png"
-download "$BASE_URL/Infantry%20-%20(Bow)%20Archers/Archer%20(M)%20%7BIS%7D-walk.png" "archer_M_walk.png"
-download "$BASE_URL/Infantry%20-%20(Bow)%20Archers/Archer%20(F)%20%7BIS%7D-stand.png" "archer_F_stand.png"
-download "$BASE_URL/Infantry%20-%20(Bow)%20Archers/Archer%20(F)%20%7BIS%7D-walk.png" "archer_F_walk.png"
+download "$BASE_URL/Infantry%20-%20(Bow)%20Archers%20and%20Hunters/Archer%20(M)%20%7BIS%7D-stand.png" "archer_M_stand.png"
+download "$BASE_URL/Infantry%20-%20(Bow)%20Archers%20and%20Hunters/Archer%20(M)%20%7BIS%7D-walk.png" "archer_M_walk.png"
+download "$BASE_URL/Infantry%20-%20(Bow)%20Archers%20and%20Hunters/Archer%20(F)%20%7BIS%7D-stand.png" "archer_F_stand.png"
+download "$BASE_URL/Infantry%20-%20(Bow)%20Archers%20and%20Hunters/Archer%20(F)%20%7BIS%7D-walk.png" "archer_F_walk.png"
 
 echo "=== Sniper ==="
-download "$BASE_URL/Infantry%20-%20(Bow)%20Archers/Sniper%20(M)%20%7BIS%7D-stand.png" "sniper_M_stand.png"
-download "$BASE_URL/Infantry%20-%20(Bow)%20Archers/Sniper%20(M)%20%7BIS%7D-walk.png" "sniper_M_walk.png"
-download "$BASE_URL/Infantry%20-%20(Bow)%20Archers/Sniper%20(F)%20%7BIS%7D-stand.png" "sniper_F_stand.png"
-download "$BASE_URL/Infantry%20-%20(Bow)%20Archers/Sniper%20(F)%20%7BIS%7D-walk.png" "sniper_F_walk.png"
+download "$BASE_URL/Infantry%20-%20(Bow)%20Snipers%20and%20Ballistae/Sniper%20(M)%20%7BIS%7D-stand.png" "sniper_M_stand.png"
+download "$BASE_URL/Infantry%20-%20(Bow)%20Snipers%20and%20Ballistae/Sniper%20(M)%20%7BIS%7D-walk.png" "sniper_M_walk.png"
+download "$BASE_URL/Infantry%20-%20(Bow)%20Snipers%20and%20Ballistae/Sniper%20(F)%20%7BIS%7D-stand.png" "sniper_F_stand.png"
+download "$BASE_URL/Infantry%20-%20(Bow)%20Snipers%20and%20Ballistae/Sniper%20(F)%20%7BIS%7D-walk.png" "sniper_F_walk.png"
 
 # =============================
 # FIGHTER / WARRIOR / HERO
 # =============================
 echo "=== Fighter ==="
-download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters/Fighter%20(M)%20%7BIS%7D-stand.png" "fighter_M_stand.png"
-download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters/Fighter%20(M)%20%7BIS%7D-walk.png" "fighter_M_walk.png"
-download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters/Fighter%20(F)%20%7BSALVAGED%7D-stand.png" "fighter_F_stand.png"
-download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters/Fighter%20(F)%20%7BSALVAGED%7D-walk.png" "fighter_F_walk.png"
+download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters%20and%20Warriors/Fighter%20(M)%20Axe%20%7BIS%7D-stand.png" "fighter_M_stand.png"
+download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters%20and%20Warriors/Fighter%20(M)%20Axe%20%7BIS%7D-walk.png" "fighter_M_walk.png"
+download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters%20and%20Warriors/Fighter%20(F)%20Thin%20Axe%20%7BFEGirls%7D-stand.png" "fighter_F_stand.png"
+download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters%20and%20Warriors/Fighter%20(F)%20Thin%20Axe%20%7BFEGirls%7D-walk.png" "fighter_F_walk.png"
 
 echo "=== Warrior ==="
-download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters/Warrior%20(M)%20%7BIS%7D-stand.png" "warrior_M_stand.png"
-download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters/Warrior%20(M)%20%7BIS%7D-walk.png" "warrior_M_walk.png"
-download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters/Warrior%20(F)%20%7BIS,%20L95,%20RandomWizard%7D-stand.png" "warrior_F_stand.png"
-download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters/Warrior%20(F)%20%7BIS,%20L95,%20RandomWizard%7D-walk.png" "warrior_F_walk.png"
+download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters%20and%20Warriors/Warrior%20(M)%20Axe%20%7BIS%7D-stand.png" "warrior_M_stand.png"
+download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters%20and%20Warriors/Warrior%20(M)%20Axe%20%7BIS%7D-walk.png" "warrior_M_walk.png"
+download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters%20and%20Warriors/Warrior%20(F)%20Axe%20%7BFEGirls%7D-stand.png" "warrior_F_stand.png"
+download "$BASE_URL/Infantry%20-%20(Axe)%20Fighters%20and%20Warriors/Warrior%20(F)%20Axe%20%7BFEGirls%7D-walk.png" "warrior_F_walk.png"
 
 echo "=== Hero ==="
 download "$BASE_URL/Infantry%20-%20(Swd)%20Mercenaries%20and%20Heroes/Hero%20(M)%20%7BIS%7D-stand.png" "hero_M_stand.png"
@@ -196,7 +196,7 @@ download "$BASE_URL/Mounted%20-%20Pegs,%20Wyverns,%20Griffons/Wyvern%20Rider%20(
 download "$BASE_URL/Mounted%20-%20Pegs,%20Wyverns,%20Griffons/Wyvern%20Rider%20(F)%20Lance%20%7Bflasuban%7D-walk.png" "wyvernRider_F_walk.png"
 
 echo "=== Wyvern Lord ==="
-download "$BASE_URL/Mounted%20-%20Pegs,%20Wyverns,%20Griffons/Wyvern%20Lord%20(U)%20Lance%20%7BIS%7D-stand.png" "wyvernLord_M_stand.png"
+download "$BASE_URL/Mounted%20-%20Pegs,%20Wyverns,%20Griffons/Wyvern%20Lord%20(U)%20Lance%20Male%20%7BIS%7D-stand.png" "wyvernLord_M_stand.png"
 download "$BASE_URL/Mounted%20-%20Pegs,%20Wyverns,%20Griffons/Wyvern%20Lord%20(U)%20Lance%20%7BIS%7D-walk.png" "wyvernLord_M_walk.png"
 download "$BASE_URL/Mounted%20-%20Pegs,%20Wyverns,%20Griffons/Wyvern%20Lord%20(F)%20Lance%20%7BSHYUTER%7D-stand.png" "wyvernLord_F_stand.png"
 download "$BASE_URL/Mounted%20-%20Pegs,%20Wyverns,%20Griffons/Wyvern%20Lord%20(F)%20Lance%20%7BSHYUTER%7D-walk.png" "wyvernLord_F_walk.png"
