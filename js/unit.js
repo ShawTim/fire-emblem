@@ -22,6 +22,7 @@ class Unit {
     this.level = data.level || 1;
     this.exp = 0;
     this.faction = data.faction || 'player';
+    this.gender = data.gender || 'm'; // 'm' or 'f', default to male
     this.x = data.x;
     this.y = data.y;
     this.isLord = data.isLord || false;
@@ -185,7 +186,7 @@ class Unit {
   serialize() {
     return {
       charId: this.charId, name: this.name, classId: this.classId,
-      level: this.level, exp: this.exp, isLord: this.isLord,
+      level: this.level, exp: this.exp, isLord: this.isLord, gender: this.gender,
       maxHp: this.maxHp, hp: this.hp, str: this.str, mag: this.mag,
       skl: this.skl, spd: this.spd, lck: this.lck, def: this.def, res: this.res,
       growths: this.growths, portrait: this.portrait,
@@ -198,6 +199,7 @@ class Unit {
       charId: data.charId, name: data.name, classId: data.classId,
       level: data.level, faction: 'player', x: 0, y: 0,
       isLord: data.isLord, portrait: data.portrait, growths: data.growths,
+      gender: data.gender || 'm',
       baseStats: { hp: data.maxHp, str: data.str, mag: data.mag, skl: data.skl, spd: data.spd, lck: data.lck, def: data.def, res: data.res },
     });
     unit.exp = data.exp;

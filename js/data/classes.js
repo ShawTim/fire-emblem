@@ -5,12 +5,13 @@ const CLASSES = {
     name: '領主', weapons: ['sword'], mov: 5,
     promo: [{ to: 'masterLord', item: 'starCrest' }],
     caps: { hp:60, str:20, mag:15, skl:20, spd:20, lck:30, def:20, res:20 },
-    sprites: { stand_m: '', stand_f: 'lord_F_stand.png', walk_m: '', walk_f: 'lord_F_move.png' }
+    sprites: { stand_m: 'lord_M_stand.png', stand_f: 'lord_F_stand.png', walk_m: 'lord_M_move.png', walk_f: 'lord_F_move.png' }
   },
   masterLord: { 
     name: '聖王', weapons: ['sword','lance'], mov: 6, promoted: true,
     caps: { hp:60, str:25, mag:20, skl:25, spd:25, lck:30, def:25, res:25 },
     sprites: { stand_m: '', stand_f: '', walk_m: '', walk_f: '' },
+    sprites: { stand_m: 'masterLord_M_stand.png', stand_f: 'masterLord_F_stand.png', walk_m: 'masterLord_M_move.png', walk_f: 'masterLord_F_move.png' },
     bonus: { hp:3, str:2, mag:1, skl:2, spd:2, def:2, res:3 }
   },
   cavalier: {
@@ -35,12 +36,12 @@ const CLASSES = {
     name: '弓箭手', weapons: ['bow'], mov: 5,
     promo: [{ to: 'sniper' }, { to: 'ranger' }],
     caps: { hp:60, str:20, mag:5, skl:20, spd:20, lck:30, def:20, res:20 },
-    sprites: { stand_m: 'archer_stand.png', stand_f: '', walk_m: 'archer_move.png', walk_f: '' }
+    sprites: { stand_m: 'archer_M_stand.png', stand_f: 'archer_F_stand.png', walk_m: 'archer_M_walk.png', walk_f: 'archer_F_walk.png' }
   },
   sniper: {
     name: '狙擊手', weapons: ['bow'], mov: 6, promoted: true,
     caps: { hp:60, str:25, mag:5, skl:30, spd:25, lck:30, def:20, res:20 },
-    sprites: { stand_m: 'sniper_stand.png', stand_f: '', walk_m: 'sniper_move.png', walk_f: '' },
+    sprites: { stand_m: 'sniper_M_stand.png', stand_f: 'sniper_F_stand.png', walk_m: 'sniper_M_walk.png', walk_f: 'sniper_F_walk.png' },
     bonus: { hp:3, str:2, skl:3, spd:2, def:2, res:1 }
   },
   ranger: { 
@@ -53,12 +54,12 @@ const CLASSES = {
     name: '戰士', weapons: ['axe'], mov: 5,
     promo: [{ to: 'warrior' }, { to: 'hero' }],
     caps: { hp:60, str:22, mag:5, skl:18, spd:18, lck:30, def:18, res:15 },
-    sprites: { stand_m: 'fighter_stand.png', stand_f: '', walk_m: 'fighter_move.png', walk_f: '' }
+    sprites: { stand_m: 'fighter_M_stand.png', stand_f: 'fighter_F_stand.png', walk_m: 'fighter_M_move.png', walk_f: 'fighter_F_move.png' }
   },
   warrior: {
     name: '勇者', weapons: ['axe','bow'], mov: 6, promoted: true,
     caps: { hp:60, str:30, mag:5, skl:24, spd:22, lck:30, def:22, res:15 },
-    sprites: { stand_m: '', stand_f: '', walk_m: '', walk_f: '' },
+    sprites: { stand_m: 'warrior_M_stand.png', stand_f: 'warrior_F_stand.png', walk_m: 'warrior_M_walk.png', walk_f: 'warrior_F_walk.png' },
     bonus: { hp:4, str:3, skl:1, spd:1, def:2, res:1 }
   },
   hero: { 

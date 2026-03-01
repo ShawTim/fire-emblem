@@ -170,10 +170,6 @@ document.addEventListener('keydown', (e) => {
 });
 
 // UI buttons
-document.getElementById('btn-end-turn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  game.endTurn();
-});
 document.getElementById('btn-new-game').addEventListener('click', (e) => {
   e.stopPropagation();
   game.startNewGame();
@@ -224,16 +220,11 @@ resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 */
 
-// === Mobile Fullscreen Toggle ===
+// === Fullscreen Toggle (All devices) ===
 const mobileToggleBtn = document.getElementById('mobile-toggle');
 if (mobileToggleBtn) {
-  // Only show fullscreen button on small screens (mobile/tablet)
-  function checkMobileFullscreen() {
-    const isSmallScreen = window.innerWidth < 900 || window.innerHeight < 650;
-    mobileToggleBtn.style.display = isSmallScreen ? 'block' : 'none';
-  }
-  checkMobileFullscreen();
-  window.addEventListener('resize', checkMobileFullscreen);
+  // Show fullscreen button on all devices
+  mobileToggleBtn.style.display = 'block';
   
   mobileToggleBtn.addEventListener('click', () => {
     const container = document.getElementById('game-container');
@@ -245,7 +236,11 @@ if (mobileToggleBtn) {
       } else if (container.msRequestFullscreen) {
         container.msRequestFullscreen();
       }
-      mobileToggleBtn.textContent = '退出全螢幕'; if (screen.orientation && screen.orientation.lock) { try { screen.orientation.lock('landscape'); } catch(e) { console.log('Orientation lock not supported'); } }
+      mobileToggleBtn.textContent = '退出全螢幕';
+      // Only try to lock orientation on mobile
+      if (screen.orientation && screen.orientation.lock && window.innerWidth < 900) {
+        try { screen.orientation.lock('landscape'); } catch(e) { console.log('Orientation lock not supported'); }
+      }
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();

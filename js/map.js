@@ -139,7 +139,7 @@ const GameMap = {
       ctx.translate(sx, sy);
       ctx.scale(this.scale, this.scale);
       var showGray = unit.acted && ((unit.faction === 'player' && game && game.phase === 'player') || (unit.faction === 'enemy' && game && game.phase === 'enemy'));
-      Sprites.drawUnit(ctx, unit, 0, 0, showGray);
+      Sprites.drawUnit(ctx, unit, 0, 0, showGray, 1, unit.faction);
       ctx.restore();
     }
   },

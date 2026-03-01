@@ -154,6 +154,7 @@ class Game {
           level: charData.level || 1, faction: 'player', x: pu.x, y: pu.y,
           isLord: charData.isLord || false, portrait: charData.portrait,
           growths: charData.growths || {}, baseStats: charData.baseStats, items: charData.items,
+          gender: charData.gender || 'm',
         });
         this.playerRoster.push(unit);
       }
@@ -218,7 +219,6 @@ class Game {
     this.processTurnEvents();
     UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'player', this.chapterData.objective);
     UI.showPhaseBanner('player');
-    UI.showEndTurnBtn();
     UI.hideActionMenu();
     UI.hideCombatForecast();
     BGM.play('playerPhase', true);
@@ -268,6 +268,7 @@ class Game {
               level: charData.level || 1, faction: 'player', x: nr.x, y: nr.y,
               isLord: charData.isLord || false, portrait: charData.portrait,
               growths: charData.growths || {}, baseStats: charData.baseStats, items: charData.items,
+              gender: charData.gender || 'm',
             });
             this.playerRoster.push(unit);
           } else {
@@ -424,13 +425,16 @@ class Game {
       .filter(Boolean);
   }
 
-  getMenuPosForUnit(unit) {
+  getMenuPosForUnit(unit, itemCount = 4) {
     const ts = GameMap.tileSize * GameMap.scale;
     let mx = unit.x * ts - GameMap.camX + ts + 8;
     let my = unit.y * ts - GameMap.camY;
-    // Keep menu on screen
+    // Keep menu on screen (use viewport height for mobile fullscreen support)
+    const viewportH = window.innerHeight || this.canvasH;
+    const mobileBuffer = 60;
+    const menuHeight = itemCount * 32 + 20; // estimate menu height
     if (mx > this.canvasW - 130) mx = unit.x * ts - GameMap.camX - 130;
-    if (my > this.canvasH - 200) my = this.canvasH - 200;
+    if (my > viewportH - menuHeight - mobileBuffer) my = viewportH - menuHeight - mobileBuffer;
     if (mx < 4) mx = 4;
     if (my < 32) my = 32;
     return { x: mx, y: my };
@@ -773,7 +777,10 @@ class Game {
     items.push({ label: '取消', action: 'cancel' });
 
     const menuX = Math.min(screenX, this.canvasW - 120);
-    const menuY = Math.min(screenY, this.canvasH - items.length * 32 - 10);
+    // Use window.innerHeight for mobile fullscreen support, with buffer for mobile UI
+    const viewportH = window.innerHeight || this.canvasH;
+    const mobileBuffer = 60; // Space for "exit fullscreen" button etc.
+    const menuY = Math.min(screenY, viewportH - items.length * 32 - mobileBuffer);
     UI.showActionMenu(items, menuX, menuY, (action, idx) => this.onActionMenuSelect(action, items[idx]));
   }
 
@@ -1092,7 +1099,6 @@ class Game {
 
   endTurn() {
     if (this.state !== 'map' || this.phase !== 'player') return;
-    UI.hideEndTurnBtn();
     UI.hideActionMenu();
     UI.hideUnitPanel();
     this.cancelSelection();
@@ -1212,7 +1218,6 @@ class Game {
 
   onChapterClear() {
     this.state = 'chapterClear';
-    UI.hideEndTurnBtn();
     BGM.play('victory', true);
     const postDialogue = this.chapterData.dialogues && this.chapterData.dialogues.post;
     const isLast = this.currentChapter >= CHAPTER_MANIFEST.length - 1;
@@ -1280,6 +1285,9 @@ class Game {
       },
       onSettings: () => {
         UI.showSettingsMenu(reopen);
+      },
+      onEndTurn: () => {
+        this.endTurn();
       },
       onQuit: () => {
         this.state = 'title';

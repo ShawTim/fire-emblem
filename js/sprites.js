@@ -1,4 +1,11 @@
 // sprites.js - SNES Fire Emblem style procedural pixel art (32x32)
+// 
+// Rendering modes:
+//   window.RENDER_MODE = 'sprite' (default) - Use PNG sprites from assets/sprites/map/
+//   window.RENDER_MODE = 'procedural' - Use canvas-drawn pixel art units
+//
+// To toggle at runtime: window.RENDER_MODE = 'procedural'; // or 'sprite'
+
 var Sprites = {
   cache: {},
   TILE: 32,
@@ -250,8 +257,19 @@ var Sprites = {
   },
 
   
-  drawUnit: function(ctx,unit,x,y,grayed,sc){
+  drawUnit: function(ctx,unit,x,y,grayed,sc,faction){
     sc=sc||1;
+    faction=faction||'player'; // 'player', 'enemy', 'ally'
+    
+    // Check rendering mode: 'sprite' (default) or 'procedural'
+    var mode = window.RENDER_MODE || 'sprite';
+    
+    // Force procedural mode if explicitly set
+    if (mode === 'procedural') {
+      this._drawProceduralUnit(ctx,unit,x,y,grayed,sc,faction);
+      return;
+    }
+    
     var cls=unit.classId||'soldier';
     var classDef=getClassData(cls);
     
@@ -260,10 +278,22 @@ var Sprites = {
       if (!this._imgCache) this._imgCache = {};
       var isMoving = (unit.vx || unit.vy);
       
-      // Get sprite key with fallback (male -> female -> empty)
-      var sKey = isMoving 
-        ? (classDef.sprites.walk_m || classDef.sprites.move_m || classDef.sprites.walk_f || classDef.sprites.move_f || '')
-        : (classDef.sprites.stand_m || classDef.sprites.stand_f || '');
+      // Get gender (default to 'm' if not specified)
+      var gender = unit.gender || 'm';
+      
+      // Get sprite key based on gender with cross-gender fallback
+      var sKey;
+      if (gender === 'f') {
+        // Female first, fallback to male
+        sKey = isMoving 
+          ? (classDef.sprites.walk_f || classDef.sprites.move_f || classDef.sprites.walk_m || classDef.sprites.move_m || '')
+          : (classDef.sprites.stand_f || classDef.sprites.stand_m || '');
+      } else {
+        // Male first, fallback to female
+        sKey = isMoving 
+          ? (classDef.sprites.walk_m || classDef.sprites.move_m || classDef.sprites.walk_f || classDef.sprites.move_f || '')
+          : (classDef.sprites.stand_m || classDef.sprites.stand_f || '');
+      }
       
       // Skip if no valid sprite path
       if (!sKey) {
@@ -312,7 +342,15 @@ var Sprites = {
         }
         
         ctx.save();
-        if (grayed) ctx.filter = 'grayscale(100%)';
+        if (grayed) {
+          ctx.filter = 'grayscale(100%)';
+        } else if (faction === 'enemy') {
+          // Blue sprites -> Red for enemies (hue-rotate 140deg + saturate for vivid red)
+          ctx.filter = 'hue-rotate(140deg) saturate(1.3) brightness(1.1)';
+        } else if (faction === 'ally') {
+          // Blue sprites -> Green for allies
+          ctx.filter = 'hue-rotate(60deg) saturate(1.2)';
+        }
         
         // Map sprites usually don't need scaling down if they are 16x32, we just draw them centered
         var drawW = sw * 1.5;
@@ -386,6 +424,10 @@ var Sprites = {
         ctx.save();
         if (grayed) {
           ctx.filter = 'grayscale(100%)';
+        } else if (faction === 'enemy') {
+          ctx.filter = 'hue-rotate(140deg) saturate(1.3) brightness(1.1)';
+        } else if (faction === 'ally') {
+          ctx.filter = 'hue-rotate(60deg) saturate(1.2)';
         }
         // FE GBA map sprites are typically 16x32 or 32x32, we scale them to fit or center
         var drawW = sw > this.TILE ? sw : this.TILE;
@@ -406,10 +448,13 @@ var Sprites = {
       }
     }
     
-    // Fallback to old procedural drawing
+    // Fallback to procedural drawing
+    this._drawProceduralUnit(ctx,unit,x,y,grayed,sc,faction);
+  },
 
+  _drawProceduralUnit: function(ctx,unit,x,y,grayed,sc,faction){
     sc=sc||1;
-    var c=this.getUnitColors(unit.faction);
+    var c=this.getUnitColors(faction);
     var hair=(unit.portrait&&unit.portrait.hair)?unit.portrait.hair:c.accent;
     var skin=(unit.portrait&&unit.portrait.skin)?unit.portrait.skin:c.skin;
     var eyes=(unit.portrait&&unit.portrait.eyes)?unit.portrait.eyes:'#222';
