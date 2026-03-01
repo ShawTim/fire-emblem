@@ -250,8 +250,9 @@ var Sprites = {
   },
 
   
-  drawUnit: function(ctx,unit,x,y,grayed,sc){
+  drawUnit: function(ctx,unit,x,y,grayed,sc,faction){
     sc=sc||1;
+    faction=faction||'player'; // 'player', 'enemy', 'ally'
     var cls=unit.classId||'soldier';
     var classDef=getClassData(cls);
     
@@ -324,7 +325,15 @@ var Sprites = {
         }
         
         ctx.save();
-        if (grayed) ctx.filter = 'grayscale(100%)';
+        if (grayed) {
+          ctx.filter = 'grayscale(100%)';
+        } else if (faction === 'enemy') {
+          // Blue sprites -> Red for enemies (hue-rotate 140deg + saturate for vivid red)
+          ctx.filter = 'hue-rotate(140deg) saturate(1.3) brightness(1.1)';
+        } else if (faction === 'ally') {
+          // Blue sprites -> Green for allies
+          ctx.filter = 'hue-rotate(60deg) saturate(1.2)';
+        }
         
         // Map sprites usually don't need scaling down if they are 16x32, we just draw them centered
         var drawW = sw * 1.5;
@@ -398,6 +407,10 @@ var Sprites = {
         ctx.save();
         if (grayed) {
           ctx.filter = 'grayscale(100%)';
+        } else if (faction === 'enemy') {
+          ctx.filter = 'hue-rotate(140deg) saturate(1.3) brightness(1.1)';
+        } else if (faction === 'ally') {
+          ctx.filter = 'hue-rotate(60deg) saturate(1.2)';
         }
         // FE GBA map sprites are typically 16x32 or 32x32, we scale them to fit or center
         var drawW = sw > this.TILE ? sw : this.TILE;
