@@ -259,8 +259,16 @@ var Sprites = {
     if (classDef && classDef.sprites) {
       if (!this._imgCache) this._imgCache = {};
       var isMoving = (unit.vx || unit.vy);
-      var sKey = isMoving ? classDef.sprites.move : classDef.sprites.stand;
-      if (!this._imgCache[sKey]) {
+      
+      // Get sprite key with fallback (male -> female -> empty)
+      var sKey = isMoving 
+        ? (classDef.sprites.walk_m || classDef.sprites.move_m || classDef.sprites.walk_f || classDef.sprites.move_f || '')
+        : (classDef.sprites.stand_m || classDef.sprites.stand_f || '');
+      
+      // Skip if no valid sprite path
+      if (!sKey) {
+        // Fall through to procedural drawing
+      } else if (!this._imgCache[sKey]) {
         var img = new Image();
         
         // Handle path resolution for subdirectories like classes/index.html
@@ -271,11 +279,19 @@ var Sprites = {
         }
 
         this._imgCache[sKey] = { img: img, loaded: false };
-        img.onload = function() { Sprites._imgCache[sKey].loaded = true; };
+        (function(key) {
+          img.onload = function() { if (Sprites._imgCache[key]) Sprites._imgCache[key].loaded = true; };
+          img.onerror = function() { 
+            if (Sprites._imgCache[key]) {
+              Sprites._imgCache[key].loaded = true; 
+              Sprites._imgCache[key].error = true;
+            }
+          };
+        })(sKey);
       }
       
-      var sData = this._imgCache[sKey];
-      if (sData && sData.loaded) {
+      var sData = sKey ? this._imgCache[sKey] : null;
+      if (sData && sData.loaded && !sData.error) {
         // Moving sheets usually have 4 columns (frames) and 4 rows (dirs: down, left, right, up)
         // Standing sheets usually have 3 frames and 1 column.
         var cols = 1;
@@ -330,19 +346,33 @@ var Sprites = {
     // Use new image sprite sheet if available
     if (classDef && classDef.sprites) {
       if (!this._imgCache) this._imgCache = {};
-      var sKey = unit._moving ? classDef.sprites.move : classDef.sprites.stand;
-      if (!this._imgCache[sKey]) {
+      var sKey = unit._moving 
+        ? (classDef.sprites.move || classDef.sprites.walk || '')
+        : (classDef.sprites.stand || '');
+      
+      // Skip if no valid sprite path
+      if (!sKey) {
+        // Fall through to procedural drawing
+      } else if (!this._imgCache[sKey]) {
         var img = new Image();
         img.src = sKey;
         this._imgCache[sKey] = { img: img, loaded: false };
-        img.onload = function() { Sprites._imgCache[sKey].loaded = true; };
+        (function(key) {
+          img.onload = function() { if (Sprites._imgCache[key]) Sprites._imgCache[key].loaded = true; };
+          img.onerror = function() { 
+            if (Sprites._imgCache[key]) {
+              Sprites._imgCache[key].loaded = true;
+              Sprites._imgCache[key].error = true;
+            }
+          };
+        })(sKey);
       }
       
-      var sData = this._imgCache[sKey];
+      var sData = sKey ? this._imgCache[sKey] : null;
       var frameCount = classDef.sprites.frames || 3;
       var frame = unit._moving ? Math.floor(this._frameCounter / 8) % 4 : Math.floor(this._frameCounter / 14) % frameCount;
       
-      if (sData && sData.loaded) {
+      if (sData && sData.loaded && !sData.error) {
         var sw = sData.img.width / (unit._moving ? 4 : frameCount); // assumption based on common sheets
         var sh = unit._moving ? sData.img.height / 4 : sData.img.height; // if moving, assume 4 rows (dirs)
         
