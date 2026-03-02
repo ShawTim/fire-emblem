@@ -253,12 +253,67 @@ if (mobileToggleBtn) {
   
   document.addEventListener('fullscreenchange', () => {
     console.log('Fullscreen changed. Element:', document.fullscreenElement);
+    const canvasEl = document.getElementById('gameCanvas');
+    const uiOverlay = document.getElementById('ui-overlay');
+    
     if (document.fullscreenElement) {
       document.body.classList.add('is-fullscreen');
+      mobileToggleBtn.style.display = 'block'; // 確保 button 可見
       mobileToggleBtn.textContent = '退出全螢幕';
+      
+      // Calculate scale using JavaScript
+      const scaleX = window.innerWidth / 800;
+      const scaleY = window.innerHeight / 600;
+      const scale = Math.min(scaleX, scaleY);
+      
+      console.log('--- Scale Debug ---');
+      console.log('Viewport:', window.innerWidth, 'x', window.innerHeight);
+      console.log('scaleX (vw/800):', scaleX);
+      console.log('scaleY (vh/600):', scaleY);
+      console.log('scale (min):', scale);
+      console.log('-------------------');
+      
+      // Apply transform directly
+      const transformValue = `scale(${scale})`;
+      canvasEl.style.transform = transformValue;
+      canvasEl.style.transformOrigin = 'center center';
+      uiOverlay.style.transform = transformValue;
+      uiOverlay.style.transformOrigin = 'center center';
+      
+      // Position elements in center
+      canvasEl.style.position = 'absolute';
+      canvasEl.style.top = '50%';
+      canvasEl.style.left = '50%';
+      canvasEl.style.marginTop = '-300px';
+      canvasEl.style.marginLeft = '-400px';
+      
+      uiOverlay.style.position = 'absolute';
+      uiOverlay.style.top = '50%';
+      uiOverlay.style.left = '50%';
+      uiOverlay.style.marginTop = '-300px';
+      uiOverlay.style.marginLeft = '-400px';
+
     } else {
       document.body.classList.remove('is-fullscreen');
+      mobileToggleBtn.style.display = 'block'; // 保持可見
       mobileToggleBtn.textContent = '全螢幕';
+      
+      // Reset transform
+      canvasEl.style.transform = '';
+      canvasEl.style.transformOrigin = '';
+      canvasEl.style.position = '';
+      canvasEl.style.top = '';
+      canvasEl.style.left = '';
+      canvasEl.style.marginTop = '';
+      canvasEl.style.marginLeft = '';
+      
+      uiOverlay.style.transform = '';
+      uiOverlay.style.transformOrigin = '';
+      uiOverlay.style.position = '';
+      uiOverlay.style.top = '';
+      uiOverlay.style.left = '';
+      uiOverlay.style.marginTop = '';
+      uiOverlay.style.marginLeft = '';
     }
     // Ensure internal resolution is always correct
     canvas.width = 800;
