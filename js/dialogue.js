@@ -90,9 +90,12 @@ class DialogueSystem {
     this.active = false;
     this.box.classList.add('hidden');
     
-    // Restore fullscreen button visibility
+    // Restore fullscreen button visibility (only on small screens)
     const mobileBtn = document.getElementById('mobile-toggle');
-    if (mobileBtn) mobileBtn.style.display = 'block';
+    if (mobileBtn) {
+      const isSmallScreen = window.innerWidth < 900 || window.innerHeight < 650;
+      if (isSmallScreen) mobileBtn.style.display = 'block';
+    }
     
     if (this.onComplete) this.onComplete();
   }
