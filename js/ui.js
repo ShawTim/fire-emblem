@@ -270,7 +270,7 @@ const UI = {
     if (hasSave) contBtn.classList.remove('hidden');
     else contBtn.classList.add('hidden');
   },
-  hideTitleScreen() { this.titleScreen.classList.add('hidden'); },
+  hideTitleScreen() { this.titleScreen.classList.add('hidden'); const toggleBtn = document.getElementById('mobile-toggle'); if (toggleBtn) toggleBtn.style.display = 'block'; },
 
   showChapterCard(title, subtitle, onDone) {
     this.chapterText.textContent = title;

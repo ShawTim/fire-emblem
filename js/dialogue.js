@@ -1,4 +1,4 @@
-// dialogue.js — Dialogue system with typewriter effect
+// dialogue.js - Dialogue system with typewriter effect
 
 class DialogueSystem {
   constructor() {
@@ -37,9 +37,17 @@ class DialogueSystem {
     this.charTimer = 0;
     this.finished = false;
 
-    // Hide fullscreen button during dialogue to prevent overlap
+    // Hide fullscreen button during dialogue ONLY if:
+    // - Already in fullscreen mode, OR
+    // - Mobile device (screen width <= 900)
     const mobileBtn = document.getElementById('mobile-toggle');
-    if (mobileBtn) mobileBtn.style.display = 'none';
+    if (mobileBtn) {
+      const isFullscreen = !!document.fullscreenElement;
+      const isMobile = window.innerWidth <= 900;
+      if (isFullscreen || isMobile) {
+        mobileBtn.style.display = 'none';
+      }
+    }
 
     // Speaker name
     if (line.speaker && CHARACTERS[line.speaker]) {
@@ -90,11 +98,15 @@ class DialogueSystem {
     this.active = false;
     this.box.classList.add('hidden');
     
-    // Restore fullscreen button visibility (only on small screens)
+    // Restore fullscreen button visibility
     const mobileBtn = document.getElementById('mobile-toggle');
     if (mobileBtn) {
-      const isSmallScreen = window.innerWidth < 900 || window.innerHeight < 650;
-      if (isSmallScreen) mobileBtn.style.display = 'block';
+      const isFullscreen = !!document.fullscreenElement;
+      const isMobile = window.innerWidth <= 900;
+      // Only show if NOT in fullscreen OR on desktop
+      if (!isFullscreen || !isMobile) {
+        mobileBtn.style.display = 'block';
+      }
     }
     
     if (this.onComplete) this.onComplete();

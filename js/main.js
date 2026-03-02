@@ -198,28 +198,6 @@ document.addEventListener('touchend', (e) => {
   lastTouchEnd = now;
 }, { passive: false });
 
-// === Mobile Support (DISABLED - caused rendering issues) ===
-// Temporarily disabled to fix canvas scaling bugs
-// TODO: Re-implement with proper coordinate transformation
-/*
-var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-var isLandscapeFS = false;
-var mobileBtn = document.getElementById('mobile-toggle');
-
-function resizeCanvas() {
-  var w = window.innerWidth;
-  var h = window.innerHeight;
-  canvas.width = 800;
-  canvas.height = 600;
-  var scale = Math.min(w / 800, h / 600);
-  canvas.style.width = Math.floor(800 * scale) + 'px';
-  canvas.style.height = Math.floor(600 * scale) + 'px';
-  ctx.imageSmoothingEnabled = false;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-*/
-
 // === Fullscreen Toggle (All devices) ===
 const mobileToggleBtn = document.getElementById('mobile-toggle');
 if (mobileToggleBtn) {
