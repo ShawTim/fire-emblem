@@ -29,11 +29,33 @@ class Game {
   }
 
   init() {
+    // Preload portraits and map sprites
     Sprites.preloadPortraits();
-    const hasSave = !!localStorage.getItem('fe_save');
-    UI.showTitleScreen(hasSave);
-    this.state = 'title';
-    BGM.play('title', true);
+    
+    // Show loading screen while preloading sprites
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'sprite-loading';
+    loadingDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#0a0a1a;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#4a9eff;font-family:inherit;';
+    loadingDiv.innerHTML = '<div style="font-size:24px;margin-bottom:20px;">載入資源中...</div><div id="loading-progress" style="font-size:16px;color:#88a;">0%</div>';
+    document.body.appendChild(loadingDiv);
+    
+    Sprites.preloadMapSprites(
+      (loaded, total) => {
+        const pct = Math.round((loaded / total) * 100);
+        const progressDiv = document.getElementById('loading-progress');
+        if (progressDiv) progressDiv.textContent = pct + '%';
+      },
+      () => {
+        // Remove loading screen when done
+        const loading = document.getElementById('sprite-loading');
+        if (loading) loading.remove();
+        
+        const hasSave = !!localStorage.getItem('fe_save');
+        UI.showTitleScreen(hasSave);
+        this.state = 'title';
+        BGM.play('title', true);
+      }
+    );
   }
 
   startNewGame() {

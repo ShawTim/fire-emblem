@@ -875,6 +875,74 @@ var Sprites = {
     }
   },
 
+  // Preload all map sprites from classes.js
+  preloadMapSprites: function(onProgress, onComplete) {
+    if (!this._imgCache) this._imgCache = {};
+    
+    // Collect all sprite paths from CLASSES
+    var spritesToLoad = [];
+    for (var classId in CLASSES) {
+      var cls = CLASSES[classId];
+      if (cls.sprites) {
+        // Add all sprite variants
+        var keys = ['stand_m', 'stand_f', 'walk_m', 'walk_f', 'move_m', 'move_f'];
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          if (cls.sprites[key]) {
+            spritesToLoad.push(cls.sprites[key]);
+          }
+        }
+      }
+    }
+    
+    // Remove duplicates
+    var uniqueSprites = [];
+    for (var j = 0; j < spritesToLoad.length; j++) {
+      if (uniqueSprites.indexOf(spritesToLoad[j]) === -1) {
+        uniqueSprites.push(spritesToLoad[j]);
+      }
+    }
+    
+    var loaded = 0;
+    var total = uniqueSprites.length;
+    
+    if (total === 0) {
+      if (onComplete) onComplete();
+      return;
+    }
+    
+    for (var k = 0; k < uniqueSprites.length; k++) {
+      var sKey = uniqueSprites[k];
+      if (!this._imgCache[sKey]) {
+        var img = new Image();
+        img.src = 'assets/sprites/map/' + sKey;
+        this._imgCache[sKey] = { img: img, loaded: false };
+        
+        (function(key, self) {
+          img.onload = function() {
+            self._imgCache[key].loaded = true;
+            loaded++;
+            if (onProgress) onProgress(loaded, total);
+            if (loaded >= total && onComplete) onComplete();
+          };
+          img.onerror = function() {
+            self._imgCache[key].loaded = true;
+            self._imgCache[key].error = true;
+            loaded++;
+            if (onProgress) onProgress(loaded, total);
+            if (loaded >= total && onComplete) onComplete();
+          };
+        })(sKey, this);
+      } else {
+        loaded++;
+        if (onProgress) onProgress(loaded, total);
+      }
+    }
+    
+    // If all already cached, call complete immediately
+    if (loaded >= total && onComplete) onComplete();
+  },
+
   onPortraitReady: function(cb) { this._portraitCallbacks.push(cb); },
 
   drawGenericPortrait: function(ctx, unit, w, h) {
