@@ -258,10 +258,9 @@ if (mobileToggleBtn) {
       canvas.style.width = '800px';
       canvas.style.height = '600px';
     } else {
-      // Fullscreen mode - canvas will be sized by CSS
-      const container = document.getElementById('game-container');
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
+      // Fullscreen mode - let CSS handle sizing via aspect-ratio
+      canvas.style.width = '';
+      canvas.style.height = '';
     }
     // Trigger a resize to ensure canvas fits
     window.dispatchEvent(new Event('resize'));

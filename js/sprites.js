@@ -276,11 +276,16 @@ var Sprites = {
     // Check if new sprite system is defined
     if (classDef && classDef.sprites) {
       if (!this._imgCache) this._imgCache = {};
-      // Check if unit is moving or has a facing direction (after movement)
-      var isMoving = (unit.vx || unit.vy);
+      
+      // Determine which sprite sheet to use:
+      // 1. Selected state (_selected) -> walk sprite (selected frames)
+      // 2. Has direction (_direction) -> walk sprite (directional frames)
+      // 3. Actually moving (vx/vy) -> walk sprite (directional frames)
+      // 4. Otherwise -> stand sprite
+      var isSelected = !!unit._selected;
       var hasDirection = !!unit._direction;
-      // Use walk sprites if moving or has direction set
-      var useWalkSprites = isMoving || hasDirection;
+      var isMoving = (unit.vx || unit.vy);
+      var useWalkSprites = isSelected || hasDirection || isMoving;
       
       // Get gender (default to 'm' if not specified)
       var gender = unit.gender || 'm';
@@ -338,15 +343,28 @@ var Sprites = {
         var frame, flipX = false;
         
         if (isWalkSheet) {
-          // Determine direction and base frame
-          var direction = unit._direction || 'down';
-          var baseFrame;
+          // Priority: Moving with direction > Selected > Stand
+          // If unit is moving or has a direction, show directional walk sprite
+          // Only show selected frames (12-14) when stationary AND selected
+          var showDirectional = isMoving || (hasDirection && !unit._selected);
           
-          if (unit._selected) {
-            // Selected state - use frames 12-14
-            baseFrame = 12;
+          if (unit._selected && !showDirectional) {
+            // Selected but not moving - use frames 12-14 (selected animation)
+            var animFrame = Math.floor(this._frameCounter / 8) % 3;
+            frame = 12 + animFrame;
           } else {
-            // Determine base frame based on direction
+            // Moving or has direction - use directional frames
+            var direction = unit._direction;
+            if (!direction && isMoving) {
+              if (unit.vx > 0) direction = 'right';
+              else if (unit.vx < 0) direction = 'left';
+              else if (unit.vy > 0) direction = 'down';
+              else if (unit.vy < 0) direction = 'up';
+            }
+            direction = direction || 'down';
+            
+            // Map direction to base frame
+            var baseFrame;
             if (direction === 'left') {
               baseFrame = 0;
             } else if (direction === 'right') {
@@ -359,13 +377,11 @@ var Sprites = {
             } else {
               baseFrame = 4;  // Default to down
             }
+            
+            // Animate through 4 frames for each direction
+            var animFrame = Math.floor(this._frameCounter / 8) % 4;
+            frame = baseFrame + animFrame;
           }
-          
-          // Animate through 4 frames for each direction
-          var animFrame = Math.floor(this._frameCounter / 8) % 4;
-          // For selected state (3 frames), cap at 2
-          if (unit._selected && animFrame > 2) animFrame = 2;
-          frame = baseFrame + animFrame;
         } else {
           // Stand animation - simple idle frames
           frame = this._idleFrame();

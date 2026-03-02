@@ -513,11 +513,11 @@ body {
 }
 
 #game-container:fullscreen #gameCanvas {
-  width: 100% !important;
-  height: 100% !important;
+  width: auto !important;
+  height: auto !important;
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  aspect-ratio: 4 / 3;
 }
 
 /* Webkit prefix for Safari */
@@ -533,9 +533,9 @@ body {
 }
 
 #game-container:-webkit-full-screen #gameCanvas {
-  width: 100% !important;
-  height: 100% !important;
+  width: auto !important;
+  height: auto !important;
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  aspect-ratio: 4 / 3;
 }
