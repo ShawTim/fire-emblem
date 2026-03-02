@@ -475,6 +475,37 @@ body {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
+
+/* ===== Desktop Fullscreen (manual calc, no object-fit) ===== */
+@media (min-width: 901px) {
+  #game-container:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #game-container:fullscreen #gameCanvas {
+    /* For wide screens: fill height, calc width */
+    height: 100vh;
+    width: calc(100vh * 4 / 3);
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  
+  /* If screen is wider than 4:3: fill width, calc height */
+  @media (min-aspect-ratio: 4/3) {
+    #game-container:fullscreen #gameCanvas {
+      width: 100vw;
+      height: calc(100vw * 3 / 4);
+      max-width: 100vw;
+      max-height: 100vh;
+    }
+  }
+}
+
 @media (max-width: 900px), (max-height: 600px) {
   body { margin: 0; padding: 0; overflow: hidden; }
   #gameCanvas { display: block; margin: 0 auto; }
