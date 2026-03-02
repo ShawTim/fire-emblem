@@ -485,7 +485,7 @@ body {
   #game-container:-ms-fullscreen {
     width: 100vw !important;
     height: 100vh !important;
-    background: #000 !important;
+    background: #f00 !important; /* DEBUG: Red background */
     /* Calculate scale based on viewport vs 800x600 */
     --scale-x: calc(100vw / 800);
     --scale-y: calc(100vh / 600);
@@ -497,6 +497,7 @@ body {
   #game-container:-webkit-full-screen #gameCanvas,
   #game-container:-moz-full-screen #gameCanvas,
   #game-container:-ms-fullscreen #gameCanvas {
+    border: 5px solid #0f0 !important; /* DEBUG: Green border */
     transform: scale(var(--scale)) !important;
     transform-origin: center center !important;
     /* Keep original size for coordinate system */
