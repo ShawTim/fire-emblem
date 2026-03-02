@@ -476,12 +476,33 @@ body {
   touch-action: manipulation;
 }
 
-/* ===== Fullscreen Debug Test ===== */
+/* ===== Fullscreen Styling using JS-added class ===== */
 body.is-fullscreen {
-  background: #f00 !important; /* DEBUG: Red background */
+  background: #000 !important;
 }
-body.is-fullscreen #gameCanvas {
-  border: 5px solid #0f0 !important; /* DEBUG: Green border */
+
+body.is-fullscreen #game-container {
+  /* Let the container fill the screen */
+  width: 100vw;
+  height: 100vh;
+  /* Use CSS variables to calculate scale */
+  --scale-x: calc(100vw / 800);
+  --scale-y: calc(100vh / 600);
+  --scale: min(var(--scale-x), var(--scale-y));
+}
+
+body.is-fullscreen #gameCanvas,
+body.is-fullscreen #ui-overlay {
+  /* Scale the canvas and UI overlay together */
+  transform: scale(var(--scale));
+  /* Ensure the origin is the center for scaling */
+  transform-origin: center center;
+  /* Position them in the middle of the container */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -400px; /* -(800/2)px */
+  margin-top: -300px; /* -(600/2)px */
 }
 
 @media (max-width: 900px), (max-height: 600px) {
