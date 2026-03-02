@@ -254,17 +254,8 @@ if (mobileToggleBtn) {
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
       mobileToggleBtn.textContent = '全螢幕';
-      // Reset canvas style to let CSS handle sizing
-      canvas.style.width = '';
-      canvas.style.height = '';
     } else {
       mobileToggleBtn.textContent = '退出全螢幕';
-      // Fullscreen mode - CSS will handle sizing
-      // Ensure internal resolution stays 800x600
-      canvas.width = 800;
-      canvas.height = 600;
     }
-    // Trigger a resize to ensure canvas fits
-    window.dispatchEvent(new Event('resize'));
   });
 }
