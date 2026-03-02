@@ -15,6 +15,9 @@ body {
   position: relative;
   width: 800px;
   height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #gameCanvas {
@@ -475,85 +478,8 @@ body {
   touch-action: manipulation;
 }
 
-/* ===== Desktop Fullscreen with Transform Scale ===== */
-@media (min-width: 901px) {
-  body.is-fullscreen #game-container {
-    width: 100vw;
-    height: 100vh;
-    background: #000;
-    /* Calculate scale based on viewport vs 800x600 */
-    --scale-x: calc(100vw / 800);
-    --scale-y: calc(100vh / 600);
-    --scale: min(var(--scale-x), var(--scale-y));
-  }
-  
-  /* Apply scale to game canvas */
-  body.is-fullscreen #game-container #gameCanvas {
-    transform: scale(var(--scale));
-    transform-origin: center center;
-    /* Keep original size for coordinate system */
-    width: 800px !important;
-    height: 600px !important;
-  }
-  
-  /* UI overlay needs same scale */
-  body.is-fullscreen #game-container #ui-overlay {
-    transform: scale(var(--scale));
-    transform-origin: center center;
-    width: 800px !important;
-    height: 600px !important;
-    top: 50%;
-    left: 50%;
-    margin-top: -300px;
-    margin-left: -400px;
-  }
-  
-  /* Terrain info also scaled */
-  body.is-fullscreen #game-container #terrain-info {
-    transform: scale(var(--scale));
-    transform-origin: bottom left;
-    /* Adjust position based on scale */
-    bottom: calc(8px * var(--scale));
-    left: calc(8px * var(--scale));
-  }
-}
-
-/* Webkit prefix */
-@media (min-width: 901px) {
-  #game-container:-webkit-full-screen {
-    width: 100vw;
-    height: 100vh;
-    background: #000;
-    --scale-x: calc(100vw / 800);
-    --scale-y: calc(100vh / 600);
-    --scale: min(var(--scale-x), var(--scale-y));
-  }
-  
-  #game-container:-webkit-full-screen #gameCanvas {
-    transform: scale(var(--scale));
-    transform-origin: center center;
-    width: 800px !important;
-    height: 600px !important;
-  }
-  
-  #game-container:-webkit-full-screen #ui-overlay {
-    transform: scale(var(--scale));
-    transform-origin: center center;
-    width: 800px !important;
-    height: 600px !important;
-    top: 50%;
-    left: 50%;
-    margin-top: -300px;
-    margin-left: -400px;
-  }
-  
-  #game-container:-webkit-full-screen #terrain-info {
-    transform: scale(var(--scale));
-    transform-origin: bottom left;
-    bottom: calc(8px * var(--scale));
-    left: calc(8px * var(--scale));
-  }
-}
+/* Desktop fullscreen is handled by JavaScript */
+/* Mobile fullscreen styles below */
 
 @media (max-width: 900px), (max-height: 600px) {
   body { margin: 0; padding: 0; overflow: hidden; }

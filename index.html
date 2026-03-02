@@ -13,22 +13,12 @@
   <button id="mobile-toggle" style="display:none; position:fixed; bottom:8px; left:8px; z-index:9999; background:rgba(0,0,0,0.7); border:1px solid #4a9eff; color:#4a9eff; padding:4px 8px; border-radius:4px; font-family:inherit; font-size:12px; cursor:pointer; line-height:1;">全螢幕</button>
     <canvas id="gameCanvas"></canvas>
   <div id="ui-overlay">
-    <div id="top-bar">
-      <span id="chapter-name"></span>
-      <span id="turn-count"></span>
-      <span id="phase-indicator"></span>
-    </div>
     <div id="unit-panel" class="hidden">
       <div id="unit-portrait"></div>
       <div id="unit-info"></div>
     </div>
     <div id="action-menu" class="hidden"></div>
     <div id="combat-forecast" class="hidden"></div>
-    <div id="dialogue-box" class="hidden">
-      <canvas id="portrait-canvas" width="80" height="80"></canvas>
-      <div id="dialogue-name"></div>
-      <div id="dialogue-text"></div>
-    </div>
     <div id="phase-banner" class="hidden"></div>
     <div id="level-up-screen" class="hidden"></div>
     <div id="title-screen" class="hidden">
@@ -46,6 +36,16 @@
       <div id="chapter-title-text"></div>
       <div id="chapter-title-sub"></div>
     </div>
+  </div>
+  <div id="top-bar">
+    <span id="chapter-name"></span>
+    <span id="turn-count"></span>
+    <span id="phase-indicator"></span>
+  </div>
+  <div id="dialogue-box" class="hidden">
+    <canvas id="portrait-canvas" width="80" height="80"></canvas>
+    <div id="dialogue-name"></div>
+    <div id="dialogue-text"></div>
   </div>
 </div>
 <script src="js/sfx.js?v=2"></script>

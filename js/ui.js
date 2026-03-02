@@ -414,21 +414,6 @@ const UI = {
     }
     if (!itemsHtml) itemsHtml = '<div style="color:#555">（無裝備）</div>';
 
-    // Promotion paths (player only)
-    let promoHtml = '';
-    if (isPlayer) {
-      if (cls.promo && cls.promo.length > 0) {
-        promoHtml = '<div style="margin-top:8px;font-size:11px;color:#aaa">轉職路線：';
-        for (const p of cls.promo) {
-          const targetCls = getClassData(p.to);
-          promoHtml += `<span style="color:#ffa500"> ${targetCls.name}</span>`;
-        }
-        promoHtml += '</div>';
-      } else if (cls.promoted) {
-        promoHtml = '<div style="margin-top:8px;font-size:11px;color:#ffa500">（已轉職）</div>';
-      }
-    }
-
     const borderColor = isPlayer ? '#4a9eff' : '#ff4a4a';
     const nameColor = isPlayer ? '#4a9eff' : '#ff4a4a';
     const hasStatusPortrait = unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded;
@@ -439,6 +424,13 @@ const UI = {
     overlay.innerHTML = `
       <div style="background:#111;border:2px solid ${borderColor};border-radius:8px;padding:16px;max-width:min(650px,95vw);max-height:90vh;overflow-y:auto;font-size:13px;box-sizing:border-box">
   <style>
+    #portrait-container {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
     @media (orientation: portrait) {
       #status-screen > div {
         display: block !important;
@@ -449,8 +441,14 @@ const UI = {
         margin: 6px 0 !important;
       }
     }
+
+    @media (orientation: landscape) {
+      #portrait-container {
+        margin-bottom: 0;
+      }
+    }
   </style>
-        <div style="display:flex;gap:24px;margin-bottom:16px;align-items:flex-start">
+        <div id="portrait-container">
           <div>
             ${statusPortraitHtml}
           </div>
@@ -471,7 +469,6 @@ const UI = {
             ${isPlayer ? `<div style="background:#224;height:6px;width:150px;margin-top:4px;border-radius:2px">
               <div style="background:#48f;height:6px;width:${unit.exp * 1.5}px;border-radius:2px"></div>
             </div>` : ''}
-            ${promoHtml}
           </div>
         </div>
 
@@ -497,7 +494,6 @@ const UI = {
             <div style="font-size:11px;line-height:1.6">${this._getWeaponProficiency(cls)}</div>
           </div>
         </div>
-        <div style="text-align:center;margin-top:16px;color:#555;font-size:11px">按 R / Esc / 點擊 關閉</div>
       </div>
     `;
 
