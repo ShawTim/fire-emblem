@@ -252,14 +252,16 @@ if (mobileToggleBtn) {
   });
   
   document.addEventListener('fullscreenchange', () => {
-    console.log('Fullscreen changed:', document.fullscreenElement);
-    if (!document.fullscreenElement) {
-      mobileToggleBtn.textContent = '全螢幕';
-    } else {
+    console.log('Fullscreen changed. Element:', document.fullscreenElement);
+    if (document.fullscreenElement) {
+      document.body.classList.add('is-fullscreen');
       mobileToggleBtn.textContent = '退出全螢幕';
+    } else {
+      document.body.classList.remove('is-fullscreen');
+      mobileToggleBtn.textContent = '全螢幕';
     }
+    // Ensure internal resolution is always correct
     canvas.width = 800;
     canvas.height = 600;
-    window.dispatchEvent(new Event('resize'));
   });
 }

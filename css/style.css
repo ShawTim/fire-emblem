@@ -476,65 +476,12 @@ body {
   touch-action: manipulation;
 }
 
-/* ===== Desktop Fullscreen with Transform Scale ===== */
-@media (min-width: 901px) {
-  /* Target the fullscreen element itself */
-  #game-container:fullscreen,
-  #game-container:-webkit-full-screen,
-  #game-container:-moz-full-screen,
-  #game-container:-ms-fullscreen {
-    width: 100vw !important;
-    height: 100vh !important;
-    background: #f00 !important; /* DEBUG: Red background */
-    /* Calculate scale based on viewport vs 800x600 */
-    --scale-x: calc(100vw / 800);
-    --scale-y: calc(100vh / 600);
-    --scale: min(var(--scale-x), var(--scale-y));
-  }
-  
-  /* Apply scale to game canvas */
-  #game-container:fullscreen #gameCanvas,
-  #game-container:-webkit-full-screen #gameCanvas,
-  #game-container:-moz-full-screen #gameCanvas,
-  #game-container:-ms-fullscreen #gameCanvas {
-    border: 5px solid #0f0 !important; /* DEBUG: Green border */
-    transform: scale(var(--scale)) !important;
-    transform-origin: center center !important;
-    /* Keep original size for coordinate system */
-    width: 800px !important;
-    height: 600px !important;
-    max-width: 800px !important;
-    max-height: 600px !important;
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    margin-top: -300px !important;
-    margin-left: -400px !important;
-  }
-  
-  /* UI overlay needs same scale */
-  #game-container:fullscreen #ui-overlay,
-  #game-container:-webkit-full-screen #ui-overlay,
-  #game-container:-moz-full-screen #ui-overlay,
-  #game-container:-ms-fullscreen #ui-overlay {
-    transform: scale(var(--scale)) !important;
-    transform-origin: center center !important;
-    width: 800px !important;
-    height: 600px !important;
-    top: 50% !important;
-    left: 50% !important;
-    margin-top: -300px !important;
-    margin-left: -400px !important;
-  }
-  
-  /* Terrain info also scaled */
-  #game-container:fullscreen #terrain-info,
-  #game-container:-webkit-full-screen #terrain-info,
-  #game-container:-moz-full-screen #terrain-info,
-  #game-container:-ms-fullscreen #terrain-info {
-    transform: scale(var(--scale)) !important;
-    transform-origin: bottom left !important;
-  }
+/* ===== Fullscreen Debug Test ===== */
+body.is-fullscreen {
+  background: #f00 !important; /* DEBUG: Red background */
+}
+body.is-fullscreen #gameCanvas {
+  border: 5px solid #0f0 !important; /* DEBUG: Green border */
 }
 
 @media (max-width: 900px), (max-height: 600px) {
