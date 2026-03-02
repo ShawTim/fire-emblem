@@ -439,6 +439,7 @@ class Game {
       UI.hideUnitPanel();
       if (this.selectedUnit) {
         this.selectedUnit._selected = false;
+        this.selectedUnit._direction = null; // Clear facing direction
       }
       this.selectedUnit = null;
       if (this.state === 'map') {
@@ -688,6 +689,7 @@ class Game {
           unit.moved = true;
           if (this.selectedUnit) {
             this.selectedUnit._selected = false;
+            this.selectedUnit._direction = null; // Clear facing direction
           }
           this.selectedUnit = null;
           this.state = 'map';
@@ -720,7 +722,8 @@ class Game {
     
     const advance = () => {
       if (step >= path.length) {
-        unit._direction = null; // Clear direction when done
+        // Keep _direction for facing after movement
+        // It will be cleared when player confirms action or cancels
         if (onDone) onDone();
         return;
       }
@@ -1057,6 +1060,7 @@ class Game {
       this.selectedUnit.acted = true;
       this.selectedUnit.moved = true;
       this.selectedUnit._selected = false;
+      this.selectedUnit._direction = null; // Clear facing direction
     }
     this.selectedUnit = null;
     this.combatResult = null;
@@ -1127,6 +1131,7 @@ class Game {
       this.selectedUnit.acted = true;
       this.selectedUnit.moved = true;
       this.selectedUnit._selected = false;
+      this.selectedUnit._direction = null; // Clear facing direction
     }
     this.selectedUnit = null;
     this.moveRange = [];
@@ -1142,6 +1147,7 @@ class Game {
   cancelSelection() {
     if (this.selectedUnit) {
       this.selectedUnit._selected = false;
+      this.selectedUnit._direction = null; // Clear facing direction
     }
     this.selectedUnit = null;
     this.moveRange = [];
