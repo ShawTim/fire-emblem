@@ -514,19 +514,14 @@ body {
 
 /* Calculate canvas size to maintain 4:3 aspect ratio */
 #game-container:fullscreen #gameCanvas {
-  /* Fill height, calculate width for 4:3 */
-  width: calc(100vh * 4 / 3) !important;
-  height: 100vh !important;
+  /* Use object-fit to maintain aspect ratio */
+  width: 100% !important;
+  height: 100% !important;
   max-width: 100vw !important;
   max-height: 100vh !important;
-}
-
-/* If screen is wider than 4:3, fill width instead */
-@media (min-aspect-ratio: 4/3) {
-  #game-container:fullscreen #gameCanvas {
-    width: 100vw !important;
-    height: calc(100vw * 3 / 4) !important;
-  }
+  object-fit: contain !important;
+  /* Constrain to 4:3 ratio */
+  aspect-ratio: 4 / 3 !important;
 }
 
 /* Webkit prefix for Safari */
@@ -542,15 +537,17 @@ body {
 }
 
 #game-container:-webkit-full-screen #gameCanvas {
-  width: calc(100vh * 4 / 3) !important;
-  height: 100vh !important;
+  width: 100% !important;
+  height: 100% !important;
   max-width: 100vw !important;
   max-height: 100vh !important;
+  object-fit: contain !important;
+  aspect-ratio: 4 / 3 !important;
 }
 
 @media (min-aspect-ratio: 4/3) {
   #game-container:-webkit-full-screen #gameCanvas {
-    width: 100vw !important;
-    height: calc(100vw * 3 / 4) !important;
+    width: 100% !important;
+    height: 100% !important;
   }
 }

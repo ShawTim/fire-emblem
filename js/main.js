@@ -260,6 +260,9 @@ if (mobileToggleBtn) {
     } else {
       mobileToggleBtn.textContent = '退出全螢幕';
       // Fullscreen mode - CSS will handle sizing
+      // Ensure internal resolution stays 800x600
+      canvas.width = 800;
+      canvas.height = 600;
     }
     // Trigger a resize to ensure canvas fits
     window.dispatchEvent(new Event('resize'));
