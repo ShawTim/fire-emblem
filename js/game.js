@@ -707,17 +707,15 @@ class Game {
   animateMove(unit, path, onDone) {
     if (!path || path.length <= 1) { if (onDone) onDone(); return; }
     if (this.state !== 'enemyPhase') this.state = 'animating';
+    let step = 1;
     
     // Movement speed based on unit's spd stat
-    // Base: 200ms per tile, faster units move quicker
-    // spd 5 -> 200ms, spd 15 -> 120ms, spd 25 -> 80ms
-    const baseSpeed = 200;
+    // Base: 150ms per tile, faster units move quicker
+    const baseSpeed = 150;
     const spd = unit.spd || 10;
-    const tileDuration = Math.max(60, baseSpeed - (spd - 10) * 8);
+    const tileDuration = Math.max(80, baseSpeed - (spd - 10) * 4);
     
-    let step = 1;
-    let lastTime = performance.now();
-    
+    // Helper to determine direction from path delta
     const getDirection = (from, to) => {
       const dx = to.x - from.x;
       const dy = to.y - from.y;
@@ -728,28 +726,21 @@ class Game {
       return unit._direction || 'down';
     };
     
-    const advance = (currentTime) => {
+    const advance = () => {
       if (step >= path.length) {
+        // Keep _direction for facing after movement
         if (onDone) onDone();
         return;
       }
-      
-      const elapsed = currentTime - lastTime;
-      
-      if (elapsed >= tileDuration) {
-        // Set direction before moving
-        unit._direction = getDirection(path[step - 1], path[step]);
-        unit.x = path[step].x;
-        unit.y = path[step].y;
-        GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
-        step++;
-        lastTime = currentTime;
-      }
-      
-      requestAnimationFrame(advance);
+      // Set direction before moving
+      unit._direction = getDirection(path[step - 1], path[step]);
+      unit.x = path[step].x;
+      unit.y = path[step].y;
+      GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
+      step++;
+      setTimeout(advance, tileDuration);
     };
-    
-    requestAnimationFrame(advance);
+    advance();
   }
 
   onUnitSelectedClick(x, y, screenX, screenY) {
