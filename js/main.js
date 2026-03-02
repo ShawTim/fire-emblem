@@ -254,6 +254,14 @@ if (mobileToggleBtn) {
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
       mobileToggleBtn.textContent = '全螢幕';
+      // Reset canvas size
+      canvas.style.width = '800px';
+      canvas.style.height = '600px';
+    } else {
+      // Fullscreen mode - canvas will be sized by CSS
+      const container = document.getElementById('game-container');
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
     }
     // Trigger a resize to ensure canvas fits
     window.dispatchEvent(new Event('resize'));
