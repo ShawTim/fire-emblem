@@ -351,7 +351,7 @@ var Sprites = {
           // Priority: Moving with direction > Selected > Stand
           // If unit is moving or has a direction, show directional walk sprite
           // Only show selected frames (12-14) when stationary AND selected
-          var showDirectional = isMoving || (hasDirection && !unit._selected);
+          var showDirectional = isMoving || hasDirection;
           
           if (unit._selected && !showDirectional) {
             // Selected but not moving - use frames 12-14 (selected animation)
