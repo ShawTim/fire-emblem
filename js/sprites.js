@@ -342,6 +342,11 @@ var Sprites = {
         
         var frame, flipX = false;
         
+        // Animation speed based on unit's spd stat
+        // spd 5 -> slower (divisor 6), spd 15 -> normal (divisor 8), spd 25 -> faster (divisor 12)
+        var spd = unit.spd || 10;
+        var animSpeed = Math.max(4, Math.min(16, 8 + (spd - 10) / 2));
+        
         if (isWalkSheet) {
           // Priority: Moving with direction > Selected > Stand
           // If unit is moving or has a direction, show directional walk sprite
@@ -350,7 +355,7 @@ var Sprites = {
           
           if (unit._selected && !showDirectional) {
             // Selected but not moving - use frames 12-14 (selected animation)
-            var animFrame = Math.floor(this._frameCounter / 8) % 3;
+            var animFrame = Math.floor(this._frameCounter / animSpeed) % 3;
             frame = 12 + animFrame;
           } else {
             // Moving or has direction - use directional frames
@@ -379,7 +384,7 @@ var Sprites = {
             }
             
             // Animate through 4 frames for each direction
-            var animFrame = Math.floor(this._frameCounter / 8) % 4;
+            var animFrame = Math.floor(this._frameCounter / animSpeed) % 4;
             frame = baseFrame + animFrame;
           }
         } else {

@@ -707,9 +707,17 @@ class Game {
   animateMove(unit, path, onDone) {
     if (!path || path.length <= 1) { if (onDone) onDone(); return; }
     if (this.state !== 'enemyPhase') this.state = 'animating';
-    let step = 1;
     
-    // Helper to determine direction from path delta
+    // Movement speed based on unit's spd stat
+    // Base: 200ms per tile, faster units move quicker
+    // spd 5 -> 200ms, spd 15 -> 120ms, spd 25 -> 80ms
+    const baseSpeed = 200;
+    const spd = unit.spd || 10;
+    const tileDuration = Math.max(60, baseSpeed - (spd - 10) * 8);
+    
+    let step = 1;
+    let lastTime = performance.now();
+    
     const getDirection = (from, to) => {
       const dx = to.x - from.x;
       const dy = to.y - from.y;
@@ -720,22 +728,28 @@ class Game {
       return unit._direction || 'down';
     };
     
-    const advance = () => {
+    const advance = (currentTime) => {
       if (step >= path.length) {
-        // Keep _direction for facing after movement
-        // It will be cleared when player confirms action or cancels
         if (onDone) onDone();
         return;
       }
-      // Set direction before moving
-      unit._direction = getDirection(path[step - 1], path[step]);
-      unit.x = path[step].x;
-      unit.y = path[step].y;
-      GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
-      step++;
-      setTimeout(advance, 90);
+      
+      const elapsed = currentTime - lastTime;
+      
+      if (elapsed >= tileDuration) {
+        // Set direction before moving
+        unit._direction = getDirection(path[step - 1], path[step]);
+        unit.x = path[step].x;
+        unit.y = path[step].y;
+        GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
+        step++;
+        lastTime = currentTime;
+      }
+      
+      requestAnimationFrame(advance);
     };
-    advance();
+    
+    requestAnimationFrame(advance);
   }
 
   onUnitSelectedClick(x, y, screenX, screenY) {
