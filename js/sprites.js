@@ -276,7 +276,8 @@ var Sprites = {
     // Check if new sprite system is defined
     if (classDef && classDef.sprites) {
       if (!this._imgCache) this._imgCache = {};
-      var isMoving = (unit.vx || unit.vy);
+      // Check if unit is moving (has velocity or has direction set during animation)
+      var isMoving = (unit.vx || unit.vy || unit._direction);
       
       // Get gender (default to 'm' if not specified)
       var gender = unit.gender || 'm';
