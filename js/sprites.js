@@ -276,8 +276,11 @@ var Sprites = {
     // Check if new sprite system is defined
     if (classDef && classDef.sprites) {
       if (!this._imgCache) this._imgCache = {};
-      // isMoving: only true when unit has velocity (actual movement)
+      // Check if unit is moving or has a facing direction (after movement)
       var isMoving = (unit.vx || unit.vy);
+      var hasDirection = !!unit._direction;
+      // Use walk sprites if moving or has direction set
+      var useWalkSprites = isMoving || hasDirection;
       
       // Get gender (default to 'm' if not specified)
       var gender = unit.gender || 'm';
@@ -286,12 +289,12 @@ var Sprites = {
       var sKey;
       if (gender === 'f') {
         // Female first, fallback to male
-        sKey = isMoving 
+        sKey = useWalkSprites
           ? (classDef.sprites.walk_f || classDef.sprites.move_f || classDef.sprites.walk_m || classDef.sprites.move_m || '')
           : (classDef.sprites.stand_f || classDef.sprites.stand_m || '');
       } else {
         // Male first, fallback to female
-        sKey = isMoving 
+        sKey = useWalkSprites
           ? (classDef.sprites.walk_m || classDef.sprites.move_m || classDef.sprites.walk_f || classDef.sprites.move_f || '')
           : (classDef.sprites.stand_m || classDef.sprites.stand_f || '');
       }
@@ -327,7 +330,7 @@ var Sprites = {
         // 0-3: Left, 4-7: Down, 8-11: Up, 12-14: Selected (no direction)
         // Stand sprites: 3 frames in a single column
         
-        var isWalkSheet = isMoving && (sKey.includes('walk') || sKey.includes('move'));
+        var isWalkSheet = useWalkSprites && (sKey.includes('walk') || sKey.includes('move'));
         var totalFrames = isWalkSheet ? 15 : 3;
         var sw = sData.img.width;
         var sh = sData.img.height / totalFrames;
