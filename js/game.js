@@ -1144,9 +1144,11 @@ class Game {
         this.endTurn();
       },
       onQuit: () => {
-        this.state = 'title';
-        UI.clearOverlays();
-        this.init();
+        UI.showConfirm('確定要結束遊戲嗎？', () => {
+          this.state = 'title';
+          UI.clearOverlays();
+          this.init();
+        });
       },
       onClose: () => {
         this.state = 'map';
