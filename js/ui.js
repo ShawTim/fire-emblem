@@ -697,6 +697,73 @@ const UI = {
     }, 1200);
   },
 
+  showConfirm(message, onConfirm) {
+    const overlay = document.createElement('div');
+    overlay.id = 'confirm-overlay';
+    overlay.style.cssText = [
+      'position:absolute;top:0;left:0;right:0;bottom:0',
+      'background:rgba(0,0,0,0.7)',
+      'display:flex;justify-content:center;align-items:center',
+      'z-index:200;pointer-events:auto',
+    ].join(';');
+
+    overlay.innerHTML = `
+      <div style="
+        background:linear-gradient(160deg,#1a1a2e,#16213e);
+        border:2px solid #ff6060;
+        border-radius:10px;
+        padding:24px 40px;
+        min-width:300px;
+        text-align:center;
+        font-family:inherit;
+      ">
+        <div style="font-size:18px;color:#fff;margin-bottom:24px">${message}</div>
+        <div style="display:flex;gap:16px;justify-content:center">
+          <button id="confirm-yes" style="
+            padding:8px 24px;
+            background:#c44;
+            border:1px solid #ff6060;
+            border-radius:6px;
+            color:#fff;
+            font-size:16px;
+            cursor:pointer;
+            font-family:inherit;
+          ">確定</button>
+          <button id="confirm-no" style="
+            padding:8px 24px;
+            background:#333;
+            border:1px solid #666;
+            border-radius:6px;
+            color:#fff;
+            font-size:16px;
+            cursor:pointer;
+            font-family:inherit;
+          ">取消</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('ui-overlay').appendChild(overlay);
+
+    const yesBtn = document.getElementById('confirm-yes');
+    const noBtn = document.getElementById('confirm-no');
+
+    yesBtn.addEventListener('click', () => {
+      overlay.remove();
+      if (onConfirm) onConfirm();
+    });
+
+    noBtn.addEventListener('click', () => {
+      overlay.remove();
+    });
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.remove();
+      }
+    });
+  },
+
   // ============================================================
   // UNIT LIST  (部隊情報) — 支援我方/敵方切換分頁
   // ============================================================
