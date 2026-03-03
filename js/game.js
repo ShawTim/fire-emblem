@@ -1104,7 +1104,11 @@ class Game {
   }
 
   endTurn() {
-    if (this.state !== 'map' || this.phase !== 'player') return;
+    console.log('endTurn called, state:', this.state, 'phase:', this.phase);
+    if (this.state !== 'map' || this.phase !== 'player') {
+      console.log('endTurn early return');
+      return;
+    }
     UI.hideActionMenu();
     UI.hideUnitPanel();
     this.cancelSelection();
