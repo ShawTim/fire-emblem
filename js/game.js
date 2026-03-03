@@ -941,14 +941,14 @@ class Game {
     // Remove dead enemies
     this.units = this.units.filter(u => !(u.hp <= 0 && u.faction === 'enemy'));
 
-    if (GameConditions.checkLose(this)) {
+    if (AITurn.checkLoseCondition(this)) {
       this.state = 'gameOver';
       BGM.play('gameOver', true);
       UI.showGameOver(() => this.init());
       return;
     }
 
-    if (GameConditions.checkWin(this)) {
+    if (AITurn.checkWinCondition(this)) {
       AITurn.onChapterClear(this);
       return;
     }
@@ -1153,6 +1153,9 @@ class Game {
           this.state = 'title';
           UI.clearOverlays();
           this.init();
+        }, () => {
+          // onCancel: reopen map menu
+          this.openMapMenu();
         });
       },
       onClose: () => {

@@ -697,7 +697,7 @@ const UI = {
     }, 1200);
   },
 
-  showConfirm(message, onConfirm) {
+  showConfirm(message, onConfirm, onCancel) {
     const overlay = document.createElement('div');
     overlay.id = 'confirm-overlay';
     overlay.style.cssText = [
@@ -755,11 +755,13 @@ const UI = {
 
     noBtn.addEventListener('click', () => {
       overlay.remove();
+      if (onCancel) onCancel();
     });
 
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
         overlay.remove();
+        if (onCancel) onCancel();
       }
     });
   },
