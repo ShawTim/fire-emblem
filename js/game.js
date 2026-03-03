@@ -941,15 +941,15 @@ class Game {
     // Remove dead enemies
     this.units = this.units.filter(u => !(u.hp <= 0 && u.faction === 'enemy'));
 
-    if (this.checkLoseCondition()) {
+    if (GameConditions.checkLose(this)) {
       this.state = 'gameOver';
       BGM.play('gameOver', true);
       UI.showGameOver(() => this.init());
       return;
     }
 
-    if (this.checkWinCondition()) {
-      this.onChapterClear();
+    if (GameConditions.checkWin(this)) {
+      AITurn.onChapterClear(this);
       return;
     }
 
@@ -1067,7 +1067,7 @@ class Game {
 
   doSeize() {
     if (this.selectedUnit) this.selectedUnit.acted = true;
-    this.onChapterClear();
+    AITurn.onChapterClear(this);
   }
 
   doWait() {
@@ -1108,142 +1108,7 @@ class Game {
     UI.hideActionMenu();
     UI.hideUnitPanel();
     this.cancelSelection();
-    this.beginEnemyPhase();
-  }
-
-  beginEnemyPhase() {
-    this.phase = 'enemy';
-    this.state = 'enemyPhase';
-    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'enemy', this.chapterData.objective);
-    UI.showPhaseBanner('enemy');
-    BGM.play('enemyPhase', true);
-    this.applyTerrainHealing('enemy');
-
-    for (const u of this.units) {
-      if (u.faction === 'enemy' && u.hp > 0) u.reset();
-    }
-
-    setTimeout(() => {
-      this.enemyActions = executeEnemyPhase(this);
-      this.enemyActionIndex = 0;
-      this.processNextEnemyAction();
-    }, 1600);
-  }
-
-  processNextEnemyAction() {
-    if (this.enemyActionIndex >= this.enemyActions.length) {
-      this.turn++;
-      if (this.checkWinCondition()) { this.onChapterClear(); return; }
-      this.beginPlayerPhase();
-      return;
-    }
-
-    const action = this.enemyActions[this.enemyActionIndex];
-    this.enemyActionIndex++;
-
-    if (action.type === 'wait') {
-      action.unit.acted = true;
-      setTimeout(() => this.processNextEnemyAction(), 100);
-      return;
-    }
-
-    const needsMove = action.moveX !== action.unit.x || action.moveY !== action.unit.y;
-
-    const doAfterMove = () => {
-      if (action.type === 'attack') {
-        // BUG FIX: 遠程打擊修復 — 在實際攻擊前驗證目標仍在射程內
-        // 若因路徑被阻擋導致單位沒移動到預定位置，需確保攻擊仍有效
-        const target = action.target;
-        if (!target || target.hp <= 0) {
-          // 目標已死亡，取消攻擊
-          action.unit.acted = true;
-          setTimeout(() => this.processNextEnemyAction(), 100);
-          return;
-        }
-        const actualDist = Math.abs(action.unit.x - target.x) + Math.abs(action.unit.y - target.y);
-        const atkRange = action.unit.getAttackRange();
-        if (!atkRange.includes(actualDist)) {
-          // 目標超出實際射程（例如路徑被阻擋導致無法移動到位）
-          // 取消攻擊，改為待機，避免超遠距離打擊
-          action.unit.acted = true;
-          setTimeout(() => this.processNextEnemyAction(), 100);
-          return;
-        }
-        GameMap.scrollToward(action.unit.x, action.unit.y, this.canvasW, this.canvasH);
-        this.selectedUnit = action.unit;
-        // Brief pause after move so player sees positioning before combat
-        setTimeout(() => this.startCombat(action.unit, action.target), needsMove ? 300 : 0);
-      } else {
-        action.unit.acted = true;
-        setTimeout(() => this.processNextEnemyAction(), 250);
-      }
-    };
-
-    // Scroll to enemy unit first so player sees who's about to act
-    GameMap.scrollToward(action.unit.x, action.unit.y, this.canvasW, this.canvasH);
-
-    if (needsMove) {
-      const path = findPath(action.unit.x, action.unit.y, action.moveX, action.moveY,
-        action.unit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
-      if (path && path.length > 1) {
-        // Small delay before movement starts so you can see who's acting
-        setTimeout(() => this.animateMove(action.unit, path, doAfterMove), 300);
-      } else if (path) {
-        doAfterMove();
-      } else {
-        // No valid path found — skip this move, stay in place
-        action.moveX = action.unit.x;
-        action.moveY = action.unit.y;
-        doAfterMove();
-      }
-    } else {
-      doAfterMove();
-    }
-  }
-
-  checkWinCondition() {
-    if (!this.chapterData) return false;
-    const obj = this.chapterData.objective;
-    if (obj === 'rout') return !this.units.some(u => u.faction === 'enemy' && u.hp > 0);
-    if (obj === 'boss') return !this.units.some(u => u.faction === 'enemy' && u.hp > 0 && u.isBoss);
-    if (obj === 'seize') {
-      if (this.chapterData.seizePos) {
-        const sp = this.chapterData.seizePos;
-        return !!this.units.find(u => u.isLord && u.x === sp.x && u.y === sp.y && u.acted);
-      }
-      return false;
-    }
-    if (obj === 'survive') return this.turn > (this.chapterData.surviveTurns || 99);
-    return false;
-  }
-
-  checkLoseCondition() {
-    const lord = this.units.find(u => u.isLord);
-    return !lord || lord.hp <= 0;
-  }
-
-  onChapterClear() {
-    this.state = 'chapterClear';
-    BGM.play('victory', true);
-    const postDialogue = this.chapterData.dialogues && this.chapterData.dialogues.post;
-    const isLast = this.currentChapter >= CHAPTER_MANIFEST.length - 1;
-
-    const afterDialogue = () => {
-      if (isLast) {
-        UI.showEnding();
-        this.state = 'ending';
-      } else {
-        GameSave.save(this);
-        UI.showVictory(() => this.nextChapter());
-      }
-    };
-
-    if (postDialogue) {
-      this.state = 'dialogue';
-      this.dialogue.start(postDialogue, afterDialogue);
-    } else {
-      afterDialogue();
-    }
+    AITurn.beginEnemyPhase(this);
   }
 
   nextChapter() {
