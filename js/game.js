@@ -50,7 +50,7 @@ class Game {
         const loading = document.getElementById('sprite-loading');
         if (loading) loading.remove();
         
-        const hasSave = !!localStorage.getItem('fe_save');
+        const hasSave = GameSave.exists();
         UI.showTitleScreen(hasSave);
         this.state = 'title';
         BGM.play('title', true);
@@ -67,7 +67,7 @@ class Game {
   }
 
   continueGame() {
-    if (this.loadGame()) {
+    if (GameSave.load(this)) {
       UI.hideTitleScreen();
       UI.clearOverlays();
       this.startChapter(this.currentChapter).catch(console.error);
@@ -1294,7 +1294,7 @@ class Game {
         UI.showEnding();
         this.state = 'ending';
       } else {
-        this.saveGame();
+        GameSave.save(this);
         UI.showVictory(() => this.nextChapter());
       }
     };
@@ -1309,29 +1309,12 @@ class Game {
 
   nextChapter() {
     this.currentChapter++;
-    this.saveGame();
+    GameSave.save(this);
     UI.clearOverlays();
     this.startChapter(this.currentChapter).catch(console.error);
   }
 
-  saveGame() {
-    const data = {
-      chapter: this.currentChapter + 1,
-      roster: this.playerRoster.filter(u => u.hp > 0).map(u => u.serialize()),
-    };
-    localStorage.setItem('fe_save', JSON.stringify(data));
-  }
 
-  loadGame() {
-    try {
-      const raw = localStorage.getItem('fe_save');
-      if (!raw) return false;
-      const data = JSON.parse(raw);
-      this.currentChapter = data.chapter || 0;
-      this.playerRoster = (data.roster || []).map(d => Unit.deserialize(d));
-      return true;
-    } catch (e) { return false; }
-  }
 
   openMapMenu() {
     this.state = 'mapMenu';
@@ -1343,7 +1326,7 @@ class Game {
         UI.showUnitList(playerUnits, enemyUnits, reopen);
       },
       onSave: () => {
-        this.saveGame();
+        GameSave.save(this);
         UI.showMapMenuMsg('已存檔！', reopen);
       },
       onMapBrowse: () => {
