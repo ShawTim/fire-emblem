@@ -1145,6 +1145,7 @@ class Game {
         UI.showSettingsMenu(reopen);
       },
       onEndTurn: () => {
+        this.state = 'map';
         this.endTurn();
       },
       onQuit: () => {
