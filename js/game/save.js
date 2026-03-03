@@ -20,7 +20,7 @@ var GameSave = {
       const raw = localStorage.getItem('fe_save');
       if (!raw) return false;
       const data = JSON.parse(raw);
-      game.currentChapter = data.chapter || 0;
+      game.currentChapter = Math.max(0, (data.chapter || 1) - 1);
       game.playerRoster = (data.roster || []).map(d => Unit.deserialize(d));
       return true;
     } catch (e) {
