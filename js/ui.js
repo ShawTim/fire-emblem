@@ -135,12 +135,12 @@ const UI = {
   showCombatForecast(forecast, onConfirm, onCancel) {
     const a = forecast.attacker, d = forecast.defender;
     // Weapon triangle indicator
-    var triA = '', triD = '';
+    let triA = '', triD = '';
     if (forecast.weaponTriangle === 1) { triA = ' <span style="color:#4f4">▲</span>'; triD = ' <span style="color:#f44">▼</span>'; }
     else if (forecast.weaponTriangle === -1) { triA = ' <span style="color:#f44">▼</span>'; triD = ' <span style="color:#4f4">▲</span>'; }
     // Double attack indicator
-    var aDbl = a.doubleAttack ? ' <span style="color:#ffd700;font-weight:bold">×2</span>' : '';
-    var dDbl = (d.canCounter && d.doubleAttack) ? ' <span style="color:#ffd700;font-weight:bold">×2</span>' : '';
+    const aDbl = a.doubleAttack ? ' <span style="color:#ffd700;font-weight:bold">×2</span>' : '';
+    const dDbl = (d.canCounter && d.doubleAttack) ? ' <span style="color:#ffd700;font-weight:bold">×2</span>' : '';
     this.forecastEl.innerHTML = `
       <div class="forecast-header">戰鬥預測</div>
       <div class="forecast-row">
@@ -229,8 +229,8 @@ const UI = {
     this.levelUpScreen.classList.remove('hidden');
     if (typeof SFX !== 'undefined') SFX.levelUp();
     // Click or tap to dismiss, or auto-dismiss after 4s
-    var dismissed = false;
-    var dismiss = () => {
+    let dismissed = false;
+    const dismiss = () => {
       if (dismissed) return;
       dismissed = true;
       this.levelUpScreen.classList.add('hidden');
@@ -251,7 +251,7 @@ const UI = {
     pi.textContent = phase === 'player' ? '自軍回合' : '敵軍回合';
     pi.className = phase === 'player' ? 'phase-player' : 'phase-enemy';
     // Objective display
-    var objEl = document.getElementById('objective-display');
+    let objEl = document.getElementById('objective-display');
     if (!objEl) {
       objEl = document.createElement('span');
       objEl.id = 'objective-display';
@@ -259,7 +259,7 @@ const UI = {
       document.getElementById('top-bar').appendChild(objEl);
     }
     if (objective) {
-      var objNames = {rout:'殲滅敵軍',boss:'擊破敵將',seize:'制壓據點',survive:'堅守防線'};
+      const objNames = {rout:'殲滅敵軍',boss:'擊破敵將',seize:'制壓據點',survive:'堅守防線'};
       objEl.textContent = '目標：' + (objNames[objective] || objective);
     }
   },
@@ -561,9 +561,9 @@ const UI = {
   },
 
   _getWeaponProficiency(cls) {
-    var weapons = cls.weapons || [];
-    var icons = {sword:'⚔️',lance:'🔱',axe:'🪓',bow:'🏹',fire:'🔥',thunder:'⚡',wind:'🌀',dark:'🌑',light:'✨',staff:'✝️'};
-    var names = {sword:'劍',lance:'槍',axe:'斧',bow:'弓',fire:'火',thunder:'雷',wind:'風',dark:'暗',light:'光',staff:'杖'};
+    const weapons = cls.weapons || [];
+    const icons = {sword:'⚔️',lance:'🔱',axe:'🪓',bow:'🏹',fire:'🔥',thunder:'⚡',wind:'🌀',dark:'🌑',light:'✨',staff:'✝️'};
+    const names = {sword:'劍',lance:'槍',axe:'斧',bow:'弓',fire:'火',thunder:'雷',wind:'風',dark:'暗',light:'光',staff:'杖'};
     if (weapons.length === 0) return '<span style="color:#555">—</span>';
     return weapons.map(function(w) {
       return '<span style="color:#adf">' + (icons[w]||'') + ' ' + (names[w]||w) + '</span>';
