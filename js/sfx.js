@@ -17,8 +17,8 @@ var SFX = {
 
   _play: function(freq, type, duration, vol, ramp) {
     if (this.muted || !this.ctx) return;
-    var o = this.ctx.createOscillator();
-    var g = this.ctx.createGain();
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
     o.type = type || 'square';
     o.frequency.setValueAtTime(freq, this.ctx.currentTime);
     if (ramp) o.frequency.linearRampToValueAtTime(ramp, this.ctx.currentTime + duration);
@@ -71,8 +71,8 @@ var SFX = {
 
   levelUp: function() {
     this.ensureCtx();
-    var notes = [523, 587, 659, 784, 880, 1047];
-    for (var i = 0; i < notes.length; i++) {
+    const notes = [523, 587, 659, 784, 880, 1047];
+    for (let i = 0; i < notes.length; i++) {
       (function(n, d) {
         setTimeout(() => SFX._play(n, 'square', 0.12, 0.07), d);
       })(notes[i], i * 80);
@@ -94,8 +94,8 @@ var SFX = {
 
   victory: function() {
     this.ensureCtx();
-    var notes = [523, 659, 784, 1047, 784, 1047];
-    for (var i = 0; i < notes.length; i++) {
+    const notes = [523, 659, 784, 1047, 784, 1047];
+    for (let i = 0; i < notes.length; i++) {
       (function(n, d) {
         setTimeout(() => SFX._play(n, 'square', 0.15, 0.07), d);
       })(notes[i], i * 120);
