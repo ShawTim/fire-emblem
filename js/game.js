@@ -1017,7 +1017,7 @@ class Game {
     }
 
     if (this.phase === 'enemy') {
-      this.processNextEnemyAction();
+      AITurn.processNextEnemyAction(this);
     } else {
       this.state = 'map';
       UI.hideUnitPanel();
