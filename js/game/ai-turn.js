@@ -48,6 +48,8 @@ var AITurn = {
 
     if (action.type === 'wait') {
       action.unit.acted = true;
+      action.unit._direction = null;
+      action.unit._selected = false;
       setTimeout(() => AITurn.processNextEnemyAction(game), 100);
       return;
     }
@@ -59,6 +61,8 @@ var AITurn = {
         const target = action.target;
         if (!target || target.hp <= 0) {
           action.unit.acted = true;
+          action.unit._direction = null;
+          action.unit._selected = false;
           setTimeout(() => AITurn.processNextEnemyAction(game), 100);
           return;
         }
@@ -67,6 +71,8 @@ var AITurn = {
         const atkRange = action.unit.getAttackRange();
         if (!atkRange.includes(actualDist)) {
           action.unit.acted = true;
+          action.unit._direction = null;
+          action.unit._selected = false;
           setTimeout(() => AITurn.processNextEnemyAction(game), 100);
           return;
         }
@@ -76,6 +82,8 @@ var AITurn = {
         setTimeout(() => game.startCombat(action.unit, action.target), needsMove ? 300 : 0);
       } else {
         action.unit.acted = true;
+        action.unit._direction = null;
+        action.unit._selected = false;
         setTimeout(() => AITurn.processNextEnemyAction(game), 250);
       }
     };
