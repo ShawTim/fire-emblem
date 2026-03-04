@@ -47,9 +47,9 @@ class BattleScene {
     this.stepIndex = 0;
     this.forecast = forecast;
     this.onComplete = onComplete;
-    var atkHP = attacker.hp, defHP = defender.hp;
-    for (var i = this.combatSteps.length - 1; i >= 0; i--) {
-      var st = this.combatSteps[i];
+    let atkHP = attacker.hp, defHP = defender.hp;
+    for (let i = this.combatSteps.length - 1; i >= 0; i--) {
+      const st = this.combatSteps[i];
       if (st.hit) {
         if (st.target === attacker) atkHP += st.damage;
         else if (st.target === defender) defHP += st.damage;
@@ -71,9 +71,9 @@ class BattleScene {
     this.hitTriggered = false;
     this.vsAlpha = 0;
     this.hitDisplayShown = false;
-    var dt = GameMap.getTerrain(defender.x, defender.y);
+    const dt = GameMap.getTerrain(defender.x, defender.y);
     this.terrainType = dt || 'plain';
-    var at = GameMap.getTerrain(attacker.x, attacker.y);
+    const at = GameMap.getTerrain(attacker.x, attacker.y);
     this.defenderTerrainType = dt || 'plain';
     this.attackerTerrainType = at || 'plain';
     this.setPhase('intro');
@@ -81,7 +81,7 @@ class BattleScene {
 
   setPhase(p) {
     this.phase = p; this.timer = 0; this.hitTriggered = false; this.hitDisplayShown = false;
-    var d = {intro:300,vs:800,ready:500,atk1:700,def1:700,atk2:700,def2:700,result:1000,outro:400};
+    const d = {intro:300,vs:800,ready:500,atk1:700,def1:700,atk2:700,def2:700,result:1000,outro:400};
     this.phaseDuration = d[p] || 0;
   }
 
@@ -99,8 +99,8 @@ class BattleScene {
   }
 
   beginStrike() {
-    var s = this.combatSteps[this.stepIndex];
-    var a = s.actor === this.attacker;
+    const s = this.combatSteps[this.stepIndex];
+    const a = s.actor === this.attacker;
     this.setPhase(a ? (this.stepIndex<=1?'atk1':'atk2') : (this.stepIndex<=1?'def1':'def2'));
     this.attackerAnimOffset = 0; this.defenderAnimOffset = 0;
     if (s.hit) {
@@ -113,25 +113,25 @@ class BattleScene {
   update(dt) {
     if (!this.active) return;
     this.timer += dt;
-    var t = Math.min(1, this.timer / this.phaseDuration);
+    const t = Math.min(1, this.timer / this.phaseDuration);
     if (this.shakeTimer > 0) {
       this.shakeTimer -= dt;
-      var intensity = Math.min(1, this.shakeTimer / 200);
+      const intensity = Math.min(1, this.shakeTimer / 200);
       this.shakeX = (Math.random()-0.5)*12*intensity; this.shakeY = (Math.random()-0.5)*10*intensity;
       if (this.shakeTimer <= 0) { this.shakeX=0; this.shakeY=0; }
     }
-    var hs = dt * 0.03;
+    const hs = dt * 0.03;
     if (this.attackerHP > this.attackerTargetHP) {
-      var diff = this.attackerHP - this.attackerTargetHP;
-      var speed = Math.max(0.5, diff * 0.08) * dt * 0.06;
+      const diff = this.attackerHP - this.attackerTargetHP;
+      const speed = Math.max(0.5, diff * 0.08) * dt * 0.06;
       this.attackerHP = Math.max(this.attackerTargetHP, this.attackerHP - speed);
     }
     if (this.defenderHP > this.defenderTargetHP) {
-      var diff = this.defenderHP - this.defenderTargetHP;
-      var speed = Math.max(0.5, diff * 0.08) * dt * 0.06;
+      const diff = this.defenderHP - this.defenderTargetHP;
+      const speed = Math.max(0.5, diff * 0.08) * dt * 0.06;
       this.defenderHP = Math.max(this.defenderTargetHP, this.defenderHP - speed);
     }
-    for (var i = this.effects.length-1; i >= 0; i--) {
+    for (let i = this.effects.length-1; i >= 0; i--) {
       this.effects[i].timer += dt;
       if (this.effects[i].timer >= this.effects[i].duration) this.effects.splice(i,1);
     }
@@ -160,16 +160,16 @@ class BattleScene {
   }
 
   _upStrike(t) {
-    var s = this.combatSteps[this.stepIndex-1]; if(!s) return;
-    var a = s.actor === this.attacker;
+    const s = this.combatSteps[this.stepIndex-1]; if(!s) return;
+    const a = s.actor === this.attacker;
     // Show hit% display at start of strike
     if(t<0.15 && !this.hitDisplayShown && this.forecast){
       this.hitDisplayShown = true;
-      var fc = a ? this.forecast.attacker : (this.forecast.defender.canCounter ? this.forecast.defender : null);
+      const fc = a ? this.forecast.attacker : (this.forecast.defender.canCounter ? this.forecast.defender : null);
       if(fc){
-        var hitPct = fc.hit || 0;
-        var critPct = fc.crit || 0;
-        var tx = a ? 240 : 560;
+        const hitPct = fc.hit || 0;
+        const critPct = fc.crit || 0;
+        const tx = a ? 240 : 560;
         this.effects.push({type:'hitpct',x:tx,y:180,text:'命中'+hitPct+'%',color:'#8f8',duration:500,timer:0});
         if(critPct > 0) this.effects.push({type:'hitpct',x:tx,y:200,text:'必殺'+critPct+'%',color:'#ff8',duration:500,timer:0});
       }
@@ -347,10 +347,10 @@ class BattleScene {
   }
 
   _drawWpn(ctx, unit, sc, striking) {
-    var cls = getClassData(unit.classId), weps = cls.weapons||[];
-    var wpn = unit.getEquippedWeapon();
-    var wt = wpn ? wpn.type : (weps[0]||'sword');
-    var mag = ['fire','thunder','wind','dark','light'].includes(wt);
+    const cls = getClassData(unit.classId), weps = cls.weapons||[];
+    const wpn = unit.getEquippedWeapon();
+    const wt = wpn ? wpn.type : (weps[0]||'sword');
+    const mag = ['fire','thunder','wind','dark','light'].includes(wt);
     if (wt==='sword') {
       if(striking){ctx.fillStyle='#ccc';ctx.fillRect(4*sc,-15*sc,1*sc,9*sc);
         ctx.fillStyle='#eee';ctx.fillRect(4.2*sc,-15*sc,0.6*sc,7*sc);
