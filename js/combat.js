@@ -76,7 +76,7 @@ function calculateCombat(attacker, defender, map) {
   }
 
   // Weapon triangle direction: 1=advantage, -1=disadvantage, 0=neutral
-  var triDir = triBonus.atk > 0 ? 1 : (triBonus.atk < 0 ? -1 : 0);
+  const triDir = triBonus.atk > 0 ? 1 : (triBonus.atk < 0 ? -1 : 0);
   return {
     attacker: { name: attacker.name, hp: attacker.hp, maxHp: attacker.maxHp, weapon: atkWpn.name,
       damage: Math.floor(atkDmg * atkEffMult), hit: atkHit, crit: atkCrit, doubleAttack: atkDouble },
