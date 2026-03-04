@@ -52,7 +52,7 @@ var BGM = {
     this.tempo = track.tempo || 120;
     this.currentStep = 0;
     this.channels = [];
-    for (var i = 0; i < track.channels.length; i++)
+    for (let i = 0; i < track.channels.length; i++)
       this.channels.push({ def: track.channels[i] });
     if (fadeIn && this.masterGain && this.ctx) {
       this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
@@ -94,7 +94,7 @@ var BGM = {
   },
 
   _playStep: function(step, time, dur) {
-    for (var i = 0; i < this.channels.length; i++) {
+    for (let i = 0; i < this.channels.length; i++) {
       var d = this.channels[i].def, p = d.pattern;
       var note = p[step % p.length];
       if (!note || note === '-' || note === 0) continue;
@@ -115,7 +115,7 @@ var BGM = {
   _noise: function(time, dur, vol) {
     var sr = this.ctx.sampleRate, len = Math.max(1, Math.floor(sr * dur));
     var buf = this.ctx.createBuffer(1, len, sr), data = buf.getChannelData(0);
-    for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
     var src = this.ctx.createBufferSource(); src.buffer = buf;
     var g = this.ctx.createGain();
     g.gain.setValueAtTime(vol * 0.3, time); g.gain.linearRampToValueAtTime(0, time + dur);
