@@ -6,7 +6,6 @@ var AITurn = {
    * @param {Game} game - Game instance
    */
   beginEnemyPhase: function(game) {
-    console.log('beginEnemyPhase called');
     game.phase = 'enemy';
     game.state = 'enemyPhase';
     UI.updateTopBar(game.chapterData.title + '：' + game.chapterData.subtitle, game.turn, 'enemy', game.chapterData.objective);
@@ -19,9 +18,7 @@ var AITurn = {
     }
     
     setTimeout(() => {
-      console.log('Starting enemy actions, calling executeEnemyPhase');
       game.enemyActions = executeEnemyPhase(game);
-      console.log('Enemy actions:', game.enemyActions);
       game.enemyActionIndex = 0;
       AITurn.processNextEnemyAction(game);
     }, 1600);
@@ -32,7 +29,6 @@ var AITurn = {
    * @param {Game} game - Game instance
    */
   processNextEnemyAction: function(game) {
-    console.log('processNextEnemyAction called, index:', game.enemyActionIndex, 'total:', game.enemyActions.length);
     if (game.enemyActionIndex >= game.enemyActions.length) {
       game.turn++;
       if (AITurn.checkWinCondition(game)) {

@@ -1104,11 +1104,7 @@ class Game {
   }
 
   endTurn() {
-    console.log('endTurn called, state:', this.state, 'phase:', this.phase);
-    if (this.state !== 'map' || this.phase !== 'player') {
-      console.log('endTurn early return');
-      return;
-    }
+    if (this.state !== 'map' || this.phase !== 'player') return;
     UI.hideActionMenu();
     UI.hideUnitPanel();
     this.cancelSelection();
@@ -1178,8 +1174,8 @@ class Game {
   handleKey(key) {
     // M key: mute toggle (works in all states)
     if (key === 'm' || key === 'M') {
-      var muted = BGM.toggleMute();
-      var btn = document.getElementById('btn-mute');
+      const muted = BGM.toggleMute();
+      const btn = document.getElementById('btn-mute');
       if (btn) btn.textContent = muted ? '🔇' : '🔊';
       return;
     }
