@@ -1,6 +1,6 @@
 // sfx.js — Simple Web Audio API sound effects (oscillator-based)
 
-var SFX = {
+const SFX = {
   ctx: null,
   muted: false,
 
