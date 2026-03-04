@@ -90,13 +90,13 @@ const GameMap = {
 
   renderOverlay(ctx, tiles, color, canvasW, canvasH, pulse) {
     const ts = this.tileSize * this.scale;
-    var now = Date.now();
+    const now = Date.now();
     for (const t of tiles) {
       const sx = t.x * ts - this.camX;
       const sy = t.y * ts - this.camY;
       if (sx + ts < 0 || sy + ts < 0 || sx > canvasW || sy > canvasH) continue;
       if (pulse) {
-        var pulseAlpha = 0.2 + 0.15 * Math.sin(now * 0.004 + t.x * 0.5 + t.y * 0.3);
+        const pulseAlpha = 0.2 + 0.15 * Math.sin(now * 0.004 + t.x * 0.5 + t.y * 0.3);
         ctx.fillStyle = color.replace(/[\d.]+\)$/, pulseAlpha + ')');
       } else {
         ctx.fillStyle = color;
@@ -119,11 +119,11 @@ const GameMap = {
     ctx.strokeStyle = 'rgba(255,255,255,0.12)';
     ctx.lineWidth = 1;
     for (let y = startY; y <= endY; y++) {
-      var sy = y * ts - this.camY;
+      const sy = y * ts - this.camY;
       ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(canvasW, sy); ctx.stroke();
     }
     for (let x = startX; x <= endX; x++) {
-      var sx = x * ts - this.camX;
+      const sx = x * ts - this.camX;
       ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, canvasH); ctx.stroke();
     }
   },
@@ -138,7 +138,7 @@ const GameMap = {
       ctx.save();
       ctx.translate(sx, sy);
       ctx.scale(this.scale, this.scale);
-      var showGray = unit.acted && ((unit.faction === 'player' && game && game.phase === 'player') || (unit.faction === 'enemy' && game && game.phase === 'enemy'));
+      const showGray = unit.acted && ((unit.faction === 'player' && game && game.phase === 'player') || (unit.faction === 'enemy' && game && game.phase === 'enemy'));
       Sprites.drawUnit(ctx, unit, 0, 0, showGray, 1, unit.faction);
       ctx.restore();
     }
