@@ -35,12 +35,12 @@ const Sprites = {
       // GBA Blazing Blade style warm green grass
       R(x,y,s,s,'#58b848');
       var gr=['#48a838','#58b848','#68c858','#50b040','#60c050'];
-      for(var py=0;py<s;py++)for(var px=0;px<s;px++){
+      for(let py=0;py<s;py++)for(let px=0;px<s;px++){
         var ck=(px+py)%2,z=((py>>2)+(px>>3)+seed)%5;
         P(x+px,y+py,gr[z]);
       }
       // Subtle grass tufts
-      for(var i=0;i<3+(seed%3);i++){
+      for(let i=0;i<3+(seed%3);i++){
         var gx=x+Math.floor(rng(i)*26)+3,gy=y+Math.floor(rng(i+20)*22)+5;
         P(gx,gy,'#78d868');P(gx+1,gy-1,'#88e878');P(gx-1,gy-1,'#70d060');
       }
@@ -53,7 +53,7 @@ const Sprites = {
     }else if(type==='forest'){
       // Rich GBA forest with visible tree shapes
       R(x,y,s,s,'#48a040'); // bright grass base
-      for(var py=0;py<s;py++)for(var px=0;px<s;px++){
+      for(let py=0;py<s;py++)for(let px=0;px<s;px++){
         if((px+py+seed)%3===0)P(x+px,y+py,'#40983a');
       }
       // Shadow on ground
@@ -112,8 +112,8 @@ const Sprites = {
     }else if(type==='wall'){
       // Stone bricks with clear mortar lines
       R(x,y,s,s,'#807870');
-      for(var row=0;row<4;row++){var ry=y+row*8,off=(row%2)*8;
-        for(var col=0;col<3;col++){var bx=x+off+col*16;
+      for(let row=0;row<4;row++){var ry=y+row*8,off=(row%2)*8;
+        for(let col=0;col<3;col++){var bx=x+off+col*16;
           var bc=['#908880','#888078','#8c8480','#847c70','#989088'][((row*3+col*7+seed)%5)];
           R(bx,ry,15,7,bc);
           R(bx,ry,15,1,'#a0988e');  // top highlight
@@ -144,7 +144,7 @@ const Sprites = {
     }else if(type==='river'){
       // Flowing blue water with wave highlights
       R(x,y,s,s,'#3888d0');
-      for(var py=0;py<s;py++){
+      for(let py=0;py<s;py++){
         var w=Math.sin((py+seed*0.3)*0.7)*0.4;
         if(w>0.15)R(x,y+py,s,1,'#50a0e0');
         else if(w<-0.15)R(x,y+py,s,1,'#2870b8');
@@ -159,7 +159,7 @@ const Sprites = {
     }else if(type==='village'){
       // Cute house with red roof on grass
       R(x,y,s,s,'#58b848'); // grass base
-      for(var py=0;py<s;py++)for(var px=0;px<s;px++){
+      for(let py=0;py<s;py++)for(let px=0;px<s;px++){
         if((px+py+seed)%4===0)P(x+px,y+py,'#50b040');
       }
       // House body
@@ -179,7 +179,7 @@ const Sprites = {
       // Royal carpet + golden seat
       R(x,y,s,s,'#584070');
       // Checkered floor
-      for(var py=0;py<s;py+=8)for(var px=0;px<s;px+=8)
+      for(let py=0;py<s;py+=8)for(let px=0;px<s;px+=8)
         R(x+px,y+py,8,8,((px+py)/8%2)?'#4c3460':'#604880');
       // Royal red carpet
       R(x+4,y+4,24,24,'#c82020');R(x+5,y+5,22,22,'#d83838');
@@ -197,7 +197,7 @@ const Sprites = {
     }else if(type==='pillar'){
       // Stone column on checkered floor
       R(x,y,s,s,'#787888');
-      for(var py=0;py<s;py+=8)for(var px=0;px<s;px+=8)
+      for(let py=0;py<s;py+=8)for(let px=0;px<s;px+=8)
         R(x+px,y+py,8,8,((px+py)/8%2)?'#707080':'#808090');
       // Column shadow
       R(x+14,y+2,10,28,'rgba(0,0,0,0.15)');
@@ -213,14 +213,14 @@ const Sprites = {
       // 宮殿室內石板地板 — 大理石格紋
       R(x,y,s,s,'#c8c0b0');
       // 大理石方格紋（8x8 checkerboard）
-      for(var py=0;py<s;py+=8)for(var px=0;px<s;px+=8){
+      for(let py=0;py<s;py+=8)for(let px=0;px<s;px+=8){
         var chk=((px+py)/8)%2;
         R(x+px,y+py,8,8,chk?'#c0b8a8':'#d0c8b8');
       }
       // 石板接縫線（水平）
-      for(var gy=8;gy<s;gy+=8){R(x,y+gy,s,1,'#a09888');}
+      for(let gy=8;gy<s;gy+=8){R(x,y+gy,s,1,'#a09888');}
       // 石板接縫線（垂直）
-      for(var gx=8;gx<s;gx+=8){R(x+gx,y,1,s,'#a09888');}
+      for(let gx=8;gx<s;gx+=8){R(x+gx,y,1,s,'#a09888');}
       // 輕微光澤（左上角高光）
       R(x+1,y+1,4,1,'#ddd8cc');R(x+1,y+2,1,3,'#ddd8cc');
       R(x+9,y+1,4,1,'#ddd8cc');R(x+17,y+9,4,1,'#ddd8cc');
@@ -853,13 +853,13 @@ const Sprites = {
     oc2.globalCompositeOperation='source-in';
     oc2.fillStyle='#000';oc2.fillRect(0,0,48,48);
     var dirs=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1],[-2,0],[2,0],[0,-2],[0,2]];
-    for(var di=0;di<dirs.length;di++){fc.drawImage(os2,dirs[di][0],dirs[di][1]);}
+    for(let di=0;di<dirs.length;di++){fc.drawImage(os2,dirs[di][0],dirs[di][1]);}
     fc.drawImage(os,0,0);
     if(grayed){
       // Desaturate to grayscale (solid, no transparency)
       const imgData = fc.getImageData(0,0,48,48);
       const d = imgData.data;
-      for(var i=0;i<d.length;i+=4){
+      for(let i=0;i<d.length;i+=4){
         if(d[i+3]===0) continue;
         const gray = Math.round(d[i]*0.3 + d[i+1]*0.59 + d[i+2]*0.11);
         d[i]=gray; d[i+1]=gray; d[i+2]=gray;
