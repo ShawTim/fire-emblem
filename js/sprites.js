@@ -885,7 +885,7 @@ const Sprites = {
 
   preloadPortraits: function() {
     const chars = Object.keys(CHARACTERS);
-    for (const i = 0; i < chars.length; i++) {
+    for (let i = 0; i < chars.length; i++) {
       const id = chars[i];
       if (!this._portraitCache[id]) {
         const img = new Image();
@@ -910,7 +910,7 @@ const Sprites = {
       if (cls.sprites) {
         // Add all sprite variants
         const keys = ['stand_m', 'stand_f', 'walk_m', 'walk_f', 'move_m', 'move_f'];
-        for (const i = 0; i < keys.length; i++) {
+        for (let i = 0; i < keys.length; i++) {
           const key = keys[i];
           if (cls.sprites[key]) {
             spritesToLoad.push(cls.sprites[key]);
@@ -921,13 +921,13 @@ const Sprites = {
     
     // Remove duplicates
     const uniqueSprites = [];
-    for (const j = 0; j < spritesToLoad.length; j++) {
+    for (let j = 0; j < spritesToLoad.length; j++) {
       if (uniqueSprites.indexOf(spritesToLoad[j]) === -1) {
         uniqueSprites.push(spritesToLoad[j]);
       }
     }
     
-    const loaded = 0;
+    let loaded = 0;
     const total = uniqueSprites.length;
     
     if (total === 0) {
@@ -935,7 +935,7 @@ const Sprites = {
       return;
     }
     
-    for (const k = 0; k < uniqueSprites.length; k++) {
+    for (let k = 0; k < uniqueSprites.length; k++) {
       const sKey = uniqueSprites[k];
       if (!this._imgCache[sKey]) {
         const img = new Image();
