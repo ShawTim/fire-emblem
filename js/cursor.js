@@ -7,8 +7,8 @@ const Cursor = {
   frame: 0,
 
   moveTo(x, y) {
-    var nx = Math.max(0, Math.min(GameMap.width - 1, x));
-    var ny = Math.max(0, Math.min(GameMap.height - 1, y));
+    const nx = Math.max(0, Math.min(GameMap.width - 1, x));
+    const ny = Math.max(0, Math.min(GameMap.height - 1, y));
     // No sound on hover — too noisy
     this.x = nx;
     this.y = ny;
