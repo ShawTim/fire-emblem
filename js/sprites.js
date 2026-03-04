@@ -12,7 +12,7 @@ const Sprites = {
   _frameCounter: 0,
   _portraitCache: {},
   tick: function(frame = 1) { this._frameCounter += frame; },
-  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / 14) % 5]; },
+  _idleFrame: function() { var seq=[0,1,2,1,0]; return seq[Math.floor(this._frameCounter / GAME_CONFIG.ANIMATION_SPEEDS.SLOW) % 5]; },
   _rng: function(seed, n) { return ((seed * 9301 + 49297 + n * 1234) % 233280) / 233280; },
   _seed: function(x, y) { return (x * 31 + y * 17) & 0xffff; },
 
@@ -26,7 +26,7 @@ const Sprites = {
   },
 
   drawTerrain: function(ctx, type, x, y) {
-    var s=this.TILE, seed=this._seed(x,y), self=this;
+    var s=GAME_CONFIG.TILE_SIZE, seed=this._seed(x,y), self=this;
     const rng = function(n) { return self._rng(seed, n); };
     const R = function(rx,ry,rw,rh,rc) { ctx.fillStyle=rc; ctx.fillRect(rx,ry,rw,rh); };
     const P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
@@ -246,7 +246,7 @@ const Sprites = {
   },
 
   _drawHP: function(ctx,unit,x,y){
-    var s=this.TILE;if(unit.hp!==undefined&&unit.maxHp){var r=unit.hp/unit.maxHp;
+    var s=GAME_CONFIG.TILE_SIZE;if(unit.hp!==undefined&&unit.maxHp){var r=unit.hp/unit.maxHp;
     ctx.fillStyle='#300000';ctx.fillRect(x+4,y+s-2,24,2);
     ctx.fillStyle=r>0.5?'#40c040':r>0.25?'#c0c040':'#c04040';ctx.fillRect(x+4,y+s-2,Math.ceil(24*r),2);}
   },
@@ -406,8 +406,8 @@ const Sprites = {
         // Map sprites usually don't need scaling down if they are 16x32, we just draw them centered
         const drawW = sw * 1.5;
         const drawH = sh * 1.5;
-        const dx = x + (this.TILE - drawW) / 2;
-        const dy = y + (this.TILE - drawH) - 4;
+        const dx = x + (GAME_CONFIG.TILE_SIZE - drawW) / 2;
+        const dy = y + (GAME_CONFIG.TILE_SIZE - drawH) - 4;
         
         ctx.imageSmoothingEnabled = false;
         
@@ -490,10 +490,10 @@ const Sprites = {
           ctx.filter = 'hue-rotate(60deg) saturate(1.2)';
         }
         // FE GBA map sprites are typically 16x32 or 32x32, we scale them to fit or center
-        const drawW = sw > this.TILE ? sw : this.TILE;
-        const drawH = sh > this.TILE ? sh : this.TILE;
-        const dx = x + (this.TILE - drawW) / 2;
-        const dy = y + (this.TILE - drawH) - 4; // Align to bottom
+        const drawW = sw > GAME_CONFIG.TILE_SIZE ? sw : GAME_CONFIG.TILE_SIZE;
+        const drawH = sh > GAME_CONFIG.TILE_SIZE ? sh : GAME_CONFIG.TILE_SIZE;
+        const dx = x + (GAME_CONFIG.TILE_SIZE - drawW) / 2;
+        const dy = y + (GAME_CONFIG.TILE_SIZE - drawH) - 4; // Align to bottom
         
         ctx.drawImage(sData.img, frame * sw, dirRow * sh, sw, sh, dx, dy, drawW, drawH);
         ctx.restore();
@@ -1029,7 +1029,7 @@ const Sprites = {
   },
 
   drawSeizeMarker: function(ctx, x, y, frame) {
-    const s = this.TILE;
+    const s = GAME_CONFIG.TILE_SIZE;
     const alpha = 0.3 + 0.25 * Math.sin(frame * 0.1);
     // Outer glow
     ctx.save();

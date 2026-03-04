@@ -1,8 +1,8 @@
 // main.js — Game initialization and main loop
 
 const canvas = document.getElementById('gameCanvas');
-canvas.width = 800;
-canvas.height = 600;
+canvas.width = GAME_CONFIG.CANVAS_WIDTH;
+canvas.height = GAME_CONFIG.CANVAS_HEIGHT;
 const ctx = canvas.getContext('2d');
 
 SFX.init();
@@ -266,7 +266,7 @@ if (mobileToggleBtn) {
       uiOverlay.style.height = "600px";
       uiOverlay.style.left = 0;
     }
-    canvas.width = 800;
-    canvas.height = 600;
+    canvas.width = GAME_CONFIG.CANVAS_WIDTH;
+    canvas.height = GAME_CONFIG.CANVAS_HEIGHT;
   });
 }
