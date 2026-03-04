@@ -1,16 +1,16 @@
 // main.js — Game initialization and main loop
 
-var canvas = document.getElementById('gameCanvas');
+const canvas = document.getElementById('gameCanvas');
 canvas.width = 800;
 canvas.height = 600;
-var ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d');
 
 SFX.init();
 BGM.init();
 BGM.createVolumeControl();
 
 // Preload chapters before starting game
-var game;
+let game;
 preloadChapters().then(() => {
   game = new Game(canvas);
   game.init();

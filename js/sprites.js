@@ -6,7 +6,7 @@
 //
 // To toggle at runtime: window.RENDER_MODE = 'procedural'; // or 'sprite'
 
-var Sprites = {
+const Sprites = {
   cache: {},
   TILE: 32,
   _frameCounter: 0,
@@ -27,9 +27,9 @@ var Sprites = {
 
   drawTerrain: function(ctx, type, x, y) {
     var s=this.TILE, seed=this._seed(x,y), self=this;
-    var rng = function(n) { return self._rng(seed, n); };
-    var R = function(rx,ry,rw,rh,rc) { ctx.fillStyle=rc; ctx.fillRect(rx,ry,rw,rh); };
-    var P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
+    const rng = function(n) { return self._rng(seed, n); };
+    const R = function(rx,ry,rw,rh,rc) { ctx.fillStyle=rc; ctx.fillRect(rx,ry,rw,rh); };
+    const P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
 
     if(type==='plain'){
       // GBA Blazing Blade style warm green grass
@@ -262,7 +262,7 @@ var Sprites = {
     faction=faction||'player'; // 'player', 'enemy', 'ally'
     
     // Check rendering mode: 'sprite' (default) or 'procedural'
-    var mode = window.RENDER_MODE || 'sprite';
+    const mode = window.RENDER_MODE || 'sprite';
     
     // Force procedural mode if explicitly set
     if (mode === 'procedural') {
@@ -282,13 +282,13 @@ var Sprites = {
       // 2. Has direction (_direction) -> walk sprite (directional frames)
       // 3. Actually moving (vx/vy) -> walk sprite (directional frames)
       // 4. Otherwise -> stand sprite
-      var isSelected = !!unit._selected;
-      var hasDirection = !!unit._direction;
-      var isMoving = (unit.vx || unit.vy);
-      var useWalkSprites = isSelected || hasDirection || isMoving;
+      const isSelected = !!unit._selected;
+      const hasDirection = !!unit._direction;
+      const isMoving = (unit.vx || unit.vy);
+      const useWalkSprites = isSelected || hasDirection || isMoving;
       
       // Get gender (default to 'm' if not specified)
-      var gender = unit.gender || 'm';
+      const gender = unit.gender || 'm';
       
       // Get sprite key based on gender with cross-gender fallback
       var sKey;
@@ -308,7 +308,7 @@ var Sprites = {
       if (!sKey) {
         // Fall through to procedural drawing
       } else if (!this._imgCache[sKey]) {
-        var img = new Image();
+        const img = new Image();
         
         // Handle path resolution for subdirectories like classes/index.html
         if (['/classes/', '/characters/'].some(sub => window.location.pathname.includes(sub))) {
@@ -329,37 +329,37 @@ var Sprites = {
         })(sKey);
       }
       
-      var sData = sKey ? this._imgCache[sKey] : null;
+      const sData = sKey ? this._imgCache[sKey] : null;
       if (sData && sData.loaded && !sData.error) {
         // Walk sprites: 15 frames in a single column
         // 0-3: Left, 4-7: Down, 8-11: Up, 12-14: Selected (no direction)
         // Stand sprites: 3 frames in a single column
         
-        var isWalkSheet = useWalkSprites && (sKey.includes('walk') || sKey.includes('move'));
-        var totalFrames = isWalkSheet ? 15 : 3;
-        var sw = sData.img.width;
-        var sh = sData.img.height / totalFrames;
+        const isWalkSheet = useWalkSprites && (sKey.includes('walk') || sKey.includes('move'));
+        const totalFrames = isWalkSheet ? 15 : 3;
+        const sw = sData.img.width;
+        const sh = sData.img.height / totalFrames;
         
         var frame, flipX = false;
         
         // Animation speed based on unit's spd stat
         // spd 5 -> slower (divisor 6), spd 15 -> normal (divisor 8), spd 25 -> faster (divisor 12)
-        var spd = unit.spd || 10;
-        var animSpeed = Math.max(4, Math.min(16, 8 + (spd - 10) / 2));
+        const spd = unit.spd || 10;
+        const animSpeed = Math.max(4, Math.min(16, 8 + (spd - 10) / 2));
         
         if (isWalkSheet) {
           // Priority: Moving with direction > Selected > Stand
           // If unit is moving or has a direction, show directional walk sprite
           // Only show selected frames (12-14) when stationary AND selected
-          var showDirectional = isMoving || hasDirection;
+          const showDirectional = isMoving || hasDirection;
           
           if (unit._selected && !showDirectional) {
             // Selected but not moving - use frames 12-14 (selected animation)
-            var animFrame = Math.floor(this._frameCounter / animSpeed) % 3;
+            const animFrame = Math.floor(this._frameCounter / animSpeed) % 3;
             frame = 12 + animFrame;
           } else {
             // Moving or has direction - use directional frames
-            var direction = unit._direction;
+            const direction = unit._direction;
             if (!direction && isMoving) {
               if (unit.vx > 0) direction = 'right';
               else if (unit.vx < 0) direction = 'left';
@@ -384,7 +384,7 @@ var Sprites = {
             }
             
             // Animate through 4 frames for each direction
-            var animFrame = Math.floor(this._frameCounter / animSpeed) % 4;
+            const animFrame = Math.floor(this._frameCounter / animSpeed) % 4;
             frame = baseFrame + animFrame;
           }
         } else {
@@ -404,10 +404,10 @@ var Sprites = {
         }
         
         // Map sprites usually don't need scaling down if they are 16x32, we just draw them centered
-        var drawW = sw * 1.5;
-        var drawH = sh * 1.5;
-        var dx = x + (this.TILE - drawW) / 2;
-        var dy = y + (this.TILE - drawH) - 4;
+        const drawW = sw * 1.5;
+        const drawH = sh * 1.5;
+        const dx = x + (this.TILE - drawW) / 2;
+        const dy = y + (this.TILE - drawH) - 4;
         
         ctx.imageSmoothingEnabled = false;
         
@@ -424,7 +424,7 @@ var Sprites = {
         
         // Draw HP bar
         if (unit.hp !== undefined && unit.maxHp) {
-            var ratio = unit.hp / unit.maxHp;
+            const ratio = unit.hp / unit.maxHp;
             ctx.fillStyle = '#000'; ctx.fillRect(x + 3, y + 30, 26, 3);
             ctx.fillStyle = ratio > 0.5 ? '#40c040' : ratio > 0.25 ? '#c0c040' : '#c04040';
             ctx.fillRect(x + 4, y + 31, Math.floor(24 * ratio), 1);
@@ -444,7 +444,7 @@ var Sprites = {
     // Use new image sprite sheet if available
     if (classDef && classDef.sprites) {
       if (!this._imgCache) this._imgCache = {};
-      var sKey = unit._moving 
+      const sKey = unit._moving 
         ? (classDef.sprites.move || classDef.sprites.walk || '')
         : (classDef.sprites.stand || '');
       
@@ -452,7 +452,7 @@ var Sprites = {
       if (!sKey) {
         // Fall through to procedural drawing
       } else if (!this._imgCache[sKey]) {
-        var img = new Image();
+        const img = new Image();
         img.src = sKey;
         this._imgCache[sKey] = { img: img, loaded: false };
         (function(key) {
@@ -466,16 +466,16 @@ var Sprites = {
         })(sKey);
       }
       
-      var sData = sKey ? this._imgCache[sKey] : null;
-      var frameCount = classDef.sprites.frames || 3;
-      var frame = unit._moving ? Math.floor(this._frameCounter / 8) % 4 : Math.floor(this._frameCounter / 14) % frameCount;
+      const sData = sKey ? this._imgCache[sKey] : null;
+      const frameCount = classDef.sprites.frames || 3;
+      const frame = unit._moving ? Math.floor(this._frameCounter / 8) % 4 : Math.floor(this._frameCounter / 14) % frameCount;
       
       if (sData && sData.loaded && !sData.error) {
-        var sw = sData.img.width / (unit._moving ? 4 : frameCount); // assumption based on common sheets
-        var sh = unit._moving ? sData.img.height / 4 : sData.img.height; // if moving, assume 4 rows (dirs)
+        const sw = sData.img.width / (unit._moving ? 4 : frameCount); // assumption based on common sheets
+        const sh = unit._moving ? sData.img.height / 4 : sData.img.height; // if moving, assume 4 rows (dirs)
         
         // Very basic direction fallback
-        var dirRow = 0;
+        const dirRow = 0;
         if (unit._moving) {
             // map simple dir: 0:down, 1:left, 2:right, 3:up
             dirRow = unit._dir || 0; 
@@ -490,10 +490,10 @@ var Sprites = {
           ctx.filter = 'hue-rotate(60deg) saturate(1.2)';
         }
         // FE GBA map sprites are typically 16x32 or 32x32, we scale them to fit or center
-        var drawW = sw > this.TILE ? sw : this.TILE;
-        var drawH = sh > this.TILE ? sh : this.TILE;
-        var dx = x + (this.TILE - drawW) / 2;
-        var dy = y + (this.TILE - drawH) - 4; // Align to bottom
+        const drawW = sw > this.TILE ? sw : this.TILE;
+        const drawH = sh > this.TILE ? sh : this.TILE;
+        const dx = x + (this.TILE - drawW) / 2;
+        const dy = y + (this.TILE - drawH) - 4; // Align to bottom
         
         ctx.drawImage(sData.img, frame * sw, dirRow * sh, sw, sh, dx, dy, drawW, drawH);
         ctx.restore();
@@ -857,17 +857,17 @@ var Sprites = {
     fc.drawImage(os,0,0);
     if(grayed){
       // Desaturate to grayscale (solid, no transparency)
-      var imgData = fc.getImageData(0,0,48,48);
-      var d = imgData.data;
+      const imgData = fc.getImageData(0,0,48,48);
+      const d = imgData.data;
       for(var i=0;i<d.length;i+=4){
         if(d[i+3]===0) continue;
-        var gray = Math.round(d[i]*0.3 + d[i+1]*0.59 + d[i+2]*0.11);
+        const gray = Math.round(d[i]*0.3 + d[i+1]*0.59 + d[i+2]*0.11);
         d[i]=gray; d[i+1]=gray; d[i+2]=gray;
       }
       fc.putImageData(imgData,0,0);
     }
     ctx.imageSmoothingEnabled=false;
-    var padding = 3;
+    const padding = 3;
     ctx.drawImage(fin,x-ox + padding,y-oy + padding);
 
     // HP bar (drawn on ctx, positioned correctly for scaled context)
@@ -884,11 +884,11 @@ var Sprites = {
   _portraitCallbacks: [],
 
   preloadPortraits: function() {
-    var chars = Object.keys(CHARACTERS);
-    for (var i = 0; i < chars.length; i++) {
-      var id = chars[i];
+    const chars = Object.keys(CHARACTERS);
+    for (const i = 0; i < chars.length; i++) {
+      const id = chars[i];
       if (!this._portraitCache[id]) {
-        var img = new Image();
+        const img = new Image();
         img.src = 'portraits/' + id + '.png';
         this._portraitCache[id] = { img: img, loaded: false, failed: false };
         (function(cache, pid) {
@@ -904,14 +904,14 @@ var Sprites = {
     if (!this._imgCache) this._imgCache = {};
     
     // Collect all sprite paths from CLASSES
-    var spritesToLoad = [];
+    const spritesToLoad = [];
     for (var classId in CLASSES) {
-      var cls = CLASSES[classId];
+      const cls = CLASSES[classId];
       if (cls.sprites) {
         // Add all sprite variants
-        var keys = ['stand_m', 'stand_f', 'walk_m', 'walk_f', 'move_m', 'move_f'];
-        for (var i = 0; i < keys.length; i++) {
-          var key = keys[i];
+        const keys = ['stand_m', 'stand_f', 'walk_m', 'walk_f', 'move_m', 'move_f'];
+        for (const i = 0; i < keys.length; i++) {
+          const key = keys[i];
           if (cls.sprites[key]) {
             spritesToLoad.push(cls.sprites[key]);
           }
@@ -920,25 +920,25 @@ var Sprites = {
     }
     
     // Remove duplicates
-    var uniqueSprites = [];
-    for (var j = 0; j < spritesToLoad.length; j++) {
+    const uniqueSprites = [];
+    for (const j = 0; j < spritesToLoad.length; j++) {
       if (uniqueSprites.indexOf(spritesToLoad[j]) === -1) {
         uniqueSprites.push(spritesToLoad[j]);
       }
     }
     
-    var loaded = 0;
-    var total = uniqueSprites.length;
+    const loaded = 0;
+    const total = uniqueSprites.length;
     
     if (total === 0) {
       if (onComplete) onComplete();
       return;
     }
     
-    for (var k = 0; k < uniqueSprites.length; k++) {
-      var sKey = uniqueSprites[k];
+    for (const k = 0; k < uniqueSprites.length; k++) {
+      const sKey = uniqueSprites[k];
       if (!this._imgCache[sKey]) {
-        var img = new Image();
+        const img = new Image();
         img.src = 'assets/sprites/map/' + sKey;
         this._imgCache[sKey] = { img: img, loaded: false };
         
@@ -970,15 +970,15 @@ var Sprites = {
   onPortraitReady: function(cb) { this._portraitCallbacks.push(cb); },
 
   drawGenericPortrait: function(ctx, unit, w, h) {
-    var cls = getClassData(unit.classId);
-    var colors = this.getUnitColors(unit.faction);
-    var seed = (unit.classId || "").length * 31 + (unit.level || 1) * 7;
+    const cls = getClassData(unit.classId);
+    const colors = this.getUnitColors(unit.faction);
+    const seed = (unit.classId || "").length * 31 + (unit.level || 1) * 7;
     ctx.fillStyle = unit.faction === 'enemy' ? '#2a1018' : '#182a10';
     ctx.fillRect(0, 0, w, h);
-    var skinTones = ['#dba','#ecb','#fdb','#ca9','#eda'];
+    const skinTones = ['#dba','#ecb','#fdb','#ca9','#eda'];
     ctx.fillStyle = skinTones[seed % skinTones.length];
     ctx.fillRect(w*0.25, h*0.2, w*0.5, h*0.55);
-    var hairColors = ['#444','#654','#543','#765','#333','#876'];
+    const hairColors = ['#444','#654','#543','#765','#333','#876'];
     ctx.fillStyle = hairColors[seed % hairColors.length];
     if (cls.tags && cls.tags.includes('armored')) {
       ctx.fillStyle = '#888'; ctx.fillRect(w*0.2, h*0.05, w*0.6, h*0.3);
@@ -1005,19 +1005,19 @@ var Sprites = {
   },
 
   drawPortrait: function(ctx, charId, w, h) {
-    var ch = CHARACTERS[charId];
+    const ch = CHARACTERS[charId];
     if (!ch) { ctx.fillStyle = '#333'; ctx.fillRect(0, 0, w, h); return; }
     if (!this._portraitCache[charId]) {
-      var img = new Image();
+      const img = new Image();
       img.src = 'portraits/' + charId + '.png';
       this._portraitCache[charId] = { img: img, loaded: false, failed: false };
       img.onload = function() { Sprites._portraitCache[charId].loaded = true; };
       img.onerror = function() { Sprites._portraitCache[charId].failed = true; };
     }
-    var cached = this._portraitCache[charId];
+    const cached = this._portraitCache[charId];
     if (cached.loaded) { ctx.drawImage(cached.img, 0, 0, w, h); return; }
     if (!ch.portrait) { ctx.fillStyle = '#333'; ctx.fillRect(0, 0, w, h); return; }
-    var p = ch.portrait;
+    const p = ch.portrait;
     ctx.fillStyle = '#223'; ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = p.skin; ctx.fillRect(16, 20, 32, 36);
     ctx.fillStyle = p.hair; ctx.fillRect(12, 8, 40, 16);
@@ -1029,8 +1029,8 @@ var Sprites = {
   },
 
   drawSeizeMarker: function(ctx, x, y, frame) {
-    var s = this.TILE;
-    var alpha = 0.3 + 0.25 * Math.sin(frame * 0.1);
+    const s = this.TILE;
+    const alpha = 0.3 + 0.25 * Math.sin(frame * 0.1);
     // Outer glow
     ctx.save();
     ctx.shadowColor = 'rgba(255,255,0,0.8)';
@@ -1042,7 +1042,7 @@ var Sprites = {
     ctx.strokeStyle = '#ff0'; ctx.lineWidth = 2;
     ctx.strokeRect(x+1, y+1, s-2, s-2);
     // Inner diamond pulse
-    var da = 0.4 + 0.3 * Math.sin(frame * 0.12);
+    const da = 0.4 + 0.3 * Math.sin(frame * 0.12);
     ctx.save();
     ctx.globalAlpha = da;
     ctx.fillStyle = '#ffd700';
