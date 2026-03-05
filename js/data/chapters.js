@@ -38,6 +38,10 @@ const TERRAIN_CODES = {
   W: 'wall', G: 'gate', R: 'river',
   V: 'village', I: 'floor', T: 'throne',
   L: 'pillar', O: 'fort', '+': 'fort',
+  H: 'hill', S: 'swamp', C: 'cliff',
+  N: 'pass', D: 'road', A: 'basin',
+  E: 'sea', K: 'desert', X: 'bridge',
+  U: 'ruins', Z: 'stairs', B: 'brazier',
   '.': 'plain', ' ': 'plain'
 };
 

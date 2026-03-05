@@ -67,7 +67,31 @@ const UI = {
     if (!unit) { this.unitPanel.classList.add('hidden'); return; }
     const cls = getClassData(unit.classId);
     const terrain = terrainType || 'plain';
-    const td = { plain:{def:0,avo:0,name:'平原'}, forest:{def:1,avo:20,name:'森林'}, mountain:{def:2,avo:30,name:'山地'}, fort:{def:2,avo:20,name:'砦'}, wall:{def:3,avo:20,name:'城牆'}, gate:{def:3,avo:30,name:'城門'}, river:{def:0,avo:0,name:'河川'}, village:{def:0,avo:10,name:'村莊'}, throne:{def:3,avo:30,name:'王座'}, pillar:{def:1,avo:15,name:'柱子'}, floor:{def:0,avo:0,name:'石板地板'} }[terrain] || {def:0,avo:0,name:terrain};
+    const td = { 
+      plain:    {def:0,avo:0,name:'平原'}, 
+      forest:   {def:1,avo:20,name:'森林'}, 
+      mountain: {def:2,avo:30,name:'山地'}, 
+      fort:     {def:2,avo:20,name:'砦'}, 
+      wall:     {def:3,avo:20,name:'城牆'}, 
+      gate:     {def:3,avo:30,name:'城門'}, 
+      river:    {def:0,avo:0,name:'河川'}, 
+      village:  {def:0,avo:10,name:'村莊'}, 
+      throne:   {def:3,avo:30,name:'王座'}, 
+      pillar:   {def:1,avo:15,name:'柱子'}, 
+      floor:    {def:0,avo:0,name:'石板地板'},
+      hill:     {def:1,avo:20,name:'山丘'},
+      swamp:    {def:0,avo:-10,name:'沼地'},
+      cliff:    {def:2,avo:30,name:'懸崖'},
+      pass:     {def:1,avo:10,name:'山口'},
+      road:     {def:0,avo:0,name:'道路'},
+      basin:    {def:0,avo:10,name:'盆地'},
+      sea:      {def:0,avo:0,name:'海洋'},
+      desert:   {def:0,avo:-10,name:'沙漠'},
+      bridge:   {def:0,avo:0,name:'橋樑'},
+      ruins:    {def:1,avo:10,name:'廢墟'},
+      stairs:   {def:0,avo:0,name:'樓梯'},
+      brazier:  {def:0,avo:0,name:'火炬台'}
+    }[terrain] || {def:0,avo:0,name:terrain};
     const hpPct = Math.round(unit.hp / unit.maxHp * 100);
     const hpColor = hpPct > 50 ? '#4f4' : (hpPct > 25 ? '#cc4' : '#c44');
     const expPct = unit.faction === 'player' ? unit.exp : 0;

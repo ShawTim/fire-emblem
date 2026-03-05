@@ -225,6 +225,55 @@ const Sprites = {
       R(x+1,y+1,4,1,'#ddd8cc');R(x+1,y+2,1,3,'#ddd8cc');
       R(x+9,y+1,4,1,'#ddd8cc');R(x+17,y+9,4,1,'#ddd8cc');
 
+    }else if(type==='hill'){
+      R(x,y,s,s,'#58b848');
+      ctx.fillStyle='#68c050';
+      ctx.beginPath();ctx.moveTo(x+4,y+28);ctx.quadraticCurveTo(x+16,y+6,x+28,y+28);ctx.fill();
+      if(seed%2===0){ // Variant A
+        ctx.fillStyle='#88e068'; ctx.beginPath();ctx.moveTo(x+10,y+22);ctx.quadraticCurveTo(x+16,y+8,x+22,y+22);ctx.fill();
+      } else { // Variant B - darker/sturdier
+        ctx.fillStyle='#50a040'; ctx.beginPath();ctx.moveTo(x+6,y+24);ctx.quadraticCurveTo(x+16,y+12,x+26,y+24);ctx.fill();
+      }
+    }else if(type==='swamp'){
+      R(x,y,s,s,seed%2===0 ? '#3a5828' : '#2d4420');
+      ctx.fillStyle='rgba(20,40,10,0.6)';
+      ctx.beginPath();ctx.arc(x+12+(seed%8),y+14+(seed%6),8,0,Math.PI*2);ctx.fill();
+    }else if(type==='cliff'){
+      R(x,y,s,s,'#585048');
+      R(x,y,s,6,'#58a848');
+      R(x+(seed%4),y+6,s-(seed%4),24,seed%2===0?'#706858':'#605848');
+    }else if(type==='pass'){
+      R(x,y,s,s,'#a09070');
+      R(x+8,y,16,s,'#b0a880');
+      if(seed%2===0) R(x+12,y+4,8,8,'#888070');
+    }else if(type==='road'){
+      R(x,y,s,s,seed%2===0 ? '#c8b870' : '#b8a860');
+      R(x+6,y,4,s,'rgba(0,0,0,0.1)'); R(x+22,y,4,s,'rgba(0,0,0,0.1)');
+    }else if(type==='basin'){
+      R(x,y,s,s,'#48a038');
+      ctx.fillStyle=seed%2===0 ? '#3878a8' : '#4a90c0';
+      ctx.beginPath();ctx.arc(x+16,y+18,6,0,Math.PI*2);ctx.fill();
+    }else if(type==='sea'){
+      R(x,y,s,s,seed%2===0 ? '#1a5898' : '#144080');
+      R(x+(seed%16),y+8,12,1,'rgba(255,255,255,0.2)');
+    }else if(type==='desert'){
+      R(x,y,s,s,seed%2===0 ? '#c8a870' : '#d8bc80');
+      P(x+10+(seed%10),y+10+(seed%10),'#a88e58');
+    }else if(type==='bridge'){
+      R(x,y,s,s,'#3888d0');
+      R(x+4,y,24,s,seed%2===0 ? '#9a7850' : '#886840');
+    }else if(type==='ruins'){
+      R(x,y,s,s,'#58b848');
+      R(x+6,y+6,20,20,seed%2===0 ? '#808070' : '#707060');
+    }else if(type==='stairs'){
+      R(x,y,s,s,'#c8c0b0');
+      for(let i=0;i<4;i++) R(x,y+i*8,s,4,`rgba(0,0,0,${0.1+i*0.05})`);
+    }else if(type==='brazier'){
+      R(x,y,s,s,'#c8c0b0');
+      R(x+12,y+12,8,8,'#404030');
+      ctx.fillStyle=seed%2===0 ? '#ff4000' : '#ff8000';
+      ctx.beginPath();ctx.arc(x+16,y+14,4,0,Math.PI*2);ctx.fill();
+
     }else{R(x,y,s,s,'#58b848');}
     ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.strokeRect(x+0.5,y+0.5,s-1,s-1);
   },
