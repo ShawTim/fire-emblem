@@ -457,7 +457,14 @@ const Sprites = {
         } else if (faction === 'enemy') {
           const enemyKey = sKey + '_enemy';
           if (!this._imgCache[enemyKey]) {
-            this._imgCache[enemyKey] = { img: this._tintSprite(sData.img, '#c04040'), loaded: true };
+            // 確保 img load 完先 tint，否則 sprite 會斷／冇色
+            if (!sData.img.complete || !sData.img.naturalWidth) {
+              // 未 load 完，等下次 render
+              return;
+            }
+            // 改用較鮮紅色，避暗紅效果
+            this._imgCache[enemyKey] = { img: this._tintSprite(sData.img, '#e05858'), loaded: true };
+
           }
           drawImg = this._imgCache[enemyKey].img;
         } else if (faction === 'ally') {
