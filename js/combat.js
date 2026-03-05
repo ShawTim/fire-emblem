@@ -30,8 +30,8 @@ function calculateCombat(attacker, defender, map) {
   }
 
   // Attacker stats
-  const atkWeaponPower = (atkWpn.atk * atkEffMult) + triBonus.atk;
-  const atkPow = (atkWpn.magic ? attacker.mag : attacker.str) + atkWeaponPower;
+  let atkPow = (atkWpn.magic ? attacker.mag : attacker.str) + atkWpn.atk + triBonus.atk;
+  atkPow *= atkEffMult;
   const defStat = defender.getDefAt(defTerrain, atkWpn.magic);
   let atkDmg = Math.max(0, atkPow - defStat);
   const atkHit = Math.max(0, Math.min(100, attacker.getHit() + triBonus.hit - defender.getAvo(defTerrain)));
