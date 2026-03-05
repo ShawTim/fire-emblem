@@ -11,6 +11,18 @@ const TERRAIN_DATA = {
   throne:   { def: 3, avo: 30, cost: 1 },
   pillar:   { def: 1, avo: 15, cost: 2 },
   floor:    { def: 0, avo: 0, cost: 1 },  // 室內宮殿地板
+  hill:     { def: 1, avo: 20, cost: 2 },
+  swamp:    { def: 0, avo: -10, cost: 3 },
+  cliff:    { def: 2, avo: 30, cost: 999 },
+  pass:     { def: 1, avo: 10, cost: 1 },
+  road:     { def: 0, avo: 0, cost: 1 },
+  basin:    { def: 0, avo: 10, cost: 1 },
+  sea:      { def: 0, avo: 0, cost: 999 },
+  desert:   { def: 0, avo: -10, cost: 3 },
+  bridge:   { def: 0, avo: 0, cost: 1 },
+  ruins:    { def: 1, avo: 10, cost: 2 },
+  stairs:   { def: 0, avo: 0, cost: 1 },
+  brazier:  { def: 0, avo: 0, cost: 1 },
 };
 
 class Unit {
