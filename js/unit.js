@@ -11,12 +11,6 @@ const TERRAIN_DATA = {
   throne:   { def: 3, avo: 30, cost: 1 },
   pillar:   { def: 1, avo: 15, cost: 2 },
   floor:    { def: 0, avo: 0, cost: 1 },  // 室內宮殿地板
-  brazier:  { def: 0, avo: 0, cost: 1 },  // 火炬台（裝飾性地板）
-  sea:      { def: 0, avo: 0,   cost: 999 }, // 海洋（不可通行）
-  desert:   { def: 0, avo: -10, cost: 3 },  // 沙漠（高移動消耗）
-  bridge:   { def: 0, avo: 0,   cost: 1 },  // 橋樑
-  ruins:    { def: 1, avo: 10,  cost: 2 },  // 廢墟（防禦加成）
-  stairs:   { def: 0, avo: 0,   cost: 1 },  // 樓梯（室內）
 };
 
 class Unit {
