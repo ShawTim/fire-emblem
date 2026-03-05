@@ -34,11 +34,20 @@ const CHAPTER_MANIFEST = [
 
 // Parse terrain codes
 const TERRAIN_CODES = {
-  P: 'plain', F: 'forest', M: 'mountain',
-  W: 'wall', G: 'gate', R: 'river',
-  V: 'village', I: 'floor', T: 'throne',
-  L: 'pillar', O: 'fort', '+': 'fort',
-  '.': 'plain', ' ': 'plain'
+  P: 'plain',
+  F: 'forest',
+  M: 'mountain',
+  W: 'wall',
+  G: 'gate',
+  R: 'river',
+  V: 'village',
+  I: 'floor',
+  T: 'throne',
+  L: 'pillar',
+  O: 'fort',
+  '+': 'fort',
+  '.': 'plain',
+  ' ': 'plain'
 };
 
 function parseTerrain(text, w, h) {
