@@ -184,6 +184,7 @@ class Game {
     UI.hideCombatForecast();
     BGM.play('playerPhase', true);
     this.applyTerrainHealing('player');
+    UI.showEndTurnButton(() => this.endTurn());
   }
 
   applyTerrainHealing(faction) {
@@ -1107,6 +1108,7 @@ class Game {
     if (this.state !== 'map' || this.phase !== 'player') return;
     UI.hideActionMenu();
     UI.hideUnitPanel();
+    UI.hideEndTurnButton();
     this.cancelSelection();
     AITurn.beginEnemyPhase(this);
   }

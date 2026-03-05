@@ -13,6 +13,55 @@ const UI = {
   chapterCard: document.getElementById('chapter-title-card'),
   chapterText: document.getElementById('chapter-title-text'),
   chapterSub: document.getElementById('chapter-title-sub'),
+  endTurnBtn: null,
+
+  showEndTurnButton(onClick) {
+    if (this.endTurnBtn) return;
+    const btn = document.createElement('button');
+    btn.id = 'end-turn-float-btn';
+    btn.innerHTML = '⏭<br><span style="font-size:11px">結束回合</span>';
+    btn.style.cssText = [
+      'position:absolute',
+      'right:20px',
+      'bottom:20px',
+      'width:64px',
+      'height:64px',
+      'border-radius:50%',
+      'background:linear-gradient(145deg,#c44,#a33)',
+      'border:2px solid #f66',
+      'color:#fff',
+      'font-size:24px',
+      'cursor:pointer',
+      'z-index:150',
+      'box-shadow:0 4px 15px rgba(0,0,0,0.4),0 0 20px rgba(255,100,100,0.3)',
+      'transition:transform 0.15s,box-shadow 0.15s',
+      'display:flex',
+      'flex-direction:column',
+      'align-items:center',
+      'justify-content:center',
+      'line-height:1.2'
+    ].join(';');
+    
+    btn.addEventListener('mouseenter', () => {
+      btn.style.transform = 'scale(1.05)';
+      btn.style.boxShadow = '0 6px 20px rgba(0,0,0,0.5),0 0 30px rgba(255,100,100,0.5)';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'scale(1)';
+      btn.style.boxShadow = '0 4px 15px rgba(0,0,0,0.4),0 0 20px rgba(255,100,100,0.3)';
+    });
+    btn.addEventListener('click', onClick);
+    
+    document.getElementById('game-container').appendChild(btn);
+    this.endTurnBtn = btn;
+  },
+
+  hideEndTurnButton() {
+    if (this.endTurnBtn) {
+      this.endTurnBtn.remove();
+      this.endTurnBtn = null;
+    }
+  },
 
   showUnitPanel(unit, terrainType) {
     if (!unit) { this.unitPanel.classList.add('hidden'); return; }
