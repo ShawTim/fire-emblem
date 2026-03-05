@@ -348,7 +348,7 @@ const Sprites = {
             frame = 12 + animFrame;
           } else {
             // Moving or has direction - use directional frames
-            const direction = unit._direction;
+            let direction = unit._direction;
             if (!direction && isMoving) {
               if (unit.vx > 0) direction = 'right';
               else if (unit.vx < 0) direction = 'left';
