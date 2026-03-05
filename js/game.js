@@ -1134,8 +1134,7 @@ class Game {
         UI.showMapMenuMsg('已存檔！', reopen);
       },
       onMapBrowse: () => {
-        this.state = 'map';
-        this.enterMapBrowse();
+        MiniMap.show(this, reopen);
       },
       onSettings: () => {
         UI.showSettingsMenu(reopen);
