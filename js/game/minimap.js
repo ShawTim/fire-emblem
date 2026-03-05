@@ -191,6 +191,14 @@ var MiniMap = {
       'village': '#8a7a5a',
       'shop': '#6a5a8a',
       'boss': '#8a3a3a',
+      'desert': '#8a7a3a',
+      'bridge': '#6a5a3a',
+      'ruins': '#5a5a4a',
+      'stairs': '#7a7a6a',
+      'floor': '#8a8070',
+      'pillar': '#6a6a7a',
+      'brazier': '#8a6a3a',
+      'river': '#2a5a8a',
     };
     return colors[terrain] || '#3a3a3a';
   }

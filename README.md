@@ -1,8 +1,8 @@
-# 🔥 火炎之紋章：翠星之影
+# 🔥 翠星之影
 
-> Fire Emblem: Shadow of the Emerald Star
+> Shadow of the Emerald Star
 
-一款完全在瀏覽器中運行的戰略角色扮演遊戲（SRPG），靈感來自經典的《火焰之紋章》系列。
+一款完全在瀏覽器中運行的戰略角色扮演遊戲（SRPG），靈感來自經典 SRPG 系列《火焰之紋章》。
 
 ## 📖 故事
 

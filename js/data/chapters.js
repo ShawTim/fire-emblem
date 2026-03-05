@@ -37,7 +37,8 @@ const TERRAIN_CODES = {
   P: 'plain', F: 'forest', M: 'mountain',
   W: 'wall', G: 'gate', R: 'river',
   V: 'village', I: 'floor', T: 'throne',
-  L: 'pillar', O: 'fort', '+': 'fort',
+  L: 'pillar', O: 'fort', '+': 'fort', B: 'brazier',
+  S: 'sea', D: 'desert', X: 'bridge', U: 'ruins', Z: 'stairs',
   '.': 'plain', ' ': 'plain'
 };
 
