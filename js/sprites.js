@@ -278,22 +278,6 @@ const Sprites = {
     ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.strokeRect(x+0.5,y+0.5,s-1,s-1);
   },
 
-  // Safari 兼容版 染色法
-  _tintSprite: function(origImg, tintColor) {
-    const w = origImg.width, h = origImg.height;
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    const tctx = canvas.getContext('2d');
-    tctx.drawImage(origImg, 0, 0);
-    tctx.globalCompositeOperation = 'multiply';
-    tctx.fillStyle = tintColor;
-    tctx.fillRect(0, 0, w, h);
-    tctx.globalCompositeOperation = 'destination-in';
-    tctx.drawImage(origImg, 0, 0);
-    tctx.globalCompositeOperation = 'source-over';
-    return canvas;
-  },
-
   getUnitColors: function(faction) {
     if(faction==='player')return{body:'#3060a8',armor:'#284880',accent:'#70a0e0',skin:'#f0d0b0',cloth:'#4878c0'};
     if(faction==='enemy')return{body:'#a03030',armor:'#802020',accent:'#e07070',skin:'#f0d0b0',cloth:'#c04848'};
@@ -446,35 +430,16 @@ const Sprites = {
           frame = this._idleFrame();
         }
         
-        // Safari 兼容：用 pre-tinted sprite cache，唔再用 ctx.filter
-        let drawImg = sData.img;
+        ctx.save();
         if (grayed) {
-          const grayKey = sKey + '_gray';
-          if (!this._imgCache[grayKey]) {
-            this._imgCache[grayKey] = { img: this._tintSprite(sData.img, '#808080'), loaded: true };
-          }
-          drawImg = this._imgCache[grayKey].img;
+          ctx.filter = 'grayscale(100%)';
         } else if (faction === 'enemy') {
-          const enemyKey = sKey + '_enemy';
-          if (!this._imgCache[enemyKey]) {
-            // 確保 img load 完先 tint，否則 sprite 會斷／冇色
-            if (!sData.img.complete || !sData.img.naturalWidth) {
-              // 未 load 完，等下次 render
-              return;
-            }
-            // 改用較鮮紅色，避暗紅效果
-            this._imgCache[enemyKey] = { img: this._tintSprite(sData.img, '#e05858'), loaded: true };
-
-          }
-          drawImg = this._imgCache[enemyKey].img;
+          // Blue sprites -> Red for enemies (hue-rotate 140deg + saturate for vivid red)
+          ctx.filter = 'hue-rotate(140deg) saturate(1.3) brightness(1.1)';
         } else if (faction === 'ally') {
-          const allyKey = sKey + '_ally';
-          if (!this._imgCache[allyKey]) {
-            this._imgCache[allyKey] = { img: this._tintSprite(sData.img, '#40c040'), loaded: true };
-          }
-          drawImg = this._imgCache[allyKey].img;
+          // Blue sprites -> Green for allies
+          ctx.filter = 'hue-rotate(60deg) saturate(1.2)';
         }
-
         
         // Map sprites usually don't need scaling down if they are 16x32, we just draw them centered
         const drawW = sw * 1.5;
@@ -490,7 +455,7 @@ const Sprites = {
           ctx.scale(-1, 1);
           ctx.drawImage(sData.img, 0, frame * sh, sw, sh, 0, 0, drawW, drawH);
         } else {
-          ctx.drawImage(drawImg, 0, frame * sh, sw, sh, dx, dy, drawW, drawH);
+          ctx.drawImage(sData.img, 0, frame * sh, sw, sh, dx, dy, drawW, drawH);
         }
         
         ctx.restore();
