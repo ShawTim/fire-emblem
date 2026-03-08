@@ -306,14 +306,26 @@ class Game {
     // Grid overlay
     GameMap.renderGrid(ctx, this.canvasW, this.canvasH);
 
+    // Hide unit layer during non-gameplay states (dialogue, chapter card, etc.)
+    var gameplayState = !['title', 'ending', 'chapterTitle'].includes(this.state)
+      && !this.dialogue.isActive();
+
     // Units — DOM layer handles sprite-based units
-    if (UnitLayer._active) {
+    if (UnitLayer._active && gameplayState) {
+      UnitLayer.setVisible(true);
       UnitLayer.update(this);
       UnitLayer.showCursor(['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state));
       // Canvas fallback for units without sprite data
       var fallbackUnits = this.units.filter(u => u.hp > 0 && !UnitLayer.hasSpriteFor(u));
       if (fallbackUnits.length > 0) {
         GameMap.renderUnits(ctx, fallbackUnits, this.canvasW, this.canvasH, this);
+      }
+    } else if (UnitLayer._active) {
+      UnitLayer.setVisible(false);
+      // Still render units on canvas when DOM layer is hidden
+      GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
+      if (['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state)) {
+        Cursor.render(ctx, this.canvasW, this.canvasH);
       }
     } else {
       GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
@@ -327,8 +339,6 @@ class Game {
       UI.hideUnitPanel();
       UnitLayer.setVisible(false);
       this.battleScene.render(ctx, this.canvasW, this.canvasH);
-    } else if (UnitLayer._active) {
-      UnitLayer.setVisible(true);
     }
   }
 
@@ -908,6 +918,7 @@ class Game {
           this.selectedUnit.x = this.prevUnitPos.x;
           this.selectedUnit.y = this.prevUnitPos.y;
           this.selectedUnit.moved = false;
+          UnitLayer.moveUnitTo(this.selectedUnit, this.prevUnitPos.x, this.prevUnitPos.y);
         }
         this.cancelSelection();
         break;
@@ -1274,6 +1285,7 @@ class Game {
           this.selectedUnit.x = this.prevUnitPos.x;
           this.selectedUnit.y = this.prevUnitPos.y;
           this.selectedUnit.moved = false;
+          UnitLayer.moveUnitTo(this.selectedUnit, this.prevUnitPos.x, this.prevUnitPos.y);
         }
         UI.hideActionMenu();
         this.cancelSelection();

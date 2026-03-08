@@ -551,21 +551,30 @@ body {
 /* HP bar */
 .map-unit__hp {
   position: absolute;
-  bottom: 2px;
+  bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
-  width: 26px;
-  height: 3px;
-  background: #000;
+  width: 28px;
+  height: 5px;
+  background: #111;
+  border: 1px solid #333;
+  box-sizing: border-box;
+  z-index: 2;
 }
 .map-unit__hp-fill {
-  height: 1px;
-  margin-top: 1px;
-  margin-left: 1px;
+  height: 3px;
   background: #40c040;
 }
 .map-unit__hp-fill--med { background: #c0c040; }
 .map-unit__hp-fill--low { background: #c04040; }
+
+/* Counter-rotate HP bar to cancel parent faction filter */
+.map-unit--enemy .map-unit__hp {
+  filter: hue-rotate(-140deg) saturate(0.77) brightness(0.91);
+}
+.map-unit--ally .map-unit__hp {
+  filter: hue-rotate(-60deg) saturate(0.83);
+}
 
 /* Boss indicator */
 .map-unit__boss {

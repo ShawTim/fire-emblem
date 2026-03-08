@@ -26,6 +26,9 @@ const UnitLayer = {
   setupChapter(units, mapW, mapH) {
     if (!this._active) return;
     this.clearUnits();
+    // Hide layer until gameplay starts (avoid flash of unstyled units)
+    this.container.style.display = 'none';
+    this._setupDone = false;
     this.world.style.width = (mapW * this._tileSize) + 'px';
     this.world.style.height = (mapH * this._tileSize) + 'px';
     for (var i = 0; i < units.length; i++) {
@@ -295,7 +298,7 @@ const UnitLayer = {
     if (!hpFill) return;
     if (unit.hp === undefined || !unit.maxHp) return;
     var ratio = unit.hp / unit.maxHp;
-    hpFill.style.width = Math.floor(24 * ratio) + 'px';
+    hpFill.style.width = Math.floor(26 * ratio) + 'px';
     // Color
     if (ratio > 0.5) {
       hpFill.className = 'map-unit__hp-fill';
