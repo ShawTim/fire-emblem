@@ -72,18 +72,26 @@ const GameMap = {
     const endX = Math.min(this.width, startX + Math.ceil(canvasW / ts) + 1);
     const endY = Math.min(this.height, startY + Math.ceil(canvasH / ts) + 1);
 
-    // Use offscreen canvas for tile rendering at native res, then scale
+    // Pass 1: Draw cached terrain tiles scaled to screen
     for (let y = startY; y < endY; y++) {
       for (let x = startX; x < endX; x++) {
         const sx = x * ts - this.camX;
         const sy = y * ts - this.camY;
         const terrain = this.terrain[y][x];
-        // Draw scaled
-        ctx.save();
-        ctx.translate(sx, sy);
-        ctx.scale(this.scale, this.scale);
-        Sprites.drawTerrain(ctx, terrain, 0, 0);
-        ctx.restore();
+        var cached = Sprites._getCachedTile(terrain, x, y);
+        ctx.drawImage(cached, sx, sy, ts, ts);
+      }
+    }
+
+    // Pass 2: Terrain transition overlays (edge blending between different terrain types)
+    for (let y = startY; y < endY; y++) {
+      for (let x = startX; x < endX; x++) {
+        var overlay = Sprites._getCachedOverlay(x, y);
+        if (overlay) {
+          const sx = x * ts - this.camX;
+          const sy = y * ts - this.camY;
+          ctx.drawImage(overlay, sx, sy, ts, ts);
+        }
       }
     }
   },

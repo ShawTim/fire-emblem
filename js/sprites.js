@@ -25,65 +25,435 @@ const Sprites = {
       floor:{base:"#c8c0b0",dark:"#b0a898",light:"#dcd4c4"} }[type] || {base:"#58b848",dark:"#48a838",light:"#68c858"};
   },
 
-  drawTerrain: function(ctx, type, x, y) {
-    var s=GAME_CONFIG.TILE_SIZE, seed=this._seed(x,y), self=this;
+  // Terrain tile cache: offscreen canvases keyed by "type_tileX_tileY"
+  _terrainCache: {},
+  _getCachedTile: function(type, tileX, tileY) {
+    var key = type + '_' + tileX + '_' + tileY;
+    if (this._terrainCache[key]) return this._terrainCache[key];
+    var c = document.createElement('canvas');
+    c.width = c.height = GAME_CONFIG.TILE_SIZE;
+    this.drawTerrain(c.getContext('2d'), type, 0, 0, tileX, tileY);
+    this._terrainCache[key] = c;
+    return c;
+  },
+  clearTerrainCache: function() { this._terrainCache = {}; this._overlayCache = {}; },
+
+  // --- Terrain Edge Overlay System ---
+  _terrainCategory: {
+    river:'water', sea:'water', basin:'water',
+    forest:'vegetation', swamp:'vegetation',
+    mountain:'rocky', cliff:'rocky', hill:'rocky',
+    wall:'structure', gate:'structure', fort:'structure',
+    floor:'indoor', pillar:'indoor', stairs:'indoor', brazier:'indoor', throne:'indoor',
+    plain:'land', village:'land', road:'land', pass:'land', desert:'land', ruins:'land', bridge:'land'
+  },
+  _overlayCache: {},
+
+  _edgeSeed: function(tileX, tileY, edge) {
+    // Shared seed: both tiles sharing an edge get the same seed for that edge
+    if (edge === 'right')  return this._seed(tileX * 2 + 1, tileY * 2);
+    if (edge === 'left')   return this._seed(tileX * 2 - 1, tileY * 2);
+    if (edge === 'bottom') return this._seed(tileX * 2, tileY * 2 + 1);
+    if (edge === 'top')    return this._seed(tileX * 2, tileY * 2 - 1);
+    return this._seed(tileX, tileY);
+  },
+
+  _getNeighborContext: function(tileX, tileY) {
+    var center = GameMap.getTerrain(tileX, tileY);
+    var centerCat = this._terrainCategory[center] || 'land';
+    var dirs = [{dx:0,dy:-1,side:'top'},{dx:0,dy:1,side:'bottom'},{dx:-1,dy:0,side:'left'},{dx:1,dy:0,side:'right'}];
+    var result = { center: { terrain: center, category: centerCat } };
+    for (var i = 0; i < 4; i++) {
+      var d = dirs[i];
+      var nT = GameMap.getTerrain(tileX + d.dx, tileY + d.dy);
+      var nC = this._terrainCategory[nT] || 'land';
+      result[d.side] = { terrain: nT, category: nC, differs: nT !== center, catDiffers: nC !== centerCat };
+    }
+    return result;
+  },
+
+  _getCachedOverlay: function(tileX, tileY) {
+    var key = 'ov_' + tileX + '_' + tileY;
+    if (this._overlayCache[key] !== undefined) return this._overlayCache[key];
+    var nb = this._getNeighborContext(tileX, tileY);
+    // Check if overlay needed
+    var need = false;
+    if (nb.center.terrain === 'forest' || nb.center.terrain === 'wall') {
+      need = true; // same-type overlays (connecting canopy / masonry)
+    }
+    if (nb.top.differs || nb.bottom.differs || nb.left.differs || nb.right.differs) {
+      need = true;
+    }
+    if (!need) { this._overlayCache[key] = null; return null; }
+    var c = document.createElement('canvas');
+    c.width = c.height = GAME_CONFIG.TILE_SIZE;
+    this._drawTerrainOverlay(c.getContext('2d'), nb, tileX, tileY);
+    this._overlayCache[key] = c;
+    return c;
+  },
+
+  // Wavy edge strip — self-contained rounded shape that tapers to 0 at both corners.
+  // Uses sin(t*PI) envelope so depth is always 0 at tile boundaries (no sharp cuts).
+  _drawIrregularEdge: function(ctx, edge, depth, color, seed, nBase) {
+    var s = GAME_CONFIG.TILE_SIZE, self = this;
+    ctx.fillStyle = color;
+    // Generate smooth wavy curve with 8 sample points + tapered envelope
+    var nSamples = 8;
+    var pts = [];
+    for (var i = 0; i <= nSamples; i++) {
+      var t = i / nSamples;
+      // Envelope: sin(t*PI) — forces 0 at both ends, peaks in middle
+      var envelope = Math.sin(t * Math.PI);
+      // Wave variation per sample
+      var wave = depth * (0.7 + self._rng(seed, nBase + i * 7) * 0.6);
+      // Apply envelope so edges taper to 0 at corners
+      var d = wave * envelope;
+      pts.push({ t: t, d: d });
+    }
+    ctx.beginPath();
+    if (edge === 'top' || edge === 'bottom') {
+      var baseY = (edge === 'top') ? 0 : s;
+      var dir = (edge === 'top') ? 1 : -1;
+      // Start at corner (depth=0)
+      ctx.moveTo(0, baseY);
+      // Smooth curve through all sample points
+      for (var j = 0; j < pts.length; j++) {
+        var px = pts[j].t * s;
+        var py = baseY + pts[j].d * dir;
+        if (j === 0) {
+          ctx.lineTo(px, py);
+        } else {
+          // Smooth quadratic through midpoints
+          var prevX = pts[j-1].t * s;
+          var prevY = baseY + pts[j-1].d * dir;
+          var cpx = (prevX + px) / 2;
+          var cpy = (prevY + py) / 2;
+          ctx.quadraticCurveTo(prevX, prevY, cpx, cpy);
+        }
+      }
+      // End at corner (depth=0 guaranteed by envelope)
+      ctx.lineTo(s, baseY);
+      ctx.closePath();
+    } else {
+      var baseX = (edge === 'left') ? 0 : s;
+      var dirX = (edge === 'left') ? 1 : -1;
+      ctx.moveTo(baseX, 0);
+      for (var k = 0; k < pts.length; k++) {
+        var py2 = pts[k].t * s;
+        var px2 = baseX + pts[k].d * dirX;
+        if (k === 0) {
+          ctx.lineTo(px2, py2);
+        } else {
+          var prevX2 = baseX + pts[k-1].d * dirX;
+          var prevY2 = pts[k-1].t * s;
+          var cpx2 = (prevX2 + px2) / 2;
+          var cpy2 = (prevY2 + py2) / 2;
+          ctx.quadraticCurveTo(prevX2, prevY2, cpx2, cpy2);
+        }
+      }
+      ctx.lineTo(baseX, s);
+      ctx.closePath();
+    }
+    ctx.fill();
+  },
+
+  // Scattered pixel clusters — kept away from tile corners (inner 70% zone)
+  _drawScatterPixels: function(ctx, edge, count, maxDepth, color, seed, nBase) {
+    var s = GAME_CONFIG.TILE_SIZE;
+    ctx.fillStyle = color;
+    for (var i = 0; i < count; i++) {
+      // Place scatter in the inner 70% to avoid corner sharp cuts
+      var along = Math.floor(s * 0.15 + this._rng(seed, nBase + i * 2) * s * 0.7);
+      var perp = Math.floor(this._rng(seed, nBase + i * 2 + 1) * maxDepth);
+      var px, py;
+      if (edge === 'top') { px = along; py = perp; }
+      else if (edge === 'bottom') { px = along; py = s - 1 - perp; }
+      else if (edge === 'left') { px = perp; py = along; }
+      else { px = s - 1 - perp; py = along; }
+      var w = this._rng(seed, nBase + i + 50) > 0.5 ? 2 : 1;
+      ctx.fillRect(px, py, w, 1);
+    }
+  },
+
+  // --- Transition drawing functions ---
+
+  _drawWaterToLandEdge: function(ctx, edge, neighborTerrain, seed) {
+    // Thick sandy bank encroaching on water tile (wave-shaped)
+    this._drawIrregularEdge(ctx, edge, 6, '#c8b870', seed, 2000);
+    // Green grass fringe on top (thicker)
+    this._drawIrregularEdge(ctx, edge, 4, '#58b848', seed, 2050);
+    // Inner grass accent
+    this._drawIrregularEdge(ctx, edge, 2, '#68c858', seed, 2080);
+    // Foam line at water's edge
+    this._drawIrregularEdge(ctx, edge, 1, 'rgba(160,216,255,0.5)', seed, 2150);
+    // Scattered pebbles on bank
+    this._drawScatterPixels(ctx, edge, 3, 7, '#a0b060', seed, 2100);
+  },
+
+  _drawForestToPlainEdge: function(ctx, edge, seed) {
+    // Thick canopy shadow on the plain tile
+    this._drawIrregularEdge(ctx, edge, 6, 'rgba(30,80,20,0.2)', seed, 3000);
+    // Undergrowth (thicker)
+    this._drawIrregularEdge(ctx, edge, 4, '#40a838', seed, 3050);
+    // Inner vegetation
+    this._drawIrregularEdge(ctx, edge, 2, '#309828', seed, 3070);
+    // Scattered dark leaves
+    this._drawScatterPixels(ctx, edge, 4, 10, '#309828', seed, 3100);
+    // Occasional fallen leaf
+    if (this._rng(seed, 3200) > 0.5) {
+      this._drawScatterPixels(ctx, edge, 2, 8, '#8a6838', seed, 3210);
+    }
+  },
+
+  _drawForestToForestEdge: function(ctx, edge, seed) {
+    // Connecting canopy blob bridging tiles
+    var s = GAME_CONFIG.TILE_SIZE;
+    var bx, by;
+    if (edge === 'top')    { bx = 6 + Math.floor(this._rng(seed, 4000) * 20); by = 2; }
+    else if (edge === 'bottom') { bx = 6 + Math.floor(this._rng(seed, 4000) * 20); by = s - 2; }
+    else if (edge === 'left')   { bx = 2; by = 6 + Math.floor(this._rng(seed, 4000) * 20); }
+    else                        { bx = s - 2; by = 6 + Math.floor(this._rng(seed, 4000) * 20); }
+    var r = 3 + Math.floor(this._rng(seed, 4010) * 3);
+    // Dark shadow layer
+    ctx.fillStyle = '#1a7810';
+    ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI * 2); ctx.fill();
+    // Brighter top layer
+    ctx.fillStyle = '#288a20';
+    ctx.beginPath(); ctx.arc(bx, by - 1, r - 1, 0, Math.PI * 2); ctx.fill();
+    // Highlight specks
+    this._drawScatterPixels(ctx, edge, 2, 4, '#60c850', seed, 4050);
+  },
+
+  _drawWallEdge: function(ctx, edge, neighborTerrain, seed) {
+    var isIndoor = (this._terrainCategory[neighborTerrain] === 'indoor');
+    if (isIndoor) {
+      // Clean shadow at wall-floor junction
+      this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.15)', seed, 5000);
+    } else {
+      // Crumbling bricks / rubble at exposed wall edge
+      this._drawScatterPixels(ctx, edge, 3, 4, '#989088', seed, 5050);
+      // Moss
+      if (this._rng(seed, 5100) > 0.5) {
+        this._drawScatterPixels(ctx, edge, 2, 3, '#507848', seed, 5110);
+      }
+      // Crack line
+      var s = GAME_CONFIG.TILE_SIZE;
+      ctx.strokeStyle = '#585048'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      var ca = 4 + Math.floor(this._rng(seed, 5150) * 12);
+      var cb = 6 + Math.floor(this._rng(seed, 5160) * 12);
+      if (edge === 'top')    { ctx.moveTo(ca, 0); ctx.lineTo(cb, 4); }
+      else if (edge === 'bottom') { ctx.moveTo(ca, s); ctx.lineTo(cb, s - 4); }
+      else if (edge === 'left')   { ctx.moveTo(0, ca); ctx.lineTo(4, cb); }
+      else                        { ctx.moveTo(s, ca); ctx.lineTo(s - 4, cb); }
+      ctx.stroke();
+    }
+  },
+
+  _drawWallToWallEdge: function(ctx, edge, seed) {
+    var s = GAME_CONFIG.TILE_SIZE;
+    // Continuous mortar line at seam
+    ctx.fillStyle = '#585048';
+    if (edge === 'top' || edge === 'bottom') {
+      var ey = (edge === 'top') ? 0 : s - 1;
+      ctx.fillRect(0, ey, s, 1);
+    } else {
+      var ex = (edge === 'left') ? 0 : s - 1;
+      for (var row = 0; row < 4; row++) {
+        var ry = row * 8 + Math.floor(this._rng(seed, 5200 + row) * 6);
+        ctx.fillRect(ex, ry, 1, 3);
+      }
+    }
+    // Shared crack spanning boundary (~30%)
+    if (this._rng(seed, 5300) > 0.7) {
+      ctx.strokeStyle = '#706860'; ctx.lineWidth = 1;
+      var ca2 = 6 + Math.floor(this._rng(seed, 5310) * 16);
+      ctx.beginPath();
+      if (edge === 'top')         { ctx.moveTo(ca2, 0); ctx.lineTo(ca2 + 2, 3); }
+      else if (edge === 'bottom') { ctx.moveTo(ca2, s); ctx.lineTo(ca2 + 2, s - 3); }
+      else if (edge === 'left')   { ctx.moveTo(0, ca2); ctx.lineTo(3, ca2 + 2); }
+      else                        { ctx.moveTo(s, ca2); ctx.lineTo(s - 3, ca2 + 2); }
+      ctx.stroke();
+    }
+  },
+
+  _drawMountainToLandEdge: function(ctx, edge, seed) {
+    // Thick scree/rubble strip on the land side
+    this._drawIrregularEdge(ctx, edge, 5, '#908870', seed, 6000);
+    this._drawIrregularEdge(ctx, edge, 3, '#a89878', seed, 6030);
+    this._drawScatterPixels(ctx, edge, 4, 8, '#a89878', seed, 6050);
+    // Shadow from elevation
+    this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.1)', seed, 6100);
+  },
+
+  // Master dispatch
+  _drawTerrainOverlay: function(ctx, nb, tileX, tileY) {
+    var sides = ['top', 'bottom', 'left', 'right'];
+    var center = nb.center;
+
+    for (var i = 0; i < 4; i++) {
+      var side = sides[i];
+      var n = nb[side];
+      var eSeed = this._edgeSeed(tileX, tileY, side);
+
+      // Different-terrain transitions
+      if (n.differs) {
+        // Water tile → land neighbor: draw bank on water tile
+        if (center.category === 'water' && n.category !== 'water') {
+          this._drawWaterToLandEdge(ctx, side, n.terrain, eSeed);
+        }
+        // Land tile → forest neighbor: canopy overhang on land tile
+        else if (center.category === 'land' && n.terrain === 'forest') {
+          this._drawForestToPlainEdge(ctx, side, eSeed);
+        }
+        // Wall tile → non-structure: crumbling edge
+        else if (center.terrain === 'wall' && n.category !== 'structure') {
+          this._drawWallEdge(ctx, side, n.terrain, eSeed);
+        }
+        // Land tile → mountain/rocky: rubble scatter
+        else if (center.category === 'land' && n.category === 'rocky') {
+          this._drawMountainToLandEdge(ctx, side, eSeed);
+        }
+        // Land tile → water: grass overhang onto water
+        else if (center.category === 'land' && n.category === 'water') {
+          this._drawIrregularEdge(ctx, side, 4, 'rgba(88,184,72,0.35)', eSeed, 9000);
+          this._drawIrregularEdge(ctx, side, 2, 'rgba(72,168,56,0.25)', eSeed, 9020);
+        }
+        // Desert encroaching on non-desert land
+        else if (n.terrain === 'desert' && center.category === 'land' && center.terrain !== 'desert') {
+          this._drawIrregularEdge(ctx, side, 3, '#d0b878', eSeed, 7000);
+          this._drawScatterPixels(ctx, side, 2, 5, '#c8a870', eSeed, 7050);
+        }
+        // Generic category boundary: subtle shadow
+        else if (n.catDiffers) {
+          this._drawIrregularEdge(ctx, side, 1, 'rgba(0,0,0,0.06)', eSeed, 9500);
+        }
+      }
+    }
+
+    // Same-terrain special overlays
+    if (center.terrain === 'forest') {
+      for (var j = 0; j < 4; j++) {
+        if (nb[sides[j]].terrain === 'forest') {
+          this._drawForestToForestEdge(ctx, sides[j], this._edgeSeed(tileX, tileY, sides[j]));
+        }
+      }
+    }
+    if (center.terrain === 'wall') {
+      for (var k = 0; k < 4; k++) {
+        if (nb[sides[k]].terrain === 'wall') {
+          this._drawWallToWallEdge(ctx, sides[k], this._edgeSeed(tileX, tileY, sides[k]));
+        }
+      }
+    }
+  },
+
+  drawTerrain: function(ctx, type, x, y, tileX, tileY) {
+    var s=GAME_CONFIG.TILE_SIZE, seed=this._seed(tileX !== undefined ? tileX : x, tileY !== undefined ? tileY : y), self=this;
     const rng = function(n) { return self._rng(seed, n); };
     const R = function(rx,ry,rw,rh,rc) { ctx.fillStyle=rc; ctx.fillRect(rx,ry,rw,rh); };
     const P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
 
     if(type==='plain'){
-      // GBA Blazing Blade style warm green grass
+      // GBA FE-style grass: smooth block variation + organic tufts
       R(x,y,s,s,'#58b848');
-      var gr=['#48a838','#58b848','#68c858','#50b040','#60c050'];
-      for(let py=0;py<s;py++)for(let px=0;px<s;px++){
-        var ck=(px+py)%2,z=((py>>2)+(px>>3)+seed)%5;
-        P(x+px,y+py,gr[z]);
+      // 4×4 block tonal patches (8 blocks per row = 64 blocks)
+      var gr=['#50b040','#58b848','#60c050','#54b444','#5cbc4c'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        var bi=Math.floor(rng(by*8+bx)*5);
+        R(x+bx*4,y+by*4,4,4,gr[bi]);
       }
-      // Subtle grass tufts
-      for(let i=0;i<3+(seed%3);i++){
-        var gx=x+Math.floor(rng(i)*26)+3,gy=y+Math.floor(rng(i+20)*22)+5;
-        P(gx,gy,'#78d868');P(gx+1,gy-1,'#88e878');P(gx-1,gy-1,'#70d060');
+      // Subtle 2×2 dither accents (GBA-style strategic color placement)
+      for(let i=0;i<6;i++){
+        var dx=x+Math.floor(rng(i+40)*28)+2,dy=y+Math.floor(rng(i+50)*28)+2;
+        var dc=rng(i+60)>0.5?'#4ca83c':'#64c454';
+        R(dx,dy,2,2,dc);
       }
-      // Occasional flowers
-      if(rng(99)>0.75){var fx=x+6+(seed%18),fy=y+8+(seed%14);
-        var fc=rng(88)>0.5?'#ffe860':'#ff90d0';
-        P(fx,fy,fc);P(fx+1,fy,fc);P(fx,fy+1,fc);P(fx+1,fy+1,fc);
-        P(fx,fy-1,'#50b040');P(fx+2,fy,'#50b040');}
+      // Grass tufts — organic inverted-V shapes
+      var numTufts=2+Math.floor(rng(10)*3);
+      for(let i=0;i<numTufts;i++){
+        var gx=x+Math.floor(rng(i+70)*24)+4,gy=y+Math.floor(rng(i+80)*22)+6;
+        var tc=rng(i+90)>0.5?'#68c858':'#48a838';
+        P(gx,gy,tc);P(gx-1,gy-1,tc);P(gx+1,gy-1,tc);
+        P(gx,gy-2,'#70d060');
+        if(rng(i+95)>0.6){P(gx-2,gy-2,tc);P(gx+2,gy-2,tc);}
+      }
+      // Occasional flowers (small 2×1 or 1×1 clusters)
+      if(rng(99)>0.7){
+        var fx=x+4+Math.floor(rng(100)*22),fy=y+6+Math.floor(rng(101)*18);
+        var fc=rng(102)>0.5?'#ffe860':'#ff90d0';
+        P(fx,fy,fc);P(fx+1,fy,fc);
+        P(fx,fy+1,'#50b040');
+      }
+      // Subtle bottom/right edge shadow
+      R(x,y+31,s,1,'rgba(0,0,0,0.06)');
+      R(x+31,y,1,s,'rgba(0,0,0,0.04)');
 
     }else if(type==='forest'){
-      // Rich GBA forest with visible tree shapes
-      R(x,y,s,s,'#48a040'); // bright grass base
-      for(let py=0;py<s;py++)for(let px=0;px<s;px++){
-        if((px+py+seed)%3===0)P(x+px,y+py,'#40983a');
+      // GBA FE-style forest: block-variation ground + varied canopy
+      R(x,y,s,s,'#48a040');
+      // Block-variation ground (darker forest floor)
+      var fg=['#3a9030','#409838','#48a040','#3c9434','#44a03c'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        var fi=Math.floor(rng(by*8+bx)*5);
+        R(x+bx*4,y+by*4,4,4,fg[fi]);
       }
-      // Shadow on ground
-      R(x+2,y+22,28,8,'rgba(0,40,0,0.3)');
-      // Tree trunks
-      R(x+9,y+18,4,12,'#7a5030');R(x+10,y+19,2,10,'#8a6040');
-      R(x+21,y+20,3,10,'#7a5030');R(x+22,y+21,1,8,'#8a6040');
-      // Canopy layers (bright green with highlights)
-      ctx.fillStyle='#208818';ctx.beginPath();ctx.arc(x+11,y+14,11,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#309828';ctx.beginPath();ctx.arc(x+22,y+16,9,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#40a838';ctx.beginPath();ctx.arc(x+11,y+11,8,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#50b848';ctx.beginPath();ctx.arc(x+9,y+9,4,0,Math.PI*2);ctx.fill();
-      // Light dapples
-      P(x+13,y+8,'#68d058');P(x+7,y+10,'#60c850');P(x+20,y+13,'#58c048');
+      // Per-tile canopy/trunk X offset for variation
+      var txOff=Math.floor(rng(200)*4)-1;
+      // Ground shadow under canopy
+      R(x+2+txOff,y+20,26,10,'rgba(0,30,0,0.25)');
+      R(x+4+txOff,y+22,22,6,'rgba(0,20,0,0.15)');
+      // Tree trunks (offset per tile)
+      R(x+9+txOff,y+18,4,14,'#6a4828');R(x+10+txOff,y+19,2,12,'#7a5838');
+      R(x+21+txOff,y+20,3,12,'#6a4828');R(x+22+txOff,y+21,1,10,'#7a5838');
+      // Main canopy — deep shadow layer
+      ctx.fillStyle='#1a7810';ctx.beginPath();ctx.arc(x+11+txOff,y+15,11,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#1a7810';ctx.beginPath();ctx.arc(x+22+txOff,y+17,9,0,Math.PI*2);ctx.fill();
+      // Mid canopy layer
+      ctx.fillStyle='#288a20';ctx.beginPath();ctx.arc(x+11+txOff,y+13,9,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#309828';ctx.beginPath();ctx.arc(x+22+txOff,y+15,7,0,Math.PI*2);ctx.fill();
+      // Highlight canopy (top-lit)
+      ctx.fillStyle='#40a838';ctx.beginPath();ctx.arc(x+10+txOff,y+10,6,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#50b848';ctx.beginPath();ctx.arc(x+9+txOff,y+8,3,0,Math.PI*2);ctx.fill();
+      // Sunlit leaf clusters (2×2 instead of single pixels)
+      var nlc=2+Math.floor(rng(210)*2);
+      for(let i=0;i<nlc;i++){
+        var lx=x+6+txOff+Math.floor(rng(211+i)*18),ly=y+6+Math.floor(rng(221+i)*12);
+        R(lx,ly,2,2,'#60c850');
+      }
+      // Dark arc at canopy bottom for depth
+      ctx.fillStyle='rgba(0,30,0,0.3)';
+      ctx.beginPath();ctx.arc(x+11+txOff,y+18,9,0,Math.PI);ctx.fill();
 
     }else if(type==='mountain'){
-      // Rocky gray-brown with visible peaks and snow
+      // GBA FE-style rocky mountain with crack details and scree
       R(x,y,s,s,'#a09880');
-      // Main peak
+      // Base grass zone
+      R(x,y+24,s,8,'#58a848');R(x,y+24,s,2,'#80a870');
+      // Scree/rubble transition zone between grass and rock
+      var screeY=y+22;
+      for(let i=0;i<6;i++){
+        var sx2=x+2+Math.floor(rng(i+300)*24),sw=2+Math.floor(rng(i+310)*3);
+        var sc=rng(i+320)>0.5?'#908870':'#a89878';
+        R(sx2,screeY+Math.floor(rng(i+330)*4),sw,2,sc);
+      }
+      // Main peak — lit right face
       ctx.fillStyle='#b0a890';ctx.beginPath();ctx.moveTo(x+16,y+1);ctx.lineTo(x+30,y+24);ctx.lineTo(x+16,y+24);ctx.fill();
-      ctx.fillStyle='#887868';ctx.beginPath();ctx.moveTo(x+16,y+1);ctx.lineTo(x+2,y+24);ctx.lineTo(x+16,y+24);ctx.fill();
+      // Main peak — shadowed left face
+      ctx.fillStyle='#807060';ctx.beginPath();ctx.moveTo(x+16,y+1);ctx.lineTo(x+2,y+24);ctx.lineTo(x+16,y+24);ctx.fill();
       // Secondary peak
       ctx.fillStyle='#a09078';ctx.beginPath();ctx.moveTo(x+24,y+6);ctx.lineTo(x+31,y+20);ctx.lineTo(x+18,y+20);ctx.fill();
-      ctx.fillStyle='#908068';ctx.beginPath();ctx.moveTo(x+24,y+6);ctx.lineTo(x+18,y+20);ctx.lineTo(x+22,y+20);ctx.fill();
+      ctx.fillStyle='#887060';ctx.beginPath();ctx.moveTo(x+24,y+6);ctx.lineTo(x+18,y+20);ctx.lineTo(x+22,y+20);ctx.fill();
       // Snow caps
       R(x+13,y+1,6,4,'#e8ecf4');R(x+14,y+0,4,2,'#f0f4f8');R(x+22,y+6,4,3,'#dce0e8');
-      // Rock details
+      // Crack lines on rock faces (1px darker shade)
+      ctx.strokeStyle='#685848';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+10,y+10);ctx.lineTo(x+13,y+16);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+7,y+14);ctx.lineTo(x+10,y+18);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+20,y+10);ctx.lineTo(x+22,y+15);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+26,y+12);ctx.lineTo(x+28,y+17);ctx.stroke();
+      // Rock texture details
       R(x+8,y+16,3,1,'#706048');R(x+20,y+12,2,2,'#706048');R(x+17,y+2,1,8,'#b8a888');
-      // Base grass
-      R(x,y+26,s,6,'#58a848');R(x,y+24,s,3,'#80a870');
 
     }else if(type==='fort'){
       // GBA-style Fort - central keep with flag
@@ -110,20 +480,31 @@ const Sprites = {
       R(x+24,y+24,4,4,stoneLight);
 
     }else if(type==='wall'){
-      // Stone bricks with clear mortar lines
+      // GBA FE-style stone bricks with damage and moss
       R(x,y,s,s,'#807870');
       for(let row=0;row<4;row++){var ry=y+row*8,off=(row%2)*8;
         for(let col=0;col<3;col++){var bx=x+off+col*16;
-          var bc=['#908880','#888078','#8c8480','#847c70','#989088'][((row*3+col*7+seed)%5)];
+          var bci=Math.floor(rng(row*3+col+500)*5);
+          var bc=['#908880','#888078','#8c8480','#847c70','#989088'][bci];
           R(bx,ry,15,7,bc);
           R(bx,ry,15,1,'#a0988e');  // top highlight
           R(bx,ry+6,15,1,'#686060');  // bottom shadow
           R(bx+14,ry,1,7,'#686060'); // right shadow
+          // Damaged brick: darker corner or 1px chip (1-2 per tile)
+          if(rng(row*3+col+520)>0.7){
+            var dmx=bx+Math.floor(rng(row*3+col+530)*12),dmy=ry+1+Math.floor(rng(row*3+col+540)*4);
+            R(dmx,dmy,2,2,'#706860');
+          }
         }
         R(x,ry+7,s,1,'#585048');  // mortar line
       }
       // Top edge highlight
       R(x,y,s,1,'#b0a8a0');
+      // Moss patches (~30% of tiles)
+      if(rng(550)>0.7){
+        var mx=x+Math.floor(rng(551)*20)+2,my=y+Math.floor(rng(552)*4)*8+5;
+        R(mx,my,4,3,'#507848');R(mx+1,my+1,2,1,'#608858');
+      }
 
     }else if(type==='gate'){
       // Archway with wooden door
@@ -142,25 +523,44 @@ const Sprites = {
       R(x+21,y+17,2,4,'#d0b060'); // door handle
 
     }else if(type==='river'){
-      // Flowing blue water with wave highlights
+      // GBA FE-style flowing water with segmented waves
       R(x,y,s,s,'#3888d0');
-      for(let py=0;py<s;py++){
-        var w=Math.sin((py+seed*0.3)*0.7)*0.4;
-        if(w>0.15)R(x,y+py,s,1,'#50a0e0');
-        else if(w<-0.15)R(x,y+py,s,1,'#2870b8');
+      // Block-level tonal variation (4×4 blocks)
+      var rv=['#3080c8','#3888d0','#4090d8','#3484cc','#3c8cd4'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        var ri=Math.floor(rng(by*8+bx+400)*5);
+        R(x+bx*4,y+by*4,4,4,rv[ri]);
       }
-      // Wave crests
-      var wo=seed%8;
-      R(x+wo,y+6,12,1,'#70b8f0');R(x+((wo+14)%22),y+14,10,1,'#70b8f0');
-      R(x+wo+3,y+5,4,1,'#a0d8ff');R(x+((wo+16)%20),y+13,5,1,'#a0d8ff');
-      // Sparkle
-      if(rng(77)>0.6){P(x+10+(seed%12),y+4+(seed%6),'#c0e8ff');}
+      // Segmented wave bands (shorter 8-16px segments at offsets)
+      for(let wi=0;wi<4;wi++){
+        var wy=y+4+wi*7+Math.floor(rng(wi+410)*3);
+        var wx=x+Math.floor(rng(wi+420)*8);
+        var ww=8+Math.floor(rng(wi+430)*10);
+        R(wx,wy,ww,1,'#50a0e0');
+        R(wx+2,wy-1,Math.floor(ww*0.5),1,'#70b8f0');
+      }
+      // Diagonal current lines (thin, 1px)
+      ctx.strokeStyle='#2870b8';ctx.lineWidth=1;
+      for(let ci=0;ci<3;ci++){
+        var cx1=x+Math.floor(rng(ci+440)*20),cy1=y+Math.floor(rng(ci+450)*20);
+        ctx.beginPath();ctx.moveTo(cx1,cy1);ctx.lineTo(cx1+8+Math.floor(rng(ci+460)*6),cy1+4);ctx.stroke();
+      }
+      // Foam specks (2-3 scattered white-ish dots)
+      var nFoam=2+Math.floor(rng(470)*2);
+      for(let fi=0;fi<nFoam;fi++){
+        var ffx=x+4+Math.floor(rng(fi+471)*24),ffy=y+3+Math.floor(rng(fi+481)*26);
+        R(ffx,ffy,2,1,'#a0d8ff');
+      }
+      // Sparkle highlight
+      if(rng(490)>0.5){P(x+6+Math.floor(rng(491)*18),y+4+Math.floor(rng(492)*8),'#c0e8ff');}
 
     }else if(type==='village'){
-      // Cute house with red roof on grass
-      R(x,y,s,s,'#58b848'); // grass base
-      for(let py=0;py<s;py++)for(let px=0;px<s;px++){
-        if((px+py+seed)%4===0)P(x+px,y+py,'#50b040');
+      // GBA FE-style village house on grass
+      R(x,y,s,s,'#58b848');
+      // Block-variation grass
+      var vg=['#50b040','#58b848','#54b444'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,vg[Math.floor(rng(by*8+bx+1100)*3)]);
       }
       // House body
       R(x+4,y+14,24,14,'#e0c898');R(x+5,y+15,22,12,'#ecd8a8');
@@ -239,53 +639,217 @@ const Sprites = {
       R(x+9,y+1,4,1,'#ddd8cc');R(x+17,y+9,4,1,'#ddd8cc');
 
     }else if(type==='hill'){
+      // GBA-style grassy hill with tonal variation
       R(x,y,s,s,'#58b848');
+      // Block-variation base
+      var hg=['#50b040','#58b848','#54b444'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,hg[Math.floor(rng(by*8+bx+600)*3)]);
+      }
+      // Hill mound
       ctx.fillStyle='#68c050';
       ctx.beginPath();ctx.moveTo(x+4,y+28);ctx.quadraticCurveTo(x+16,y+6,x+28,y+28);ctx.fill();
-      if(seed%2===0){ // Variant A
-        ctx.fillStyle='#88e068'; ctx.beginPath();ctx.moveTo(x+10,y+22);ctx.quadraticCurveTo(x+16,y+8,x+22,y+22);ctx.fill();
-      } else { // Variant B - darker/sturdier
-        ctx.fillStyle='#50a040'; ctx.beginPath();ctx.moveTo(x+6,y+24);ctx.quadraticCurveTo(x+16,y+12,x+26,y+24);ctx.fill();
+      // Highlight band
+      var hillVar=Math.floor(rng(610)*3);
+      if(hillVar===0){
+        ctx.fillStyle='#78d060';ctx.beginPath();ctx.moveTo(x+10,y+22);ctx.quadraticCurveTo(x+16,y+8,x+22,y+22);ctx.fill();
+      }else if(hillVar===1){
+        ctx.fillStyle='#50a840';ctx.beginPath();ctx.moveTo(x+6,y+24);ctx.quadraticCurveTo(x+16,y+12,x+26,y+24);ctx.fill();
+      }else{
+        ctx.fillStyle='#60b848';ctx.beginPath();ctx.moveTo(x+8,y+26);ctx.quadraticCurveTo(x+14,y+10,x+24,y+26);ctx.fill();
       }
+      // Shadow on hillside
+      ctx.fillStyle='rgba(0,0,0,0.08)';
+      ctx.beginPath();ctx.moveTo(x+4,y+28);ctx.quadraticCurveTo(x+10,y+14,x+16,y+28);ctx.fill();
+      // Grass tufts on hill
+      for(let i=0;i<2;i++){
+        var hx=x+8+Math.floor(rng(i+620)*14),hy=y+10+Math.floor(rng(i+630)*10);
+        P(hx,hy,'#80e068');P(hx-1,hy-1,'#70d058');P(hx+1,hy-1,'#70d058');
+      }
+
     }else if(type==='swamp'){
-      R(x,y,s,s,seed%2===0 ? '#3a5828' : '#2d4420');
+      // Murky swamp with varied dark greens and puddles
+      R(x,y,s,s,'#3a5828');
+      var sg=['#2d4420','#3a5828','#344e24','#385428'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,sg[Math.floor(rng(by*8+bx+650)*4)]);
+      }
+      // Dark murky puddle
+      var px2=x+8+Math.floor(rng(660)*10),ppy=y+10+Math.floor(rng(661)*8);
       ctx.fillStyle='rgba(20,40,10,0.6)';
-      ctx.beginPath();ctx.arc(x+12+(seed%8),y+14+(seed%6),8,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(px2,ppy,6+Math.floor(rng(662)*3),0,Math.PI*2);ctx.fill();
+      // Reeds/vegetation marks
+      for(let i=0;i<3;i++){
+        var rx2=x+4+Math.floor(rng(i+670)*24),ry2=y+4+Math.floor(rng(i+680)*24);
+        P(rx2,ry2,'#4a6830');P(rx2,ry2-1,'#4a6830');P(rx2,ry2-2,'#587838');
+      }
+      // Mud spots
+      R(x+Math.floor(rng(690)*20)+4,y+Math.floor(rng(691)*20)+6,3,2,'#4a4420');
+
     }else if(type==='cliff'){
+      // Rocky cliff with layered shading
       R(x,y,s,s,'#585048');
+      // Top grass strip
       R(x,y,s,6,'#58a848');
-      R(x+(seed%4),y+6,s-(seed%4),24,seed%2===0?'#706858':'#605848');
+      R(x,y+5,s,2,'#80a870');
+      // Rock face with variation
+      var clOff=Math.floor(rng(700)*4);
+      R(x+clOff,y+7,s-clOff,23,'#706858');
+      R(x+clOff+2,y+9,s-clOff-4,19,'#605848');
+      // Horizontal crack lines
+      ctx.strokeStyle='#504838';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+clOff+2,y+14);ctx.lineTo(x+clOff+18,y+15);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+clOff+6,y+22);ctx.lineTo(x+clOff+22,y+21);ctx.stroke();
+      // Rock texture
+      for(let i=0;i<3;i++){
+        var cx2=x+4+Math.floor(rng(i+710)*22),cy2=y+10+Math.floor(rng(i+720)*16);
+        R(cx2,cy2,2,2,rng(i+730)>0.5?'#786858':'#584838');
+      }
+
     }else if(type==='pass'){
+      // Mountain pass with worn path
       R(x,y,s,s,'#a09070');
+      // Block variation
+      var pg=['#988868','#a09070','#a89878','#9c8c6c'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,pg[Math.floor(rng(by*8+bx+750)*4)]);
+      }
+      // Worn path center
       R(x+8,y,16,s,'#b0a880');
-      if(seed%2===0) R(x+12,y+4,8,8,'#888070');
+      R(x+10,y,12,s,'#b8b088');
+      // Rock details at edges
+      R(x+2,y+Math.floor(rng(760)*20)+4,4,3,'#888070');
+      R(x+26,y+Math.floor(rng(761)*20)+4,4,3,'#888070');
+
     }else if(type==='road'){
-      R(x,y,s,s,seed%2===0 ? '#c8b870' : '#b8a860');
-      R(x+6,y,4,s,'rgba(0,0,0,0.1)'); R(x+22,y,4,s,'rgba(0,0,0,0.1)');
+      // Packed earth road with ruts
+      R(x,y,s,s,'#c8b870');
+      var rdg=['#c0b068','#c8b870','#d0c078','#c4b46c'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,rdg[Math.floor(rng(by*8+bx+780)*4)]);
+      }
+      // Wheel ruts
+      R(x+8,y,2,s,'rgba(0,0,0,0.1)');R(x+22,y,2,s,'rgba(0,0,0,0.1)');
+      // Scattered pebbles
+      for(let i=0;i<3;i++){
+        P(x+4+Math.floor(rng(i+790)*24),y+4+Math.floor(rng(i+800)*24),'#a89858');
+      }
+
     }else if(type==='basin'){
+      // Grass basin with small pond
       R(x,y,s,s,'#48a038');
-      ctx.fillStyle=seed%2===0 ? '#3878a8' : '#4a90c0';
-      ctx.beginPath();ctx.arc(x+16,y+18,6,0,Math.PI*2);ctx.fill();
+      var bg=['#409030','#48a038','#44983c'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,bg[Math.floor(rng(by*8+bx+820)*3)]);
+      }
+      // Pond with slight position variation
+      var bpx=x+14+Math.floor(rng(830)*4),bpy=y+16+Math.floor(rng(831)*4);
+      ctx.fillStyle='#3080b0';ctx.beginPath();ctx.arc(bpx,bpy,6,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#4898c8';ctx.beginPath();ctx.arc(bpx-1,bpy-1,4,0,Math.PI*2);ctx.fill();
+      // Shore detail
+      ctx.strokeStyle='#60a858';ctx.lineWidth=1;
+      ctx.beginPath();ctx.arc(bpx,bpy,7,0.5,2.5);ctx.stroke();
+
     }else if(type==='sea'){
-      R(x,y,s,s,seed%2===0 ? '#1a5898' : '#144080');
-      R(x+(seed%16),y+8,12,1,'rgba(255,255,255,0.2)');
+      // Deep ocean with wave variation
+      R(x,y,s,s,'#1a5898');
+      var seag=['#144080','#1a5898','#1850a0','#1c5c98'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,seag[Math.floor(rng(by*8+bx+850)*4)]);
+      }
+      // Wave highlights
+      for(let wi=0;wi<3;wi++){
+        var swx=x+Math.floor(rng(wi+860)*16),swy=y+4+wi*9+Math.floor(rng(wi+870)*3);
+        R(swx,swy,8+Math.floor(rng(wi+880)*8),1,'rgba(255,255,255,0.15)');
+      }
+      // Foam
+      if(rng(890)>0.5){R(x+Math.floor(rng(891)*20)+4,y+Math.floor(rng(892)*20)+6,3,1,'rgba(255,255,255,0.25)');}
+
     }else if(type==='desert'){
-      R(x,y,s,s,seed%2===0 ? '#c8a870' : '#d8bc80');
-      P(x+10+(seed%10),y+10+(seed%10),'#a88e58');
+      // Sandy desert with dune contours
+      R(x,y,s,s,'#d0b878');
+      var dg=['#c8a870','#d0b878','#d8c080','#ccb474'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,dg[Math.floor(rng(by*8+bx+900)*4)]);
+      }
+      // Dune shadow lines
+      ctx.strokeStyle='#b8a060';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+2,y+12+Math.floor(rng(910)*6));ctx.quadraticCurveTo(x+16,y+8+Math.floor(rng(911)*8),x+30,y+14+Math.floor(rng(912)*4));ctx.stroke();
+      // Small rock/pebble
+      R(x+8+Math.floor(rng(920)*14),y+18+Math.floor(rng(921)*8),2,2,'#a88e58');
+
     }else if(type==='bridge'){
+      // Wooden bridge over water
       R(x,y,s,s,'#3888d0');
-      R(x+4,y,24,s,seed%2===0 ? '#9a7850' : '#886840');
+      // Water variation underneath
+      R(x,y+2,s,4,'#4090d8');R(x,y+26,s,4,'#3080c8');
+      // Bridge planks
+      var brc=rng(940)>0.5?'#9a7850':'#8a6840';
+      R(x+4,y,24,s,brc);
+      // Plank lines
+      for(let pi=0;pi<4;pi++){
+        R(x+4,y+pi*8,24,1,'#705028');
+      }
+      // Railing
+      R(x+4,y,2,s,'#7a5830');R(x+26,y,2,s,'#7a5830');
+      // Railing posts
+      for(let pp=0;pp<4;pp++){
+        R(x+3,y+pp*8+2,4,3,'#8a6840');R(x+25,y+pp*8+2,4,3,'#8a6840');
+      }
+
     }else if(type==='ruins'){
+      // Overgrown stone ruins on grass
       R(x,y,s,s,'#58b848');
-      R(x+6,y+6,20,20,seed%2===0 ? '#808070' : '#707060');
+      // Grass variation
+      var rg=['#50b040','#58b848','#54b444'];
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,rg[Math.floor(rng(by*8+bx+960)*3)]);
+      }
+      // Broken stone walls
+      var rc=rng(970)>0.5?'#808070':'#707060';
+      R(x+6,y+6,20,20,rc);
+      R(x+8,y+8,16,16,'#888878');
+      // Gaps in walls (grass showing through)
+      R(x+12,y+6,8,4,'#58b848');R(x+22,y+14,6,8,'#58b848');
+      // Moss on stones
+      R(x+7,y+18,3,2,'#507848');R(x+20,y+8,3,2,'#507848');
+      // Rubble
+      R(x+14,y+22,3,2,'#989888');R(x+10,y+12,2,2,'#a0a090');
+
     }else if(type==='stairs'){
+      // Stone staircase with proper step shading
       R(x,y,s,s,'#c8c0b0');
-      for(let i=0;i<4;i++) R(x,y+i*8,s,4,`rgba(0,0,0,${0.1+i*0.05})`);
+      for(let i=0;i<4;i++){
+        var sy2=y+i*8;
+        R(x,sy2,s,8,i%2===0?'#c0b8a8':'#ccc4b4');
+        R(x,sy2,s,1,'#d8d0c4');  // step edge highlight
+        R(x,sy2+7,s,1,'#a09888');  // step shadow
+        // Surface texture
+        for(let j=0;j<3;j++){
+          P(x+4+Math.floor(rng(i*3+j+980)*22),sy2+2+Math.floor(rng(i*3+j+990)*4),'#b8b0a0');
+        }
+      }
+
     }else if(type==='brazier'){
+      // Floor tile with iron brazier and fire
       R(x,y,s,s,'#c8c0b0');
-      R(x+12,y+12,8,8,'#404030');
-      ctx.fillStyle=seed%2===0 ? '#ff4000' : '#ff8000';
-      ctx.beginPath();ctx.arc(x+16,y+14,4,0,Math.PI*2);ctx.fill();
+      // Floor tile pattern
+      for(let py2=0;py2<s;py2+=8)for(let px2=0;px2<s;px2+=8){
+        R(x+px2,y+py2,8,8,((px2+py2)/8%2)?'#c0b8a8':'#d0c8b8');
+      }
+      // Iron brazier bowl
+      R(x+10,y+16,12,10,'#404030');R(x+11,y+17,10,8,'#484838');
+      R(x+12,y+14,8,4,'#505040');  // rim
+      // Brazier legs
+      R(x+10,y+26,3,4,'#383028');R(x+19,y+26,3,4,'#383028');
+      // Fire glow on floor
+      ctx.fillStyle='rgba(255,120,20,0.15)';ctx.beginPath();ctx.arc(x+16,y+18,12,0,Math.PI*2);ctx.fill();
+      // Flames
+      var flc=rng(1000)>0.5?'#ff6010':'#ff9020';
+      ctx.fillStyle=flc;ctx.beginPath();ctx.moveTo(x+14,y+14);ctx.quadraticCurveTo(x+16,y+4,x+18,y+14);ctx.fill();
+      ctx.fillStyle='#ffcc30';ctx.beginPath();ctx.moveTo(x+15,y+14);ctx.quadraticCurveTo(x+16,y+8,x+17,y+14);ctx.fill();
+      // Embers
+      if(rng(1010)>0.4){P(x+12+Math.floor(rng(1011)*8),y+6+Math.floor(rng(1012)*6),'#ff8040');}
 
     }else{R(x,y,s,s,'#58b848');}
     ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.strokeRect(x+0.5,y+0.5,s-1,s-1);

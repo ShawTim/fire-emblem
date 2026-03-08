@@ -95,6 +95,7 @@ class Game {
     this.units = [];
     this.state = 'chapterTitle';
 
+    Sprites.clearTerrainCache();
     GameMap.init(chapter);
 
     // Place player units
