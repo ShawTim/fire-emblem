@@ -548,21 +548,21 @@ body {
   transform: scaleX(-1);
 }
 
-/* HP bar */
+/* HP bar — matches canvas: 26×3 @ (x+3,y+30) in 32px space → 52×6 in 64px tile */
 .map-unit__hp {
   position: absolute;
-  bottom: 0px;
+  bottom: -2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 28px;
-  height: 5px;
-  background: #111;
-  border: 1px solid #333;
-  box-sizing: border-box;
+  width: 52px;
+  height: 6px;
+  background: #000;
   z-index: 2;
 }
 .map-unit__hp-fill {
-  height: 3px;
+  height: 2px;
+  margin-top: 2px;
+  margin-left: 2px;
   background: #40c040;
 }
 .map-unit__hp-fill--med { background: #c0c040; }
@@ -594,7 +594,7 @@ body {
   height: 64px;
   pointer-events: none;
   box-sizing: border-box;
-  border: 2px solid rgba(255,255,255,0.8);
+  border: 3px solid rgba(255,255,0,0.7);
   z-index: 100;
   display: none;
   animation: cursor-pulse 0.5s ease-in-out infinite alternate;
@@ -614,23 +614,23 @@ body {
 }
 .cursor-tl {
   top: -1px; left: -1px;
-  border-top: 2px solid rgba(255,255,0,0.9);
-  border-left: 2px solid rgba(255,255,0,0.9);
+  border-top: 3px solid rgba(255,255,0,0.9);
+  border-left: 3px solid rgba(255,255,0,0.9);
 }
 .cursor-tr {
   top: -1px; right: -1px;
-  border-top: 2px solid rgba(255,255,0,0.9);
-  border-right: 2px solid rgba(255,255,0,0.9);
+  border-top: 3px solid rgba(255,255,0,0.9);
+  border-right: 3px solid rgba(255,255,0,0.9);
 }
 .cursor-bl {
   bottom: -1px; left: -1px;
-  border-bottom: 2px solid rgba(255,255,0,0.9);
-  border-left: 2px solid rgba(255,255,0,0.9);
+  border-bottom: 3px solid rgba(255,255,0,0.9);
+  border-left: 3px solid rgba(255,255,0,0.9);
 }
 .cursor-br {
   bottom: -1px; right: -1px;
-  border-bottom: 2px solid rgba(255,255,0,0.9);
-  border-right: 2px solid rgba(255,255,0,0.9);
+  border-bottom: 3px solid rgba(255,255,0,0.9);
+  border-right: 3px solid rgba(255,255,0,0.9);
 }
 
 /* Unit layer sizing is synced to canvas via JS in UnitLayer.update() */

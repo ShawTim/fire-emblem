@@ -298,7 +298,7 @@ const UnitLayer = {
     if (!hpFill) return;
     if (unit.hp === undefined || !unit.maxHp) return;
     var ratio = unit.hp / unit.maxHp;
-    hpFill.style.width = Math.floor(26 * ratio) + 'px';
+    hpFill.style.width = Math.floor(48 * ratio) + 'px';
     // Color
     if (ratio > 0.5) {
       hpFill.className = 'map-unit__hp-fill';

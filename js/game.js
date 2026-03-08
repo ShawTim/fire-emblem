@@ -306,12 +306,9 @@ class Game {
     // Grid overlay
     GameMap.renderGrid(ctx, this.canvasW, this.canvasH);
 
-    // Hide unit layer during non-gameplay states (dialogue, chapter card, etc.)
-    var gameplayState = !['title', 'ending', 'chapterTitle'].includes(this.state)
-      && !this.dialogue.isActive();
-
-    // Units — DOM layer handles sprite-based units
-    if (UnitLayer._active && gameplayState) {
+    // DOM unit layer: visible whenever map is rendered (including during dialogue).
+    // Only hidden during battle scene (full-screen overlay) and before chapter starts.
+    if (UnitLayer._active) {
       UnitLayer.setVisible(true);
       UnitLayer.update(this);
       UnitLayer.showCursor(['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state));
@@ -320,13 +317,6 @@ class Game {
       if (fallbackUnits.length > 0) {
         GameMap.renderUnits(ctx, fallbackUnits, this.canvasW, this.canvasH, this);
       }
-    } else if (UnitLayer._active) {
-      UnitLayer.setVisible(false);
-      // Still render units on canvas when DOM layer is hidden
-      GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
-      if (['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state)) {
-        Cursor.render(ctx, this.canvasW, this.canvasH);
-      }
     } else {
       GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
       if (['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state)) {
@@ -334,7 +324,7 @@ class Game {
       }
     }
 
-    // Battle scene
+    // Battle scene — hide unit layer, render full-screen battle animation
     if (this.battleScene.isActive()) {
       UI.hideUnitPanel();
       UnitLayer.setVisible(false);
