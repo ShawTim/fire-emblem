@@ -195,19 +195,32 @@ const Sprites = {
       R(x+8,y+10,2,7,'#d0a028');R(x+22,y+10,2,7,'#d0a028');
 
     }else if(type==='pillar'){
-      // Stone column on checkered floor
-      R(x,y,s,s,'#787888');
-      for(let py=0;py<s;py+=8)for(let px=0;px<s;px+=8)
-        R(x+px,y+py,8,8,((px+py)/8%2)?'#707080':'#808090');
-      // Column shadow
-      R(x+14,y+2,10,28,'rgba(0,0,0,0.15)');
-      // Column body
-      R(x+10,y+4,12,24,'#b0b0c0');R(x+11,y+4,10,24,'#c0c0d0');
-      // Highlight stripe
-      R(x+13,y+4,3,24,'#d0d0e0');R(x+14,y+5,1,22,'#e0e0f0');
-      // Capital and base
-      R(x+8,y+2,16,3,'#a8a8b8');R(x+9,y+2,14,1,'#c0c0d0');
-      R(x+8,y+27,16,3,'#a8a8b8');R(x+9,y+29,14,1,'#989898');
+      // Marble floor base — matches floor terrain palette
+      R(x,y,s,s,'#c8c0b0');
+      for(let py=0;py<s;py+=8)for(let px=0;px<s;px+=8){
+        var chk=((px+py)/8)%2;
+        R(x+px,y+py,8,8,chk?'#c0b8a8':'#d0c8b8');
+      }
+      for(let gy=8;gy<s;gy+=8){R(x,y+gy,s,1,'#a09888');}
+      for(let gx=8;gx<s;gx+=8){R(x+gx,y,1,s,'#a09888');}
+      // Column shadow on floor
+      R(x+14,y+6,12,24,'rgba(0,0,0,0.12)');
+      R(x+15,y+8,11,20,'rgba(0,0,0,0.06)');
+      // Column body — cylindrical shading (dark edge → light center → dark edge)
+      R(x+10,y+4,12,24,'#9898a8');   // dark left edge
+      R(x+11,y+4,10,24,'#b0b0c0');   // mid tone
+      R(x+12,y+4,8,24,'#c0c0d0');    // lighter
+      R(x+13,y+4,5,24,'#d0d0e0');    // highlight band
+      R(x+14,y+5,2,22,'#dddde8');    // bright highlight stripe
+      // Fluting lines (subtle vertical grooves)
+      R(x+12,y+6,1,20,'#a8a8b8');
+      R(x+18,y+6,1,20,'#a8a8b8');
+      // Capital (top decorative piece)
+      R(x+8,y+2,16,3,'#b8b8c8');R(x+7,y+1,18,2,'#c8c8d8');
+      R(x+9,y+3,14,1,'#a0a0b0');
+      // Base (bottom wider piece)
+      R(x+8,y+27,16,3,'#b8b8c8');R(x+7,y+29,18,2,'#a8a8b8');
+      R(x+9,y+27,14,1,'#d0d0e0');
 
     }else if(type==='floor'){
       // 宮殿室內石板地板 — 大理石格紋

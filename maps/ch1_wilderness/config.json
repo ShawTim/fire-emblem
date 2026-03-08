@@ -13,9 +13,159 @@
   "newRecruits": [
     {"charId": "lina", "x": 5, "y": 5, "turnJoin": 1}
   ],
-  "enemies": [],
+  "enemies": [
+    {
+      "classId": "soldier",
+      "level": 1,
+      "x": 7,
+      "y": 8,
+      "items": ["slimLance"],
+      "ai": "aggressive",
+      "name": "帝國追兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 1,
+      "x": 9,
+      "y": 7,
+      "items": ["slimLance"],
+      "ai": "aggressive",
+      "name": "帝國追兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 2,
+      "x": 5,
+      "y": 8,
+      "items": ["ironLance"],
+      "ai": "aggressive",
+      "name": "帝國追兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 1,
+      "x": 12,
+      "y": 7,
+      "items": ["ironAxe"],
+      "ai": "aggressive",
+      "name": "帝國斧兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 2,
+      "x": 10,
+      "y": 5,
+      "items": ["ironAxe"],
+      "ai": "aggressive",
+      "name": "帝國斧兵"
+    },
+    {
+      "classId": "archer",
+      "level": 2,
+      "x": 13,
+      "y": 4,
+      "items": ["ironBow"],
+      "ai": "defensive",
+      "name": "帝國弓兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 2,
+      "x": 4,
+      "y": 3,
+      "items": ["ironLance"],
+      "ai": "aggressive",
+      "name": "帝國精兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 3,
+      "x": 8,
+      "y": 3,
+      "items": ["ironLance"],
+      "ai": "aggressive",
+      "name": "帝國精兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 3,
+      "x": 11,
+      "y": 2,
+      "items": ["ironAxe", "handAxe"],
+      "ai": "aggressive",
+      "name": "帝國老兵"
+    },
+    {
+      "classId": "archer",
+      "level": 3,
+      "x": 6,
+      "y": 1,
+      "items": ["ironBow"],
+      "ai": "defensive",
+      "name": "帝國弓兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 3,
+      "x": 3,
+      "y": 1,
+      "items": ["ironLance"],
+      "ai": "defensive",
+      "name": "帝國精兵"
+    },
+    {
+      "classId": "knight",
+      "level": 4,
+      "x": 5,
+      "y": 2,
+      "items": ["ironLance"],
+      "ai": "boss",
+      "name": "追擊隊長",
+      "isBoss": true,
+      "bonusStats": { "hp": 3, "str": 1, "def": 2 }
+    }
+  ],
   "npcs": [],
   "talkEvents": [],
-  "turnEvents": [],
+  "turnEvents": [
+    {
+      "turn": 1,
+      "type": "recruit",
+      "text": [
+        {
+          "speaker": null,
+          "text": "森林深處傳來弓弦的聲音。一個綠色短髮的年輕女弓手從林間現身。"
+        },
+        {
+          "speaker": "lina",
+          "text": "喂，你們！前面有帝國的追兵在搜索——你們就是他們要找的人吧？"
+        },
+        {
+          "speaker": "eirine",
+          "text": "你是……？你怎麼知道的？"
+        },
+        {
+          "speaker": "lina",
+          "text": "我是莉娜，在這片森林裡狩獵維生的弓箭手。帝國的人從昨晚就在翻找整個荒野了。說是要抓什麼叛逃的公主。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "……消息傳得比我預想的快。姑娘，如果你能指條安全的路——"
+        },
+        {
+          "speaker": "lina",
+          "text": "安全的路？太遲了。他們已經從北邊包圍過來了。——不過，我對這片森林瞭如指掌。讓我幫你們。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "你願意幫助我們？可是這很危險……"
+        },
+        {
+          "speaker": "lina",
+          "text": "公主殿下，帝國佔了我們村莊的田地，趕走了獵人。我早就想跟他們算帳了。我的弓可不是擺設！"
+        }
+      ]
+    }
+  ],
   "dialogues": {}
 }

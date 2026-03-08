@@ -551,7 +551,7 @@ body {
 /* HP bar — matches canvas: 26×3 @ (x+3,y+30) in 32px space → 52×6 in 64px tile */
 .map-unit__hp {
   position: absolute;
-  bottom: -2px;
+  bottom: -6px;
   left: 50%;
   transform: translateX(-50%);
   width: 52px;
