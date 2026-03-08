@@ -142,6 +142,9 @@ class Game {
       Cursor.moveTo(pu.x, pu.y);
     }
 
+    // Initialize DOM unit layer
+    UnitLayer.setupChapter(this.units, GameMap.width, GameMap.height);
+
     UI.showChapterCard(chapter.title, chapter.subtitle, () => {
       if (chapter.dialogues && chapter.dialogues.pre) {
         this.state = 'dialogue';
@@ -303,18 +306,29 @@ class Game {
     // Grid overlay
     GameMap.renderGrid(ctx, this.canvasW, this.canvasH);
 
-    // Units
-    GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
-
-    // Cursor
-    if (['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state)) {
-      Cursor.render(ctx, this.canvasW, this.canvasH);
+    // Units — DOM layer handles sprite-based units
+    if (UnitLayer._active) {
+      UnitLayer.update(this);
+      UnitLayer.showCursor(['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state));
+      // Canvas fallback for units without sprite data
+      var fallbackUnits = this.units.filter(u => u.hp > 0 && !UnitLayer.hasSpriteFor(u));
+      if (fallbackUnits.length > 0) {
+        GameMap.renderUnits(ctx, fallbackUnits, this.canvasW, this.canvasH, this);
+      }
+    } else {
+      GameMap.renderUnits(ctx, this.units.filter(u => u.hp > 0), this.canvasW, this.canvasH, this);
+      if (['map', 'unitSelected', 'unitCommand', 'selectTarget', 'mapBrowse'].includes(this.state)) {
+        Cursor.render(ctx, this.canvasW, this.canvasH);
+      }
     }
 
     // Battle scene
     if (this.battleScene.isActive()) {
       UI.hideUnitPanel();
+      UnitLayer.setVisible(false);
       this.battleScene.render(ctx, this.canvasW, this.canvasH);
+    } else if (UnitLayer._active) {
+      UnitLayer.setVisible(true);
     }
   }
 
@@ -648,13 +662,13 @@ class Game {
     if (!path || path.length <= 1) { if (onDone) onDone(); return; }
     if (this.state !== 'enemyPhase') this.state = 'animating';
     let step = 1;
-    
+
     // Movement speed based on unit's spd stat
     // Base: 150ms per tile, faster units move quicker
     const baseSpeed = 150;
     const spd = unit.spd || 10;
     const tileDuration = Math.max(80, baseSpeed - (spd - 10) * 4);
-    
+
     // Helper to determine direction from path delta
     const getDirection = (from, to) => {
       const dx = to.x - from.x;
@@ -665,10 +679,14 @@ class Game {
       if (dy < 0) return 'up';
       return unit._direction || 'down';
     };
-    
+
+    // Enable CSS transition for smooth movement
+    UnitLayer.startMoveTransition(unit, tileDuration);
+
     const advance = () => {
       if (step >= path.length) {
         // Keep _direction for facing after movement
+        UnitLayer.endMoveTransition(unit);
         if (onDone) onDone();
         return;
       }
@@ -676,6 +694,8 @@ class Game {
       unit._direction = getDirection(path[step - 1], path[step]);
       unit.x = path[step].x;
       unit.y = path[step].y;
+      // Update DOM position (CSS transition handles interpolation)
+      UnitLayer.moveUnitTo(unit, unit.x, unit.y);
       GameMap.scrollToward(unit.x, unit.y, this.canvasW, this.canvasH);
       step++;
       setTimeout(advance, tileDuration);
@@ -939,6 +959,10 @@ class Game {
   }
 
   finishCombat() {
+    // Remove dead units from DOM layer before filtering
+    for (var i = 0; i < this.units.length; i++) {
+      if (this.units[i].hp <= 0) UnitLayer.removeUnit(this.units[i]);
+    }
     // Remove dead enemies
     this.units = this.units.filter(u => !(u.hp <= 0 && u.faction === 'enemy'));
 

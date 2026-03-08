@@ -9,6 +9,8 @@ SFX.init();
 BGM.init();
 BGM.createVolumeControl();
 
+UnitLayer.init();
+
 // Preload chapters before starting game
 let game;
 preloadChapters().then(() => {
@@ -232,22 +234,22 @@ if (mobileToggleBtn) {
   document.addEventListener('fullscreenchange', () => {
     const canvasEl = document.getElementById('gameCanvas');
     const uiOverlay = document.getElementById('ui-overlay');
-    
+
     if (document.fullscreenElement) {
       document.body.classList.add('is-fullscreen');
       mobileToggleBtn.style.display = 'block';
       mobileToggleBtn.textContent = '退出全螢幕';
-      
+
       // Only apply scale on desktop (width > 900px)
       const isDesktop = window.innerWidth > 900;
-      
+
       if (isDesktop) {
         const scaleX = window.innerWidth / 800;
         const scaleY = window.innerHeight / 600;
         const scale = Math.min(scaleX, scaleY);
 	const newWidth = 800 * scale;
 	const newHeight = 600 * scale;
-        
+
 	canvasEl.style.width = `${newWidth}px`;
         canvasEl.style.height = `${newHeight}px`;
 	uiOverlay.style.width = `${newWidth}px`;
@@ -258,7 +260,7 @@ if (mobileToggleBtn) {
       document.body.classList.remove('is-fullscreen');
       mobileToggleBtn.style.display = 'block';
       mobileToggleBtn.textContent = '全螢幕';
-      
+
       // Reset all styles
       canvasEl.style.width = "800px";
       canvasEl.style.height = "600px";
