@@ -1013,7 +1013,7 @@ const Sprites = {
         const img = new Image();
         
         // Handle path resolution for subdirectories like classes/index.html
-        if (['/classes/', '/characters/'].some(sub => window.location.pathname.includes(sub))) {
+        if (['/classes/', '/characters/', '/demo/'].some(sub => window.location.pathname.includes(sub))) {
           img.src = '../assets/sprites/map/' + sKey;
         } else {
           img.src = 'assets/sprites/map/' + sKey;

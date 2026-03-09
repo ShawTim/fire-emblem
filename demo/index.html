@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>精靈測試台 — 火炎之紋章：翠星之影</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0a0a1a; color:#e8e8f0; font-family:'Segoe UI',sans-serif; min-height:100vh; overflow:hidden; }
+
+header {
+  background: linear-gradient(135deg, #1a1a3a 0%, #0a0a2a 100%);
+  border-bottom: 2px solid #4a4a8a;
+  padding: 10px 24px;
+  display: flex; align-items: center; gap: 24px;
+}
+header h1 { font-size: 20px; color: #aac; letter-spacing: 2px; white-space: nowrap; }
+header a { color: #8af; text-decoration: none; font-size: 13px; }
+header a:hover { text-decoration: underline; }
+
+#controls {
+  display: flex; gap: 16px; align-items: center; margin-left: auto;
+}
+#controls label {
+  color: #aac; font-size: 13px; cursor: pointer; user-select: none;
+  display: flex; align-items: center; gap: 4px;
+}
+#controls input[type="checkbox"] { accent-color: #8af; }
+
+#demo-container {
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 42px);
+}
+#demoCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  cursor: grab;
+}
+#demoCanvas.dragging { cursor: grabbing; }
+
+#info-panel {
+  position: absolute;
+  bottom: 12px; left: 12px;
+  background: rgba(10,10,30,0.9);
+  border: 1px solid #4a4a8a;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  min-width: 180px;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+#info-panel.hidden { opacity: 0; }
+.info-label { color: #88a; }
+.info-value { color: #eee; font-weight: bold; }
+.info-terrain { color: #e8d080; }
+.info-unit { color: #8af; }
+.info-faction-player { color: #4a9eff; }
+.info-faction-enemy { color: #ff6060; }
+.info-faction-ally { color: #4f4; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>精靈測試台</h1>
+  <a href="../">← 返回遊戲</a>
+  <div id="controls">
+    <label><input type="checkbox" id="cb-grid"> 格線</label>
+    <label><input type="checkbox" id="cb-terrain"> 地形標籤</label>
+    <label><input type="checkbox" id="cb-units"> 單位標籤</label>
+  </div>
+</header>
+
+<div id="demo-container">
+  <canvas id="demoCanvas"></canvas>
+  <div id="info-panel" class="hidden"></div>
+</div>
+
+<!-- Shared game modules (minimal set) -->
+<script src="../js/config.js"></script>
+<script src="../js/data/items.js"></script>
+<script src="../js/data/classes.js"></script>
+<script src="../js/data/chapters.js"></script>
+<script src="../js/sprites.js"></script>
+<script src="../js/unit.js"></script>
+<script src="../js/map.js"></script>
+
+<script>
+// ===== TERRAIN MAP (30 x 20) — all 23 terrain types =====
+// P=plain F=forest M=mountain W=wall G=gate R=river V=village
+// I=floor T=throne L=pillar O=fort H=hill S=swamp C=cliff
+// N=pass D=road A=basin E=sea K=desert X=bridge U=ruins
+// Z=stairs B=brazier
+const MAP_W = 30, MAP_H = 20;
+const DEMO_MAP = [
+  // Row 0-2: Sea coast, river, forest cluster, mountains+cliffs
+  'EEEEERRRPPPPFFFPPPPMMMCCCMMMMM',
+  'EEEPPRRRRPPFFFFPPPPMMMCCCMMMMM',
+  'EEPPPPPRRPPPFFPPPPPPMPPCPPHHHH',
+  // Row 3-5: Village, road → bridge → river, hills
+  'PPPPPPPPRRPPPPPPPPPPPPPPPHHHPP',
+  'PPVPDDDDDXRRRRRRRRPPPPPPPHHPP',
+  'PPPPDDPPPPPPPPPPRRPPPPPPPPPPPP',
+  // Row 6-9: Forest, road, desert+ruins, river bends
+  'PPPPDDPPPPPPPPPPPRRPPPPPPPPPPP',
+  'PFFFDPPPKKKKPPPPPPRRRPPPPPPPPPP',
+  'PFFFPPPKKKKKKKPPPPPRRPPPPPPPPPP',
+  'PPFPPPPPPKUKKPPPPPPPRRPWWWWWWW',
+  // Row 10-13: Fort, swamp, bridge, castle interior
+  'PPPPPPPPPPKKKPPPPPPPRRWWIIIIWW',
+  'PPOPPPPPPPPPPSSPPPPPRPWWILLIWW',
+  'PPOPPPPPPPPPSSSPPPPXRPWWIPPPIWW',
+  'PPPPPPPPPPPPPSPPPPPPRRWWIPLPIWW',
+  // Row 14-17: Basin, pass, castle throne+gate
+  'PPPPPPAAAPPPPPPPPPPPRRWWIPPPIWW',
+  'PPPPPAAPPPPPPPPPPPPPRPWWIPPTIW',
+  'PPNNNPPPPPPPPPPPPPPPPRRWWIBZIW',
+  'PPNNNPPPPPPPPPVPPPPPPRPWWGGWWW',
+  // Row 18-19: Open area
+  'PPPPPPPPPPPPPPPPPPPPPPRRPPPPPP',
+  'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPP',
+].join('\n');
+
+// ===== INIT MAP =====
+const terrain = parseTerrain(DEMO_MAP, MAP_W, MAP_H);
+GameMap.width = MAP_W;
+GameMap.height = MAP_H;
+GameMap.terrain = terrain;
+GameMap.camX = 0;
+GameMap.camY = 0;
+
+// Reverse lookup: terrain name → code letter
+const TERRAIN_NAMES = {};
+for (const [code, name] of Object.entries(TERRAIN_CODES)) {
+  if (code !== '.' && code !== ' ' && code !== '+') TERRAIN_NAMES[name] = code;
+}
+
+// ===== CREATE UNITS (one per class) =====
+const defaultStats = { hp: 25, str: 10, mag: 5, skl: 8, spd: 10, lck: 5, def: 8, res: 5 };
+const defaultPortrait = { hair: '#c4a', eyes: '#48f', skin: '#fdb' };
+const UNIT_DEFS = [
+  // Player units — left/center of map
+  { classId:'lord',           name:'艾琳',     gender:'f', faction:'player', x:5,  y:4,  items:['rapier'] },
+  { classId:'masterLord',     name:'聖王',     gender:'f', faction:'player', x:6,  y:5,  items:['silverSword'] },
+  { classId:'cavalier',       name:'騎士',     gender:'m', faction:'player', x:8,  y:3,  items:['ironLance'] },
+  { classId:'paladin',        name:'馬庫斯',   gender:'m', faction:'player', x:10, y:2,  items:['steelSword'], acted:true },
+  { classId:'archer',         name:'莉娜',     gender:'f', faction:'player', x:12, y:1,  items:['ironBow'] },
+  { classId:'fighter',        name:'托爾',     gender:'m', faction:'player', x:1,  y:7,  items:['ironAxe'] },
+  { classId:'warrior',        name:'猛將',     gender:'m', faction:'player', x:2,  y:8,  items:['steelAxe'], acted:true },
+  { classId:'mercenary',      name:'凱恩',     gender:'m', faction:'player', x:4,  y:6,  items:['ironSword'] },
+  { classId:'swordmaster',    name:'劍聖',     gender:'m', faction:'player', x:3,  y:5,  items:['killingEdge'] },
+  { classId:'cleric',         name:'賽拉',     gender:'f', faction:'player', x:3,  y:11, items:['heal'] },
+  { classId:'mage',           name:'法蘭',     gender:'f', faction:'player', x:10, y:8,  items:['fire'] },
+  { classId:'sage',           name:'賢者',     gender:'m', faction:'player', x:11, y:9,  items:['thunder'], acted:true },
+  { classId:'wyvernRider',    name:'雷克斯',   gender:'m', faction:'player', x:22, y:1,  items:['steelLance'] },
+  { classId:'pegasusKnight',  name:'ナターシャ', gender:'f', faction:'player', x:26, y:3,  items:['ironLance'] },
+  { classId:'thief',          name:'オリヴィエ', gender:'m', faction:'player', x:7,  y:9,  items:['ironSword'] },
+  { classId:'assassin',       name:'刺客',     gender:'m', faction:'player', x:6,  y:10, items:['ironSword'], acted:true },
+  { classId:'general',        name:'ヘルガ',   gender:'f', faction:'player', x:25, y:13, items:['steelLance'] },
+  // Enemy units — castle/swamp area
+  { classId:'knight',         name:'重裝兵',   gender:'m', faction:'enemy',  x:24, y:10, items:['ironLance'] },
+  { classId:'soldier',        name:'士兵',     gender:'m', faction:'enemy',  x:23, y:17, items:['ironLance'] },
+  { classId:'darkMage',       name:'暗黑法師', gender:'m', faction:'enemy',  x:26, y:15, items:['dark'] },
+  { classId:'brigand',        name:'山賊',     gender:'m', faction:'enemy',  x:14, y:12, items:['ironAxe'] },
+  { classId:'skeleton',       name:'骷髏兵',   gender:'m', faction:'enemy',  x:10, y:10, items:['ironSword'] },
+  // Ally units — scattered
+  { classId:'greatKnight',    name:'大騎士',   gender:'m', faction:'ally',   x:9,  y:4,  items:['ironLance'] },
+  { classId:'sniper',         name:'狙擊手',   gender:'m', faction:'ally',   x:14, y:3,  items:['ironBow'] },
+  { classId:'ranger',         name:'遊俠',     gender:'f', faction:'ally',   x:13, y:5,  items:['ironBow'] },
+  { classId:'hero',           name:'英雄',     gender:'m', faction:'ally',   x:5,  y:9,  items:['ironSword'] },
+  { classId:'bishop',         name:'司祭',     gender:'f', faction:'ally',   x:4,  y:12, items:['mend'] },
+  { classId:'valkyrie',       name:'聖騎士',   gender:'f', faction:'ally',   x:6,  y:13, items:['heal'] },
+  { classId:'mageKnight',     name:'魔法騎士', gender:'f', faction:'ally',   x:8,  y:11, items:['fire'] },
+  { classId:'wyvernLord',     name:'飛龍將',   gender:'m', faction:'ally',   x:25, y:2,  items:['silverLance'] },
+  { classId:'falconKnight',   name:'隼騎士',   gender:'f', faction:'ally',   x:28, y:4,  items:['ironLance'] },
+];
+
+const demoUnits = [];
+for (const def of UNIT_DEFS) {
+  try {
+    const unit = new Unit({
+      classId: def.classId,
+      name: def.name,
+      gender: def.gender,
+      faction: def.faction,
+      x: def.x,
+      y: def.y,
+      level: 5,
+      items: def.items || [],
+      baseStats: Object.assign({}, defaultStats),
+      portrait: Object.assign({}, defaultPortrait),
+    });
+    if (def.acted) unit.acted = true;
+    demoUnits.push(unit);
+  } catch (e) {
+    console.warn('Failed to create unit:', def.classId, e);
+  }
+}
+
+// ===== CANVAS SETUP =====
+const canvas = document.getElementById('demoCanvas');
+const ctx = canvas.getContext('2d');
+const container = document.getElementById('demo-container');
+
+function resize() {
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Mock game for grayed-out units
+const mockGame = { phase: 'player' };
+
+// ===== TOGGLES =====
+let showGrid = false;
+let showTerrainLabels = false;
+let showUnitLabels = false;
+document.getElementById('cb-grid').addEventListener('change', function() { showGrid = this.checked; });
+document.getElementById('cb-terrain').addEventListener('change', function() { showTerrainLabels = this.checked; });
+document.getElementById('cb-units').addEventListener('change', function() { showUnitLabels = this.checked; });
+
+// ===== CAMERA DRAG (mouse) =====
+let isDragging = false;
+let dragStartX = 0, dragStartY = 0;
+let dragStartCamX = 0, dragStartCamY = 0;
+
+function canvasCoords(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height),
+  };
+}
+
+canvas.addEventListener('mousedown', function(e) {
+  const pos = canvasCoords(e);
+  isDragging = true;
+  dragStartX = pos.x;
+  dragStartY = pos.y;
+  dragStartCamX = GameMap.camX;
+  dragStartCamY = GameMap.camY;
+  canvas.classList.add('dragging');
+});
+
+canvas.addEventListener('mousemove', function(e) {
+  const pos = canvasCoords(e);
+  if (isDragging) {
+    GameMap.camX = dragStartCamX + (dragStartX - pos.x);
+    GameMap.camY = dragStartCamY + (dragStartY - pos.y);
+    GameMap.clampCamera(canvas.width, canvas.height);
+  }
+  updateInfoPanel(pos.x, pos.y);
+});
+
+canvas.addEventListener('mouseup', function() {
+  isDragging = false;
+  canvas.classList.remove('dragging');
+});
+canvas.addEventListener('mouseleave', function() {
+  isDragging = false;
+  canvas.classList.remove('dragging');
+});
+
+// ===== CAMERA DRAG (touch) =====
+let touchId = null;
+canvas.addEventListener('touchstart', function(e) {
+  e.preventDefault();
+  if (touchId !== null) return;
+  const t = e.changedTouches[0];
+  touchId = t.identifier;
+  const pos = canvasCoords(t);
+  isDragging = true;
+  dragStartX = pos.x;
+  dragStartY = pos.y;
+  dragStartCamX = GameMap.camX;
+  dragStartCamY = GameMap.camY;
+}, { passive: false });
+
+canvas.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === touchId) {
+      const pos = canvasCoords(e.changedTouches[i]);
+      GameMap.camX = dragStartCamX + (dragStartX - pos.x);
+      GameMap.camY = dragStartCamY + (dragStartY - pos.y);
+      GameMap.clampCamera(canvas.width, canvas.height);
+    }
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchend', function(e) {
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === touchId) {
+      touchId = null;
+      isDragging = false;
+    }
+  }
+});
+
+// ===== INFO PANEL =====
+const infoPanel = document.getElementById('info-panel');
+
+// Terrain stat bonuses (from unit.js TERRAIN_DATA)
+const TERRAIN_INFO = {
+  plain:    { def:0, avo:0,   mov:1, zh:'平原' },
+  forest:   { def:1, avo:20,  mov:2, zh:'森林' },
+  mountain: { def:2, avo:30,  mov:3, zh:'山地' },
+  wall:     { def:3, avo:20,  mov:999, zh:'牆壁' },
+  gate:     { def:3, avo:30,  mov:1, zh:'城門' },
+  river:    { def:0, avo:0,   mov:999, zh:'河川' },
+  village:  { def:0, avo:10,  mov:1, zh:'村莊' },
+  floor:    { def:0, avo:0,   mov:1, zh:'地板' },
+  throne:   { def:3, avo:30,  mov:1, zh:'王座' },
+  pillar:   { def:1, avo:15,  mov:2, zh:'柱子' },
+  fort:     { def:2, avo:20,  mov:2, zh:'據點' },
+  hill:     { def:1, avo:20,  mov:2, zh:'丘陵' },
+  swamp:    { def:0, avo:-10, mov:3, zh:'沼澤' },
+  cliff:    { def:2, avo:30,  mov:999, zh:'懸崖' },
+  pass:     { def:1, avo:10,  mov:1, zh:'隘口' },
+  road:     { def:0, avo:0,   mov:1, zh:'道路' },
+  basin:    { def:0, avo:10,  mov:1, zh:'盆地' },
+  sea:      { def:0, avo:0,   mov:999, zh:'海洋' },
+  desert:   { def:0, avo:-10, mov:3, zh:'沙漠' },
+  bridge:   { def:0, avo:0,   mov:1, zh:'橋' },
+  ruins:    { def:1, avo:10,  mov:2, zh:'遺跡' },
+  stairs:   { def:0, avo:0,   mov:1, zh:'階梯' },
+  brazier:  { def:0, avo:0,   mov:1, zh:'火盆' },
+};
+
+function updateInfoPanel(sx, sy) {
+  const tile = GameMap.screenToTile(sx, sy);
+  if (tile.x < 0 || tile.x >= MAP_W || tile.y < 0 || tile.y >= MAP_H) {
+    infoPanel.classList.add('hidden');
+    return;
+  }
+  infoPanel.classList.remove('hidden');
+
+  const terrainType = GameMap.getTerrain(tile.x, tile.y);
+  const ti = TERRAIN_INFO[terrainType] || { def:0, avo:0, mov:1, zh:terrainType };
+  const code = TERRAIN_NAMES[terrainType] || '?';
+
+  let html = '<span class="info-terrain">' + ti.zh + '</span> '
+    + '<span class="info-label">(' + terrainType + ' [' + code + '])</span><br>'
+    + '<span class="info-label">防禦+</span><span class="info-value">' + ti.def + '</span> '
+    + '<span class="info-label">迴避+</span><span class="info-value">' + ti.avo + '</span> '
+    + '<span class="info-label">移動</span><span class="info-value">' + (ti.mov >= 999 ? '∞' : ti.mov) + '</span>'
+    + '<br><span class="info-label">座標</span> (' + tile.x + ', ' + tile.y + ')';
+
+  // Check for unit at this tile
+  const unit = demoUnits.find(u => u.x === tile.x && u.y === tile.y && u.hp > 0);
+  if (unit) {
+    const cls = CLASSES[unit.classId] || {};
+    const factionClass = 'info-faction-' + unit.faction;
+    html += '<hr style="border-color:#333;margin:6px 0">'
+      + '<span class="info-unit">' + unit.name + '</span> '
+      + '<span class="' + factionClass + '">[' + unit.faction + ']</span><br>'
+      + '<span class="info-label">職業</span> <span class="info-value">' + (cls.name || unit.classId) + '</span> '
+      + '<span class="info-label">(' + unit.classId + ')</span><br>'
+      + '<span class="info-label">性別</span> ' + (unit.gender === 'f' ? '♀' : '♂')
+      + (unit.acted ? ' <span style="color:#f84">【已行動】</span>' : '');
+  }
+
+  infoPanel.innerHTML = html;
+}
+
+// ===== LABEL RENDERING =====
+function drawTerrainLabels(ctx) {
+  const ts = GameMap.tileSize * GameMap.scale;
+  const startX = Math.max(0, Math.floor(GameMap.camX / ts));
+  const startY = Math.max(0, Math.floor(GameMap.camY / ts));
+  const endX = Math.min(MAP_W - 1, Math.ceil((GameMap.camX + canvas.width) / ts));
+  const endY = Math.min(MAP_H - 1, Math.ceil((GameMap.camY + canvas.height) / ts));
+
+  ctx.font = 'bold 10px monospace';
+  ctx.textBaseline = 'top';
+
+  for (let y = startY; y <= endY; y++) {
+    for (let x = startX; x <= endX; x++) {
+      const sx = x * ts - GameMap.camX;
+      const sy = y * ts - GameMap.camY;
+      const t = GameMap.getTerrain(x, y);
+      const code = TERRAIN_NAMES[t] || '?';
+
+      ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx.fillRect(sx, sy, 14, 13);
+      ctx.fillStyle = '#ff0';
+      ctx.fillText(code, sx + 3, sy + 2);
+    }
+  }
+}
+
+function drawUnitLabels(ctx) {
+  const ts = GameMap.tileSize * GameMap.scale;
+  ctx.font = 'bold 9px monospace';
+  ctx.textBaseline = 'top';
+  ctx.textAlign = 'center';
+
+  for (const unit of demoUnits) {
+    if (unit.hp <= 0) continue;
+    const sx = unit.x * ts - GameMap.camX + ts / 2;
+    const sy = unit.y * ts - GameMap.camY + ts + 1;
+
+    const label = unit.classId;
+    const w = ctx.measureText(label).width + 6;
+    ctx.fillStyle = 'rgba(0,0,0,0.75)';
+    ctx.fillRect(sx - w / 2, sy, w, 12);
+
+    ctx.fillStyle = unit.faction === 'player' ? '#4a9eff' : unit.faction === 'enemy' ? '#ff6060' : '#4f4';
+    ctx.fillText(label, sx, sy + 1);
+  }
+  ctx.textAlign = 'left';
+}
+
+// ===== RENDER LOOP =====
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  Sprites.tick();
+
+  // 1. Terrain
+  GameMap.render(ctx, canvas.width, canvas.height, 0);
+
+  // 2. Grid overlay
+  if (showGrid) {
+    GameMap.renderGrid(ctx, canvas.width, canvas.height);
+  }
+
+  // 3. Units
+  GameMap.renderUnits(ctx, demoUnits, canvas.width, canvas.height, mockGame);
+
+  // 4. Labels
+  if (showTerrainLabels) drawTerrainLabels(ctx);
+  if (showUnitLabels) drawUnitLabels(ctx);
+
+  requestAnimationFrame(render);
+}
+
+Sprites.clearTerrainCache();
+requestAnimationFrame(render);
+</script>
+</body>
+</html>
