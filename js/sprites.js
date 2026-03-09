@@ -97,16 +97,26 @@ const Sprites = {
   _drawIrregularEdge: function(ctx, edge, depth, color, seed, nBase) {
     var s = GAME_CONFIG.TILE_SIZE, self = this;
     ctx.fillStyle = color;
-    // Generate smooth wavy curve with 8 sample points + tapered envelope
-    var nSamples = 8;
+
+    // Record layer for corner fill patches
+    if (this._edgeLayers) {
+      if (!this._edgeLayers[edge]) this._edgeLayers[edge] = [];
+      this._edgeLayers[edge].push({ depth: depth, color: color });
+    }
+
+    // Multi-wave: always 2-4 waves for organic feel (never 1 = too round)
+    var numWaves = 2 + Math.floor(self._rng(seed, 777) * 3); // 2, 3, or 4
+    var nSamples = 8 + (numWaves - 1) * 3; // 11, 14, or 17 for smooth curves
+
     var pts = [];
     for (var i = 0; i <= nSamples; i++) {
       var t = i / nSamples;
-      // Envelope: sin(t*PI) — forces 0 at both ends, peaks in middle
-      var envelope = Math.sin(t * Math.PI);
-      // Wave variation per sample
-      var wave = depth * (0.7 + self._rng(seed, nBase + i * 7) * 0.6);
-      // Apply envelope so edges taper to 0 at corners
+
+      // Envelope: sin(πt) outer taper × multi-wave oscillation
+      var envelope = Math.sin(t * Math.PI) * (0.45 + 0.55 * Math.abs(Math.sin(numWaves * t * Math.PI)));
+
+      // Wave variation per sample (wider range for more organic feel)
+      var wave = depth * (0.6 + self._rng(seed, nBase + i * 7) * 0.8);
       var d = wave * envelope;
       pts.push({ t: t, d: d });
     }
@@ -157,12 +167,12 @@ const Sprites = {
     ctx.fill();
   },
 
-  // Scattered pixel clusters — kept away from tile corners (inner 70% zone)
+  // Scattered pixel clusters — inner 70% zone to avoid corners
   _drawScatterPixels: function(ctx, edge, count, maxDepth, color, seed, nBase) {
     var s = GAME_CONFIG.TILE_SIZE;
     ctx.fillStyle = color;
+
     for (var i = 0; i < count; i++) {
-      // Place scatter in the inner 70% to avoid corner sharp cuts
       var along = Math.floor(s * 0.15 + this._rng(seed, nBase + i * 2) * s * 0.7);
       var perp = Math.floor(this._rng(seed, nBase + i * 2 + 1) * maxDepth);
       var px, py;
@@ -286,10 +296,43 @@ const Sprites = {
     this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.1)', seed, 6100);
   },
 
+  // Classify edge transition type — must mirror the dispatch if/else chain exactly
+  _classifyEdge: function(center, neighbor) {
+    if (!neighbor.differs) {
+      if (center.terrain === 'forest' && neighbor.terrain === 'forest') return 'forestToForest';
+      if (center.terrain === 'wall' && neighbor.terrain === 'wall') return 'wallToWall';
+      return null;
+    }
+    if (center.category === 'water' && neighbor.category !== 'water') return 'waterToLand';
+    if (center.category === 'land' && neighbor.terrain === 'forest') return 'forestToPlain';
+    if (center.terrain === 'wall' && neighbor.category !== 'structure') return 'wallEdge';
+    if (center.category === 'land' && neighbor.category === 'rocky') return 'mountainToLand';
+    if (center.category === 'land' && neighbor.category === 'water') return 'landToWater';
+    if (neighbor.terrain === 'desert' && center.category === 'land' && center.terrain !== 'desert') return 'desertEdge';
+    if (neighbor.catDiffers) return 'genericBoundary';
+    return null;
+  },
+
   // Master dispatch
   _drawTerrainOverlay: function(ctx, nb, tileX, tileY) {
     var sides = ['top', 'bottom', 'left', 'right'];
     var center = nb.center;
+    var s = GAME_CONFIG.TILE_SIZE;
+
+    // B1-B2: Classify edges and compute corner connectivity
+    var edgeTypes = {};
+    for (var ei = 0; ei < 4; ei++) {
+      edgeTypes[sides[ei]] = this._classifyEdge(center, nb[sides[ei]]);
+    }
+    var corners = {
+      topLeft:     edgeTypes.top && edgeTypes.top === edgeTypes.left,
+      topRight:    edgeTypes.top && edgeTypes.top === edgeTypes.right,
+      bottomLeft:  edgeTypes.bottom && edgeTypes.bottom === edgeTypes.left,
+      bottomRight: edgeTypes.bottom && edgeTypes.bottom === edgeTypes.right
+    };
+
+    // Layer recording for corner fill
+    this._edgeLayers = { top: [], bottom: [], left: [], right: [] };
 
     for (var i = 0; i < 4; i++) {
       var side = sides[i];
@@ -331,7 +374,7 @@ const Sprites = {
       }
     }
 
-    // Same-terrain special overlays
+    // Same-terrain special overlays (blob/mortar style, not corner-filled)
     if (center.terrain === 'forest') {
       for (var j = 0; j < 4; j++) {
         if (nb[sides[j]].terrain === 'forest') {
@@ -346,6 +389,50 @@ const Sprites = {
         }
       }
     }
+
+    // Corner fill: concave patches on top of edges (x*y = r² style)
+    // Edges taper to 0 at corners via sin(πt). Where 2 adjacent edges share
+    // the same transition type, paint a concave fill to bridge the gap.
+    // Shape: parametric power curve with exponent ~1.3 (gentle concavity)
+    var cornerDefs = [
+      // key, corner pixel coords, dx/dy directions pointing INTO tile
+      { key: 'topLeft',     cx: 0, cy: 0, dx: 1,  dy: 1,  edge1: 'top',    edge2: 'left' },
+      { key: 'topRight',    cx: s, cy: 0, dx: -1, dy: 1,  edge1: 'top',    edge2: 'right' },
+      { key: 'bottomRight', cx: s, cy: s, dx: -1, dy: -1, edge1: 'bottom', edge2: 'right' },
+      { key: 'bottomLeft',  cx: 0, cy: s, dx: 1,  dy: -1, edge1: 'bottom', edge2: 'left' }
+    ];
+    var cSeed = this._seed(tileX * 3, tileY * 3);
+    for (var ci = 0; ci < cornerDefs.length; ci++) {
+      var cd = cornerDefs[ci];
+      if (!corners[cd.key]) continue;
+
+      var layers = this._edgeLayers[cd.edge1];
+      if (!layers || layers.length === 0) continue;
+
+      // Draw from outermost (largest depth) to innermost
+      for (var li = 0; li < layers.length; li++) {
+        // Generous radius: 1.2-1.6x the layer depth so the fill is clearly visible
+        var r = layers[li].depth * (1.2 + this._rng(cSeed, ci * 100 + li * 10) * 0.4);
+        ctx.fillStyle = layers[li].color;
+        ctx.beginPath();
+        ctx.moveTo(cd.cx, cd.cy); // corner point
+        // Gentle concave curve (exponent 1.3): fills most of the triangle
+        // while still curving inward like x*y = r²
+        var nPts = 6;
+        var pow = 1.2 + this._rng(cSeed, ci * 100 + 90) * 0.3; // 1.2-1.5
+        for (var pi = 0; pi <= nPts; pi++) {
+          var ct = pi / nPts;
+          var perturb = 1.0 + (this._rng(cSeed, ci * 100 + li * 10 + pi + 50) - 0.5) * 0.25;
+          var px = cd.cx + cd.dx * r * Math.pow(1 - ct, pow) * perturb;
+          var py = cd.cy + cd.dy * r * Math.pow(ct, pow) * perturb;
+          ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    this._edgeLayers = null;
   },
 
   drawTerrain: function(ctx, type, x, y, tileX, tileY) {
