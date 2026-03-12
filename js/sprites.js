@@ -235,6 +235,8 @@ const Sprites = {
     this._drawIrregularEdge(ctx, edge, 2, '#68c858', seed, 2080 + v * 83);
     // Foam line at water's edge
     this._drawIrregularEdge(ctx, edge, 1, 'rgba(160,216,255,0.5)', seed, 2150 + v * 71);
+    // Anti-jagged soft blend line near bank transition
+    this._drawIrregularEdge(ctx, edge, 1, 'rgba(120,180,120,0.22)', seed, 2180 + v * 61);
     // Scattered pebbles on bank
     this._drawScatterPixels(ctx, edge, pebbleCount, 6 + (v % 2), '#a0b060', seed, 2100 + v * 67);
   },
@@ -457,15 +459,14 @@ const Sprites = {
 
       // Draw from outermost (largest depth) to innermost
       for (var li = 0; li < layers.length; li++) {
-        var r = layers[li].depth * (2.2 + this._rng(cSeed, ci * 100 + li * 10) * 0.6);
+        // Thicker, rounder corner cap (reduce right-angle look)
+        var r = layers[li].depth * (3.0 + this._rng(cSeed, ci * 100 + li * 10) * 0.9);
         ctx.fillStyle = layers[li].color;
         ctx.beginPath();
         ctx.moveTo(cd.cx, cd.cy); // corner point
-        // Concave envelope curve: √x + √y = k shape.
-        // pow(_, exp) with exp ≈ 2 makes both coordinates small in the middle,
-        // so the curve dips TOWARD the corner (filled area < triangle).
-        var nPts = 12;
-        var exp = 1.4 + this._rng(cSeed, ci * 100 + 90) * 0.6; // 1.8-2.2
+        // Lower exponent => fuller / rounder bulge near middle
+        var nPts = 14;
+        var exp = 1.05 + this._rng(cSeed, ci * 100 + 90) * 0.35;
         for (var pi = 0; pi <= nPts; pi++) {
           var ct = pi / nPts;
           var perturb = 1.0 + (this._rng(cSeed, ci * 100 + li * 10 + pi + 50) - 0.5) * 0.12;
@@ -560,38 +561,44 @@ const Sprites = {
       ctx.beginPath();ctx.arc(x+11+txOff,y+18,9,0,Math.PI);ctx.fill();
 
     }else if(type==='mountain'){
-      // GBA FE-style mountain — warm earthy brown tones, NOT grey
+      // FE GBA-like mountain: chunky faceted massif + clear top-left light
       R(x,y,s,s,'#8a7858');
-      // Base grass zone
-      R(x,y+24,s,8,'#58a848');R(x,y+24,s,2,'#78a860');
-      // Scree/rubble transition (brown rocks on grass edge)
-      var screeY=y+21;
-      for(let i=0;i<7;i++){
-        var sx2=x+1+Math.floor(rng(i+300)*26),sw=2+Math.floor(rng(i+310)*3);
-        var sc=rng(i+320)>0.5?'#907850':'#a08860';
-        R(sx2,screeY+Math.floor(rng(i+330)*5),sw,2,sc);
+      // foothill / grass contact
+      R(x,y+24,s,8,'#5aa84a');
+      R(x,y+24,s,1,'#7fc06a');
+      R(x,y+31,s,1,'#4a7a3a');
+
+      // Main massif silhouette
+      ctx.fillStyle='#7e6744';
+      ctx.beginPath();
+      ctx.moveTo(x+2,y+24);ctx.lineTo(x+7,y+14);ctx.lineTo(x+12,y+8);
+      ctx.lineTo(x+16,y+4);ctx.lineTo(x+21,y+8);ctx.lineTo(x+26,y+13);
+      ctx.lineTo(x+30,y+24);ctx.closePath();ctx.fill();
+
+      // Left-lit planes
+      ctx.fillStyle='#b59662';
+      ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+7,y+14);ctx.lineTo(x+14,y+23);ctx.lineTo(x+16,y+23);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#a98956';
+      ctx.beginPath();ctx.moveTo(x+12,y+8);ctx.lineTo(x+6,y+16);ctx.lineTo(x+11,y+23);ctx.lineTo(x+14,y+23);ctx.closePath();ctx.fill();
+
+      // Right shadow planes
+      ctx.fillStyle='#654f33';
+      ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+26,y+13);ctx.lineTo(x+18,y+23);ctx.lineTo(x+16,y+23);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#5b452d';
+      ctx.beginPath();ctx.moveTo(x+21,y+8);ctx.lineTo(x+30,y+24);ctx.lineTo(x+22,y+24);ctx.lineTo(x+18,y+23);ctx.closePath();ctx.fill();
+
+      // Ridge highlights + cracks
+      R(x+12,y+9,2,1,'#d6b57a');R(x+15,y+6,2,1,'#debe84');R(x+18,y+10,1,1,'#cfae72');
+      ctx.strokeStyle='#4a3a25';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+10,y+15);ctx.lineTo(x+12,y+20);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+19,y+13);ctx.lineTo(x+21,y+19);ctx.stroke();
+
+      // Scree at foot
+      for(let i=0;i<6;i++){
+        var sx2=x+2+Math.floor(rng(i+300)*26), sw=1+Math.floor(rng(i+310)*3);
+        var sy2=y+22+Math.floor(rng(i+320)*4);
+        R(sx2,sy2,sw,1,rng(i+330)>0.5?'#9a835c':'#7e6a49');
       }
-      // Main peak — lit right face (warm tan)
-      ctx.fillStyle='#b89860';ctx.beginPath();ctx.moveTo(x+14,y+2);ctx.lineTo(x+29,y+23);ctx.lineTo(x+14,y+23);ctx.fill();
-      // Main peak — shadowed left face (deep brown)
-      ctx.fillStyle='#705838';ctx.beginPath();ctx.moveTo(x+14,y+2);ctx.lineTo(x+2,y+23);ctx.lineTo(x+14,y+23);ctx.fill();
-      // Secondary peak (slightly different brown)
-      ctx.fillStyle='#a88858';ctx.beginPath();ctx.moveTo(x+24,y+7);ctx.lineTo(x+31,y+20);ctx.lineTo(x+18,y+20);ctx.fill();
-      ctx.fillStyle='#806840';ctx.beginPath();ctx.moveTo(x+24,y+7);ctx.lineTo(x+18,y+20);ctx.lineTo(x+22,y+20);ctx.fill();
-      // Small peak left
-      ctx.fillStyle='#987848';ctx.beginPath();ctx.moveTo(x+6,y+10);ctx.lineTo(x+12,y+22);ctx.lineTo(x+1,y+22);ctx.fill();
-      ctx.fillStyle='#685030';ctx.beginPath();ctx.moveTo(x+6,y+10);ctx.lineTo(x+1,y+22);ctx.lineTo(x+5,y+22);ctx.fill();
-      // Vegetation patches on lower slopes (green-brown)
-      R(x+4,y+20,3,2,'#688848');R(x+22,y+18,3,2,'#688848');
-      P(x+8,y+19,'#708850');P(x+26,y+20,'#708850');
-      // Crack lines on rock faces (darker brown)
-      ctx.strokeStyle='#584828';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+10,y+10);ctx.lineTo(x+12,y+16);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+7,y+14);ctx.lineTo(x+9,y+18);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+18,y+11);ctx.lineTo(x+20,y+16);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+26,y+12);ctx.lineTo(x+28,y+17);ctx.stroke();
-      // Rock texture highlights
-      R(x+16,y+6,2,1,'#c8a870');R(x+12,y+14,1,1,'#c0a068');R(x+25,y+10,1,2,'#b89860');
 
     }else if(type==='wall'){
       // GBA FE-style stone bricks with damage and moss
@@ -717,24 +724,34 @@ const Sprites = {
       R(x+Math.floor(rng(690)*20)+4,y+Math.floor(rng(691)*20)+6,3,2,'#4a4420');
 
     }else if(type==='cliff'){
-      // Rocky cliff with layered shading
-      R(x,y,s,s,'#585048');
-      // Top grass strip
-      R(x,y,s,6,'#58a848');
-      R(x,y+5,s,2,'#80a870');
-      // Rock face with variation
-      var clOff=Math.floor(rng(700)*4);
-      R(x+clOff,y+7,s-clOff,23,'#706858');
-      R(x+clOff+2,y+9,s-clOff-4,19,'#605848');
-      // Horizontal crack lines
-      ctx.strokeStyle='#504838';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+clOff+2,y+14);ctx.lineTo(x+clOff+18,y+15);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+clOff+6,y+22);ctx.lineTo(x+clOff+22,y+21);ctx.stroke();
-      // Rock texture
-      for(let i=0;i<3;i++){
-        var cx2=x+4+Math.floor(rng(i+710)*22),cy2=y+10+Math.floor(rng(i+720)*16);
-        R(cx2,cy2,2,2,rng(i+730)>0.5?'#786858':'#584838');
-      }
+      // FE GBA-like cliff: stepped strata, strong top lip, right-side falloff shadow
+      R(x,y,s,s,'#6d5a45');
+      // top grass lip
+      R(x,y,s,5,'#5aaa4a');
+      R(x,y+5,s,1,'#86c270');
+      R(x,y+6,s,1,'#4a7a3a');
+
+      // cliff body blocks
+      R(x+1,y+7,30,24,'#7a654c');
+      R(x+2,y+9,28,21,'#6e5a43');
+      // left light / right shadow
+      R(x+2,y+8,2,20,'#927b61');
+      R(x+28,y+8,2,20,'#4f4030');
+
+      // horizontal strata lines
+      R(x+3,y+12,25,1,'#5c4b38');
+      R(x+4,y+17,23,1,'#594936');
+      R(x+3,y+22,24,1,'#574633');
+      R(x+4,y+27,22,1,'#554431');
+
+      // broken ledges / chips
+      R(x+6,y+11,3,2,'#8f785d');R(x+12,y+16,2,2,'#8b745a');R(x+19,y+21,3,2,'#876f55');
+      R(x+23,y+14,2,2,'#4a3b2c');R(x+10,y+24,2,2,'#4d3d2e');
+
+      // sparse cracks
+      ctx.strokeStyle='#443628';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+9,y+13);ctx.lineTo(x+11,y+18);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+20,y+18);ctx.lineTo(x+22,y+23);ctx.stroke();
 
     }else if(type==='pass'){
       // Mountain pass with worn path
@@ -837,10 +854,24 @@ const Sprites = {
     const rng = function(n) { return self._rng(seed, n); };
     const R = function(rx,ry,rw,rh,rc) { ctx.fillStyle=rc; ctx.fillRect(rx,ry,rw,rh); };
     const P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
+    const drawGroundContactShadow = function(cx, cy, w, h, alpha) {
+      var a = alpha || 0.12;
+      // Core contact shadow
+      ctx.fillStyle = 'rgba(0,0,0,' + a + ')';
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, w, h, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Slightly offset penumbra toward bottom-right (top-left light)
+      ctx.fillStyle = 'rgba(0,0,0,' + (a * 0.65) + ')';
+      ctx.beginPath();
+      ctx.ellipse(cx + 1.5, cy + 0.8, w * 0.92, h * 0.88, 0, 0, Math.PI * 2);
+      ctx.fill();
+    };
 
     if(type==='fort'){
       // GBA FE-style fort — square building, muddy yellow walls, 3/4 oblique view
       // Ground shadow
+      drawGroundContactShadow(x + 16, y + 29, 13, 2.6, 0.22);
       R(x+6,y+27,22,4,'rgba(0,0,0,0.12)');
       // Front wall (muddy yellow-tan, visible from oblique angle)
       R(x+4,y+12,24,18,'#b89850');
@@ -886,6 +917,7 @@ const Sprites = {
     }else if(type==='village'){
       // GBA FE-style village house — 3/4 oblique view, pitched roof, warm walls
       // Ground shadow
+      drawGroundContactShadow(x + 16, y + 29, 12.5, 2.4, 0.19);
       R(x+4,y+28,24,3,'rgba(0,0,0,0.10)');
       // House body (cream/stucco walls, front face visible)
       R(x+3,y+14,26,16,'#d8c088');
@@ -935,6 +967,7 @@ const Sprites = {
 
     }else if(type==='throne'){
       // GBA FE-style ornate throne — golden chair with red cushion on small carpet
+      drawGroundContactShadow(x + 16, y + 28.5, 10.5, 2.0, 0.17);
       // Red carpet (smaller, centered)
       R(x+6,y+10,20,20,'#b01818');
       R(x+7,y+11,18,18,'#c82020');
@@ -982,6 +1015,7 @@ const Sprites = {
     }else if(type==='pillar'){
       // GBA FE-style stone column — warm stone tones, not grey
       // Column shadow on ground
+      drawGroundContactShadow(x + 16, y + 30, 9.5, 2.2, 0.2);
       R(x+16,y+6,10,24,'rgba(0,0,0,0.10)');
       R(x+18,y+8,8,20,'rgba(0,0,0,0.05)');
       // Base (wider bottom piece — warm stone)
@@ -1013,6 +1047,7 @@ const Sprites = {
 
     }else if(type==='gate'){
       // GBA FE-style castle gate — warm stone walls with wooden door, 3/4 view
+      drawGroundContactShadow(x + 16, y + 30, 13.5, 2.5, 0.23);
       // Side wall pillars (warm stone matching fort palette)
       R(x+1,y+0,8,32,'#b09048');
       R(x+23,y+0,8,32,'#b09048');
