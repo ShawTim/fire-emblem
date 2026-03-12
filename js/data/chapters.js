@@ -45,18 +45,35 @@ const TERRAIN_CODES = {
   '.': 'plain', ' ': 'plain'
 };
 
+// Default base terrain underneath each object type
+const OBJECT_BASE_TERRAIN = {
+  fort: 'plain', village: 'plain', ruins: 'plain',
+  gate: 'floor', throne: 'floor', pillar: 'floor',
+  brazier: 'floor', stairs: 'floor'
+};
+
 function parseTerrain(text, w, h) {
   const lines = text.trim().split('\n');
-  const map = [];
+  const terrain = [];
+  const objects = [];
   for (let y = 0; y < h; y++) {
-    map[y] = [];
+    terrain[y] = [];
+    objects[y] = [];
     const row = lines[y] || '';
     for (let x = 0; x < w; x++) {
       const code = row[x] || '.';
-      map[y][x] = TERRAIN_CODES[code] || 'plain';
+      const type = TERRAIN_CODES[code] || 'plain';
+      // Auto-split: if type is an object, separate into base terrain + object
+      if (OBJECT_BASE_TERRAIN[type] !== undefined) {
+        terrain[y][x] = OBJECT_BASE_TERRAIN[type];
+        objects[y][x] = type;
+      } else {
+        terrain[y][x] = type;
+        objects[y][x] = null;
+      }
     }
   }
-  return map;
+  return { terrain, objects };
 }
 
 // Load chapter data dynamically
@@ -92,15 +109,16 @@ async function loadChapter(chapterId) {
     if (!terrainRes.ok) throw new Error(`Failed to load terrain for chapter ${chapterId}`);
     const terrainText = await terrainRes.text();
 
-    // Parse terrain
-    const terrain = parseTerrain(terrainText, config.width, config.height);
+    // Parse terrain (returns { terrain, objects } two-layer map)
+    const parsed = parseTerrain(terrainText, config.width, config.height);
 
     // Merge everything
-  return { ...config, dialogues, prologue, terrain: terrain, _loaded: true };
+  return { ...config, dialogues, prologue, terrain: parsed.terrain, objects: parsed.objects, _loaded: true };
 
   } catch (err) {
     console.error('Error loading chapter:', err);
     // Fallback: return minimal chapter data
+    const fallback = parseTerrain('.'.repeat(10) + '\n'.repeat(9), 10, 10);
     return {
       id: chapterId,
       title: manifest.file,
@@ -108,7 +126,8 @@ async function loadChapter(chapterId) {
       objective: 'rout',
       width: 10,
       height: 10,
-      terrain: parseTerrain('.'.repeat(10).repeat(10), 10, 10),
+      terrain: fallback.terrain,
+      objects: fallback.objects,
       playerUnits: [],
       enemies: [],
       dialogues: {}

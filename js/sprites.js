@@ -18,10 +18,10 @@ const Sprites = {
 
   getTerrainColor: function(type) {
     return { plain:{base:"#58b848",dark:"#48a838",light:"#68c858"}, forest:{base:"#40a838",dark:"#309828",light:"#50b848"},
-      mountain:{base:"#a09880",dark:"#887868",light:"#b0a890"}, fort:{base:"#8a9a8a",dark:"#6a7a6a",light:"#aabaaa"}, wall:{base:"#807870",dark:"#686060",light:"#989088"},
+      mountain:{base:"#8a7858",dark:"#705838",light:"#a89868"}, fort:{base:"#c8a860",dark:"#a88840",light:"#d8c080"}, wall:{base:"#807870",dark:"#686060",light:"#989088"},
       gate:{base:"#908880",dark:"#706858",light:"#a8a098"}, river:{base:"#3888d0",dark:"#2870b8",light:"#50a0e0"},
       village:{base:"#e0c898",dark:"#c8a878",light:"#ecd8a8"}, throne:{base:"#d83838",dark:"#c82020",light:"#e0b030"},
-      pillar:{base:"#b0b0c0",dark:"#a8a8b8",light:"#c0c0d0"},
+      pillar:{base:"#b8a888",dark:"#a09070",light:"#d0c0a0"},
       floor:{base:"#c8c0b0",dark:"#b0a898",light:"#dcd4c4"} }[type] || {base:"#58b848",dark:"#48a838",light:"#68c858"};
   },
 
@@ -36,16 +36,30 @@ const Sprites = {
     this._terrainCache[key] = c;
     return c;
   },
-  clearTerrainCache: function() { this._terrainCache = {}; this._overlayCache = {}; },
+  clearTerrainCache: function() { this._terrainCache = {}; this._overlayCache = {}; this._objectCache = {}; },
+
+  // Object overlay cache: transparent sprites for fort, village, throne, etc.
+  _objectCache: {},
+  _getCachedObject: function(type, tileX, tileY) {
+    var key = 'obj_' + type + '_' + tileX + '_' + tileY;
+    if (this._objectCache[key]) return this._objectCache[key];
+    var c = document.createElement('canvas');
+    c.width = c.height = GAME_CONFIG.TILE_SIZE;
+    this.drawObject(c.getContext('2d'), type, 0, 0, tileX, tileY);
+    this._objectCache[key] = c;
+    return c;
+  },
 
   // --- Terrain Edge Overlay System ---
+  // Objects (fort, gate, village, throne, pillar, brazier, stairs, ruins) removed from categories
+  // They are now rendered as transparent overlays on top of base terrain
   _terrainCategory: {
     river:'water', sea:'water', basin:'water',
     forest:'vegetation', swamp:'vegetation',
     mountain:'rocky', cliff:'rocky', hill:'rocky',
-    wall:'structure', gate:'structure', fort:'structure',
-    floor:'indoor', pillar:'indoor', stairs:'indoor', brazier:'indoor', throne:'indoor',
-    plain:'land', village:'land', road:'land', pass:'land', desert:'land', ruins:'land', bridge:'land'
+    wall:'structure',
+    floor:'indoor',
+    plain:'land', road:'land', pass:'land', desert:'land', bridge:'land'
   },
   _overlayCache: {},
 
@@ -390,12 +404,11 @@ const Sprites = {
       }
     }
 
-    // Corner fill: concave patches on top of edges (x*y = r² style)
-    // Edges taper to 0 at corners via sin(πt). Where 2 adjacent edges share
-    // the same transition type, paint a concave fill to bridge the gap.
-    // Shape: parametric power curve with exponent ~1.3 (gentle concavity)
+    // Corner fill: concave envelope curve (√x + √y = k) bridging two adjacent edges.
+    // When two edges share the same transition type, fill the corner with
+    // a concave curve where the boundary curves TOWARD the corner.
+    // The filled area is SMALLER than a triangle — like the GBA FE shoreline style.
     var cornerDefs = [
-      // key, corner pixel coords, dx/dy directions pointing INTO tile
       { key: 'topLeft',     cx: 0, cy: 0, dx: 1,  dy: 1,  edge1: 'top',    edge2: 'left' },
       { key: 'topRight',    cx: s, cy: 0, dx: -1, dy: 1,  edge1: 'top',    edge2: 'right' },
       { key: 'bottomRight', cx: s, cy: s, dx: -1, dy: -1, edge1: 'bottom', edge2: 'right' },
@@ -411,20 +424,21 @@ const Sprites = {
 
       // Draw from outermost (largest depth) to innermost
       for (var li = 0; li < layers.length; li++) {
-        // Generous radius: 1.2-1.6x the layer depth so the fill is clearly visible
-        var r = layers[li].depth * (1.2 + this._rng(cSeed, ci * 100 + li * 10) * 0.4);
+        var r = layers[li].depth * (2.2 + this._rng(cSeed, ci * 100 + li * 10) * 0.6);
         ctx.fillStyle = layers[li].color;
         ctx.beginPath();
         ctx.moveTo(cd.cx, cd.cy); // corner point
-        // Gentle concave curve (exponent 1.3): fills most of the triangle
-        // while still curving inward like x*y = r²
-        var nPts = 6;
-        var pow = 1.2 + this._rng(cSeed, ci * 100 + 90) * 0.3; // 1.2-1.5
+        // Concave envelope curve: √x + √y = k shape.
+        // pow(_, exp) with exp ≈ 2 makes both coordinates small in the middle,
+        // so the curve dips TOWARD the corner (filled area < triangle).
+        var nPts = 12;
+        var exp = 1.4 + this._rng(cSeed, ci * 100 + 90) * 0.6; // 1.8-2.2
         for (var pi = 0; pi <= nPts; pi++) {
           var ct = pi / nPts;
-          var perturb = 1.0 + (this._rng(cSeed, ci * 100 + li * 10 + pi + 50) - 0.5) * 0.25;
-          var px = cd.cx + cd.dx * r * Math.pow(1 - ct, pow) * perturb;
-          var py = cd.cy + cd.dy * r * Math.pow(ct, pow) * perturb;
+          var perturb = 1.0 + (this._rng(cSeed, ci * 100 + li * 10 + pi + 50) - 0.5) * 0.12;
+          // pow with exp≈2: values are small in the middle → concave curve toward corner
+          var px = cd.cx + cd.dx * r * Math.pow(1 - ct, exp) * perturb;
+          var py = cd.cy + cd.dy * r * Math.pow(ct, exp) * perturb;
           ctx.lineTo(px, py);
         }
         ctx.closePath();
@@ -513,58 +527,38 @@ const Sprites = {
       ctx.beginPath();ctx.arc(x+11+txOff,y+18,9,0,Math.PI);ctx.fill();
 
     }else if(type==='mountain'){
-      // GBA FE-style rocky mountain with crack details and scree
-      R(x,y,s,s,'#a09880');
+      // GBA FE-style mountain — warm earthy brown tones, NOT grey
+      R(x,y,s,s,'#8a7858');
       // Base grass zone
-      R(x,y+24,s,8,'#58a848');R(x,y+24,s,2,'#80a870');
-      // Scree/rubble transition zone between grass and rock
-      var screeY=y+22;
-      for(let i=0;i<6;i++){
-        var sx2=x+2+Math.floor(rng(i+300)*24),sw=2+Math.floor(rng(i+310)*3);
-        var sc=rng(i+320)>0.5?'#908870':'#a89878';
-        R(sx2,screeY+Math.floor(rng(i+330)*4),sw,2,sc);
+      R(x,y+24,s,8,'#58a848');R(x,y+24,s,2,'#78a860');
+      // Scree/rubble transition (brown rocks on grass edge)
+      var screeY=y+21;
+      for(let i=0;i<7;i++){
+        var sx2=x+1+Math.floor(rng(i+300)*26),sw=2+Math.floor(rng(i+310)*3);
+        var sc=rng(i+320)>0.5?'#907850':'#a08860';
+        R(sx2,screeY+Math.floor(rng(i+330)*5),sw,2,sc);
       }
-      // Main peak — lit right face
-      ctx.fillStyle='#b0a890';ctx.beginPath();ctx.moveTo(x+16,y+1);ctx.lineTo(x+30,y+24);ctx.lineTo(x+16,y+24);ctx.fill();
-      // Main peak — shadowed left face
-      ctx.fillStyle='#807060';ctx.beginPath();ctx.moveTo(x+16,y+1);ctx.lineTo(x+2,y+24);ctx.lineTo(x+16,y+24);ctx.fill();
-      // Secondary peak
-      ctx.fillStyle='#a09078';ctx.beginPath();ctx.moveTo(x+24,y+6);ctx.lineTo(x+31,y+20);ctx.lineTo(x+18,y+20);ctx.fill();
-      ctx.fillStyle='#887060';ctx.beginPath();ctx.moveTo(x+24,y+6);ctx.lineTo(x+18,y+20);ctx.lineTo(x+22,y+20);ctx.fill();
-      // Snow caps
-      R(x+13,y+1,6,4,'#e8ecf4');R(x+14,y+0,4,2,'#f0f4f8');R(x+22,y+6,4,3,'#dce0e8');
-      // Crack lines on rock faces (1px darker shade)
-      ctx.strokeStyle='#685848';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+10,y+10);ctx.lineTo(x+13,y+16);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+7,y+14);ctx.lineTo(x+10,y+18);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+20,y+10);ctx.lineTo(x+22,y+15);ctx.stroke();
+      // Main peak — lit right face (warm tan)
+      ctx.fillStyle='#b89860';ctx.beginPath();ctx.moveTo(x+14,y+2);ctx.lineTo(x+29,y+23);ctx.lineTo(x+14,y+23);ctx.fill();
+      // Main peak — shadowed left face (deep brown)
+      ctx.fillStyle='#705838';ctx.beginPath();ctx.moveTo(x+14,y+2);ctx.lineTo(x+2,y+23);ctx.lineTo(x+14,y+23);ctx.fill();
+      // Secondary peak (slightly different brown)
+      ctx.fillStyle='#a88858';ctx.beginPath();ctx.moveTo(x+24,y+7);ctx.lineTo(x+31,y+20);ctx.lineTo(x+18,y+20);ctx.fill();
+      ctx.fillStyle='#806840';ctx.beginPath();ctx.moveTo(x+24,y+7);ctx.lineTo(x+18,y+20);ctx.lineTo(x+22,y+20);ctx.fill();
+      // Small peak left
+      ctx.fillStyle='#987848';ctx.beginPath();ctx.moveTo(x+6,y+10);ctx.lineTo(x+12,y+22);ctx.lineTo(x+1,y+22);ctx.fill();
+      ctx.fillStyle='#685030';ctx.beginPath();ctx.moveTo(x+6,y+10);ctx.lineTo(x+1,y+22);ctx.lineTo(x+5,y+22);ctx.fill();
+      // Vegetation patches on lower slopes (green-brown)
+      R(x+4,y+20,3,2,'#688848');R(x+22,y+18,3,2,'#688848');
+      P(x+8,y+19,'#708850');P(x+26,y+20,'#708850');
+      // Crack lines on rock faces (darker brown)
+      ctx.strokeStyle='#584828';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+10,y+10);ctx.lineTo(x+12,y+16);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+7,y+14);ctx.lineTo(x+9,y+18);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+18,y+11);ctx.lineTo(x+20,y+16);ctx.stroke();
       ctx.beginPath();ctx.moveTo(x+26,y+12);ctx.lineTo(x+28,y+17);ctx.stroke();
-      // Rock texture details
-      R(x+8,y+16,3,1,'#706048');R(x+20,y+12,2,2,'#706048');R(x+17,y+2,1,8,'#b8a888');
-
-    }else if(type==='fort'){
-      // GBA-style Fort - central keep with flag
-      const stone='#7a8a7a', stoneLight='#9aabaa', stoneDark='#5a6a5a', roof='#8b4513';
-      // Stone pavement base
-      R(x,y,s,s,stone);
-      // Outer wall ring (8px thick)
-      R(x+4,y+4,24,24,stoneDark);
-      R(x+6,y+6,20,20,stone);
-      // Inner courtyard
-      R(x+8,y+8,16,16,'#6a7a6a');
-      // Central keep (square tower)
-      R(x+10,y+10,12,12,stoneLight);
-      R(x+12,y+12,8,8,'#5a6a5a');
-      // Roof
-      R(x+10,y+10,12,3,roof);
-      // Flag
-      R(x+15,y+4,1,6,'#8b4513');
-      R(x+16,y+4,4,3,'#4a9eff');
-      // Corner details
-      R(x+4,y+4,4,4,stoneLight);
-      R(x+24,y+4,4,4,stoneLight);
-      R(x+4,y+24,4,4,stoneLight);
-      R(x+24,y+24,4,4,stoneLight);
+      // Rock texture highlights
+      R(x+16,y+6,2,1,'#c8a870');R(x+12,y+14,1,1,'#c0a068');R(x+25,y+10,1,2,'#b89860');
 
     }else if(type==='wall'){
       // GBA FE-style stone bricks with damage and moss
@@ -592,22 +586,6 @@ const Sprites = {
         var mx=x+Math.floor(rng(551)*20)+2,my=y+Math.floor(rng(552)*4)*8+5;
         R(mx,my,4,3,'#507848');R(mx+1,my+1,2,1,'#608858');
       }
-
-    }else if(type==='gate'){
-      // Archway with wooden door
-      R(x,y,s,s,'#908880'); // stone base
-      R(x,y,8,s,'#a09890');R(x+24,y,8,s,'#a09890'); // pillars
-      R(x+2,y,3,s,'#b0a8a0');R(x+27,y,3,s,'#b0a8a0'); // pillar highlights
-      // Arch
-      ctx.fillStyle='#a8a098';ctx.beginPath();ctx.arc(x+16,y+8,10,Math.PI,0);ctx.fill();
-      ctx.fillStyle='#685838';ctx.beginPath();ctx.arc(x+16,y+8,8,Math.PI,0);ctx.fill();
-      // Wooden door
-      R(x+8,y+8,16,24,'#8a6838');R(x+9,y+9,14,22,'#9a7848');
-      R(x+15,y+8,2,24,'#705028');R(x+8,y+18,16,2,'#705028');
-      // Iron studs and handle
-      R(x+10,y+12,2,2,'#c0c0c0');R(x+10,y+22,2,2,'#c0c0c0');
-      R(x+20,y+12,2,2,'#c0c0c0');R(x+20,y+22,2,2,'#c0c0c0');
-      R(x+21,y+17,2,4,'#d0b060'); // door handle
 
     }else if(type==='river'){
       // GBA FE-style flowing water with segmented waves
@@ -640,74 +618,6 @@ const Sprites = {
       }
       // Sparkle highlight
       if(rng(490)>0.5){P(x+6+Math.floor(rng(491)*18),y+4+Math.floor(rng(492)*8),'#c0e8ff');}
-
-    }else if(type==='village'){
-      // GBA FE-style village house on grass
-      R(x,y,s,s,'#58b848');
-      // Block-variation grass
-      var vg=['#50b040','#58b848','#54b444'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,vg[Math.floor(rng(by*8+bx+1100)*3)]);
-      }
-      // House body
-      R(x+4,y+14,24,14,'#e0c898');R(x+5,y+15,22,12,'#ecd8a8');
-      // Roof (bright red)
-      ctx.fillStyle='#d04030';ctx.beginPath();ctx.moveTo(x+16,y+3);ctx.lineTo(x+31,y+14);ctx.lineTo(x+1,y+14);ctx.fill();
-      ctx.fillStyle='#b03028';ctx.beginPath();ctx.moveTo(x+16,y+3);ctx.lineTo(x+1,y+14);ctx.lineTo(x+16,y+14);ctx.fill();
-      // Door
-      R(x+12,y+20,6,8,'#7a5030');R(x+13,y+21,4,7,'#8a6040');P(x+16,y+24,'#d0b060');
-      // Window with warm light
-      R(x+21,y+17,5,5,'#405060');R(x+22,y+18,3,3,'#f8e070');
-      // Chimney with smoke
-      R(x+23,y+3,4,8,'#908070');R(x+22,y+3,6,1,'#a09080');
-      P(x+24,y+1,'#c0c0c0');P(x+25,y+0,'#d0d0d0');
-
-    }else if(type==='throne'){
-      // Royal carpet + golden seat
-      R(x,y,s,s,'#584070');
-      // Checkered floor
-      for(let py=0;py<s;py+=8)for(let px=0;px<s;px+=8)
-        R(x+px,y+py,8,8,((px+py)/8%2)?'#4c3460':'#604880');
-      // Royal red carpet
-      R(x+4,y+4,24,24,'#c82020');R(x+5,y+5,22,22,'#d83838');
-      // Gold border
-      R(x+4,y+4,24,1,'#e0b030');R(x+4,y+27,24,1,'#e0b030');R(x+4,y+4,1,24,'#e0b030');R(x+27,y+4,1,24,'#e0b030');
-      R(x+5,y+5,22,1,'#c89828');R(x+5,y+26,22,1,'#c89828');
-      // Throne back
-      R(x+10,y+4,12,6,'#e0b030');R(x+11,y+5,10,4,'#f0c840');
-      // Seat
-      R(x+9,y+10,14,8,'#e0b030');R(x+10,y+11,12,6,'#d83838');
-      // Jewel and armrests
-      R(x+14,y+5,4,2,'#ff4040');P(x+15,y+5,'#ff8080');
-      R(x+8,y+10,2,7,'#d0a028');R(x+22,y+10,2,7,'#d0a028');
-
-    }else if(type==='pillar'){
-      // Marble floor base — matches floor terrain palette
-      R(x,y,s,s,'#c8c0b0');
-      for(let py=0;py<s;py+=8)for(let px=0;px<s;px+=8){
-        var chk=((px+py)/8)%2;
-        R(x+px,y+py,8,8,chk?'#c0b8a8':'#d0c8b8');
-      }
-      for(let gy=8;gy<s;gy+=8){R(x,y+gy,s,1,'#a09888');}
-      for(let gx=8;gx<s;gx+=8){R(x+gx,y,1,s,'#a09888');}
-      // Column shadow on floor
-      R(x+14,y+6,12,24,'rgba(0,0,0,0.12)');
-      R(x+15,y+8,11,20,'rgba(0,0,0,0.06)');
-      // Column body — cylindrical shading (dark edge → light center → dark edge)
-      R(x+10,y+4,12,24,'#9898a8');   // dark left edge
-      R(x+11,y+4,10,24,'#b0b0c0');   // mid tone
-      R(x+12,y+4,8,24,'#c0c0d0');    // lighter
-      R(x+13,y+4,5,24,'#d0d0e0');    // highlight band
-      R(x+14,y+5,2,22,'#dddde8');    // bright highlight stripe
-      // Fluting lines (subtle vertical grooves)
-      R(x+12,y+6,1,20,'#a8a8b8');
-      R(x+18,y+6,1,20,'#a8a8b8');
-      // Capital (top decorative piece)
-      R(x+8,y+2,16,3,'#b8b8c8');R(x+7,y+1,18,2,'#c8c8d8');
-      R(x+9,y+3,14,1,'#a0a0b0');
-      // Base (bottom wider piece)
-      R(x+8,y+27,16,3,'#b8b8c8');R(x+7,y+29,18,2,'#a8a8b8');
-      R(x+9,y+27,14,1,'#d0d0e0');
 
     }else if(type==='floor'){
       // 宮殿室內石板地板 — 大理石格紋
@@ -884,62 +794,313 @@ const Sprites = {
         R(x+3,y+pp*8+2,4,3,'#8a6840');R(x+25,y+pp*8+2,4,3,'#8a6840');
       }
 
-    }else if(type==='ruins'){
-      // Overgrown stone ruins on grass
-      R(x,y,s,s,'#58b848');
-      // Grass variation
-      var rg=['#50b040','#58b848','#54b444'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,rg[Math.floor(rng(by*8+bx+960)*3)]);
+    }else{R(x,y,s,s,'#58b848');}
+    ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.strokeRect(x+0.5,y+0.5,s-1,s-1);
+  },
+
+  // --- Object overlay sprites (transparent background, drawn on top of base terrain) ---
+  drawObject: function(ctx, type, x, y, tileX, tileY) {
+    var s=GAME_CONFIG.TILE_SIZE, seed=this._seed(tileX !== undefined ? tileX : x, tileY !== undefined ? tileY : y), self=this;
+    const rng = function(n) { return self._rng(seed, n); };
+    const R = function(rx,ry,rw,rh,rc) { ctx.fillStyle=rc; ctx.fillRect(rx,ry,rw,rh); };
+    const P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
+
+    if(type==='fort'){
+      // GBA FE-style fort — square building, muddy yellow walls, 3/4 oblique view
+      // Ground shadow
+      R(x+6,y+27,22,4,'rgba(0,0,0,0.12)');
+      // Front wall (muddy yellow-tan, visible from oblique angle)
+      R(x+4,y+12,24,18,'#b89850');
+      R(x+5,y+13,22,16,'#c8a860');
+      // Left wall shadow (darker)
+      R(x+4,y+12,3,18,'#987838');
+      // Right wall highlight
+      R(x+25,y+12,3,18,'#d0b870');
+      // Bottom wall shadow
+      R(x+4,y+29,24,1,'#886828');
+      // Flat roof seen from above (slightly darker, showing depth)
+      R(x+3,y+6,26,7,'#a88840');
+      R(x+4,y+7,24,5,'#b89848');
+      R(x+3,y+6,26,1,'#c8a858');  // roof front edge highlight
+      R(x+3,y+12,26,1,'#886830');  // roof-wall junction shadow
+      // Crenellations/battlements on roof edges
+      R(x+3,y+3,5,4,'#b89848'); R(x+3,y+3,5,1,'#c8a858');
+      R(x+10,y+3,5,4,'#b89848'); R(x+10,y+3,5,1,'#c8a858');
+      R(x+17,y+3,5,4,'#b89848'); R(x+17,y+3,5,1,'#c8a858');
+      R(x+24,y+3,5,4,'#b89848'); R(x+24,y+3,5,1,'#c8a858');
+      // Crenel gaps between merlons (dark openings)
+      R(x+8,y+5,2,3,'#584020');
+      R(x+15,y+5,2,3,'#584020');
+      R(x+22,y+5,2,3,'#584020');
+      // Arrow slit windows on front wall
+      R(x+10,y+16,2,5,'#483818');
+      R(x+20,y+16,2,5,'#483818');
+      // Doorway (dark arch)
+      R(x+13,y+22,6,8,'#483018');
+      R(x+14,y+23,4,7,'#382410');
+      R(x+13,y+21,6,2,'#8a6830');  // door lintel
+      // Wall stone lines (horizontal mortar)
+      ctx.strokeStyle='#a08040';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+5,y+17);ctx.lineTo(x+27,y+17);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+5,y+22);ctx.lineTo(x+13,y+22);ctx.moveTo(x+19,y+22);ctx.lineTo(x+27,y+22);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+5,y+27);ctx.lineTo(x+27,y+27);ctx.stroke();
+      // Flag pole and banner
+      R(x+14,y+0,2,4,'#6a4020');
+      R(x+16,y+0,5,3,'#c03020');
+      R(x+16,y+0,5,1,'#d04030');
+      P(x+19,y+1,'#f0d040');
+
+    }else if(type==='village'){
+      // GBA FE-style village house — 3/4 oblique view, pitched roof, warm walls
+      // Ground shadow
+      R(x+4,y+28,24,3,'rgba(0,0,0,0.10)');
+      // House body (cream/stucco walls, front face visible)
+      R(x+3,y+14,26,16,'#d8c088');
+      R(x+4,y+15,24,14,'#e8d8a8');
+      // Left wall shadow face (slightly angled, darker)
+      R(x+3,y+14,2,16,'#c0a868');
+      // Right wall highlight
+      R(x+27,y+14,2,16,'#f0e0b0');
+      // Bottom edge shadow
+      R(x+3,y+29,26,1,'#b09858');
+      // Pitched roof — 3/4 view: see roof top face + front slope
+      // Roof top face (seen from above — terracotta red)
+      ctx.fillStyle='#b83020';
+      ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+30,y+14);ctx.lineTo(x+2,y+14);ctx.fill();
+      // Roof left slope shadow (darker red)
+      ctx.fillStyle='#8c2018';
+      ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+2,y+14);ctx.lineTo(x+16,y+14);ctx.fill();
+      // Roof eave (bottom edge, creates depth with wall)
+      R(x+1,y+13,30,2,'#6a1810');
+      // Roof tile lines
+      ctx.strokeStyle='#9a2818';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+5,y+11);ctx.lineTo(x+27,y+11);ctx.stroke();
+      // Door (centered, dark wood with frame)
+      R(x+12,y+20,7,10,'#6a4020');
+      R(x+13,y+21,5,9,'#7a5030');
+      R(x+11,y+19,9,1,'#5a3018');  // lintel
+      P(x+17,y+25,'#c8a040');  // door handle
+      // Window left
+      R(x+5,y+18,5,5,'#2a2030');
+      R(x+6,y+19,3,3,'#f0d860');
+      P(x+7,y+19,'#ffe890');
+      // Window right
+      R(x+22,y+18,5,5,'#2a2030');
+      R(x+23,y+19,3,3,'#f0d860');
+      P(x+24,y+19,'#ffe890');
+      // Chimney (rises from right side of roof)
+      R(x+24,y+3,4,11,'#907060');
+      R(x+24,y+3,4,1,'#a08070');  // chimney cap
+      R(x+26,y+4,1,10,'#a08070');  // highlight edge
+      // Smoke wisps
+      P(x+25,y+1,'rgba(180,180,180,0.5)');
+      P(x+26,y+0,'rgba(190,190,190,0.3)');
+      // Wall texture — horizontal mortar lines
+      ctx.strokeStyle='#d0b880';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+5,y+20);ctx.lineTo(x+12,y+20);ctx.moveTo(x+19,y+20);ctx.lineTo(x+27,y+20);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+5,y+25);ctx.lineTo(x+27,y+25);ctx.stroke();
+
+    }else if(type==='throne'){
+      // GBA FE-style ornate throne — golden chair with red cushion on small carpet
+      // Red carpet (smaller, centered)
+      R(x+6,y+10,20,20,'#b01818');
+      R(x+7,y+11,18,18,'#c82020');
+      // Carpet fringe/border
+      R(x+6,y+10,20,1,'#d8a020');
+      R(x+6,y+29,20,1,'#d8a020');
+      R(x+6,y+10,1,20,'#d8a020');
+      R(x+25,y+10,1,20,'#d8a020');
+      // Carpet inner border
+      R(x+7,y+11,18,1,'#a08018');
+      R(x+7,y+28,18,1,'#a08018');
+      // Throne back (tall golden frame)
+      R(x+9,y+2,14,14,'#c8a020');
+      R(x+10,y+3,12,12,'#d8b030');
+      R(x+11,y+4,10,10,'#e0c040');
+      // Back panel (red upholstery)
+      R(x+12,y+5,8,8,'#c02020');
+      R(x+13,y+6,6,6,'#d03030');
+      // Crown ornament at top
+      R(x+13,y+1,6,2,'#e8c830');
+      R(x+14,y+0,4,2,'#f0d840');
+      P(x+15,y+0,'#ff4040');  // center jewel
+      P(x+17,y+0,'#ff4040');
+      // Side finials
+      R(x+9,y+1,2,3,'#d0a820');
+      R(x+21,y+1,2,3,'#d0a820');
+      // Armrests
+      R(x+8,y+12,3,10,'#c8a020');
+      R(x+21,y+12,3,10,'#c8a020');
+      R(x+8,y+12,3,2,'#e0c040');  // armrest top highlight
+      R(x+21,y+12,3,2,'#e0c040');
+      // Seat
+      R(x+10,y+14,12,6,'#d8b030');
+      R(x+11,y+15,10,4,'#c82020');  // red cushion
+      R(x+11,y+15,10,1,'#e03838');  // cushion highlight
+      // Throne legs
+      R(x+9,y+20,3,8,'#b89018');
+      R(x+20,y+20,3,8,'#b89018');
+      R(x+9,y+27,3,1,'#d0a828');
+      R(x+20,y+27,3,1,'#d0a828');
+      // Armrest jewels
+      P(x+9,y+13,'#40c0ff');
+      P(x+22,y+13,'#40c0ff');
+
+    }else if(type==='pillar'){
+      // GBA FE-style stone column — warm stone tones, not grey
+      // Column shadow on ground
+      R(x+16,y+6,10,24,'rgba(0,0,0,0.10)');
+      R(x+18,y+8,8,20,'rgba(0,0,0,0.05)');
+      // Base (wider bottom piece — warm stone)
+      R(x+7,y+27,18,3,'#b0a080');
+      R(x+6,y+29,20,2,'#a09070');
+      R(x+8,y+27,16,1,'#d0c0a0');  // top highlight
+      R(x+6,y+30,20,1,'#887860');  // bottom shadow
+      // Column shaft — cylindrical shading (warm beige-tan)
+      R(x+10,y+5,12,23,'#a09070');   // dark left edge
+      R(x+11,y+5,10,23,'#b8a888');   // mid tone
+      R(x+12,y+5,8,23,'#c8b898');    // lighter
+      R(x+13,y+5,6,23,'#d0c0a0');    // highlight band
+      R(x+14,y+6,3,21,'#d8c8a8');    // bright highlight stripe
+      // Fluting grooves (darker vertical lines)
+      R(x+11,y+7,1,19,'#a89878');
+      R(x+19,y+7,1,19,'#a89878');
+      R(x+15,y+7,1,19,'#c0b090');  // center groove (lighter)
+      // Capital (ornate top piece — warm stone)
+      R(x+8,y+3,16,3,'#b8a888');
+      R(x+7,y+1,18,3,'#c8b898');
+      R(x+6,y+0,20,2,'#d8c8a8');
+      // Capital decoration (volute details)
+      R(x+7,y+1,2,2,'#a89878');
+      R(x+23,y+1,2,2,'#a89878');
+      R(x+9,y+4,14,1,'#a09070');  // capital bottom shadow
+      // Subtle column texture
+      P(x+13,y+10,'#a89878'); P(x+17,y+16,'#a89878');
+      P(x+14,y+22,'#d8c8a8'); P(x+12,y+14,'#d8c8a8');
+
+    }else if(type==='gate'){
+      // GBA FE-style castle gate — warm stone walls with wooden door, 3/4 view
+      // Side wall pillars (warm stone matching fort palette)
+      R(x+1,y+0,8,32,'#b09048');
+      R(x+23,y+0,8,32,'#b09048');
+      // Pillar shading
+      R(x+1,y+0,2,32,'#907030');  // left dark
+      R(x+7,y+0,2,32,'#c0a058');  // left highlight
+      R(x+23,y+0,2,32,'#907030');
+      R(x+29,y+0,2,32,'#c0a058');
+      // Stone block lines
+      for(let i=0;i<4;i++){
+        R(x+1,y+i*8,8,1,'#806828');
+        R(x+23,y+i*8,8,1,'#806828');
       }
-      // Broken stone walls
-      var rc=rng(970)>0.5?'#808070':'#707060';
-      R(x+6,y+6,20,20,rc);
-      R(x+8,y+8,16,16,'#888878');
-      // Gaps in walls (grass showing through)
-      R(x+12,y+6,8,4,'#58b848');R(x+22,y+14,6,8,'#58b848');
-      // Moss on stones
-      R(x+7,y+18,3,2,'#507848');R(x+20,y+8,3,2,'#507848');
-      // Rubble
-      R(x+14,y+22,3,2,'#989888');R(x+10,y+12,2,2,'#a0a090');
+      // Stone arch (warm tan)
+      ctx.fillStyle='#c0a050';
+      ctx.beginPath();ctx.arc(x+16,y+10,8,Math.PI,0);ctx.fill();
+      ctx.fillStyle='#c8a858';
+      ctx.beginPath();ctx.arc(x+16,y+10,7,Math.PI,0);ctx.fill();
+      // Arch keystone
+      R(x+14,y+2,4,4,'#d0b060');
+      R(x+14,y+2,4,1,'#d8b868');
+      // Inner arch shadow
+      ctx.fillStyle='#382818';
+      ctx.beginPath();ctx.arc(x+16,y+10,6,Math.PI,0);ctx.fill();
+      // Wooden door
+      R(x+9,y+10,14,22,'#7a5828');
+      R(x+10,y+11,12,20,'#8a6838');
+      // Door planks
+      R(x+12,y+10,1,22,'#6a4820');
+      R(x+15,y+10,2,22,'#6a4820');
+      R(x+19,y+10,1,22,'#6a4820');
+      // Horizontal iron bands
+      R(x+9,y+14,14,2,'#5a4018');
+      R(x+9,y+22,14,2,'#5a4018');
+      // Iron studs
+      R(x+10,y+12,2,2,'#a0a098'); R(x+10,y+15,2,2,'#a0a098');
+      R(x+20,y+12,2,2,'#a0a098'); R(x+20,y+15,2,2,'#a0a098');
+      R(x+10,y+23,2,2,'#a0a098'); R(x+20,y+23,2,2,'#a0a098');
+      // Door ring handle
+      R(x+20,y+18,2,4,'#c0a030');
+      P(x+20,y+19,'#d8b840');
+
+    }else if(type==='brazier'){
+      // Iron brazier with flames — transparent overlay
+      // Fire glow on floor
+      ctx.fillStyle='rgba(255,120,20,0.12)';
+      ctx.beginPath();ctx.arc(x+16,y+20,12,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='rgba(255,80,10,0.08)';
+      ctx.beginPath();ctx.arc(x+16,y+18,8,0,Math.PI*2);ctx.fill();
+      // Iron bowl
+      R(x+10,y+18,12,8,'#383028');
+      R(x+11,y+19,10,6,'#484038');
+      R(x+9,y+17,14,2,'#505040');  // rim
+      R(x+9,y+17,14,1,'#606050');  // rim highlight
+      // Legs
+      R(x+10,y+26,2,5,'#302820');
+      R(x+20,y+26,2,5,'#302820');
+      R(x+15,y+27,2,4,'#302820');
+      // Flames (layered)
+      ctx.fillStyle='#e04808';
+      ctx.beginPath();ctx.moveTo(x+12,y+17);ctx.quadraticCurveTo(x+16,y+4,x+20,y+17);ctx.fill();
+      ctx.fillStyle='#ff7820';
+      ctx.beginPath();ctx.moveTo(x+13,y+17);ctx.quadraticCurveTo(x+16,y+7,x+19,y+17);ctx.fill();
+      ctx.fillStyle='#ffcc30';
+      ctx.beginPath();ctx.moveTo(x+14,y+17);ctx.quadraticCurveTo(x+16,y+10,x+18,y+17);ctx.fill();
+      // Embers
+      if(rng(1010)>0.3){
+        P(x+12+Math.floor(rng(1011)*8),y+4+Math.floor(rng(1012)*8),'#ff8040');
+        P(x+10+Math.floor(rng(1013)*12),y+2+Math.floor(rng(1014)*6),'#ff6020');
+      }
 
     }else if(type==='stairs'){
-      // Stone staircase with proper step shading
-      R(x,y,s,s,'#c8c0b0');
+      // Stone steps — warm tan stone, transparent overlay
       for(let i=0;i<4;i++){
         var sy2=y+i*8;
-        R(x,sy2,s,8,i%2===0?'#c0b8a8':'#ccc4b4');
-        R(x,sy2,s,1,'#d8d0c4');  // step edge highlight
-        R(x,sy2+7,s,1,'#a09888');  // step shadow
+        var shade=i%2===0?'#c8b088':'#d0b890';
+        R(x+2,sy2,28,7,shade);
+        R(x+2,sy2,28,1,'#d8c8a0');  // step edge highlight
+        R(x+2,sy2+6,28,1,'#a89068');  // step shadow
+        // Side shadows
+        R(x+2,sy2,1,7,'#a89068');
+        R(x+29,sy2,1,7,'#d8c8a0');
         // Surface texture
-        for(let j=0;j<3;j++){
-          P(x+4+Math.floor(rng(i*3+j+980)*22),sy2+2+Math.floor(rng(i*3+j+990)*4),'#b8b0a0');
+        for(let j=0;j<2;j++){
+          P(x+6+Math.floor(rng(i*3+j+980)*18),sy2+2+Math.floor(rng(i*3+j+990)*3),'#b8a078');
         }
       }
 
-    }else if(type==='brazier'){
-      // Floor tile with iron brazier and fire
-      R(x,y,s,s,'#c8c0b0');
-      // Floor tile pattern
-      for(let py2=0;py2<s;py2+=8)for(let px2=0;px2<s;px2+=8){
-        R(x+px2,y+py2,8,8,((px2+py2)/8%2)?'#c0b8a8':'#d0c8b8');
-      }
-      // Iron brazier bowl
-      R(x+10,y+16,12,10,'#404030');R(x+11,y+17,10,8,'#484838');
-      R(x+12,y+14,8,4,'#505040');  // rim
-      // Brazier legs
-      R(x+10,y+26,3,4,'#383028');R(x+19,y+26,3,4,'#383028');
-      // Fire glow on floor
-      ctx.fillStyle='rgba(255,120,20,0.15)';ctx.beginPath();ctx.arc(x+16,y+18,12,0,Math.PI*2);ctx.fill();
-      // Flames
-      var flc=rng(1000)>0.5?'#ff6010':'#ff9020';
-      ctx.fillStyle=flc;ctx.beginPath();ctx.moveTo(x+14,y+14);ctx.quadraticCurveTo(x+16,y+4,x+18,y+14);ctx.fill();
-      ctx.fillStyle='#ffcc30';ctx.beginPath();ctx.moveTo(x+15,y+14);ctx.quadraticCurveTo(x+16,y+8,x+17,y+14);ctx.fill();
-      // Embers
-      if(rng(1010)>0.4){P(x+12+Math.floor(rng(1011)*8),y+6+Math.floor(rng(1012)*6),'#ff8040');}
-
-    }else{R(x,y,s,s,'#58b848');}
-    ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.strokeRect(x+0.5,y+0.5,s-1,s-1);
+    }else if(type==='ruins'){
+      // Broken stone walls and rubble — warm brown tones
+      // Ground rubble/debris shadow
+      R(x+4,y+24,24,4,'rgba(0,0,0,0.08)');
+      // Broken wall segment (left — warm tan stone)
+      R(x+3,y+8,8,20,'#a08848');
+      R(x+4,y+9,6,18,'#b09858');
+      R(x+3,y+8,8,1,'#c0a868');  // top highlight
+      R(x+3,y+27,8,1,'#886830');  // bottom shadow
+      // Wall damage (irregular top)
+      R(x+3,y+8,3,3,'#b09858');
+      R(x+8,y+6,3,5,'#a08848');
+      R(x+8,y+6,3,1,'#c0a868');
+      // Broken wall segment (right, shorter)
+      R(x+20,y+14,8,14,'#a08848');
+      R(x+21,y+15,6,12,'#b09858');
+      R(x+20,y+14,8,1,'#c0a868');
+      R(x+23,y+12,4,4,'#a89050');
+      R(x+23,y+12,4,1,'#c0a868');
+      // Scattered rubble blocks
+      R(x+13,y+22,4,3,'#b8a060');
+      R(x+14,y+23,2,1,'#c8b070');
+      R(x+10,y+25,3,2,'#a89050');
+      R(x+17,y+26,2,2,'#b09858');
+      // Moss/vine patches
+      R(x+4,y+18,3,2,'#507848');
+      R(x+21,y+16,3,2,'#507848');
+      P(x+6,y+12,'#608858');
+      // Crack lines (darker brown)
+      ctx.strokeStyle='#705830';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+5,y+14);ctx.lineTo(x+8,y+20);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+22,y+18);ctx.lineTo(x+24,y+24);ctx.stroke();
+    }
   },
 
   getUnitColors: function(faction) {

@@ -71,9 +71,9 @@ class BattleScene {
     this.hitTriggered = false;
     this.vsAlpha = 0;
     this.hitDisplayShown = false;
-    const dt = GameMap.getTerrain(defender.x, defender.y);
+    const dt = GameMap.getEffectiveTerrain(defender.x, defender.y);
     this.terrainType = dt || 'plain';
-    const at = GameMap.getTerrain(attacker.x, attacker.y);
+    const at = GameMap.getEffectiveTerrain(attacker.x, attacker.y);
     this.defenderTerrainType = dt || 'plain';
     this.attackerTerrainType = at || 'plain';
     this.setPhase('intro');
@@ -261,7 +261,7 @@ class BattleScene {
   }
 
   _drawTerrainLabel(ctx, ter, x, y) {
-    var names={plain:'平原',forest:'森林',mountain:'山地',wall:'城牆',gate:'城門',river:'河川',village:'村莊',throne:'王座',pillar:'柱子'};
+    var names={plain:'平原',forest:'森林',mountain:'山地',wall:'城牆',gate:'城門',river:'河川',village:'村莊',throne:'王座',pillar:'柱子',fort:'砦',floor:'石板',hill:'山丘',ruins:'廢墟',brazier:'火炬台',stairs:'樓梯',road:'道路',bridge:'橋樑',desert:'沙漠'};
     var name=names[ter]||ter;
     ctx.save();
     ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(x,y,100,20);

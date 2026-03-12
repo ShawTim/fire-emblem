@@ -127,10 +127,11 @@ const DEMO_MAP = [
 ].join('\n');
 
 // ===== INIT MAP =====
-const terrain = parseTerrain(DEMO_MAP, MAP_W, MAP_H);
+const parsed = parseTerrain(DEMO_MAP, MAP_W, MAP_H);
 GameMap.width = MAP_W;
 GameMap.height = MAP_H;
-GameMap.terrain = terrain;
+GameMap.terrain = parsed.terrain;
+GameMap.objects = parsed.objects;
 GameMap.camX = 0;
 GameMap.camY = 0;
 
@@ -341,12 +342,19 @@ function updateInfoPanel(sx, sy) {
   }
   infoPanel.classList.remove('hidden');
 
-  const terrainType = GameMap.getTerrain(tile.x, tile.y);
-  const ti = TERRAIN_INFO[terrainType] || { def:0, avo:0, mov:1, zh:terrainType };
-  const code = TERRAIN_NAMES[terrainType] || '?';
+  const baseTerrain = GameMap.getTerrain(tile.x, tile.y);
+  const obj = GameMap.getObject ? GameMap.getObject(tile.x, tile.y) : null;
+  const effectiveTerrain = obj || baseTerrain;
+  const ti = TERRAIN_INFO[effectiveTerrain] || { def:0, avo:0, mov:1, zh:effectiveTerrain };
+  const code = TERRAIN_NAMES[effectiveTerrain] || '?';
 
   let html = '<span class="info-terrain">' + ti.zh + '</span> '
-    + '<span class="info-label">(' + terrainType + ' [' + code + '])</span><br>'
+    + '<span class="info-label">(' + effectiveTerrain + ' [' + code + '])</span>';
+  if (obj) {
+    const baseTi = TERRAIN_INFO[baseTerrain] || { zh: baseTerrain };
+    html += ' <span class="info-label">on ' + baseTi.zh + '</span>';
+  }
+  html += '<br>'
     + '<span class="info-label">防禦+</span><span class="info-value">' + ti.def + '</span> '
     + '<span class="info-label">迴避+</span><span class="info-value">' + ti.avo + '</span> '
     + '<span class="info-label">移動</span><span class="info-value">' + (ti.mov >= 999 ? '∞' : ti.mov) + '</span>'
@@ -384,12 +392,13 @@ function drawTerrainLabels(ctx) {
     for (let x = startX; x <= endX; x++) {
       const sx = x * ts - GameMap.camX;
       const sy = y * ts - GameMap.camY;
-      const t = GameMap.getTerrain(x, y);
+      const obj = GameMap.getObject ? GameMap.getObject(x, y) : null;
+      const t = obj || GameMap.getTerrain(x, y);
       const code = TERRAIN_NAMES[t] || '?';
 
-      ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx.fillStyle = obj ? 'rgba(80,20,0,0.7)' : 'rgba(0,0,0,0.6)';
       ctx.fillRect(sx, sy, 14, 13);
-      ctx.fillStyle = '#ff0';
+      ctx.fillStyle = obj ? '#f90' : '#ff0';
       ctx.fillText(code, sx + 3, sy + 2);
     }
   }

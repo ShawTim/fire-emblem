@@ -3,13 +3,8 @@ const TERRAIN_DATA = {
   plain:    { def: 0, avo: 0, cost: 1 },
   forest:   { def: 1, avo: 20, cost: 2 },
   mountain: { def: 2, avo: 30, cost: 3 },
-  fort:     { def: 2, avo: 20, cost: 2 },
   wall:     { def: 3, avo: 20, cost: 999 },
-  gate:     { def: 3, avo: 30, cost: 1 },
   river:    { def: 0, avo: 0, cost: 999 },
-  village:  { def: 0, avo: 10, cost: 1 },
-  throne:   { def: 3, avo: 30, cost: 1 },
-  pillar:   { def: 1, avo: 15, cost: 2 },
   floor:    { def: 0, avo: 0, cost: 1 },  // 室內宮殿地板
   hill:     { def: 1, avo: 20, cost: 2 },
   swamp:    { def: 0, avo: -10, cost: 3 },
@@ -20,10 +15,20 @@ const TERRAIN_DATA = {
   sea:      { def: 0, avo: 0, cost: 999 },
   desert:   { def: 0, avo: -10, cost: 3 },
   bridge:   { def: 0, avo: 0, cost: 1 },
-  ruins:    { def: 1, avo: 10, cost: 2 },
-  stairs:   { def: 0, avo: 0, cost: 1 },
-  brazier:  { def: 0, avo: 0, cost: 1 },
 };
+
+// Objects that can be placed on any base terrain (overlay layer)
+const OBJECT_DATA = {
+  fort:    { def: 2, avo: 20, cost: 2, heals: true },
+  gate:    { def: 3, avo: 30, cost: 1, heals: true },
+  throne:  { def: 3, avo: 30, cost: 1, heals: true },
+  village: { def: 0, avo: 10, cost: 1 },
+  pillar:  { def: 1, avo: 15, cost: 2 },
+  brazier: { def: 0, avo: 0, cost: 1 },
+  stairs:  { def: 0, avo: 0, cost: 1 },
+  ruins:   { def: 1, avo: 10, cost: 2 },
+};
+const OBJECT_TYPES = new Set(Object.keys(OBJECT_DATA));
 
 class Unit {
   constructor(data) {
@@ -120,13 +125,13 @@ class Unit {
     return Math.floor(this.skl / 2) + (wpn ? (wpn.crit || 0) : 0);
   }
 
-  getAvo(terrain) {
-    const td = TERRAIN_DATA[terrain] || TERRAIN_DATA.plain;
+  getAvo(terrain, object) {
+    const td = (object && OBJECT_DATA[object]) || TERRAIN_DATA[terrain] || TERRAIN_DATA.plain;
     return this.spd * 2 + this.lck + td.avo;
   }
 
-  getDefAt(terrain, magical) {
-    const td = TERRAIN_DATA[terrain] || TERRAIN_DATA.plain;
+  getDefAt(terrain, magical, object) {
+    const td = (object && OBJECT_DATA[object]) || TERRAIN_DATA[terrain] || TERRAIN_DATA.plain;
     return (magical ? this.res : this.def) + td.def;
   }
 
@@ -225,11 +230,16 @@ class Unit {
   }
 }
 
-function getMovementCost(terrain, unit) {
+function getMovementCost(terrain, unit, object) {
   if (unit.flying) return 1;
+  // Object cost overrides base terrain cost when present
+  if (object) {
+    const od = OBJECT_DATA[object];
+    if (od) return od.cost >= 999 ? 999 : od.cost;
+  }
   const td = TERRAIN_DATA[terrain];
   if (!td) return 1;
-  if (td.cost >= 999 && !unit.flying) return 999;
+  if (td.cost >= 999) return 999;
   return td.cost;
 }
 
@@ -238,6 +248,7 @@ function getMovementRange(unit, terrainMap, allUnits, mapW, mapH) {
   const queue = [{ x: unit.x, y: unit.y, remaining: unit.mov }];
   visited[`${unit.x},${unit.y}`] = unit.mov;
   const result = [];
+  const objectMap = typeof GameMap !== 'undefined' ? GameMap.objects : null;
 
   while (queue.length > 0) {
     const { x, y, remaining } = queue.shift();
@@ -248,7 +259,8 @@ function getMovementRange(unit, terrainMap, allUnits, mapW, mapH) {
       const nx = x + dx, ny = y + dy;
       if (nx < 0 || ny < 0 || nx >= mapW || ny >= mapH) continue;
       const terrain = terrainMap[ny][nx];
-      const cost = getMovementCost(terrain, unit);
+      const obj = objectMap ? objectMap[ny][nx] : null;
+      const cost = getMovementCost(terrain, unit, obj);
       if (cost >= 999) continue;
       const newRemaining = remaining - cost;
       if (newRemaining < 0) continue;
@@ -313,6 +325,7 @@ function findPath(fromX, fromY, toX, toY, unit, terrainMap, allUnits, mapW, mapH
   const queue = [{ x: fromX, y: fromY, remaining: unit.mov, path: [{x: fromX, y: fromY}] }];
   visited[`${fromX},${fromY}`] = unit.mov;
   let best = null;
+  const objectMap = typeof GameMap !== 'undefined' ? GameMap.objects : null;
 
   while (queue.length > 0) {
     const { x, y, remaining, path } = queue.shift();
@@ -323,7 +336,8 @@ function findPath(fromX, fromY, toX, toY, unit, terrainMap, allUnits, mapW, mapH
       const nx = x + dx, ny = y + dy;
       if (nx < 0 || ny < 0 || nx >= mapW || ny >= mapH) continue;
       const terrain = terrainMap[ny][nx];
-      const cost = getMovementCost(terrain, unit);
+      const obj = objectMap ? objectMap[ny][nx] : null;
+      const cost = getMovementCost(terrain, unit, obj);
       if (cost >= 999) continue;
       const newRemaining = remaining - cost;
       if (newRemaining < 0) continue;

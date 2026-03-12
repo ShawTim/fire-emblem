@@ -1,6 +1,7 @@
 // map.js - Map rendering & camera
 const GameMap = {
   terrain: [],
+  objects: [],  // Object overlay layer (fort, village, throne, pillar, gate, etc.)
   width: 0,
   height: 0,
   camX: 0,
@@ -11,15 +12,31 @@ const GameMap = {
   init(chapter) {
     this.width = chapter.width;
     this.height = chapter.height;
-    // terrain is already parsed by loadChapter
     this.terrain = chapter.terrain;
+    this.objects = chapter.objects || this._emptyObjects(chapter.width, chapter.height);
     this.camX = 0;
     this.camY = 0;
+  },
+
+  _emptyObjects(w, h) {
+    return Array.from({length: h}, () => Array(w).fill(null));
   },
 
   getTerrain(x, y) {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) return 'wall';
     return this.terrain[y][x];
+  },
+
+  getObject(x, y) {
+    if (x < 0 || y < 0 || x >= this.width || y >= this.height) return null;
+    return this.objects[y][x];
+  },
+
+  // Returns object type if present, otherwise base terrain (for stat lookups)
+  getEffectiveTerrain(x, y) {
+    const obj = this.getObject(x, y);
+    if (obj) return obj;
+    return this.getTerrain(x, y);
   },
 
   screenToTile(sx, sy) {
@@ -91,6 +108,19 @@ const GameMap = {
           const sx = x * ts - this.camX;
           const sy = y * ts - this.camY;
           ctx.drawImage(overlay, sx, sy, ts, ts);
+        }
+      }
+    }
+
+    // Pass 3: Object overlays (fort, village, throne, pillar, gate, etc.)
+    for (let y = startY; y < endY; y++) {
+      for (let x = startX; x < endX; x++) {
+        const obj = this.objects[y] && this.objects[y][x];
+        if (obj) {
+          const sx = x * ts - this.camX;
+          const sy = y * ts - this.camY;
+          var objCached = Sprites._getCachedObject(obj, x, y);
+          ctx.drawImage(objCached, sx, sy, ts, ts);
         }
       }
     }

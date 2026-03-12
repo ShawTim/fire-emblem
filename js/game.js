@@ -195,8 +195,8 @@ class Game {
     let hasHealed = false;
     for (const u of this.units) {
       if (u.faction === faction && u.hp > 0 && u.hp < u.maxHp) {
-        const terrain = GameMap.getTerrain(u.x, u.y);
-        if (terrain === 'fort' || terrain === 'gate' || terrain === 'throne') {
+        const obj = GameMap.getObject(u.x, u.y);
+        if (obj && OBJECT_DATA[obj] && OBJECT_DATA[obj].heals) {
           const healAmt = Math.min(u.maxHp - u.hp, Math.floor(u.maxHp * 0.2));
           if (healAmt > 0) {
             u.hp += healAmt;
@@ -338,7 +338,7 @@ class Game {
     const tile = GameMap.screenToTile(screenX, screenY);
     if (!tile) return;
     Cursor.moveTo(tile.x, tile.y);
-    const terrain = GameMap.getTerrain(tile.x, tile.y);
+    const terrain = GameMap.getEffectiveTerrain(tile.x, tile.y);
     const unit = this.units.find(u => u.x === tile.x && u.y === tile.y && u.hp > 0);
     UI.showTerrainInfo(terrain, unit);
     if (unit) UI.showUnitPanel(unit, terrain);
@@ -381,14 +381,14 @@ class Game {
     if (unit && unit.faction === 'player' && !unit.acted) {
       this.selectedUnit = unit;
       unit._selected = true;  // Mark as selected for sprite rendering
-      UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+      UI.showUnitPanel(unit, GameMap.getEffectiveTerrain(unit.x, unit.y));
       this.showUnitCommandMenu(unit);
     } else if (unit && unit.faction === 'enemy') {
       // Show enemy status screen
-      UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+      UI.showUnitPanel(unit, GameMap.getEffectiveTerrain(unit.x, unit.y));
       UI.showStatusScreen(unit, null);
     } else if (unit) {
-      UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+      UI.showUnitPanel(unit, GameMap.getEffectiveTerrain(unit.x, unit.y));
     } else {
       // 點擊空格（無單位格）觸發地圖選單
       UI.hideUnitPanel();
@@ -590,7 +590,7 @@ class Game {
         unit.items.splice(origIdx, 1);
         unit.items.unshift(weapon);
       }
-      UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+      UI.showUnitPanel(unit, GameMap.getEffectiveTerrain(unit.x, unit.y));
       this.showUnitCommandMenu(unit);
     });
   }
@@ -638,7 +638,7 @@ class Game {
           const sy = unit.y * ts - GameMap.camY;
           UI.showDamagePopup(sx, sy, healAmt, 'heal');
           if (typeof SFX !== 'undefined') SFX.heal();
-          UI.showUnitPanel(unit, GameMap.getTerrain(unit.x, unit.y));
+          UI.showUnitPanel(unit, GameMap.getEffectiveTerrain(unit.x, unit.y));
           // Using item counts as action
           unit.acted = true;
           unit.moved = true;
@@ -858,7 +858,7 @@ class Game {
             u.items.splice(origIdx, 1);
             u.items.unshift(weapon);
           }
-          UI.showUnitPanel(u, GameMap.getTerrain(u.x, u.y));
+          UI.showUnitPanel(u, GameMap.getEffectiveTerrain(u.x, u.y));
           this.showActionMenuForUnit(u, pos.x, pos.y);
         });
         break;
@@ -1218,7 +1218,7 @@ class Game {
       Cursor.move(dirs[key][0], dirs[key][1]);
       GameMap.scrollToward(Cursor.x, Cursor.y, this.canvasW, this.canvasH);
       // Show terrain + unit info at cursor
-      const terrain = GameMap.getTerrain(Cursor.x, Cursor.y);
+      const terrain = GameMap.getEffectiveTerrain(Cursor.x, Cursor.y);
       const unit = this.units.find(u => u.x === Cursor.x && u.y === Cursor.y && u.hp > 0);
       UI.showTerrainInfo(terrain, unit);
       if (unit) UI.showUnitPanel(unit, terrain);

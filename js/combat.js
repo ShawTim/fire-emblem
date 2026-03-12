@@ -4,8 +4,8 @@ function calculateCombat(attacker, defender, map) {
   const atkWpn = attacker.getEquippedWeapon();
   const defWpn = defender.getEquippedWeapon();
   if (!atkWpn) return null;
-  const atkTerrain = map.getTerrain(attacker.x, attacker.y);
-  const defTerrain = map.getTerrain(defender.x, defender.y);
+  const atkTerrain = map.getEffectiveTerrain(attacker.x, attacker.y);
+  const defTerrain = map.getEffectiveTerrain(defender.x, defender.y);
   const dist = Math.abs(attacker.x - defender.x) + Math.abs(attacker.y - defender.y);
 
   // Weapon triangle

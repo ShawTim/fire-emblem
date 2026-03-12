@@ -112,7 +112,8 @@ var MiniMap = {
     for (let y = 0; y < mapH; y++) {
       for (let x = 0; x < mapW; x++) {
         const terrain = GameMap.terrain[y][x];
-        const color = this.getTerrainColor(terrain);
+        const obj = GameMap.objects && GameMap.objects[y] ? GameMap.objects[y][x] : null;
+        const color = obj ? this.getObjectColor(obj) : this.getTerrainColor(terrain);
         ctx.fillStyle = color;
         ctx.fillRect(x * scale, y * scale, scale, scale);
       }
@@ -185,13 +186,29 @@ var MiniMap = {
       'mountain': '#5a5a5a',
       'sea': '#2a3a6a',
       'wall': '#4a4a4a',
-      'door': '#6a4a3a',
-      'throne': '#8a7a3a',
-      'chest': '#8a6a3a',
-      'village': '#8a7a5a',
-      'shop': '#6a5a8a',
-      'boss': '#8a3a3a',
+      'floor': '#5a5a5a',
+      'river': '#2a4a7a',
+      'hill': '#4a5a3a',
+      'road': '#6a6a4a',
+      'bridge': '#5a4a3a',
+      'desert': '#7a6a4a',
+      'cliff': '#4a4a3a',
+      'swamp': '#2a3a2a',
     };
     return colors[terrain] || '#3a3a3a';
+  },
+
+  getObjectColor: function(obj) {
+    const colors = {
+      'fort': '#5a6a5a',
+      'village': '#8a7a5a',
+      'throne': '#8a7a3a',
+      'pillar': '#6a6a7a',
+      'gate': '#6a5a4a',
+      'brazier': '#8a5a2a',
+      'stairs': '#7a7a6a',
+      'ruins': '#5a5a4a',
+    };
+    return colors[obj] || '#3a3a3a';
   }
 };
