@@ -72,6 +72,27 @@ const Sprites = {
     return this._seed(tileX, tileY);
   },
 
+  _edgeVariantPoolSize: {
+    waterToLand: 5,
+    forestToPlain: 5,
+    mountainToLand: 4,
+    wallEdge: 4,
+    landToWater: 4,
+    desertEdge: 3,
+    genericBoundary: 3
+  },
+
+  _pickEdgeVariant: function(tileX, tileY, centerTerrain, side, transitionType) {
+    var pool = this._edgeVariantPoolSize[transitionType] || 3;
+    var sideCode = side === 'top' ? 11 : side === 'right' ? 17 : side === 'bottom' ? 23 : 29;
+    var tHash = 0;
+    for (var i = 0; i < transitionType.length; i++) tHash = (tHash + transitionType.charCodeAt(i) * (i + 3)) & 0xffff;
+    var cHash = 0;
+    for (var j = 0; j < centerTerrain.length; j++) cHash = (cHash + centerTerrain.charCodeAt(j) * (j + 5)) & 0xffff;
+    var h = (tileX * 73856093 + tileY * 19349663 + sideCode * 83492791 + tHash * 131 + cHash * 17) >>> 0;
+    return h % pool;
+  },
+
   _getNeighborContext: function(tileX, tileY) {
     var center = GameMap.getTerrain(tileX, tileY);
     var centerCat = this._terrainCategory[center] || 'land';
@@ -201,31 +222,39 @@ const Sprites = {
 
   // --- Transition drawing functions ---
 
-  _drawWaterToLandEdge: function(ctx, edge, neighborTerrain, seed) {
+  _drawWaterToLandEdge: function(ctx, edge, neighborTerrain, seed, variant) {
+    var v = variant || 0;
+    var bankDepth = 5 + (v % 2);
+    var fringeDepth = 3 + (v % 2);
+    var pebbleCount = 2 + (v % 3);
     // Thick sandy bank encroaching on water tile (wave-shaped)
-    this._drawIrregularEdge(ctx, edge, 6, '#c8b870', seed, 2000);
+    this._drawIrregularEdge(ctx, edge, bankDepth, '#c8b870', seed, 2000 + v * 97);
     // Green grass fringe on top (thicker)
-    this._drawIrregularEdge(ctx, edge, 4, '#58b848', seed, 2050);
+    this._drawIrregularEdge(ctx, edge, fringeDepth, '#58b848', seed, 2050 + v * 89);
     // Inner grass accent
-    this._drawIrregularEdge(ctx, edge, 2, '#68c858', seed, 2080);
+    this._drawIrregularEdge(ctx, edge, 2, '#68c858', seed, 2080 + v * 83);
     // Foam line at water's edge
-    this._drawIrregularEdge(ctx, edge, 1, 'rgba(160,216,255,0.5)', seed, 2150);
+    this._drawIrregularEdge(ctx, edge, 1, 'rgba(160,216,255,0.5)', seed, 2150 + v * 71);
     // Scattered pebbles on bank
-    this._drawScatterPixels(ctx, edge, 3, 7, '#a0b060', seed, 2100);
+    this._drawScatterPixels(ctx, edge, pebbleCount, 6 + (v % 2), '#a0b060', seed, 2100 + v * 67);
   },
 
-  _drawForestToPlainEdge: function(ctx, edge, seed) {
+  _drawForestToPlainEdge: function(ctx, edge, seed, variant) {
+    var v = variant || 0;
+    var canopyDepth = 5 + (v % 2);
+    var underDepth = 3 + ((v >> 1) % 2);
+    var leafCount = 3 + (v % 3);
     // Thick canopy shadow on the plain tile
-    this._drawIrregularEdge(ctx, edge, 6, 'rgba(30,80,20,0.2)', seed, 3000);
+    this._drawIrregularEdge(ctx, edge, canopyDepth, 'rgba(30,80,20,0.2)', seed, 3000 + v * 97);
     // Undergrowth (thicker)
-    this._drawIrregularEdge(ctx, edge, 4, '#40a838', seed, 3050);
+    this._drawIrregularEdge(ctx, edge, underDepth, '#40a838', seed, 3050 + v * 89);
     // Inner vegetation
-    this._drawIrregularEdge(ctx, edge, 2, '#309828', seed, 3070);
+    this._drawIrregularEdge(ctx, edge, 2, '#309828', seed, 3070 + v * 83);
     // Scattered dark leaves
-    this._drawScatterPixels(ctx, edge, 4, 10, '#309828', seed, 3100);
+    this._drawScatterPixels(ctx, edge, leafCount, 8 + (v % 3), '#309828', seed, 3100 + v * 79);
     // Occasional fallen leaf
-    if (this._rng(seed, 3200) > 0.5) {
-      this._drawScatterPixels(ctx, edge, 2, 8, '#8a6838', seed, 3210);
+    if (this._rng(seed, 3200 + v * 53) > 0.42) {
+      this._drawScatterPixels(ctx, edge, 1 + (v % 2), 7 + (v % 2), '#8a6838', seed, 3210 + v * 47);
     }
   },
 
@@ -248,24 +277,25 @@ const Sprites = {
     this._drawScatterPixels(ctx, edge, 2, 4, '#60c850', seed, 4050);
   },
 
-  _drawWallEdge: function(ctx, edge, neighborTerrain, seed) {
+  _drawWallEdge: function(ctx, edge, neighborTerrain, seed, variant) {
+    var v = variant || 0;
     var isIndoor = (this._terrainCategory[neighborTerrain] === 'indoor');
     if (isIndoor) {
       // Clean shadow at wall-floor junction
-      this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.15)', seed, 5000);
+      this._drawIrregularEdge(ctx, edge, 2 + (v % 2), 'rgba(0,0,0,0.15)', seed, 5000 + v * 53);
     } else {
       // Crumbling bricks / rubble at exposed wall edge
-      this._drawScatterPixels(ctx, edge, 3, 4, '#989088', seed, 5050);
+      this._drawScatterPixels(ctx, edge, 2 + (v % 3), 4 + (v % 2), '#989088', seed, 5050 + v * 47);
       // Moss
-      if (this._rng(seed, 5100) > 0.5) {
-        this._drawScatterPixels(ctx, edge, 2, 3, '#507848', seed, 5110);
+      if (this._rng(seed, 5100 + v * 31) > 0.45) {
+        this._drawScatterPixels(ctx, edge, 1 + (v % 2), 3 + (v % 2), '#507848', seed, 5110 + v * 43);
       }
       // Crack line
       var s = GAME_CONFIG.TILE_SIZE;
       ctx.strokeStyle = '#585048'; ctx.lineWidth = 1;
       ctx.beginPath();
-      var ca = 4 + Math.floor(this._rng(seed, 5150) * 12);
-      var cb = 6 + Math.floor(this._rng(seed, 5160) * 12);
+      var ca = 4 + Math.floor(this._rng(seed, 5150 + v * 29) * 12);
+      var cb = 6 + Math.floor(this._rng(seed, 5160 + v * 37) * 12);
       if (edge === 'top')    { ctx.moveTo(ca, 0); ctx.lineTo(cb, 4); }
       else if (edge === 'bottom') { ctx.moveTo(ca, s); ctx.lineTo(cb, s - 4); }
       else if (edge === 'left')   { ctx.moveTo(0, ca); ctx.lineTo(4, cb); }
@@ -301,13 +331,14 @@ const Sprites = {
     }
   },
 
-  _drawMountainToLandEdge: function(ctx, edge, seed) {
+  _drawMountainToLandEdge: function(ctx, edge, seed, variant) {
+    var v = variant || 0;
     // Thick scree/rubble strip on the land side
-    this._drawIrregularEdge(ctx, edge, 5, '#908870', seed, 6000);
-    this._drawIrregularEdge(ctx, edge, 3, '#a89878', seed, 6030);
-    this._drawScatterPixels(ctx, edge, 4, 8, '#a89878', seed, 6050);
+    this._drawIrregularEdge(ctx, edge, 4 + (v % 2), '#908870', seed, 6000 + v * 59);
+    this._drawIrregularEdge(ctx, edge, 2 + ((v >> 1) % 2), '#a89878', seed, 6030 + v * 61);
+    this._drawScatterPixels(ctx, edge, 3 + (v % 2), 7 + (v % 2), '#a89878', seed, 6050 + v * 67);
     // Shadow from elevation
-    this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.1)', seed, 6100);
+    this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.1)', seed, 6100 + v * 71);
   },
 
   // Classify edge transition type — must mirror the dispatch if/else chain exactly
@@ -352,38 +383,40 @@ const Sprites = {
       var side = sides[i];
       var n = nb[side];
       var eSeed = this._edgeSeed(tileX, tileY, side);
+      var tType = edgeTypes[side];
+      var variant = tType ? this._pickEdgeVariant(tileX, tileY, center.terrain, side, tType) : 0;
 
       // Different-terrain transitions
       if (n.differs) {
         // Water tile → land neighbor: draw bank on water tile
         if (center.category === 'water' && n.category !== 'water') {
-          this._drawWaterToLandEdge(ctx, side, n.terrain, eSeed);
+          this._drawWaterToLandEdge(ctx, side, n.terrain, eSeed, variant);
         }
         // Land tile → forest neighbor: canopy overhang on land tile
         else if (center.category === 'land' && n.terrain === 'forest') {
-          this._drawForestToPlainEdge(ctx, side, eSeed);
+          this._drawForestToPlainEdge(ctx, side, eSeed, variant);
         }
         // Wall tile → non-structure: crumbling edge
         else if (center.terrain === 'wall' && n.category !== 'structure') {
-          this._drawWallEdge(ctx, side, n.terrain, eSeed);
+          this._drawWallEdge(ctx, side, n.terrain, eSeed, variant);
         }
         // Land tile → mountain/rocky: rubble scatter
         else if (center.category === 'land' && n.category === 'rocky') {
-          this._drawMountainToLandEdge(ctx, side, eSeed);
+          this._drawMountainToLandEdge(ctx, side, eSeed, variant);
         }
         // Land tile → water: grass overhang onto water
         else if (center.category === 'land' && n.category === 'water') {
-          this._drawIrregularEdge(ctx, side, 4, 'rgba(88,184,72,0.35)', eSeed, 9000);
-          this._drawIrregularEdge(ctx, side, 2, 'rgba(72,168,56,0.25)', eSeed, 9020);
+          this._drawIrregularEdge(ctx, side, 3 + (variant % 2), 'rgba(88,184,72,0.35)', eSeed, 9000 + variant * 41);
+          this._drawIrregularEdge(ctx, side, 2, 'rgba(72,168,56,0.25)', eSeed, 9020 + variant * 37);
         }
         // Desert encroaching on non-desert land
         else if (n.terrain === 'desert' && center.category === 'land' && center.terrain !== 'desert') {
-          this._drawIrregularEdge(ctx, side, 3, '#d0b878', eSeed, 7000);
-          this._drawScatterPixels(ctx, side, 2, 5, '#c8a870', eSeed, 7050);
+          this._drawIrregularEdge(ctx, side, 2 + (variant % 2), '#d0b878', eSeed, 7000 + variant * 43);
+          this._drawScatterPixels(ctx, side, 1 + (variant % 2), 4 + (variant % 2), '#c8a870', eSeed, 7050 + variant * 31);
         }
         // Generic category boundary: subtle shadow
         else if (n.catDiffers) {
-          this._drawIrregularEdge(ctx, side, 1, 'rgba(0,0,0,0.06)', eSeed, 9500);
+          this._drawIrregularEdge(ctx, side, 1, 'rgba(0,0,0,0.06)', eSeed, 9500 + variant * 23);
         }
       }
     }
