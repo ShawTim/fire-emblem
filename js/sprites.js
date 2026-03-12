@@ -490,75 +490,75 @@ const Sprites = {
     const P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
 
     if(type==='plain'){
-      // GBA FE-style grass: smooth block variation + organic tufts
-      R(x,y,s,s,'#58b848');
-      // 4×4 block tonal patches (8 blocks per row = 64 blocks)
-      var gr=['#50b040','#58b848','#60c050','#54b444','#5cbc4c'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        var bi=Math.floor(rng(by*8+bx)*5);
-        R(x+bx*4,y+by*4,4,4,gr[bi]);
+      // FE GBA-like plain: continuous field, directional grass strokes (no blocky checker look)
+      R(x,y,s,s,'#63b84f');
+      // broad tonal bands (avoid visible per-cell squares)
+      R(x,y+2,s,10,'#66bc52');
+      R(x,y+12,s,10,'#5fb24b');
+      R(x,y+22,s,10,'#65b952');
+
+      // diagonal grass strokes (\\ direction) for field flow
+      for(let i=0;i<18;i++){
+        var sx=x+Math.floor(rng(10+i)*30)+1;
+        var sy=y+Math.floor(rng(40+i)*28)+2;
+        var c = rng(70+i)>0.45 ? '#6dc45a' : '#56a744';
+        P(sx,sy,c); P(sx+1,sy+1,c);
+        if(rng(90+i)>0.6) P(sx+2,sy+2,c);
       }
-      // Subtle 2×2 dither accents (GBA-style strategic color placement)
-      for(let i=0;i<6;i++){
-        var dx=x+Math.floor(rng(i+40)*28)+2,dy=y+Math.floor(rng(i+50)*28)+2;
-        var dc=rng(i+60)>0.5?'#4ca83c':'#64c454';
-        R(dx,dy,2,2,dc);
-      }
-      // Grass tufts — organic inverted-V shapes
-      var numTufts=2+Math.floor(rng(10)*3);
+
+      // grass clumps (small arrow-like tufts)
+      var numTufts=2+Math.floor(rng(120)*3);
       for(let i=0;i<numTufts;i++){
-        var gx=x+Math.floor(rng(i+70)*24)+4,gy=y+Math.floor(rng(i+80)*22)+6;
-        var tc=rng(i+90)>0.5?'#68c858':'#48a838';
-        P(gx,gy,tc);P(gx-1,gy-1,tc);P(gx+1,gy-1,tc);
-        P(gx,gy-2,'#70d060');
-        if(rng(i+95)>0.6){P(gx-2,gy-2,tc);P(gx+2,gy-2,tc);}
+        var gx=x+4+Math.floor(rng(130+i)*22), gy=y+6+Math.floor(rng(150+i)*20);
+        var tc=rng(170+i)>0.5?'#78cc66':'#4f9f3e';
+        P(gx,gy,tc); P(gx-1,gy+1,tc); P(gx+1,gy-1,tc);
       }
-      // Occasional flowers (small 2×1 or 1×1 clusters)
-      if(rng(99)>0.7){
-        var fx=x+4+Math.floor(rng(100)*22),fy=y+6+Math.floor(rng(101)*18);
-        var fc=rng(102)>0.5?'#ffe860':'#ff90d0';
-        P(fx,fy,fc);P(fx+1,fy,fc);
-        P(fx,fy+1,'#50b040');
+
+      // sparse flowers
+      if(rng(199)>0.75){
+        var fx=x+5+Math.floor(rng(200)*20),fy=y+6+Math.floor(rng(201)*18);
+        var fc=rng(202)>0.5?'#ffe074':'#ff9ac8';
+        P(fx,fy,fc); P(fx+1,fy,fc);
       }
-      // Subtle bottom/right edge shadow
-      R(x,y+31,s,1,'rgba(0,0,0,0.06)');
-      R(x+31,y,1,s,'rgba(0,0,0,0.04)');
+
+      // subtle tile-edge shade only
+      R(x,y+31,s,1,'rgba(0,0,0,0.045)');
+      R(x+31,y,1,s,'rgba(0,0,0,0.03)');
 
     }else if(type==='forest'){
-      // GBA FE-style forest: block-variation ground + varied canopy
-      R(x,y,s,s,'#48a040');
-      // Block-variation ground (darker forest floor)
-      var fg=['#3a9030','#409838','#48a040','#3c9434','#44a03c'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        var fi=Math.floor(rng(by*8+bx)*5);
-        R(x+bx*4,y+by*4,4,4,fg[fi]);
+      // FE GBA-like forest tile: compact conifer cluster + strong ground anchor
+      R(x,y,s,s,'#4aa345');
+      R(x,y+18,s,14,'#438f3e');
+
+      // floor texture (not checker)
+      for(let i=0;i<14;i++){
+        var fx=x+Math.floor(rng(220+i)*30)+1, fy=y+Math.floor(rng(260+i)*30)+1;
+        P(fx,fy,rng(300+i)>0.5?'#509e49':'#3f853a');
       }
-      // Per-tile canopy/trunk X offset for variation
-      var txOff=Math.floor(rng(200)*4)-1;
-      // Ground shadow under canopy
-      R(x+2+txOff,y+20,26,10,'rgba(0,30,0,0.25)');
-      R(x+4+txOff,y+22,22,6,'rgba(0,20,0,0.15)');
-      // Tree trunks (offset per tile)
-      R(x+9+txOff,y+18,4,14,'#6a4828');R(x+10+txOff,y+19,2,12,'#7a5838');
-      R(x+21+txOff,y+20,3,12,'#6a4828');R(x+22+txOff,y+21,1,10,'#7a5838');
-      // Main canopy — deep shadow layer
-      ctx.fillStyle='#1a7810';ctx.beginPath();ctx.arc(x+11+txOff,y+15,11,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#1a7810';ctx.beginPath();ctx.arc(x+22+txOff,y+17,9,0,Math.PI*2);ctx.fill();
-      // Mid canopy layer
-      ctx.fillStyle='#288a20';ctx.beginPath();ctx.arc(x+11+txOff,y+13,9,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#309828';ctx.beginPath();ctx.arc(x+22+txOff,y+15,7,0,Math.PI*2);ctx.fill();
-      // Highlight canopy (top-lit)
-      ctx.fillStyle='#40a838';ctx.beginPath();ctx.arc(x+10+txOff,y+10,6,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#50b848';ctx.beginPath();ctx.arc(x+9+txOff,y+8,3,0,Math.PI*2);ctx.fill();
-      // Sunlit leaf clusters (2×2 instead of single pixels)
-      var nlc=2+Math.floor(rng(210)*2);
-      for(let i=0;i<nlc;i++){
-        var lx=x+6+txOff+Math.floor(rng(211+i)*18),ly=y+6+Math.floor(rng(221+i)*12);
-        R(lx,ly,2,2,'#60c850');
-      }
-      // Dark arc at canopy bottom for depth
-      ctx.fillStyle='rgba(0,30,0,0.3)';
-      ctx.beginPath();ctx.arc(x+11+txOff,y+18,9,0,Math.PI);ctx.fill();
+
+      // two trunks
+      R(x+10,y+18,3,12,'#68482a');
+      R(x+20,y+19,3,11,'#68482a');
+      R(x+11,y+19,1,10,'#86603a');
+      R(x+21,y+20,1,9,'#86603a');
+
+      // conifer-like canopy triangles/blobs
+      ctx.fillStyle='#1f6f1c';
+      ctx.beginPath();ctx.moveTo(x+11,y+5);ctx.lineTo(x+3,y+18);ctx.lineTo(x+19,y+18);ctx.closePath();ctx.fill();
+      ctx.beginPath();ctx.moveTo(x+22,y+7);ctx.lineTo(x+14,y+20);ctx.lineTo(x+30,y+20);ctx.closePath();ctx.fill();
+
+      ctx.fillStyle='#2d8628';
+      ctx.beginPath();ctx.moveTo(x+11,y+7);ctx.lineTo(x+5,y+17);ctx.lineTo(x+17,y+17);ctx.closePath();ctx.fill();
+      ctx.beginPath();ctx.moveTo(x+22,y+9);ctx.lineTo(x+16,y+19);ctx.lineTo(x+28,y+19);ctx.closePath();ctx.fill();
+
+      // top-left highlights
+      ctx.fillStyle='#49a63f';
+      R(x+9,y+9,3,2,'#49a63f'); R(x+19,y+11,3,2,'#49a63f');
+      P(x+8,y+11,'#62bc58'); P(x+18,y+13,'#62bc58');
+
+      // heavy ground shadow under canopy
+      R(x+4,y+22,24,8,'rgba(0,25,0,0.28)');
+      R(x+6,y+24,20,5,'rgba(0,20,0,0.18)');
 
     }else if(type==='mountain'){
       // FE GBA-like mountain: chunky faceted massif + clear top-left light
@@ -869,99 +869,83 @@ const Sprites = {
     };
 
     if(type==='fort'){
-      // GBA FE-style fort — square building, muddy yellow walls, 3/4 oblique view
-      // Ground shadow
-      drawGroundContactShadow(x + 16, y + 29, 13, 2.6, 0.22);
-      R(x+6,y+27,22,4,'rgba(0,0,0,0.12)');
-      // Front wall (muddy yellow-tan, visible from oblique angle)
-      R(x+4,y+12,24,18,'#b89850');
-      R(x+5,y+13,22,16,'#c8a860');
-      // Left wall shadow (darker)
-      R(x+4,y+12,3,18,'#987838');
-      // Right wall highlight
-      R(x+25,y+12,3,18,'#d0b870');
-      // Bottom wall shadow
-      R(x+4,y+29,24,1,'#886828');
-      // Flat roof seen from above (slightly darker, showing depth)
-      R(x+3,y+6,26,7,'#a88840');
-      R(x+4,y+7,24,5,'#b89848');
-      R(x+3,y+6,26,1,'#c8a858');  // roof front edge highlight
-      R(x+3,y+12,26,1,'#886830');  // roof-wall junction shadow
-      // Crenellations/battlements on roof edges
-      R(x+3,y+3,5,4,'#b89848'); R(x+3,y+3,5,1,'#c8a858');
-      R(x+10,y+3,5,4,'#b89848'); R(x+10,y+3,5,1,'#c8a858');
-      R(x+17,y+3,5,4,'#b89848'); R(x+17,y+3,5,1,'#c8a858');
-      R(x+24,y+3,5,4,'#b89848'); R(x+24,y+3,5,1,'#c8a858');
-      // Crenel gaps between merlons (dark openings)
-      R(x+8,y+5,2,3,'#584020');
-      R(x+15,y+5,2,3,'#584020');
-      R(x+22,y+5,2,3,'#584020');
-      // Arrow slit windows on front wall
-      R(x+10,y+16,2,5,'#483818');
-      R(x+20,y+16,2,5,'#483818');
-      // Doorway (dark arch)
-      R(x+13,y+22,6,8,'#483018');
-      R(x+14,y+23,4,7,'#382410');
-      R(x+13,y+21,6,2,'#8a6830');  // door lintel
-      // Wall stone lines (horizontal mortar)
-      ctx.strokeStyle='#a08040';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+5,y+17);ctx.lineTo(x+27,y+17);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+5,y+22);ctx.lineTo(x+13,y+22);ctx.moveTo(x+19,y+22);ctx.lineTo(x+27,y+22);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+5,y+27);ctx.lineTo(x+27,y+27);ctx.stroke();
-      // Flag pole and banner
-      R(x+14,y+0,2,4,'#6a4020');
-      R(x+16,y+0,5,3,'#c03020');
-      R(x+16,y+0,5,1,'#d04030');
-      P(x+19,y+1,'#f0d040');
+      // FE GBA-style single-tile fort: mud-yellow masonry + corner towers + command post
+      drawGroundContactShadow(x + 16, y + 29, 13.5, 2.8, 0.24);
+      R(x+5,y+27,23,4,'rgba(0,0,0,0.14)');
+
+      // main keep body
+      R(x+5,y+12,22,17,'#bfa262');
+      R(x+6,y+13,20,15,'#cdb172');
+      R(x+5,y+12,2,17,'#9f8248');   // left shadow wall
+      R(x+25,y+12,2,17,'#dbc07f');  // right highlight wall
+      R(x+5,y+28,22,1,'#8d733f');   // bottom shade
+
+      // top parapet platform (45-degree look)
+      R(x+4,y+7,24,6,'#b09054');
+      R(x+5,y+8,22,4,'#c09f62');
+      R(x+4,y+7,24,1,'#d4b373');
+      R(x+4,y+12,24,1,'#8a6d39');
+
+      // corner defense towers (hinted in 1 tile)
+      R(x+3,y+4,5,5,'#b89a5d'); R(x+3,y+4,5,1,'#cfb074');
+      R(x+24,y+4,5,5,'#b89a5d'); R(x+24,y+4,5,1,'#cfb074');
+      R(x+3,y+8,5,1,'#876a37'); R(x+24,y+8,5,1,'#876a37');
+
+      // battlements across roof
+      R(x+9,y+4,3,4,'#bb9d5f'); R(x+13,y+4,3,4,'#bb9d5f');
+      R(x+17,y+4,3,4,'#bb9d5f'); R(x+21,y+4,3,4,'#bb9d5f');
+      R(x+12,y+6,1,2,'#5d4726'); R(x+16,y+6,1,2,'#5d4726'); R(x+20,y+6,1,2,'#5d4726');
+
+      // command tower banner
+      R(x+15,y+0,1,5,'#654022');
+      R(x+16,y+0,5,3,'#b7332a');
+      R(x+16,y+0,5,1,'#d45245');
+      P(x+19,y+1,'#f1d56a');
+
+      // gate + arrow slits
+      R(x+13,y+21,6,8,'#4a3218'); R(x+14,y+22,4,7,'#38240f');
+      R(x+9,y+16,2,5,'#4c3920'); R(x+21,y+16,2,5,'#4c3920');
+
+      // masonry lines
+      ctx.strokeStyle='#a4874f';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+7,y+17);ctx.lineTo(x+25,y+17);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+7,y+22);ctx.lineTo(x+12,y+22);ctx.moveTo(x+20,y+22);ctx.lineTo(x+25,y+22);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+7,y+26);ctx.lineTo(x+25,y+26);ctx.stroke();
 
     }else if(type==='village'){
-      // GBA FE-style village house — 3/4 oblique view, pitched roof, warm walls
-      // Ground shadow
-      drawGroundContactShadow(x + 16, y + 29, 12.5, 2.4, 0.19);
-      R(x+4,y+28,24,3,'rgba(0,0,0,0.10)');
-      // House body (cream/stucco walls, front face visible)
-      R(x+3,y+14,26,16,'#d8c088');
-      R(x+4,y+15,24,14,'#e8d8a8');
-      // Left wall shadow face (slightly angled, darker)
-      R(x+3,y+14,2,16,'#c0a868');
-      // Right wall highlight
-      R(x+27,y+14,2,16,'#f0e0b0');
-      // Bottom edge shadow
-      R(x+3,y+29,26,1,'#b09858');
-      // Pitched roof — 3/4 view: see roof top face + front slope
-      // Roof top face (seen from above — terracotta red)
-      ctx.fillStyle='#b83020';
-      ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+30,y+14);ctx.lineTo(x+2,y+14);ctx.fill();
-      // Roof left slope shadow (darker red)
-      ctx.fillStyle='#8c2018';
-      ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+2,y+14);ctx.lineTo(x+16,y+14);ctx.fill();
-      // Roof eave (bottom edge, creates depth with wall)
-      R(x+1,y+13,30,2,'#6a1810');
-      // Roof tile lines
-      ctx.strokeStyle='#9a2818';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+5,y+11);ctx.lineTo(x+27,y+11);ctx.stroke();
-      // Door (centered, dark wood with frame)
-      R(x+12,y+20,7,10,'#6a4020');
-      R(x+13,y+21,5,9,'#7a5030');
-      R(x+11,y+19,9,1,'#5a3018');  // lintel
-      P(x+17,y+25,'#c8a040');  // door handle
-      // Window left
-      R(x+5,y+18,5,5,'#2a2030');
-      R(x+6,y+19,3,3,'#f0d860');
-      P(x+7,y+19,'#ffe890');
-      // Window right
-      R(x+22,y+18,5,5,'#2a2030');
-      R(x+23,y+19,3,3,'#f0d860');
-      P(x+24,y+19,'#ffe890');
-      // Chimney (rises from right side of roof)
-      R(x+24,y+3,4,11,'#907060');
-      R(x+24,y+3,4,1,'#a08070');  // chimney cap
-      R(x+26,y+4,1,10,'#a08070');  // highlight edge
-      // Smoke wisps
-      P(x+25,y+1,'rgba(180,180,180,0.5)');
-      P(x+26,y+0,'rgba(190,190,190,0.3)');
-      // Wall texture — horizontal mortar lines
-      ctx.strokeStyle='#d0b880';ctx.lineWidth=1;
+      // FE GBA-style village: warm mud walls + steeper red roof + aged look
+      drawGroundContactShadow(x + 16, y + 29, 13, 2.6, 0.21);
+      R(x+3,y+28,26,3,'rgba(0,0,0,0.11)');
+
+      // house body
+      R(x+3,y+14,26,16,'#d2bb86');
+      R(x+4,y+15,24,14,'#e3d2a2');
+      R(x+3,y+14,2,16,'#b79d68');
+      R(x+27,y+14,2,16,'#f0e0b3');
+      R(x+3,y+29,26,1,'#a88f5c');
+
+      // roof: steeper, older tiles
+      ctx.fillStyle='#a43224';
+      ctx.beginPath();ctx.moveTo(x+16,y+3);ctx.lineTo(x+31,y+14);ctx.lineTo(x+1,y+14);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#7d241a';
+      ctx.beginPath();ctx.moveTo(x+16,y+3);ctx.lineTo(x+1,y+14);ctx.lineTo(x+16,y+14);ctx.closePath();ctx.fill();
+      R(x+1,y+13,30,2,'#651a12');
+      R(x+4,y+10,24,1,'#bf4b3d');
+      R(x+6,y+12,20,1,'#7f2a1f');
+
+      // chimney + soot
+      R(x+24,y+3,4,11,'#8f715f'); R(x+24,y+3,4,1,'#a98978'); R(x+26,y+4,1,10,'#b39583');
+      P(x+25,y+1,'rgba(120,120,120,0.45)'); P(x+26,y+0,'rgba(110,110,110,0.32)');
+
+      // door/windows
+      R(x+12,y+20,7,10,'#68401f'); R(x+13,y+21,5,9,'#7a5030'); R(x+11,y+19,9,1,'#563018');
+      P(x+17,y+25,'#c8a040');
+      R(x+5,y+18,5,5,'#2a2030'); R(x+6,y+19,3,3,'#eed86a'); P(x+7,y+19,'#fff0a0');
+      R(x+22,y+18,5,5,'#2a2030'); R(x+23,y+19,3,3,'#eed86a'); P(x+24,y+19,'#fff0a0');
+
+      // aged wall cracks / dirt
+      P(x+8,y+24,'#a69062'); P(x+20,y+23,'#a69062'); P(x+14,y+27,'#9d875b');
+      ctx.strokeStyle='#cdb57f';ctx.lineWidth=1;
       ctx.beginPath();ctx.moveTo(x+5,y+20);ctx.lineTo(x+12,y+20);ctx.moveTo(x+19,y+20);ctx.lineTo(x+27,y+20);ctx.stroke();
       ctx.beginPath();ctx.moveTo(x+5,y+25);ctx.lineTo(x+27,y+25);ctx.stroke();
 
