@@ -261,22 +261,13 @@ const Sprites = {
   },
 
   _drawForestToForestEdge: function(ctx, edge, seed) {
-    // Connecting canopy blob bridging tiles
+    // Keep only subtle seam; avoid extra mini-tree artifacts between forest tiles.
     var s = GAME_CONFIG.TILE_SIZE;
-    var bx, by;
-    if (edge === 'top')    { bx = 6 + Math.floor(this._rng(seed, 4000) * 20); by = 2; }
-    else if (edge === 'bottom') { bx = 6 + Math.floor(this._rng(seed, 4000) * 20); by = s - 2; }
-    else if (edge === 'left')   { bx = 2; by = 6 + Math.floor(this._rng(seed, 4000) * 20); }
-    else                        { bx = s - 2; by = 6 + Math.floor(this._rng(seed, 4000) * 20); }
-    var r = 3 + Math.floor(this._rng(seed, 4010) * 3);
-    // Dark shadow layer
-    ctx.fillStyle = '#1a7810';
-    ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI * 2); ctx.fill();
-    // Brighter top layer
-    ctx.fillStyle = '#288a20';
-    ctx.beginPath(); ctx.arc(bx, by - 1, r - 1, 0, Math.PI * 2); ctx.fill();
-    // Highlight specks
-    this._drawScatterPixels(ctx, edge, 2, 4, '#60c850', seed, 4050);
+    ctx.fillStyle = 'rgba(22,84,22,0.08)';
+    if (edge === 'top') ctx.fillRect(2, 0, s - 4, 1);
+    else if (edge === 'bottom') ctx.fillRect(2, s - 1, s - 4, 1);
+    else if (edge === 'left') ctx.fillRect(0, 2, 1, s - 4);
+    else ctx.fillRect(s - 1, 2, 1, s - 4);
   },
 
   _drawWallEdge: function(ctx, edge, neighborTerrain, seed, variant) {
@@ -526,39 +517,72 @@ const Sprites = {
       R(x+31,y,1,s,'rgba(0,0,0,0.03)');
 
     }else if(type==='forest'){
-      // FE GBA-like forest tile: compact conifer cluster + strong ground anchor
-      R(x,y,s,s,'#4aa345');
-      R(x,y+18,s,14,'#438f3e');
+      // Forest prototype: single tree, pointed top + wide bottom (per feedback)
+      R(x,y,s,s,'#4b9d42');
 
-      // floor texture (not checker)
-      for(let i=0;i<14;i++){
-        var fx=x+Math.floor(rng(220+i)*30)+1, fy=y+Math.floor(rng(260+i)*30)+1;
-        P(fx,fy,rng(300+i)>0.5?'#509e49':'#3f853a');
+      var txOff=Math.floor(rng(205)*3)-1;
+      var dark='#1f6a1b', mid='#2f8528', light='#49a23f', hi='#6abd57', edgeShadow='#1a5617';
+
+      function poly(pts, c){
+        ctx.fillStyle=c; ctx.beginPath();
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for(var i=1;i<pts.length;i++) ctx.lineTo(pts[i][0], pts[i][1]);
+        ctx.closePath(); ctx.fill();
       }
 
-      // two trunks
-      R(x+10,y+18,3,12,'#68482a');
-      R(x+20,y+19,3,11,'#68482a');
-      R(x+11,y+19,1,10,'#86603a');
-      R(x+21,y+20,1,9,'#86603a');
+      // droplet: pointed top, broad lower body
+      var cx=x+16+txOff, top=y+3;
+      poly([
+        [cx,top],
+        [cx-2,top+2],[cx-4,top+5],[cx-6,top+8],[cx-7,top+11],[cx-8,top+14],
+        [cx-9,top+17],[cx-9,top+20],[cx-8,top+22],[cx-6,top+24],[cx-4,top+25],[cx-2,top+26],
+        [cx+2,top+26],[cx+4,top+25],[cx+6,top+24],[cx+8,top+22],[cx+9,top+20],[cx+9,top+17],
+        [cx+8,top+14],[cx+7,top+11],[cx+6,top+8],[cx+4,top+5],[cx+2,top+2]
+      ], dark);
 
-      // conifer-like canopy triangles/blobs
-      ctx.fillStyle='#1f6f1c';
-      ctx.beginPath();ctx.moveTo(x+11,y+5);ctx.lineTo(x+3,y+18);ctx.lineTo(x+19,y+18);ctx.closePath();ctx.fill();
-      ctx.beginPath();ctx.moveTo(x+22,y+7);ctx.lineTo(x+14,y+20);ctx.lineTo(x+30,y+20);ctx.closePath();ctx.fill();
+      // denser 1px jagged contour (broken silhouette feel)
+      var jag=[[-1,3],[-3,5],[-5,8],[-7,11],[-8,14],[-9,18],[-8,21],[-6,24],[-3,25],[0,26],[3,25],[6,24],[8,21],[9,18],[8,14],[7,11],[5,8],[3,5],[1,3]];
+      for(let i=0;i<jag.length;i++){
+        var jx=cx+jag[i][0], jy=top+jag[i][1];
+        P(jx,jy,dark);
+        if((i%3)===0) P(jx+(jx<cx?-1:1),jy+1,dark);
+      }
 
-      ctx.fillStyle='#2d8628';
-      ctx.beginPath();ctx.moveTo(x+11,y+7);ctx.lineTo(x+5,y+17);ctx.lineTo(x+17,y+17);ctx.closePath();ctx.fill();
-      ctx.beginPath();ctx.moveTo(x+22,y+9);ctx.lineTo(x+16,y+19);ctx.lineTo(x+28,y+19);ctx.closePath();ctx.fill();
+      // inner foliage mass
+      poly([
+        [cx,top+3],[cx-2,top+5],[cx-4,top+8],[cx-5,top+11],[cx-6,top+14],[cx-6,top+18],
+        [cx-5,top+21],[cx-3,top+23],[cx-1,top+24],[cx+1,top+24],[cx+3,top+23],[cx+5,top+21],
+        [cx+6,top+18],[cx+6,top+14],[cx+5,top+11],[cx+4,top+8],[cx+2,top+5]
+      ], mid);
 
-      // top-left highlights
-      ctx.fillStyle='#49a63f';
-      R(x+9,y+9,3,2,'#49a63f'); R(x+19,y+11,3,2,'#49a63f');
-      P(x+8,y+11,'#62bc58'); P(x+18,y+13,'#62bc58');
+      // top-left highlight (smaller)
+      poly([[cx-1,top+6],[cx-4,top+9],[cx-4,top+11],[cx-1,top+11],[cx+1,top+9]], light);
+      P(cx-2,top+8,hi); P(cx-1,top+9,hi);
 
-      // heavy ground shadow under canopy
-      R(x+4,y+22,24,8,'rgba(0,25,0,0.28)');
-      R(x+6,y+24,20,5,'rgba(0,20,0,0.18)');
+      // right-bottom deep-green shadow as broken short segments (not outline)
+      var segs=[[4,15],[5,17],[6,19],[7,21],[7,23],[6,24],[5,25]];
+      for(let i=0;i<segs.length;i++){
+        var ex=cx+segs[i][0], ey=top+segs[i][1];
+        P(ex,ey,edgeShadow);
+        if(i===1||i===3||i===5) P(ex+1,ey,edgeShadow);
+      }
+
+      // random leaf tones
+      for(let i=0;i<34;i++){
+        var nx=cx-6+Math.floor(rng(300+i)*13);
+        var ny=top+7+Math.floor(rng(400+i)*18);
+        var c = rng(500+i)>0.7 ? light : (rng(600+i)>0.45 ? mid : '#2a7c24');
+        P(nx,ny,c);
+      }
+
+      // tiny trunk only
+      R(cx-1,y+28,1,2,'#4b331d');
+
+      if (window.DEBUG_FOREST_VARIANTS) {
+        R(x+1,y+1,6,6,'rgba(0,0,0,0.35)');
+        ctx.fillStyle='#fff'; ctx.font='6px monospace'; ctx.fillText('T',x+2,y+6);
+      }
+
 
     }else if(type==='mountain'){
       // FE GBA-like mountain: chunky faceted massif + clear top-left light
