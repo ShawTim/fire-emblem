@@ -520,7 +520,6 @@ const Sprites = {
       // Forest prototype: single tree, pointed top + wide bottom (per feedback)
       R(x,y,s,s,'#4b9d42');
 
-      var txOff=Math.floor(rng(205)*3)-1;
       var dark='#1f6a1b', mid='#2f8528', light='#49a23f', hi='#6abd57', edgeShadow='#1a5617';
 
       function poly(pts, c){
@@ -530,86 +529,116 @@ const Sprites = {
         ctx.closePath(); ctx.fill();
       }
 
-      // droplet: pointed top, broad lower body
-      var cx=x+16+txOff, top=y+3;
-      poly([
-        [cx,top],
-        [cx-2,top+2],[cx-4,top+5],[cx-6,top+8],[cx-7,top+11],[cx-8,top+14],
-        [cx-9,top+17],[cx-9,top+20],[cx-8,top+22],[cx-6,top+24],[cx-4,top+25],[cx-2,top+26],
-        [cx+2,top+26],[cx+4,top+25],[cx+6,top+24],[cx+8,top+22],[cx+9,top+20],[cx+9,top+17],
-        [cx+8,top+14],[cx+7,top+11],[cx+6,top+8],[cx+4,top+5],[cx+2,top+2]
-      ], dark);
+      function drawBaseTreeAt(cx, top, seedShift, scaleX, scaleY){
+        var sx=(scaleX==null?1:scaleX), sy=(scaleY==null?1:scaleY);
+        // hard clamp: never allow tree canopy to go outside this tile
+        var halfW = 9*sx;
+        var h = 26*sy;
+        cx = Math.max(x+halfW, Math.min(x+31-halfW, cx));
+        top = Math.max(y+1, Math.min(y+31-h, top));
 
-      // denser 1px jagged contour (broken silhouette feel)
-      var jag=[[-1,3],[-3,5],[-5,8],[-7,11],[-8,14],[-9,18],[-8,21],[-6,24],[-3,25],[0,26],[3,25],[6,24],[8,21],[9,18],[8,14],[7,11],[5,8],[3,5],[1,3]];
-      for(let i=0;i<jag.length;i++){
-        var jx=cx+jag[i][0], jy=top+jag[i][1];
-        P(jx,jy,dark);
-        if((i%3)===0) P(jx+(jx<cx?-1:1),jy+1,dark);
-      }
+        ctx.save();
+        ctx.translate(cx, top);
+        ctx.scale(sx, sy);
+        ctx.translate(-cx, -top);
 
-      // inner foliage mass
-      poly([
-        [cx,top+3],[cx-2,top+5],[cx-4,top+8],[cx-5,top+11],[cx-6,top+14],[cx-6,top+18],
-        [cx-5,top+21],[cx-3,top+23],[cx-1,top+24],[cx+1,top+24],[cx+3,top+23],[cx+5,top+21],
-        [cx+6,top+18],[cx+6,top+14],[cx+5,top+11],[cx+4,top+8],[cx+2,top+5]
-      ], mid);
+        // droplet: pointed top, broad lower body (locked silhouette)
+        poly([
+          [cx,top],
+          [cx-2,top+2],[cx-4,top+5],[cx-6,top+8],[cx-7,top+11],[cx-8,top+14],
+          [cx-9,top+17],[cx-9,top+20],[cx-8,top+22],[cx-6,top+24],[cx-4,top+25],[cx-2,top+26],
+          [cx+2,top+26],[cx+4,top+25],[cx+6,top+24],[cx+8,top+22],[cx+9,top+20],[cx+9,top+17],
+          [cx+8,top+14],[cx+7,top+11],[cx+6,top+8],[cx+4,top+5],[cx+2,top+2]
+        ], dark);
 
-      // top-left highlight (smaller)
-      poly([[cx-1,top+6],[cx-4,top+9],[cx-4,top+11],[cx-1,top+11],[cx+1,top+9]], light);
-      P(cx-2,top+8,hi); P(cx-1,top+9,hi);
+        var jag=[[-1,3],[-3,5],[-5,8],[-7,11],[-8,14],[-9,18],[-8,21],[-6,24],[-3,25],[0,26],[3,25],[6,24],[8,21],[9,18],[8,14],[7,11],[5,8],[3,5],[1,3]];
+        for(let i=0;i<jag.length;i++){
+          var jx=cx+jag[i][0], jy=top+jag[i][1];
+          P(jx,jy,dark);
+          if((i%3)===0) P(jx+(jx<cx?-1:1),jy+1,dark);
+        }
 
-      // right-bottom deep-green shadow as broken short segments (not outline)
-      var segs=[[4,15],[5,17],[6,19],[7,21],[7,23],[6,24],[5,25]];
-      for(let i=0;i<segs.length;i++){
-        var ex=cx+segs[i][0], ey=top+segs[i][1];
-        P(ex,ey,edgeShadow);
-        if(i===1||i===3||i===5) P(ex+1,ey,edgeShadow);
-      }
+        poly([
+          [cx,top+3],[cx-2,top+5],[cx-4,top+8],[cx-5,top+11],[cx-6,top+14],[cx-6,top+18],
+          [cx-5,top+21],[cx-3,top+23],[cx-1,top+24],[cx+1,top+24],[cx+3,top+23],[cx+5,top+21],
+          [cx+6,top+18],[cx+6,top+14],[cx+5,top+11],[cx+4,top+8],[cx+2,top+5]
+        ], mid);
 
-      // foliage specks: softer plum-stagger base + more organic jitter
-      var gridY = 10;
-      var placedDots = 0;
-      for(let gy=0; gy<5; gy++){
-        var baseY = top + gridY + gy*3;
-        var rowOffset = (gy % 2 === 0) ? 0 : 2;
-        for(let gx=0; gx<5; gx++){
-          if(rng(870 + gy*11 + gx*7) < 0.24) continue;
-          var baseX = cx - 4 + rowOffset + gx*2; // pull anchors further inward
+        poly([[cx-1,top+6],[cx-4,top+9],[cx-4,top+11],[cx-1,top+11],[cx+1,top+9]], light);
+        P(cx-2,top+8,hi); P(cx-1,top+9,hi);
 
-          // controlled jitter so dots stay near tree center
-          var jx = Math.floor(rng(900 + gy*31 + gx*17) * 3) - 1; // -1..1
-          var jy = Math.floor(rng(902 + gy*23 + gx*19) * 3) - 1; // -1..1
-          var nx = baseX + jx;
-          var ny = baseY + jy;
+        var segs=[[4,15],[5,17],[6,19],[7,21],[7,23],[6,24],[5,25]];
+        for(let i=0;i<segs.length;i++){
+          var ex=cx+segs[i][0], ey=top+segs[i][1];
+          P(ex,ey,edgeShadow);
+          if(i===1||i===3||i===5) P(ex+1,ey,edgeShadow);
+        }
 
-          // clamp to central canopy ellipse
-          var dx=(nx-cx)/6.0, dy=(ny-(top+16))/7.8;
-          if(dx*dx + dy*dy > 1.0) continue;
+        var gridY = 10;
+        for(let gy=0; gy<5; gy++){
+          var baseY = top + gridY + gy*3;
+          var rowOffset = (gy % 2 === 0) ? 0 : 2;
+          for(let gx=0; gx<5; gx++){
+            if(rng(seedShift + 870 + gy*11 + gx*7) < 0.24) continue;
+            var baseX = cx - 4 + rowOffset + gx*2;
+            var jx = Math.floor(rng(seedShift + 900 + gy*31 + gx*17) * 3) - 1;
+            var jy = Math.floor(rng(seedShift + 902 + gy*23 + gx*19) * 3) - 1;
+            var nx = baseX + jx;
+            var ny = baseY + jy;
+            var dx=(nx-cx)/6.0, dy=(ny-(top+16))/7.8;
+            if(dx*dx + dy*dy > 1.0) continue;
 
-          var rDot = rng(960 + gy*41 + gx*37);
-          var c = rDot > 0.90 ? '#5ea74f' : (rDot > 0.70 ? '#3f8f36' : '#2b7426');
-          R(nx,ny,2,2,c);
-          placedDots++;
-
-          // occasional tiny extra fragment but still center-clamped
-          if(rng(990 + gy*17 + gx*29) > 0.76){
-            var ox = Math.floor(rng(1000 + gy*13 + gx*11) * 3) - 1;
-            var oy = Math.floor(rng(1010 + gy*19 + gx*23) * 3) - 1;
-            var ex = nx+ox, ey = ny+oy;
-            var edx=(ex-cx)/6.0, edy=(ey-(top+16))/7.8;
-            if(edx*edx + edy*edy <= 1.0) P(ex, ey, c);
+            var rDot = rng(seedShift + 960 + gy*41 + gx*37);
+            var c = rDot > 0.90 ? '#5ea74f' : (rDot > 0.70 ? '#3f8f36' : '#2b7426');
+            R(nx,ny,2,2,c);
+            if(rng(seedShift + 990 + gy*17 + gx*29) > 0.76){
+              var ox = Math.floor(rng(seedShift + 1000 + gy*13 + gx*11) * 3) - 1;
+              var oy = Math.floor(rng(seedShift + 1010 + gy*19 + gx*23) * 3) - 1;
+              var ex = nx+ox, ey = ny+oy;
+              var edx=(ex-cx)/6.0, edy=(ey-(top+16))/7.8;
+              if(edx*edx + edy*edy <= 1.0) P(ex, ey, c);
+            }
           }
         }
-      }
-      if (window.DEBUG_TREE_DOTS) {
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '6px monospace';
-        ctx.fillText(String(placedDots), x+1, y+30);
+
+        ctx.restore();
+        R(cx-1,top+Math.round(25*sy),1,2,'#4b331d');
       }
 
-      // tiny trunk only
-      R(cx-1,y+28,1,2,'#4b331d');
+      // 隨機 1/2/3 棵（deterministic），樹形鎖死，只改scale/擺位
+      var g = [ [6,6], [16,6], [26,6], [6,16], [16,16], [26,16], [6,26], [16,26], [26,26] ];
+      function putAt(anchorIdx, seed, sx, sy){
+        var a=g[anchorIdx];
+        var jx=Math.floor(rng(seed+11)*3)-1;
+        var jy=Math.floor(rng(seed+13)*3)-1;
+        var top = y + a[1] + jy - Math.round(13*sy);
+        drawBaseTreeAt(x+a[0]+jx, top, seed, sx, sy);
+      }
+
+      var roll = rng(840);
+      var layout = roll < 0.34 ? 1 : (roll < 0.67 ? 2 : 3);
+
+      if(layout===1){
+        // 1棵：中央，稍大
+        putAt(4, 1500, 0.62, 0.92);
+      }else if(layout===2){
+        // 2棵：左右分散
+        putAt(3, 2000, 0.54, 0.82);
+        putAt(5, 3000, 0.54, 0.82);
+      }else{
+        // 3棵：九宮格分散 pattern（避免堆埋）
+        var p3 = [
+          [2,3,7], // XXO / OXX / XOX
+          [0,5,7], // OXX / XXO / XOX
+          [1,3,8], // XOX / OXX / XXO
+          [1,5,6]  // XOX / XXO / OXX
+        ];
+        var pIdx = Math.floor(rng(841) * p3.length);
+        var pick = p3[pIdx];
+        putAt(pick[0], 2000, 0.48, 0.74);
+        putAt(pick[1], 3000, 0.48, 0.74);
+        putAt(pick[2], 4000, 0.48, 0.74);
+      }
 
       if (window.DEBUG_FOREST_VARIANTS) {
         R(x+1,y+1,6,6,'rgba(0,0,0,0.35)');
