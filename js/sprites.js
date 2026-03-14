@@ -567,12 +567,45 @@ const Sprites = {
         if(i===1||i===3||i===5) P(ex+1,ey,edgeShadow);
       }
 
-      // random leaf tones
-      for(let i=0;i<34;i++){
-        var nx=cx-6+Math.floor(rng(300+i)*13);
-        var ny=top+7+Math.floor(rng(400+i)*18);
-        var c = rng(500+i)>0.7 ? light : (rng(600+i)>0.45 ? mid : '#2a7c24');
-        P(nx,ny,c);
+      // foliage specks: softer plum-stagger base + more organic jitter
+      var gridY = 10;
+      var placedDots = 0;
+      for(let gy=0; gy<5; gy++){
+        var baseY = top + gridY + gy*3;
+        var rowOffset = (gy % 2 === 0) ? 0 : 2;
+        for(let gx=0; gx<5; gx++){
+          if(rng(870 + gy*11 + gx*7) < 0.24) continue;
+          var baseX = cx - 4 + rowOffset + gx*2; // pull anchors further inward
+
+          // controlled jitter so dots stay near tree center
+          var jx = Math.floor(rng(900 + gy*31 + gx*17) * 3) - 1; // -1..1
+          var jy = Math.floor(rng(902 + gy*23 + gx*19) * 3) - 1; // -1..1
+          var nx = baseX + jx;
+          var ny = baseY + jy;
+
+          // clamp to central canopy ellipse
+          var dx=(nx-cx)/6.0, dy=(ny-(top+16))/7.8;
+          if(dx*dx + dy*dy > 1.0) continue;
+
+          var rDot = rng(960 + gy*41 + gx*37);
+          var c = rDot > 0.90 ? '#5ea74f' : (rDot > 0.70 ? '#3f8f36' : '#2b7426');
+          R(nx,ny,2,2,c);
+          placedDots++;
+
+          // occasional tiny extra fragment but still center-clamped
+          if(rng(990 + gy*17 + gx*29) > 0.76){
+            var ox = Math.floor(rng(1000 + gy*13 + gx*11) * 3) - 1;
+            var oy = Math.floor(rng(1010 + gy*19 + gx*23) * 3) - 1;
+            var ex = nx+ox, ey = ny+oy;
+            var edx=(ex-cx)/6.0, edy=(ey-(top+16))/7.8;
+            if(edx*edx + edy*edy <= 1.0) P(ex, ey, c);
+          }
+        }
+      }
+      if (window.DEBUG_TREE_DOTS) {
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '6px monospace';
+        ctx.fillText(String(placedDots), x+1, y+30);
       }
 
       // tiny trunk only
