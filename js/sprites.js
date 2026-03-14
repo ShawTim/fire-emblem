@@ -481,12 +481,8 @@ const Sprites = {
     const P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
 
     if(type==='plain'){
-      // FE GBA-like plain: continuous field, directional grass strokes (no blocky checker look)
+      // FE GBA-like plain: continuous field + specks/strokes (no horizontal bands)
       R(x,y,s,s,'#63b84f');
-      // broad tonal bands (avoid visible per-cell squares)
-      R(x,y+2,s,10,'#66bc52');
-      R(x,y+12,s,10,'#5fb24b');
-      R(x,y+22,s,10,'#65b952');
 
       // diagonal grass strokes (\\ direction) for field flow
       for(let i=0;i<18;i++){
@@ -512,13 +508,44 @@ const Sprites = {
         P(fx,fy,fc); P(fx+1,fy,fc);
       }
 
-      // subtle tile-edge shade only
-      R(x,y+31,s,1,'rgba(0,0,0,0.045)');
+      // extra micro-specks so grassland is less flat (boosted, visible)
+      for(let i=0;i<34;i++) if(rng(220+i)>0.28){
+        var mx=x+1+Math.floor(rng(260+i)*30), my=y+1+Math.floor(rng(300+i)*30);
+        var mc=rng(340+i)>0.55?'#9dd26d':'#5fa34d';
+        P(mx,my,mc);
+        if(rng(360+i)>0.62) P(mx+1,my,mc);
+      }
+
+      // remove horizontal bottom band; keep only subtle side depth
+      R(x, y, 1, s, 'rgba(0,0,0,0.02)');
       R(x+31,y,1,s,'rgba(0,0,0,0.03)');
 
     }else if(type==='forest'){
-      // Forest prototype: single tree, pointed top + wide bottom (per feedback)
+      // Forest ground: richer specks/strokes only (avoid rectangle patches)
       R(x,y,s,s,'#4b9d42');
+
+      // 1) denser grass scratches (random short diagonals)
+      for(let i=0;i<40;i++){
+        var sx2=x+1+Math.floor(rng(760+i)*30), sy2=y+1+Math.floor(rng(780+i)*30);
+        var lc=rng(800+i)>0.5?'rgba(148,216,110,0.62)':'rgba(48,116,48,0.52)';
+        P(sx2,sy2,lc);
+        if(rng(820+i)>0.5) P(sx2+1,sy2+1,lc); else P(sx2+1,sy2-1,lc);
+      }
+
+      // 3) yellow-green dry specks (much more visible)
+      for(let i=0;i<34;i++) if(rng(850+i)>0.35){
+        var dx=x+2+Math.floor(rng(870+i)*28), dy=y+2+Math.floor(rng(890+i)*28);
+        var dc=rng(910+i)>0.40 ? '#afd775' : '#dae681';
+        P(dx,dy,dc);
+        if(rng(930+i)>0.72) P(dx+1,dy,dc);
+      }
+
+      // 3b) extra tiny green noise for richer forest floor
+      for(let i=0;i<40;i++) if(rng(980+i)>0.30){
+        var nx=x+1+Math.floor(rng(1010+i)*30), ny=y+1+Math.floor(rng(1040+i)*30);
+        var nc=rng(1070+i)>0.5?'#6eb25b':'#3f8e3d';
+        P(nx,ny,nc);
+      }
 
       var dark='#1f6a1b', mid='#2f8528', light='#49a23f', hi='#6abd57', edgeShadow='#1a5617';
 
@@ -639,6 +666,15 @@ const Sprites = {
         putAt(pick[1], 3000, 0.48, 0.74);
         putAt(pick[2], 4000, 0.48, 0.74);
       }
+
+      // 4) deeper micro-specks (no rectangular blotches)
+      for(let i=0;i<26;i++) if(rng(1120+i)>0.42){
+        var bx=x+1+Math.floor(rng(1140+i)*30), by=y+1+Math.floor(rng(1160+i)*30);
+        var bc=rng(1180+i)>0.5?'#2f7e32':'#255f28';
+        P(bx,by,bc);
+      }
+      R(x, y, 1, s, 'rgba(24,76,30,0.10)');
+      R(x+31, y, 1, s, 'rgba(10,42,16,0.14)');
 
       if (window.DEBUG_FOREST_VARIANTS) {
         R(x+1,y+1,6,6,'rgba(0,0,0,0.35)');
