@@ -228,17 +228,17 @@ const Sprites = {
     var fringeDepth = 3 + (v % 2);
     var pebbleCount = 2 + (v % 3);
     // Thick sandy bank encroaching on water tile (wave-shaped)
-    this._drawIrregularEdge(ctx, edge, bankDepth, '#c8b870', seed, 2000 + v * 97);
+    this._drawIrregularEdge(ctx, edge, bankDepth, '#d8c880', seed, 2000 + v * 97);
     // Green grass fringe on top (thicker)
-    this._drawIrregularEdge(ctx, edge, fringeDepth, '#58b848', seed, 2050 + v * 89);
+    this._drawIrregularEdge(ctx, edge, fringeDepth, '#63b84f', seed, 2050 + v * 89);
     // Inner grass accent
-    this._drawIrregularEdge(ctx, edge, 2, '#68c858', seed, 2080 + v * 83);
+    this._drawIrregularEdge(ctx, edge, 2, '#78cc66', seed, 2080 + v * 83);
     // Foam line at water's edge
-    this._drawIrregularEdge(ctx, edge, 1, 'rgba(160,216,255,0.5)', seed, 2150 + v * 71);
+    this._drawIrregularEdge(ctx, edge, 1, 'rgba(255,255,255,0.4)', seed, 2150 + v * 71);
     // Anti-jagged soft blend line near bank transition
-    this._drawIrregularEdge(ctx, edge, 1, 'rgba(120,180,120,0.22)', seed, 2180 + v * 61);
+    this._drawIrregularEdge(ctx, edge, 1, 'rgba(100,160,100,0.3)', seed, 2180 + v * 61);
     // Scattered pebbles on bank
-    this._drawScatterPixels(ctx, edge, pebbleCount, 6 + (v % 2), '#a0b060', seed, 2100 + v * 67);
+    this._drawScatterPixels(ctx, edge, pebbleCount, 6 + (v % 2), '#b0a070', seed, 2100 + v * 67);
   },
 
   _drawForestToPlainEdge: function(ctx, edge, seed, variant) {
