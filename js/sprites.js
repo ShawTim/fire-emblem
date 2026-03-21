@@ -1035,41 +1035,51 @@ const Sprites = {
       ctx.beginPath();ctx.moveTo(x+7,y+26);ctx.lineTo(x+25,y+26);ctx.stroke();
 
     }else if(type==='village'){
-      // FE GBA-style village: warm mud walls + steeper red roof + aged look
-      drawGroundContactShadow(x + 16, y + 29, 13, 2.6, 0.21);
-      R(x+3,y+28,26,3,'rgba(0,0,0,0.11)');
+      // FE GBA-style village: front wall + two vertical roof parallelograms
+      drawGroundContactShadow(x + 16, y + 28, 11.8, 2.3, 0.2);
+      R(x+6,y+27,20,2,'rgba(0,0,0,0.1)');
 
-      // house body
-      R(x+3,y+14,26,16,'#d2bb86');
-      R(x+4,y+15,24,14,'#e3d2a2');
-      R(x+3,y+14,2,16,'#b79d68');
-      R(x+27,y+14,2,16,'#f0e0b3');
-      R(x+3,y+29,26,1,'#a88f5c');
+      // front façade (~35-40%)
+      R(x+8,y+20,16,8,'#bfa56f');
+      R(x+9,y+21,14,6,'#eadcb2');
+      R(x+8,y+20,16,1,'#f7ebc4');
+      R(x+8,y+27,16,1,'#8e7444');
 
-      // roof: steeper, older tiles
-      ctx.fillStyle='#a43224';
-      ctx.beginPath();ctx.moveTo(x+16,y+3);ctx.lineTo(x+31,y+14);ctx.lineTo(x+1,y+14);ctx.closePath();ctx.fill();
-      ctx.fillStyle='#7d241a';
-      ctx.beginPath();ctx.moveTo(x+16,y+3);ctx.lineTo(x+1,y+14);ctx.lineTo(x+16,y+14);ctx.closePath();ctx.fill();
-      R(x+1,y+13,30,2,'#651a12');
-      R(x+4,y+10,24,1,'#bf4b3d');
-      R(x+6,y+12,20,1,'#7f2a1f');
+      // roof (~60-65%): two VERTICAL parallelograms (left big lit, right small shadow)
+      // narrowed to ~60% tile width + tuned asymmetric slant
+      // big lit plane (left) — reduced slant, shifted right by 2px
+      ctx.fillStyle='#e67852';
+      ctx.beginPath();
+      ctx.moveTo(x+5,y+7);   // TL (wider +2px)
+      ctx.lineTo(x+19,y+3);  // TR
+      ctx.lineTo(x+19,y+20); // BR
+      ctx.lineTo(x+5,y+24);  // BL (wider +2px)
+      ctx.closePath();
+      ctx.fill();
 
-      // chimney + soot
-      R(x+24,y+3,4,11,'#8f715f'); R(x+24,y+3,4,1,'#a98978'); R(x+26,y+4,1,10,'#b39583');
-      P(x+25,y+1,'rgba(120,120,120,0.45)'); P(x+26,y+0,'rgba(110,110,110,0.32)');
+      // small shadow plane (right) — shifted right by 2px and shorter
+      ctx.fillStyle='#32100f';
+      ctx.beginPath();
+      ctx.moveTo(x+19,y+3);  // TL
+      ctx.lineTo(x+26,y+9);  // TR
+      ctx.lineTo(x+26,y+24); // BR (shorter)
+      ctx.lineTo(x+19,y+18); // BL (shorter)
+      ctx.closePath();
+      ctx.fill();
 
-      // door/windows
-      R(x+12,y+20,7,10,'#68401f'); R(x+13,y+21,5,9,'#7a5030'); R(x+11,y+19,9,1,'#563018');
-      P(x+17,y+25,'#c8a040');
-      R(x+5,y+18,5,5,'#2a2030'); R(x+6,y+19,3,3,'#eed86a'); P(x+7,y+19,'#fff0a0');
-      R(x+22,y+18,5,5,'#2a2030'); R(x+23,y+19,3,3,'#eed86a'); P(x+24,y+19,'#fff0a0');
+      // clear seam + eave line
+      ctx.strokeStyle='#ffd0b0'; ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+19,y+3);ctx.lineTo(x+19,y+20);ctx.stroke();
 
-      // aged wall cracks / dirt
-      P(x+8,y+24,'#a69062'); P(x+20,y+23,'#a69062'); P(x+14,y+27,'#9d875b');
-      ctx.strokeStyle='#cdb57f';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+5,y+20);ctx.lineTo(x+12,y+20);ctx.moveTo(x+19,y+20);ctx.lineTo(x+27,y+20);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+5,y+25);ctx.lineTo(x+27,y+25);ctx.stroke();
+
+      // centered doorway
+      R(x+13,y+22,5,6,'#4a2b14');
+      R(x+14,y+23,3,5,'#6c4326');
+      P(x+17,y+25,'#d5b256');
+
+      // small windows
+      R(x+10,y+22,2,3,'#2a2230'); R(x+10,y+23,1,1,'#f0de87');
+      R(x+20,y+22,2,3,'#2a2230'); R(x+20,y+23,1,1,'#f0de87');
 
     }else if(type==='throne'){
       // GBA FE-style ornate throne — golden chair with red cushion on small carpet
