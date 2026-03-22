@@ -75,6 +75,8 @@ const Sprites = {
   _edgeVariantPoolSize: {
     waterToLand: 5,
     forestToPlain: 5,
+    roadToPlain: 4,
+    roadToForest: 4,
     mountainToLand: 4,
     wallEdge: 4,
     landToWater: 4,
@@ -241,6 +243,22 @@ const Sprites = {
     this._drawScatterPixels(ctx, edge, pebbleCount, 6 + (v % 2), '#b0a070', seed, 2100 + v * 67);
   },
 
+  _drawRoadToPlainEdge: function(ctx, edge, seed, variant) {
+    var v = variant || 0;
+    // Grass reclaim creeping into road edge
+    this._drawIrregularEdge(ctx, edge, 3 + (v % 2), 'rgba(92,174,72,0.42)', seed, 2800 + v * 83);
+    this._drawIrregularEdge(ctx, edge, 2, 'rgba(112,194,92,0.28)', seed, 2830 + v * 79);
+    this._drawScatterPixels(ctx, edge, 2 + (v % 2), 5 + (v % 2), 'rgba(96,176,76,0.45)', seed, 2860 + v * 71);
+  },
+
+  _drawRoadToForestEdge: function(ctx, edge, seed, variant) {
+    var v = variant || 0;
+    // Darker, denser edge when forest touches road
+    this._drawIrregularEdge(ctx, edge, 4 + (v % 2), 'rgba(40,96,32,0.36)', seed, 2900 + v * 89);
+    this._drawIrregularEdge(ctx, edge, 2 + ((v >> 1) % 2), 'rgba(56,132,44,0.30)', seed, 2930 + v * 83);
+    this._drawScatterPixels(ctx, edge, 3 + (v % 2), 6 + (v % 2), 'rgba(48,120,40,0.46)', seed, 2960 + v * 73);
+  },
+
   _drawForestToPlainEdge: function(ctx, edge, seed, variant) {
     var v = variant || 0;
     var canopyDepth = 5 + (v % 2);
@@ -342,6 +360,8 @@ const Sprites = {
       return null;
     }
     if (center.category === 'water' && neighbor.category !== 'water') return 'waterToLand';
+    if (center.terrain === 'road' && neighbor.terrain === 'plain') return 'roadToPlain';
+    if (center.terrain === 'road' && neighbor.terrain === 'forest') return 'roadToForest';
     if (center.category === 'land' && neighbor.terrain === 'forest') return 'forestToPlain';
     if (center.terrain === 'wall' && neighbor.category !== 'structure') return 'wallEdge';
     if (center.category === 'land' && neighbor.category === 'rocky') return 'mountainToLand';
@@ -384,6 +404,14 @@ const Sprites = {
         // Water tile → land neighbor: draw bank on water tile
         if (center.category === 'water' && n.category !== 'water') {
           this._drawWaterToLandEdge(ctx, side, n.terrain, eSeed, variant);
+        }
+        // Road tile → plain neighbor: grass reclaim edge on road
+        else if (center.terrain === 'road' && n.terrain === 'plain') {
+          this._drawRoadToPlainEdge(ctx, side, eSeed, variant);
+        }
+        // Road tile → forest neighbor: darker forest encroach edge on road
+        else if (center.terrain === 'road' && n.terrain === 'forest') {
+          this._drawRoadToForestEdge(ctx, side, eSeed, variant);
         }
         // Land tile → forest neighbor: canopy overhang on land tile
         else if (center.category === 'land' && n.terrain === 'forest') {
@@ -897,11 +925,27 @@ const Sprites = {
       for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
         R(x+bx*4,y+by*4,4,4,rdg[Math.floor(rng(by*8+bx+780)*4)]);
       }
-      // Wheel ruts
-      R(x+8,y,2,s,'rgba(0,0,0,0.1)');R(x+22,y,2,s,'rgba(0,0,0,0.1)');
       // Scattered pebbles
       for(let i=0;i<3;i++){
         P(x+4+Math.floor(rng(i+790)*24),y+4+Math.floor(rng(i+800)*24),'#a89858');
+      }
+      // Random stains / shallow pits
+      for(let i=0;i<4;i++){
+        const px=x+5+Math.floor(rng(i+810)*22);
+        const py=y+5+Math.floor(rng(i+820)*22);
+        const pw=2+Math.floor(rng(i+830)*3);
+        const ph=1+Math.floor(rng(i+840)*2);
+        R(px,py,pw,ph,'rgba(120,95,58,0.28)');
+      }
+      // Tiny random scrape marks (non-directional)
+      for(let i=0;i<3;i++){
+        const sx=x+4+Math.floor(rng(i+850)*24);
+        const sy=y+4+Math.floor(rng(i+860)*24);
+        if(rng(i+870)>0.5){
+          R(sx,sy,3,1,'rgba(105,82,50,0.22)');
+        }else{
+          R(sx,sy,1,3,'rgba(105,82,50,0.22)');
+        }
       }
 
     }else if(type==='basin'){
