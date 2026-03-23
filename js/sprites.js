@@ -1035,48 +1035,142 @@ const Sprites = {
     };
 
     if(type==='fort'){
-      // FE GBA-style single-tile fort: mud-yellow masonry + corner towers + command post
-      drawGroundContactShadow(x + 16, y + 29, 13.5, 2.8, 0.24);
-      R(x+5,y+27,23,4,'rgba(0,0,0,0.14)');
+      // Reference-driven fort: high square walls, front round towers, tall command tower (mid-left)
+      drawGroundContactShadow(x + 16, y + 30, 14.8, 2.9, 0.22);
+      R(x+3,y+28,26,2,'rgba(0,0,0,0.11)');
 
-      // main keep body
-      R(x+5,y+12,22,17,'#bfa262');
-      R(x+6,y+13,20,15,'#cdb172');
-      R(x+5,y+12,2,17,'#9f8248');   // left shadow wall
-      R(x+25,y+12,2,17,'#dbc07f');  // right highlight wall
-      R(x+5,y+28,22,1,'#8d733f');   // bottom shade
+      // Outer mass (nearly full tile)
+      R(x+3,y+5,26,24,'#977945');
+      R(x+4,y+6,24,22,'#ac8d57');
 
-      // top parapet platform (45-degree look)
-      R(x+4,y+7,24,6,'#b09054');
-      R(x+5,y+8,22,4,'#c09f62');
-      R(x+4,y+7,24,1,'#d4b373');
-      R(x+4,y+12,24,1,'#8a6d39');
+      // High enclosing walls (taller)
+      R(x+4,y+4,24,6,'#806339');    // back/top wall (higher)
+      R(x+2,y+7,5,22,'#7b5f35');    // left wall (thicker)
+      R(x+25,y+7,5,22,'#917347');   // right wall (thicker)
+      R(x+5,y+18,23,11,'#856738');   // front wall (higher, clearer)
+      // front wall thickness cap + underside shadow
+      R(x+5,y+18,23,3,'#a88b57');
+      R(x+5,y+28,23,1,'#5f4526');
+      R(x+4,y+4,24,1,'#c5a873');
 
-      // corner defense towers (hinted in 1 tile)
-      R(x+3,y+4,5,5,'#b89a5d'); R(x+3,y+4,5,1,'#cfb074');
-      R(x+24,y+4,5,5,'#b89a5d'); R(x+24,y+4,5,1,'#cfb074');
-      R(x+3,y+8,5,1,'#876a37'); R(x+24,y+8,5,1,'#876a37');
+      // crenellations (gear-like teeth) + shadow
+      R(x+6,y+3,3,2,'#8e7142'); R(x+10,y+3,3,2,'#8e7142');
+      R(x+14,y+3,3,2,'#8e7142'); R(x+18,y+3,3,2,'#8e7142'); R(x+22,y+3,3,2,'#8e7142');
+      R(x+6,y+5,19,1,'#5a4324');
+      // Inner courtyard (clear, not noisy)
+      R(x+8,y+11,16,10,'#b9ad8c');
+      R(x+9,y+12,14,8,'#d4cdb3');
+      R(x+8,y+11,16,1,'#eee5ca');
 
-      // battlements across roof
-      R(x+9,y+4,3,4,'#bb9d5f'); R(x+13,y+4,3,4,'#bb9d5f');
-      R(x+17,y+4,3,4,'#bb9d5f'); R(x+21,y+4,3,4,'#bb9d5f');
-      R(x+12,y+6,1,2,'#5d4726'); R(x+16,y+6,1,2,'#5d4726'); R(x+20,y+6,1,2,'#5d4726');
+      // Central command tower (fatter++)
+      R(x+9,y+7,10,14,'#6b512b');
+      R(x+10,y+8,8,12,'#886b3d');
+      ctx.fillStyle='#5b4425';
+      ctx.beginPath();ctx.moveTo(x+8,y+7);ctx.lineTo(x+20,y+7);ctx.lineTo(x+18,y+5);ctx.lineTo(x+10,y+5);ctx.closePath();ctx.fill();
+      R(x+13,y+2,1,5,'#553f22');
+      R(x+14,y+2,6,2,'#b7332a');
+      R(x+14,y+2,6,1,'#d45145');
+      // fuzzy contour on command tower
+      for(let i=0;i<7;i++){
+        if(rng(1040+i)>0.28) P(x+9,y+8+i*2,'rgba(56,40,22,0.36)');
+        if(rng(1060+i)>0.28) P(x+19,y+8+i*2,'rgba(56,40,22,0.34)');
+      }
 
-      // command tower banner
-      R(x+15,y+0,1,5,'#654022');
-      R(x+16,y+0,5,3,'#b7332a');
-      R(x+16,y+0,5,1,'#d45245');
-      P(x+19,y+1,'#f1d56a');
+      // Back wall crenellations
+      R(x+6,y+4,3,3,'#8d7042');
+      R(x+10,y+4,3,3,'#8d7042');
+      R(x+14,y+4,3,3,'#8d7042');
+      R(x+18,y+4,3,3,'#8d7042');
+      R(x+22,y+4,3,3,'#8d7042');
 
-      // gate + arrow slits
-      R(x+13,y+21,6,8,'#4a3218'); R(x+14,y+22,4,7,'#38240f');
-      R(x+9,y+16,2,5,'#4c3920'); R(x+21,y+16,2,5,'#4c3920');
+      // FE GBA-style fuzzy contour for whole building (fixed: no upward-shifted seam)
+      for(let i=0;i<12;i++){
+        if(rng(600+i)>0.18) P(x+4+i*2,y+11,'rgba(66,48,27,0.42)');
+        if(rng(620+i)>0.26) P(x+4+i*2,y+24,'rgba(58,42,24,0.34)');
+      }
+      for(let i=0;i<8;i++){
+        if(rng(640+i)>0.28) P(x+7,y+9+i*2,'rgba(63,45,24,0.36)');
+        if(rng(660+i)>0.28) P(x+25,y+9+i*2,'rgba(63,45,24,0.34)');
+      }
+      // outer silhouette fuzzy contour (left/right + top)
+      for(let i=0;i<20;i++){
+        if(rng(900+i)>0.35) P(x+3,y+7+i,'rgba(54,39,21,0.34)');
+        if(rng(930+i)>0.35) P(x+28,y+7+i,'rgba(54,39,21,0.32)');
+      }
+      for(let i=0;i<12;i++){
+        if(rng(960+i)>0.30) P(x+5+i*2,y+5,'rgba(56,40,22,0.34)');
+      }
+      // soft highlights to avoid hard contour look
+      for(let i=0;i<6;i++){
+        if(rng(680+i)>0.36) P(x+8+i*3,y+12,'rgba(230,211,162,0.30)');
+        if(rng(700+i)>0.40) P(x+8+i*3,y+25,'rgba(210,188,140,0.24)');
+      }
 
-      // masonry lines
-      ctx.strokeStyle='#a4874f';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+7,y+17);ctx.lineTo(x+25,y+17);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+7,y+22);ctx.lineTo(x+12,y+22);ctx.moveTo(x+20,y+22);ctx.lineTo(x+25,y+22);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+7,y+26);ctx.lineTo(x+25,y+26);ctx.stroke();
+      // Front wall foreground pass (render after command tower so it overlaps tower base)
+      R(x+5,y+18,23,11,'rgba(133,103,56,0.94)');
+      R(x+5,y+18,23,3,'rgba(168,139,87,0.92)');
+      R(x+5,y+28,23,1,'rgba(95,69,38,0.94)');
+
+      // Weathering/noise on front wall (aged, shadowed)
+      for(let i=0;i<22;i++){
+        const nx=x+6+Math.floor(rng(1200+i)*21);
+        const ny=y+19+Math.floor(rng(1240+i)*9);
+        if(rng(1280+i)>0.35) P(nx,ny,'rgba(72,52,29,0.34)');
+        if(rng(1320+i)>0.55) P(nx+1,ny,'rgba(178,150,98,0.22)');
+      }
+      // subtle damp streaks
+      for(let i=0;i<5;i++){
+        const sx=x+7+Math.floor(rng(1360+i)*19);
+        const sy=y+20+Math.floor(rng(1380+i)*6);
+        R(sx,sy,1,3,'rgba(52,38,21,0.24)');
+      }
+
+      // Gate opening
+      R(x+14,y+22,4,7,'#4a3218');
+      R(x+15,y+23,2,6,'#35210f');
+
+      // Front two round towers — render LAST so they sit above walls/contours
+      const frontTower=(cx, dir, body, top)=>{
+        // tower body slightly outside wall line to read as independent cylinder
+        R(cx-4,y+17,9,12,body);
+        ctx.fillStyle=top;
+        ctx.beginPath();ctx.ellipse(cx,y+17,3.9,2.2,0,0,Math.PI*2);ctx.fill();
+
+        // fuzzy tower contour pixels
+        for(let i=0;i<8;i++) if(rng(760+cx+i)>0.28) P(cx-4,y+18+i,'rgba(58,40,22,0.44)');
+        for(let i=0;i<8;i++) if(rng(780+cx+i)>0.28) P(cx+4,y+18+i,'rgba(58,40,22,0.44)');
+        if(rng(800+cx)>0.3) P(cx-2,y+16,'rgba(58,40,22,0.42)');
+        if(rng(801+cx)>0.3) P(cx+2,y+16,'rgba(58,40,22,0.42)');
+        // soft rim highlight
+        if(rng(820+cx)>0.2) P(cx-1,y+16,'rgba(240,219,171,0.65)');
+        if(rng(821+cx)>0.35) P(cx,y+16,'rgba(230,206,154,0.55)');
+
+        // separation seam where tower meets front wall (soft)
+        const seamX = dir < 0 ? cx+4 : cx-4;
+        R(seamX,y+22,1,6,'rgba(48,34,18,0.38)');
+
+        // base shadow
+        ctx.fillStyle='rgba(0,0,0,0.2)';
+        ctx.beginPath();ctx.ellipse(cx,y+29,3.2,1.1,0,0,Math.PI);ctx.fill();
+      };
+      frontTower(x+5,-1,'#7e6136','#b19360');   // front-left corner
+      frontTower(x+27,1,'#85683b','#ba9c69');   // front-right corner
+
+      // Tower weathering/noise (old stone texture)
+      const towerNoise=(cx)=>{
+        for(let i=0;i<10;i++){
+          const tx=cx-3+Math.floor(rng(1400+cx+i)*6);
+          const ty=y+18+Math.floor(rng(1420+cx+i)*9);
+          if(rng(1440+cx+i)>0.32) P(tx,ty,'rgba(66,47,26,0.34)');
+          if(rng(1460+cx+i)>0.60) P(tx,ty,'rgba(186,158,106,0.24)');
+        }
+        // tiny crack mark
+        const cx2=cx-1+Math.floor(rng(1480+cx)*3);
+        const cy2=y+22+Math.floor(rng(1490+cx)*4);
+        R(cx2,cy2,1,2,'rgba(46,33,18,0.35)');
+      };
+      towerNoise(x+5);
+      towerNoise(x+27);
 
     }else if(type==='village'){
       // FE GBA-style village: front wall + two vertical roof parallelograms
