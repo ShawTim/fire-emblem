@@ -1234,51 +1234,56 @@ const Sprites = {
       ctx.moveTo(x+6,y+8); ctx.lineTo(x+18,y+4); ctx.stroke();
 
     }else if(type==='throne'){
-      // GBA FE-style ornate throne — golden chair with red cushion on small carpet
+      // Redrawn FE-style throne: clearer silhouette and proportions
       drawGroundContactShadow(x + 16, y + 28.5, 10.5, 2.0, 0.17);
-      // Red carpet (smaller, centered)
-      R(x+6,y+10,20,20,'#b01818');
-      R(x+7,y+11,18,18,'#c82020');
-      // Carpet fringe/border
-      R(x+6,y+10,20,1,'#d8a020');
-      R(x+6,y+29,20,1,'#d8a020');
-      R(x+6,y+10,1,20,'#d8a020');
-      R(x+25,y+10,1,20,'#d8a020');
-      // Carpet inner border
-      R(x+7,y+11,18,1,'#a08018');
-      R(x+7,y+28,18,1,'#a08018');
-      // Throne back (tall golden frame)
-      R(x+9,y+2,14,14,'#c8a020');
-      R(x+10,y+3,12,12,'#d8b030');
-      R(x+11,y+4,10,10,'#e0c040');
-      // Back panel (red upholstery)
-      R(x+12,y+5,8,8,'#c02020');
-      R(x+13,y+6,6,6,'#d03030');
-      // Crown ornament at top
-      R(x+13,y+1,6,2,'#e8c830');
-      R(x+14,y+0,4,2,'#f0d840');
-      P(x+15,y+0,'#ff4040');  // center jewel
-      P(x+17,y+0,'#ff4040');
-      // Side finials
-      R(x+9,y+1,2,3,'#d0a820');
-      R(x+21,y+1,2,3,'#d0a820');
-      // Armrests
-      R(x+8,y+12,3,10,'#c8a020');
-      R(x+21,y+12,3,10,'#c8a020');
-      R(x+8,y+12,3,2,'#e0c040');  // armrest top highlight
-      R(x+21,y+12,3,2,'#e0c040');
-      // Seat
-      R(x+10,y+14,12,6,'#d8b030');
-      R(x+11,y+15,10,4,'#c82020');  // red cushion
-      R(x+11,y+15,10,1,'#e03838');  // cushion highlight
-      // Throne legs
-      R(x+9,y+20,3,8,'#b89018');
-      R(x+20,y+20,3,8,'#b89018');
-      R(x+9,y+27,3,1,'#d0a828');
-      R(x+20,y+27,3,1,'#d0a828');
-      // Armrest jewels
-      P(x+9,y+13,'#40c0ff');
-      P(x+22,y+13,'#40c0ff');
+
+      // carpet
+      R(x+7,y+11,18,18,'#b51c1c');
+      R(x+8,y+12,16,16,'#ca2828');
+      R(x+7,y+11,18,1,'#d8a020');
+      R(x+7,y+28,18,1,'#8a6b16');
+      R(x+7,y+11,1,18,'#a8841e');
+      R(x+24,y+11,1,18,'#a8841e');
+
+      // main throne silhouette (backrest)
+      R(x+10,y+3,12,14,'#ba9722');
+      R(x+11,y+4,10,12,'#d1ad34');
+      R(x+12,y+5,8,10,'#e0be4b');
+
+      // red upholstery panel
+      R(x+13,y+6,6,8,'#c32626');
+      R(x+14,y+7,4,6,'#d63a3a');
+
+      // top crown
+      R(x+13,y+2,6,2,'#e8c940');
+      R(x+14,y+1,4,2,'#f1d95f');
+      P(x+15,y+1,'#ff4a4a'); P(x+17,y+1,'#ff4a4a');
+
+      // armrests
+      R(x+9,y+13,3,8,'#c09a26');
+      R(x+20,y+13,3,8,'#c09a26');
+      R(x+9,y+13,3,2,'#e4c34f');
+      R(x+20,y+13,3,2,'#e4c34f');
+
+      // seat + cushion
+      R(x+11,y+15,10,5,'#d7b440');
+      R(x+12,y+16,8,3,'#c82828');
+      R(x+12,y+16,8,1,'#e54343');
+
+      // legs
+      R(x+10,y+20,2,8,'#b78f1d');
+      R(x+20,y+20,2,8,'#b78f1d');
+      R(x+10,y+27,2,1,'#d8b23c');
+      R(x+20,y+27,2,1,'#d8b23c');
+
+      // soft contour/readability
+      R(x+10,y+3,1,25,'rgba(82,62,28,0.40)');
+      R(x+21,y+3,1,25,'rgba(82,62,28,0.36)');
+      R(x+10,y+27,12,1,'rgba(70,52,24,0.34)');
+      for(let i=0;i<8;i++){
+        if(rng(2200+i)>0.4) P(x+11+i,y+4,'rgba(78,58,28,0.30)');
+        if(rng(2220+i)>0.45) P(x+11+i,y+20,'rgba(68,50,24,0.26)');
+      }
 
     }else if(type==='pillar'){
       // GBA FE-style stone column — warm stone tones, not grey
