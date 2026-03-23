@@ -1177,47 +1177,61 @@ const Sprites = {
       drawGroundContactShadow(x + 16, y + 28, 11.8, 2.3, 0.2);
       R(x+6,y+27,20,2,'rgba(0,0,0,0.1)');
 
-      // front façade (~35-40%)
+      // 屋身
       R(x+8,y+20,16,8,'#bfa56f');
       R(x+9,y+21,14,6,'#eadcb2');
       R(x+8,y+20,16,1,'#f7ebc4');
       R(x+8,y+27,16,1,'#8e7444');
-
-      // roof (~60-65%): two VERTICAL parallelograms (left big lit, right small shadow)
-      // narrowed to ~60% tile width + tuned asymmetric slant
-      // big lit plane (left) — reduced slant, shifted right by 2px
-      ctx.fillStyle='#e67852';
-      ctx.beginPath();
-      ctx.moveTo(x+5,y+7);   // TL (wider +2px)
-      ctx.lineTo(x+19,y+3);  // TR
-      ctx.lineTo(x+19,y+20); // BR
-      ctx.lineTo(x+5,y+24);  // BL (wider +2px)
-      ctx.closePath();
-      ctx.fill();
-
-      // small shadow plane (right) — shifted right by 2px and shorter
-      ctx.fillStyle='#32100f';
-      ctx.beginPath();
-      ctx.moveTo(x+19,y+3);  // TL
-      ctx.lineTo(x+26,y+9);  // TR
-      ctx.lineTo(x+26,y+24); // BR (shorter)
-      ctx.lineTo(x+19,y+18); // BL (shorter)
-      ctx.closePath();
-      ctx.fill();
-
-      // clear seam + eave line
-      ctx.strokeStyle='#ffd0b0'; ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+19,y+3);ctx.lineTo(x+19,y+20);ctx.stroke();
-
-
-      // centered doorway
+      // 屋身細節
       R(x+13,y+22,5,6,'#4a2b14');
       R(x+14,y+23,3,5,'#6c4326');
       P(x+17,y+25,'#d5b256');
-
-      // small windows
       R(x+10,y+22,2,3,'#2a2230'); R(x+10,y+23,1,1,'#f0de87');
       R(x+20,y+22,2,3,'#2a2230'); R(x+20,y+23,1,1,'#f0de87');
+      // 屋身殘舊感
+      for(let i=0;i<10;i++){
+        const wx=x+9+Math.floor(rng(1920+i)*13);
+        const wy=y+21+Math.floor(rng(1940+i)*6);
+        if(rng(1960+i)>0.40) P(wx,wy,'rgba(84,68,44,0.24)');
+      }
+
+      // 屋身輪廓
+      R(x+8,y+20,1,8,'rgba(52,34,20,0.50)');
+      R(x+23,y+20,1,8,'rgba(52,34,20,0.46)');
+      R(x+8,y+27,16,1,'rgba(52,34,20,0.42)');
+
+      // 屋頂
+      ctx.fillStyle='#e67852';
+      ctx.beginPath();
+      ctx.moveTo(x+5,y+7);
+      ctx.lineTo(x+19,y+3);
+      ctx.lineTo(x+19,y+20);
+      ctx.lineTo(x+5,y+24);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle='#32100f';
+      ctx.beginPath();
+      ctx.moveTo(x+19,y+3);
+      ctx.lineTo(x+26,y+9);
+      ctx.lineTo(x+26,y+24);
+      ctx.lineTo(x+19,y+18);
+      ctx.closePath();
+      ctx.fill();
+
+      // 屋頂輪廓
+      ctx.strokeStyle='rgba(64,24,20,0.52)';
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(x+5,y+24); ctx.lineTo(x+5,y+7); ctx.lineTo(x+19,y+3); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x+19,y+3); ctx.lineTo(x+26,y+9); ctx.lineTo(x+26,y+24); ctx.lineTo(x+19,y+18); ctx.stroke();
+      // add missing lower roof contour (left plane bottom edge)
+      ctx.beginPath();
+      ctx.moveTo(x+5,y+24); ctx.lineTo(x+19,y+20); ctx.stroke();
+      ctx.strokeStyle='rgba(236,208,156,0.36)';
+      ctx.beginPath();
+      ctx.moveTo(x+6,y+8); ctx.lineTo(x+18,y+4); ctx.stroke();
 
     }else if(type==='throne'){
       // GBA FE-style ornate throne — golden chair with red cushion on small carpet
