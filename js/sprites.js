@@ -1286,36 +1286,56 @@ const Sprites = {
       }
 
     }else if(type==='pillar'){
-      // GBA FE-style stone column — warm stone tones, not grey
-      // Column shadow on ground
-      drawGroundContactShadow(x + 16, y + 30, 9.5, 2.2, 0.2);
-      R(x+16,y+6,10,24,'rgba(0,0,0,0.10)');
-      R(x+18,y+8,8,20,'rgba(0,0,0,0.05)');
-      // Base (wider bottom piece — warm stone)
-      R(x+7,y+27,18,3,'#b0a080');
-      R(x+6,y+29,20,2,'#a09070');
-      R(x+8,y+27,16,1,'#d0c0a0');  // top highlight
-      R(x+6,y+30,20,1,'#887860');  // bottom shadow
-      // Column shaft — cylindrical shading (warm beige-tan)
-      R(x+10,y+5,12,23,'#a09070');   // dark left edge
-      R(x+11,y+5,10,23,'#b8a888');   // mid tone
-      R(x+12,y+5,8,23,'#c8b898');    // lighter
-      R(x+13,y+5,6,23,'#d0c0a0');    // highlight band
-      R(x+14,y+6,3,21,'#d8c8a8');    // bright highlight stripe
-      // Fluting grooves (darker vertical lines)
-      R(x+11,y+7,1,19,'#a89878');
-      R(x+19,y+7,1,19,'#a89878');
-      R(x+15,y+7,1,19,'#c0b090');  // center groove (lighter)
-      // Capital (ornate top piece — warm stone)
-      R(x+8,y+3,16,3,'#b8a888');
-      R(x+7,y+1,18,3,'#c8b898');
-      R(x+6,y+0,20,2,'#d8c8a8');
-      // Capital decoration (volute details)
-      R(x+7,y+1,2,2,'#a89878');
-      R(x+23,y+1,2,2,'#a89878');
-      R(x+9,y+4,14,1,'#a09070');  // capital bottom shadow
-      // Subtle column texture
-      P(x+13,y+10,'#a89878'); P(x+17,y+16,'#a89878');
+      // Pillar with clearer 45° look-down read (keep original style)
+      drawGroundContactShadow(x + 16, y + 30, 9.6, 2.2, 0.2);
+      R(x+16,y+7,10,22,'rgba(0,0,0,0.09)');
+
+      // Base (original palette, stronger top plane)
+      ctx.fillStyle='#b0a080';
+      ctx.beginPath();
+      ctx.moveTo(x+7,y+27); ctx.lineTo(x+23,y+27); ctx.lineTo(x+25,y+30); ctx.lineTo(x+5,y+30);
+      ctx.closePath(); ctx.fill();
+      R(x+7,y+27,16,1,'#d0c0a0');
+      R(x+5,y+30,20,1,'#887860');
+      // right side of base
+      R(x+23,y+27,2,3,'#9a8a6a');
+
+      // Shaft front plane (close to original)
+      R(x+10,y+6,11,22,'#a09070');
+      R(x+11,y+6,9,22,'#b8a888');
+      R(x+12,y+6,7,22,'#c8b898');
+      R(x+13,y+6,5,22,'#d0c0a0');
+      R(x+14,y+7,3,20,'#d8c8a8');
+
+      // Right side plane to force 3D read
+      R(x+20,y+7,2,21,'#9f8f72');
+      R(x+21,y+7,1,21,'#8f8064');
+
+      // Fluting grooves
+      R(x+11,y+8,1,18,'#a89878');
+      R(x+18,y+8,1,18,'#a89878');
+      R(x+15,y+8,1,18,'#c0b090');
+
+      // Capital top plane (45°) + faces
+      ctx.fillStyle='#d8c8a8';
+      ctx.beginPath();
+      ctx.moveTo(x+8,y+2); ctx.lineTo(x+20,y+2); ctx.lineTo(x+23,y+6); ctx.lineTo(x+11,y+6);
+      ctx.closePath(); ctx.fill();
+      // front face
+      R(x+11,y+6,10,3,'#b8a888');
+      // right face
+      ctx.fillStyle='#a09070';
+      ctx.beginPath();
+      ctx.moveTo(x+20,y+2); ctx.lineTo(x+23,y+6); ctx.lineTo(x+23,y+9); ctx.lineTo(x+20,y+5);
+      ctx.closePath(); ctx.fill();
+
+      // keep original decorative hints
+      R(x+8,y+3,2,2,'#a89878');
+      R(x+22,y+3,2,2,'#a89878');
+      R(x+11,y+8,10,1,'#a09070');
+
+      // subtle texture
+      P(x+13,y+11,'#a89878'); P(x+17,y+16,'#a89878');
       P(x+14,y+22,'#d8c8a8'); P(x+12,y+14,'#d8c8a8');
 
     }else if(type==='gate'){
