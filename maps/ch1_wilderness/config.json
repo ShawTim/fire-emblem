@@ -7,11 +7,24 @@
   "width": 16,
   "height": 14,
   "playerUnits": [
-    {"charId": "eirine", "x": 1, "y": 12},
-    {"charId": "marcus", "x": 2, "y": 13}
+    {
+      "charId": "eirine",
+      "x": 1,
+      "y": 12
+    },
+    {
+      "charId": "marcus",
+      "x": 2,
+      "y": 13
+    }
   ],
   "newRecruits": [
-    {"charId": "lina", "x": 5, "y": 5, "turnJoin": 1}
+    {
+      "charId": "lina",
+      "x": 5,
+      "y": 5,
+      "turnJoin": 1
+    }
   ],
   "enemies": [
     {
@@ -19,7 +32,9 @@
       "level": 1,
       "x": 7,
       "y": 8,
-      "items": ["slimLance"],
+      "items": [
+        "slimLance"
+      ],
       "ai": "aggressive",
       "name": "帝國追兵"
     },
@@ -28,7 +43,9 @@
       "level": 1,
       "x": 9,
       "y": 7,
-      "items": ["slimLance"],
+      "items": [
+        "slimLance"
+      ],
       "ai": "aggressive",
       "name": "帝國追兵"
     },
@@ -37,7 +54,9 @@
       "level": 2,
       "x": 5,
       "y": 8,
-      "items": ["ironLance"],
+      "items": [
+        "ironLance"
+      ],
       "ai": "aggressive",
       "name": "帝國追兵"
     },
@@ -46,7 +65,9 @@
       "level": 1,
       "x": 12,
       "y": 7,
-      "items": ["ironAxe"],
+      "items": [
+        "ironAxe"
+      ],
       "ai": "aggressive",
       "name": "帝國斧兵"
     },
@@ -55,7 +76,9 @@
       "level": 2,
       "x": 10,
       "y": 5,
-      "items": ["ironAxe"],
+      "items": [
+        "ironAxe"
+      ],
       "ai": "aggressive",
       "name": "帝國斧兵"
     },
@@ -64,7 +87,9 @@
       "level": 2,
       "x": 13,
       "y": 4,
-      "items": ["ironBow"],
+      "items": [
+        "ironBow"
+      ],
       "ai": "defensive",
       "name": "帝國弓兵"
     },
@@ -73,7 +98,9 @@
       "level": 2,
       "x": 4,
       "y": 3,
-      "items": ["ironLance"],
+      "items": [
+        "ironLance"
+      ],
       "ai": "aggressive",
       "name": "帝國精兵"
     },
@@ -82,7 +109,9 @@
       "level": 3,
       "x": 8,
       "y": 3,
-      "items": ["ironLance"],
+      "items": [
+        "ironLance"
+      ],
       "ai": "aggressive",
       "name": "帝國精兵"
     },
@@ -91,7 +120,10 @@
       "level": 3,
       "x": 11,
       "y": 2,
-      "items": ["ironAxe", "handAxe"],
+      "items": [
+        "ironAxe",
+        "handAxe"
+      ],
       "ai": "aggressive",
       "name": "帝國老兵"
     },
@@ -100,7 +132,9 @@
       "level": 3,
       "x": 6,
       "y": 1,
-      "items": ["ironBow"],
+      "items": [
+        "ironBow"
+      ],
       "ai": "defensive",
       "name": "帝國弓兵"
     },
@@ -109,7 +143,9 @@
       "level": 3,
       "x": 3,
       "y": 1,
-      "items": ["ironLance"],
+      "items": [
+        "ironLance"
+      ],
       "ai": "defensive",
       "name": "帝國精兵"
     },
@@ -118,11 +154,17 @@
       "level": 4,
       "x": 5,
       "y": 2,
-      "items": ["ironLance"],
+      "items": [
+        "ironLance"
+      ],
       "ai": "boss",
       "name": "追擊隊長",
       "isBoss": true,
-      "bonusStats": { "hp": 3, "str": 1, "def": 2 }
+      "bonusStats": {
+        "hp": 3,
+        "str": 1,
+        "def": 2
+      }
     }
   ],
   "npcs": [],
@@ -133,36 +175,28 @@
       "type": "recruit",
       "text": [
         {
-          "speaker": null,
-          "text": "森林深處傳來弓弦的聲音。一個綠色短髮的年輕女弓手從林間現身。"
-        },
-        {
           "speaker": "lina",
-          "text": "喂，你們！前面有帝國的追兵在搜索——你們就是他們要找的人吧？"
+          "text": "怎麼？還在懷疑我？"
         },
         {
           "speaker": "eirine",
-          "text": "你是……？你怎麼知道的？"
+          "text": "不，我只是...很高興妳願意加入。"
         },
         {
           "speaker": "lina",
-          "text": "我是莉娜，在這片森林裡狩獵維生的弓箭手。帝國的人從昨晚就在翻找整個荒野了。說是要抓什麼叛逃的公主。"
+          "text": "別自作多情，我只是不想讓帝國好過。"
         },
         {
           "speaker": "marcus",
-          "text": "……消息傳得比我預想的快。姑娘，如果你能指條安全的路——"
+          "text": "有妳在，我們的射程更遠了。"
         },
         {
           "speaker": "lina",
-          "text": "安全的路？太遲了。他們已經從北邊包圍過來了。——不過，我對這片森林瞭如指掌。讓我幫你們。"
+          "text": "跟緊我，這片地形的路我最熟。"
         },
         {
           "speaker": "eirine",
-          "text": "你願意幫助我們？可是這很危險……"
-        },
-        {
-          "speaker": "lina",
-          "text": "公主殿下，帝國佔了我們村莊的田地，趕走了獵人。我早就想跟他們算帳了。我的弓可不是擺設！"
+          "text": "那麼...一起前往北境村莊吧！"
         }
       ]
     }

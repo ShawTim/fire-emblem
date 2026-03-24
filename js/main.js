@@ -15,12 +15,32 @@ UnitLayer.init();
 let game;
 preloadChapters().then(() => {
   game = new Game(canvas);
+
+  // Hidden debug query: ?chapter=2 or ?ch=2
+  // - 1-based chapter number is recommended (序章=1, 第一章=2 ...)
+  // - 0-based id is also accepted internally by Game.startNewGame
+  const params = new URLSearchParams(window.location.search);
+  const chapterRaw = params.get('chapter') || params.get('ch');
+  if (chapterRaw !== null && chapterRaw !== '') {
+    const n = parseInt(chapterRaw, 10);
+    if (!isNaN(n)) game.debugStartChapter = n;
+  }
+
   game.init();
   requestAnimationFrame(gameLoop);
 }).catch(err => {
   console.error('Failed to preload chapters:', err);
   // Start game anyway with fallback
   game = new Game(canvas);
+
+  // Keep same hidden debug behavior in fallback path
+  const params = new URLSearchParams(window.location.search);
+  const chapterRaw = params.get('chapter') || params.get('ch');
+  if (chapterRaw !== null && chapterRaw !== '') {
+    const n = parseInt(chapterRaw, 10);
+    if (!isNaN(n)) game.debugStartChapter = n;
+  }
+
   game.init();
   requestAnimationFrame(gameLoop);
 });

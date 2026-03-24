@@ -26,6 +26,7 @@ class Game {
     this.combatStepTimer = 0;
     this.prevUnitPos = null;
     this.battleScene = new BattleScene();
+    this.debugStartChapter = null; // hidden query jump, set by main.js
   }
 
   init() {
@@ -63,7 +64,17 @@ class Game {
     this.currentChapter = 0;
     UI.hideTitleScreen();
     UI.clearOverlays();
-    this.startChapter(0).catch(console.error);
+
+    // Hidden debug jump: if query param requests a chapter, start from it.
+    // Accepts either chapter id (0-based) or chapter number (1-based).
+    let startId = 0;
+    if (Number.isInteger(this.debugStartChapter)) {
+      const n = this.debugStartChapter;
+      if (n >= 1 && n <= CHAPTER_MANIFEST.length) startId = n - 1;
+      else if (n >= 0 && n < CHAPTER_MANIFEST.length) startId = n;
+    }
+
+    this.startChapter(startId).catch(console.error);
   }
 
   continueGame() {
@@ -126,6 +137,7 @@ class Game {
     // Place enemies
     for (const ed of chapter.enemies) {
       const unit = new Unit({
+        charId: ed.charId || null,
         name: ed.name || '敵兵', classId: ed.classId, level: ed.level || 1,
         faction: 'enemy', x: ed.x, y: ed.y, ai: ed.ai || 'aggressive',
         isBoss: ed.isBoss || false, isCain: ed.isCain || false,
@@ -251,6 +263,7 @@ class Game {
       } else if (evt.type === 'reinforce') {
         for (const ed of (evt.enemies || [])) {
           const unit = new Unit({
+            charId: ed.charId || null,
             name: ed.name || '敵兵', classId: ed.classId, level: ed.level || 1,
             faction: 'enemy', x: ed.x, y: ed.y, ai: ed.ai || 'aggressive',
             isBoss: ed.isBoss || false, items: ed.items,

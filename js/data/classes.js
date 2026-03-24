@@ -5,13 +5,13 @@ const CLASSES = {
     name: '領主', weapons: ['sword'], mov: 5,
     promo: [{ to: 'masterLord', item: 'starCrest' }],
     caps: { hp:60, str:20, mag:15, skl:20, spd:20, lck:30, def:20, res:20 },
-    sprites: { stand_m: 'lord_M_stand.png', stand_f: 'lord_F_stand.png', walk_m: 'lord_M_move.png', walk_f: 'lord_F_move.png' }
+    sprites: { stand_m: 'lord_M_stand.png', stand_f: 'lord_F_stand.png', walk_m: 'lord_M_walk.png', walk_f: 'lord_F_move.png' }
   },
   masterLord: { 
     name: '聖王', weapons: ['sword','lance'], mov: 6, promoted: true,
     caps: { hp:60, str:25, mag:20, skl:25, spd:25, lck:30, def:25, res:25 },
     sprites: { stand_m: '', stand_f: '', walk_m: '', walk_f: '' },
-    sprites: { stand_m: 'masterLord_M_stand.png', stand_f: 'masterLord_F_stand.png', walk_m: 'masterLord_M_move.png', walk_f: 'masterLord_F_move.png' },
+    sprites: { stand_m: 'masterLord_M_stand.png', stand_f: 'masterLord_F_stand.png', walk_m: 'masterLord_M_walk.png', walk_f: 'masterLord_F_walk.png' },
     bonus: { hp:3, str:2, mag:1, skl:2, spd:2, def:2, res:3 }
   },
   cavalier: {
@@ -54,7 +54,7 @@ const CLASSES = {
     name: '戰士', weapons: ['axe'], mov: 5,
     promo: [{ to: 'warrior' }, { to: 'hero' }],
     caps: { hp:60, str:22, mag:5, skl:18, spd:18, lck:30, def:18, res:15 },
-    sprites: { stand_m: 'fighter_M_stand.png', stand_f: 'fighter_F_stand.png', walk_m: 'fighter_M_move.png', walk_f: 'fighter_F_move.png' }
+    sprites: { stand_m: 'fighter_M_stand.png', stand_f: 'fighter_F_stand.png', walk_m: 'fighter_M_walk.png', walk_f: 'fighter_F_walk.png' }
   },
   warrior: {
     name: '勇者', weapons: ['axe','bow'], mov: 6, promoted: true,

@@ -101,9 +101,14 @@ const UI = {
     const avoRate = unit.spd * 2 + unit.lck;
     const critRate = weapon ? Math.floor(unit.skl / 2) + weapon.crit : 0;
     // Portrait: use <img> if available, fallback to canvas
-    const hasPortrait = unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded;
+    const enemyBossPortrait = (unit.faction === 'enemy' && unit.isBoss)
+      ? ((unit.charId || 'guardCaptain') + '.png')
+      : null;
+    const hasPortrait = enemyBossPortrait
+      ? true
+      : (unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded);
     const portraitHtml = hasPortrait
-      ? `<img src="portraits/${unit.charId}.png" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;flex-shrink:0;object-fit:cover;object-position:center 30%">`
+      ? `<img src="portraits/${enemyBossPortrait || (unit.charId + '.png')}" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;flex-shrink:0;object-fit:cover;object-position:center 30%">`
       : `<canvas id="panel-portrait" width="40" height="40" style="width:40px;height:40px;border:1px solid ${unit.faction==='player'?'#4a9eff':'#f44'};border-radius:4px;flex-shrink:0"></canvas>`;
     this.unitInfo.innerHTML = `
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
@@ -489,9 +494,14 @@ const UI = {
 
     const borderColor = isPlayer ? '#4a9eff' : '#ff4a4a';
     const nameColor = isPlayer ? '#4a9eff' : '#ff4a4a';
-    const hasStatusPortrait = unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded;
+    const enemyBossStatusPortrait = (unit.faction === 'enemy' && unit.isBoss)
+      ? ((unit.charId || 'guardCaptain') + '.png')
+      : null;
+    const hasStatusPortrait = enemyBossStatusPortrait
+      ? true
+      : (unit.charId && Sprites._portraitCache[unit.charId] && Sprites._portraitCache[unit.charId].loaded);
     const statusPortraitHtml = hasStatusPortrait
-      ? `<img src="portraits/${unit.charId}.png" style="width:96px;height:96px;border:2px solid ${borderColor};border-radius:4px;object-fit:cover;object-position:center 30%">`
+      ? `<img src="portraits/${enemyBossStatusPortrait || (unit.charId + '.png')}" style="width:96px;height:96px;border:2px solid ${borderColor};border-radius:4px;object-fit:cover;object-position:center 30%">`
       : `<canvas id="status-portrait" width="96" height="96" style="width:96px;height:96px;border:2px solid ${borderColor};border-radius:4px"></canvas>`;
 
     overlay.innerHTML = `

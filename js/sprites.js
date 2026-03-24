@@ -1790,7 +1790,6 @@ const Sprites = {
 
   drawPortrait: function(ctx, charId, w, h) {
     const ch = CHARACTERS[charId];
-    if (!ch) { ctx.fillStyle = '#333'; ctx.fillRect(0, 0, w, h); return; }
     if (!this._portraitCache[charId]) {
       const img = new Image();
       img.src = 'portraits/' + charId + '.png';
@@ -1800,7 +1799,10 @@ const Sprites = {
     }
     const cached = this._portraitCache[charId];
     if (cached.loaded) { ctx.drawImage(cached.img, 0, 0, w, h); return; }
-    if (!ch.portrait) { ctx.fillStyle = '#333'; ctx.fillRect(0, 0, w, h); return; }
+
+    // If image not yet loaded (or missing), fallback to procedural portrait
+    // only when character metadata exists.
+    if (!ch || !ch.portrait) { ctx.fillStyle = '#333'; ctx.fillRect(0, 0, w, h); return; }
     const p = ch.portrait;
     ctx.fillStyle = '#223'; ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = p.skin; ctx.fillRect(16, 20, 32, 36);
