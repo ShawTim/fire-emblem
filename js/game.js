@@ -27,6 +27,8 @@ class Game {
     this.prevUnitPos = null;
     this.battleScene = new BattleScene();
     this.debugStartChapter = null; // hidden query jump, set by main.js
+    this._deferTurnEvents = false;
+    this._deferTurnEventsMs = 0;
   }
 
   init() {
@@ -160,6 +162,8 @@ class Game {
 
     UI.showChapterCard(chapter.title, chapter.subtitle, () => {
       if (chapter.dialogues && chapter.dialogues.pre) {
+        this._deferTurnEvents = true;
+        this._deferTurnEventsMs = Date.now() + 500;
         this.state = 'dialogue';
         BGM.play('dialogue', true);
         this.dialogue.start(chapter.dialogues.pre, () => {
@@ -231,8 +235,16 @@ class Game {
 
   processTurnEvents() {
     if (!this.chapterData.turnEvents) return;
+    if (this._deferTurnEvents) {
+      if (Date.now() < this._deferTurnEventsMs) return;
+      this._deferTurnEvents = false;
+    }
+
+    const dialogueQueue = [];
+
     for (const evt of this.chapterData.turnEvents) {
       if (evt.turn !== this.turn) continue;
+
       if (evt.type === 'recruit' && this.chapterData.newRecruits) {
         for (const nr of this.chapterData.newRecruits) {
           if (nr.turnJoin !== this.turn) continue;
@@ -255,11 +267,8 @@ class Game {
           }
           this.units.push(unit);
         }
-        if (evt.text) {
-          const prevState = this.state;
-          this.state = 'dialogue';
-          this.dialogue.start(evt.text, () => { this.state = prevState; });
-        }
+        if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
+
       } else if (evt.type === 'reinforce') {
         for (const ed of (evt.enemies || [])) {
           const unit = new Unit({
@@ -271,7 +280,17 @@ class Game {
           });
           this.units.push(unit);
         }
+        if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
+
+      } else if (evt.type === 'dialogue') {
+        if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
       }
+    }
+
+    if (dialogueQueue.length) {
+      const prevState = this.state;
+      this.state = 'dialogue';
+      this.dialogue.start(dialogueQueue, () => { this.state = prevState; });
     }
   }
 

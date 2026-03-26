@@ -1,1 +1,62 @@
-[]
+{
+  "pre": [
+    {
+      "speaker": "eirine",
+      "text": "發現新線索。"
+    },
+    {
+      "speaker": "marcus",
+      "text": "說重點。"
+    },
+    {
+      "speaker": "thor",
+      "text": "我來幫忙。"
+    },
+    {
+      "speaker": "serra",
+      "text": "別浪費時間。"
+    },
+    {
+      "speaker": "eirine",
+      "text": "敵人很多。"
+    },
+    {
+      "speaker": "marcus",
+      "text": "正好。"
+    },
+    {
+      "speaker": "thor",
+      "text": "讓我試試。"
+    },
+    {
+      "speaker": "serra",
+      "text": "別死太快。"
+    }
+  ],
+  "post": [
+    {
+      "speaker": "marcus",
+      "text": "解決了。"
+    },
+    {
+      "speaker": "eirine",
+      "text": "收集情報。"
+    },
+    {
+      "speaker": "thor",
+      "text": "還撐得住。"
+    },
+    {
+      "speaker": "serra",
+      "text": "算你有用。"
+    },
+    {
+      "speaker": "eirine",
+      "text": "準備出發。"
+    },
+    {
+      "speaker": "marcus",
+      "text": "整隊離開村莊，前往下一個目的地。"
+    }
+  ]
+}

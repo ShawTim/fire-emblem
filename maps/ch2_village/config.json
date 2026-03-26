@@ -2,23 +2,408 @@
   "id": 2,
   "title": "第二章",
   "subtitle": "北境之村",
-  "objective": "survive",
-  "objectiveDesc": "堅持8回合",
-  "surviveTurns": 8,
+  "objective": "seize",
+  "objectiveDesc": "擊破百夫長並制壓村中央指揮點",
   "width": 18,
   "height": 16,
   "playerUnits": [
-    {"charId": "eirine", "x": 8, "y": 5},
-    {"charId": "marcus", "x": 7, "y": 5},
-    {"charId": "lina", "x": 9, "y": 5}
+    {
+      "charId": "eirine",
+      "x": 8,
+      "y": 5
+    },
+    {
+      "charId": "marcus",
+      "x": 7,
+      "y": 5
+    },
+    {
+      "charId": "lina",
+      "x": 9,
+      "y": 5
+    }
   ],
   "newRecruits": [
-    {"charId": "thor", "x": 6, "y": 7, "turnJoin": 1},
-    {"charId": "serra", "x": 7, "y": 7, "turnJoin": 1}
+    {
+      "charId": "thor",
+      "x": 6,
+      "y": 7,
+      "turnJoin": 1
+    },
+    {
+      "charId": "serra",
+      "x": 7,
+      "y": 7,
+      "turnJoin": 1
+    }
   ],
-  "enemies": [],
+  "enemies": [
+    {
+      "charId": "guardCaptain",
+      "classId": "knight",
+      "level": 6,
+      "x": 9,
+      "y": 1,
+      "items": [
+        "steelLance",
+        "javelin"
+      ],
+      "ai": "boss",
+      "name": "帝國百夫長",
+      "isBoss": true,
+      "bonusStats": {
+        "hp": 5,
+        "str": 2,
+        "def": 3
+      }
+    },
+    {
+      "classId": "soldier",
+      "level": 5,
+      "x": 8,
+      "y": 2,
+      "items": [
+        "ironLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國槍兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 5,
+      "x": 10,
+      "y": 2,
+      "items": [
+        "ironLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國槍兵"
+    },
+    {
+      "classId": "archer",
+      "level": 5,
+      "x": 6,
+      "y": 3,
+      "items": [
+        "ironBow"
+      ],
+      "ai": "defensive",
+      "name": "帝國弓兵"
+    },
+    {
+      "classId": "archer",
+      "level": 5,
+      "x": 12,
+      "y": 3,
+      "items": [
+        "ironBow"
+      ],
+      "ai": "defensive",
+      "name": "帝國弓兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 5,
+      "x": 5,
+      "y": 6,
+      "items": [
+        "ironAxe"
+      ],
+      "ai": "aggressive",
+      "name": "帝國斧兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 5,
+      "x": 13,
+      "y": 6,
+      "items": [
+        "ironAxe"
+      ],
+      "ai": "aggressive",
+      "name": "帝國斧兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 4,
+      "x": 7,
+      "y": 8,
+      "items": [
+        "slimLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國追兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 4,
+      "x": 11,
+      "y": 8,
+      "items": [
+        "slimLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國追兵"
+    },
+    {
+      "classId": "mage",
+      "level": 5,
+      "x": 9,
+      "y": 4,
+      "items": [
+        "fire"
+      ],
+      "ai": "defensive",
+      "name": "帝國魔法兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 5,
+      "x": 4,
+      "y": 5,
+      "items": [
+        "ironLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國槍兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 5,
+      "x": 14,
+      "y": 5,
+      "items": [
+        "ironLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國槍兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 6,
+      "x": 8,
+      "y": 6,
+      "items": [
+        "handAxe"
+      ],
+      "ai": "aggressive",
+      "name": "帝國突擊兵"
+    },
+    {
+      "classId": "mage",
+      "level": 6,
+      "x": 11,
+      "y": 6,
+      "items": [
+        "thunder"
+      ],
+      "ai": "defensive",
+      "name": "帝國魔法兵"
+    }
+  ],
   "npcs": [],
   "talkEvents": [],
-  "turnEvents": [],
-  "dialogues": {}
+  "turnEvents": [
+    {
+      "turn": 1,
+      "type": "recruit",
+      "text": [
+        {
+          "speaker": null,
+          "text": "索爾與瑟拉加入隊伍。"
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "soldier",
+          "level": 5,
+          "x": 1,
+          "y": 11,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國增援"
+        },
+        {
+          "classId": "soldier",
+          "level": 5,
+          "x": 16,
+          "y": 11,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國增援"
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "soldier",
+          "level": 5,
+          "x": 2,
+          "y": 4,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國增援"
+        },
+        {
+          "classId": "soldier",
+          "level": 5,
+          "x": 15,
+          "y": 4,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國增援"
+        },
+        {
+          "classId": "archer",
+          "level": 5,
+          "x": 16,
+          "y": 6,
+          "items": [
+            "ironBow"
+          ],
+          "ai": "defensive",
+          "name": "帝國弓兵增援"
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "archer",
+          "level": 6,
+          "x": 2,
+          "y": 9,
+          "items": [
+            "steelBow"
+          ],
+          "ai": "defensive",
+          "name": "帝國弓增援"
+        },
+        {
+          "classId": "archer",
+          "level": 6,
+          "x": 15,
+          "y": 9,
+          "items": [
+            "steelBow"
+          ],
+          "ai": "defensive",
+          "name": "帝國弓增援"
+        },
+        {
+          "classId": "fighter",
+          "level": 6,
+          "x": 9,
+          "y": 12,
+          "items": [
+            "handAxe"
+          ],
+          "ai": "aggressive",
+          "name": "帝國突擊兵"
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "type": "recruit",
+      "text": [
+        {
+          "speaker": null,
+          "text": "帝國百夫長高聲喝令，後軍壓上。"
+        },
+        {
+          "speaker": "thor",
+          "text": "撐住！再守幾回合就有機會撤離。"
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "knight",
+          "level": 7,
+          "x": 9,
+          "y": 0,
+          "items": [
+            "steelLance"
+          ],
+          "ai": "defensive",
+          "name": "帝國近衛"
+        },
+        {
+          "classId": "soldier",
+          "level": 6,
+          "x": 8,
+          "y": 1,
+          "items": [
+            "steelLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國精銳"
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "fighter",
+          "level": 6,
+          "x": 3,
+          "y": 9,
+          "items": [
+            "handAxe"
+          ],
+          "ai": "aggressive",
+          "name": "帝國重斧兵"
+        },
+        {
+          "classId": "fighter",
+          "level": 6,
+          "x": 14,
+          "y": 9,
+          "items": [
+            "handAxe"
+          ],
+          "ai": "aggressive",
+          "name": "帝國重斧兵"
+        }
+      ]
+    }
+  ],
+  "dialogues": {},
+  "bossLines": {
+    "opening": "你們逃不掉的。",
+    "mid": "別太囂張。",
+    "death": "還沒結束……"
+  },
+  "terrainRandomize": {
+    "plainToForest": 0.06,
+    "plainToHill": 0.02,
+    "safeRadius": 1
+  },
+  "seizePos": {
+    "x": 10,
+    "y": 2
+  }
 }

@@ -2,65 +2,65 @@
   "pre": [
     {
       "speaker": "eirine",
-      "text": "有人在那裡！大家小心！"
+      "text": "敵軍已封鎖北側。"
     },
     {
       "speaker": "marcus",
-      "text": "等等，她沒有敵意。"
-    },
-    {
-      "speaker": "lina",
-      "text": "你們是什麼人？"
+      "text": "保持隊形，逐步推進。"
     },
     {
       "speaker": "eirine",
-      "text": "我們是從王都逃出來的..."
+      "text": "準備迎敵。"
     },
     {
       "speaker": "lina",
-      "text": "帝國的走狗？"
+      "text": "我來支援。"
     },
     {
       "speaker": "marcus",
-      "text": "我們正在躲避帝國追捕。"
+      "text": "別拖後腿。"
+    },
+    {
+      "speaker": "lina",
+      "text": "放心。"
     },
     {
       "speaker": "eirine",
-      "text": "請相信我們，沒有惡意。"
+      "text": "敵人接近中。"
+    },
+    {
+      "speaker": "marcus",
+      "text": "各就各位。"
     }
   ],
   "post": [
     {
-      "speaker": "lina",
-      "text": "哼，既然是反抗帝國的..."
-    },
-    {
       "speaker": "marcus",
-      "text": "妳願意加入我們？"
-    },
-    {
-      "speaker": "lina",
-      "text": "這片荒原我熟著呢。"
+      "text": "戰鬥結束。"
     },
     {
       "speaker": "eirine",
-      "text": "有妳相助，我們一定能..."
+      "text": "清理現場。"
     },
     {
       "speaker": "lina",
-      "text": "別誤會，我只是看不慣帝國罷了。"
+      "text": "我沒受傷。"
     },
     {
       "speaker": "marcus",
-      "text": "有妳的箭術，戰力大增。"
+      "text": "繼續前進。"
     },
     {
       "speaker": "eirine",
-      "text": "歡迎加入，莉娜。"
+      "text": "保持警覺。"
     },
     {
       "speaker": "lina",
-      "text": "前方不遠就是北境村莊，走吧。"
+      "text": "明白。"
+    },
+    {
+      "speaker": "marcus",
+      "text": "整隊離開村莊，前往下一個目的地。"
     }
   ]
 }

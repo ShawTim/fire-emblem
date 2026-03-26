@@ -154,5 +154,10 @@
         }
       ]
     }
-  ]
+  ],
+  "terrainRandomize": {
+    "plainToForest": 0.0,
+    "plainToHill": 0.03,
+    "safeRadius": 1
+  }
 }

@@ -2,8 +2,8 @@
   "id": 1,
   "title": "第一章",
   "subtitle": "荒野的邂逅",
-  "objective": "rout",
-  "objectiveDesc": "殲滅所有敵人",
+  "objective": "seize",
+  "objectiveDesc": "擊破追擊隊長並制壓據點",
   "width": 16,
   "height": 14,
   "playerUnits": [
@@ -164,7 +164,30 @@
         "hp": 3,
         "str": 1,
         "def": 2
-      }
+      },
+      "charId": "guardCaptain"
+    },
+    {
+      "classId": "soldier",
+      "level": 2,
+      "x": 10,
+      "y": 8,
+      "items": [
+        "ironLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國追兵"
+    },
+    {
+      "classId": "archer",
+      "level": 2,
+      "x": 12,
+      "y": 5,
+      "items": [
+        "ironBow"
+      ],
+      "ai": "defensive",
+      "name": "帝國弓兵"
     }
   ],
   "npcs": [],
@@ -175,31 +198,106 @@
       "type": "recruit",
       "text": [
         {
-          "speaker": "lina",
-          "text": "怎麼？還在懷疑我？"
-        },
+          "speaker": null,
+          "text": "莉娜加入隊伍。"
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "type": "recruit",
+      "text": [
         {
-          "speaker": "eirine",
-          "text": "不，我只是...很高興妳願意加入。"
-        },
-        {
-          "speaker": "lina",
-          "text": "別自作多情，我只是不想讓帝國好過。"
+          "speaker": null,
+          "text": "追擊隊長怒吼，命令殘兵收緊包圍。"
         },
         {
           "speaker": "marcus",
-          "text": "有妳在，我們的射程更遠了。"
+          "text": "佢哋開始收縮陣形，唔好冒進。"
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "soldier",
+          "level": 3,
+          "x": 0,
+          "y": 9,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國援兵"
         },
         {
-          "speaker": "lina",
-          "text": "跟緊我，這片地形的路我最熟。"
+          "classId": "soldier",
+          "level": 3,
+          "x": 15,
+          "y": 9,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國援兵"
         },
         {
-          "speaker": "eirine",
-          "text": "那麼...一起前往北境村莊吧！"
+          "classId": "fighter",
+          "level": 3,
+          "x": 15,
+          "y": 11,
+          "items": [
+            "ironAxe"
+          ],
+          "ai": "aggressive",
+          "name": "帝國斧援兵"
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "archer",
+          "level": 4,
+          "x": 2,
+          "y": 0,
+          "items": [
+            "ironBow"
+          ],
+          "ai": "defensive",
+          "name": "帝國弓援兵"
+        },
+        {
+          "classId": "soldier",
+          "level": 4,
+          "x": 14,
+          "y": 0,
+          "items": [
+            "steelLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國精銳援兵"
         }
       ]
     }
   ],
-  "dialogues": {}
+  "dialogues": {},
+  "bossLines": {
+    "opening": "你們來送死了。",
+    "mid": "不過如此。",
+    "death": "可惡……"
+  },
+  "terrainRandomize": {
+    "plainToForest": 0.08,
+    "plainToHill": 0.03,
+    "safeRadius": 1
+  },
+  "seizePos": {
+    "x": 5,
+    "y": 2
+  }
 }

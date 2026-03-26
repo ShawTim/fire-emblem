@@ -77,6 +77,44 @@ function parseTerrain(text, w, h) {
   return { terrain, objects };
 }
 
+function applyTerrainRandomize(parsed, config) {
+  const randCfg = config && config.terrainRandomize;
+  if (!randCfg) return parsed;
+
+  const forestPct = Math.max(0, Math.min(1, randCfg.plainToForest || 0));
+  const hillPct = Math.max(0, Math.min(1, randCfg.plainToHill || 0));
+  const safeRadius = Math.max(0, Math.floor(randCfg.safeRadius || 1));
+
+  if (forestPct + hillPct <= 0) return parsed;
+
+  const blocked = [];
+  const collect = (arr) => {
+    for (const u of (arr || [])) {
+      if (typeof u.x === 'number' && typeof u.y === 'number') blocked.push({ x: u.x, y: u.y });
+    }
+  };
+  collect(config.playerUnits);
+  collect(config.newRecruits);
+  collect(config.enemies);
+  collect(config.npcs);
+
+  const isNearBlocked = (x, y) => blocked.some(p => Math.abs(p.x - x) + Math.abs(p.y - y) <= safeRadius);
+
+  for (let y = 0; y < config.height; y++) {
+    for (let x = 0; x < config.width; x++) {
+      if (parsed.objects[y][x]) continue;
+      if (parsed.terrain[y][x] !== 'plain') continue;
+      if (isNearBlocked(x, y)) continue;
+
+      const r = Math.random();
+      if (r < forestPct) parsed.terrain[y][x] = 'forest';
+      else if (r < forestPct + hillPct) parsed.terrain[y][x] = 'hill';
+    }
+  }
+
+  return parsed;
+}
+
 // Load chapter data dynamically
 async function loadChapter(chapterId) {
   const manifest = CHAPTER_MANIFEST.find(c => c.id === chapterId);
@@ -111,7 +149,8 @@ async function loadChapter(chapterId) {
     const terrainText = await terrainRes.text();
 
     // Parse terrain (returns { terrain, objects } two-layer map)
-    const parsed = parseTerrain(terrainText, config.width, config.height);
+    let parsed = parseTerrain(terrainText, config.width, config.height);
+    parsed = applyTerrainRandomize(parsed, config);
 
     // Merge everything
   return { ...config, dialogues, prologue, terrain: parsed.terrain, objects: parsed.objects, _loaded: true };
