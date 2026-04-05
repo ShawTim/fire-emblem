@@ -507,6 +507,12 @@ const Sprites = {
     const rng = function(n) { return self._rng(seed, n); };
     const R = function(rx,ry,rw,rh,rc) { ctx.fillStyle=rc; ctx.fillRect(rx,ry,rw,rh); };
     const P = function(px,py,pc) { ctx.fillStyle=pc; ctx.fillRect(px,py,1,1); };
+    // Block variation: fills 8×8 grid of 4px blocks with random palette colors
+    const BV = function(palette, offset) {
+      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
+        R(x+bx*4,y+by*4,4,4,palette[Math.floor(rng(by*8+bx+offset)*palette.length)]);
+      }
+    };
 
     if(type==='plain'){
       // FE GBA-like plain: continuous field + specks/strokes (no horizontal bands)
@@ -711,43 +717,131 @@ const Sprites = {
 
 
     }else if(type==='mountain'){
-      // FE GBA-like mountain: chunky faceted massif + clear top-left light
-      R(x,y,s,s,'#8a7858');
-      // foothill / grass contact
-      R(x,y+24,s,8,'#5aa84a');
-      R(x,y+24,s,1,'#7fc06a');
-      R(x,y+31,s,1,'#4a7a3a');
+      // GBA FE-style mountain with varied layouts (like forest system)
+      // Green base grass
+      R(x,y,s,s,'#58b848');
+      BV(['#50b040','#58b848','#54b444'], 350);
 
-      // Main massif silhouette
-      ctx.fillStyle='#7e6744';
-      ctx.beginPath();
-      ctx.moveTo(x+2,y+24);ctx.lineTo(x+7,y+14);ctx.lineTo(x+12,y+8);
-      ctx.lineTo(x+16,y+4);ctx.lineTo(x+21,y+8);ctx.lineTo(x+26,y+13);
-      ctx.lineTo(x+30,y+24);ctx.closePath();ctx.fill();
+      // Per-tile color palette shift for variety
+      var cShift = Math.floor(rng(340)*3);
+      var rockBase = ['#7e6744','#7a6040','#82704a'][cShift];
+      var rockLit  = ['#b59662','#b08e58','#ba9a68'][cShift];
+      var rockMid  = ['#a98956','#a48250','#ae8e5c'][cShift];
+      var rockDark = ['#654f33','#604a30','#6a5438'][cShift];
+      var rockDeep = ['#5b452d','#56402a','#604a32'][cShift];
+      var snowHi   = ['#e8dcc8','#e4d8c4','#ecdec8'][cShift];
+      var snowLo   = ['#d8ccb0','#d4c8ac','#dcceb4'][cShift];
 
-      // Left-lit planes
-      ctx.fillStyle='#b59662';
-      ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+7,y+14);ctx.lineTo(x+14,y+23);ctx.lineTo(x+16,y+23);ctx.closePath();ctx.fill();
-      ctx.fillStyle='#a98956';
-      ctx.beginPath();ctx.moveTo(x+12,y+8);ctx.lineTo(x+6,y+16);ctx.lineTo(x+11,y+23);ctx.lineTo(x+14,y+23);ctx.closePath();ctx.fill();
+      // Foothill grass zone
+      R(x,y+25,s,7,'#4a9a3c');
+      R(x,y+25,s,1,'#68b858');
 
-      // Right shadow planes
-      ctx.fillStyle='#654f33';
-      ctx.beginPath();ctx.moveTo(x+16,y+4);ctx.lineTo(x+26,y+13);ctx.lineTo(x+18,y+23);ctx.lineTo(x+16,y+23);ctx.closePath();ctx.fill();
-      ctx.fillStyle='#5b452d';
-      ctx.beginPath();ctx.moveTo(x+21,y+8);ctx.lineTo(x+30,y+24);ctx.lineTo(x+22,y+24);ctx.lineTo(x+18,y+23);ctx.closePath();ctx.fill();
+      // Helper: draw a single peak at (cx,peakY) with given width/height
+      function drawPeak(cx, peakY, halfW, h, isFront){
+        var baseY = peakY + h;
+        var midL = cx - halfW * 0.3 + Math.floor(rng(350 + cx)* halfW*0.2);
+        var midR = cx + halfW * 0.3 + Math.floor(rng(351 + cx)* halfW*0.2);
+        // Base silhouette
+        ctx.fillStyle = rockBase;
+        ctx.beginPath();
+        ctx.moveTo(cx - halfW, baseY);
+        ctx.lineTo(cx - halfW*0.6, peakY + h*0.55);
+        ctx.lineTo(cx - halfW*0.25, peakY + h*0.2);
+        ctx.lineTo(cx, peakY);
+        ctx.lineTo(cx + halfW*0.3, peakY + h*0.25);
+        ctx.lineTo(cx + halfW*0.65, peakY + h*0.5);
+        ctx.lineTo(cx + halfW, baseY);
+        ctx.closePath(); ctx.fill();
+        // Left lit face
+        ctx.fillStyle = isFront ? rockLit : rockMid;
+        ctx.beginPath();
+        ctx.moveTo(cx, peakY);
+        ctx.lineTo(cx - halfW*0.6, peakY + h*0.55);
+        ctx.lineTo(cx - halfW*0.15, baseY);
+        ctx.lineTo(cx, baseY);
+        ctx.closePath(); ctx.fill();
+        // Secondary lit
+        ctx.fillStyle = rockMid;
+        ctx.beginPath();
+        ctx.moveTo(cx - halfW*0.25, peakY + h*0.2);
+        ctx.lineTo(cx - halfW*0.7, peakY + h*0.65);
+        ctx.lineTo(cx - halfW*0.35, baseY);
+        ctx.lineTo(cx - halfW*0.15, baseY);
+        ctx.closePath(); ctx.fill();
+        // Right shadow
+        ctx.fillStyle = rockDark;
+        ctx.beginPath();
+        ctx.moveTo(cx, peakY);
+        ctx.lineTo(cx + halfW*0.65, peakY + h*0.5);
+        ctx.lineTo(cx + halfW*0.15, baseY);
+        ctx.lineTo(cx, baseY);
+        ctx.closePath(); ctx.fill();
+        // Deeper shadow
+        ctx.fillStyle = rockDeep;
+        ctx.beginPath();
+        ctx.moveTo(cx + halfW*0.3, peakY + h*0.25);
+        ctx.lineTo(cx + halfW, baseY);
+        ctx.lineTo(cx + halfW*0.3, baseY);
+        ctx.closePath(); ctx.fill();
+        // Snow cap
+        ctx.fillStyle = isFront ? snowHi : snowLo;
+        var capH = Math.max(2, Math.floor(h * 0.18));
+        ctx.beginPath();
+        ctx.moveTo(cx, peakY);
+        ctx.lineTo(cx - halfW*0.15, peakY + capH);
+        ctx.lineTo(cx, peakY + capH - 1);
+        ctx.lineTo(cx + halfW*0.2, peakY + capH);
+        ctx.closePath(); ctx.fill();
+        // Ridge highlight
+        if(isFront && h > 10){
+          R(cx - Math.floor(halfW*0.2), peakY + Math.floor(h*0.35), 2, 1, snowLo);
+        }
+      }
 
-      // Ridge highlights + cracks
-      R(x+12,y+9,2,1,'#d6b57a');R(x+15,y+6,2,1,'#debe84');R(x+18,y+10,1,1,'#cfae72');
-      ctx.strokeStyle='#4a3a25';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+10,y+15);ctx.lineTo(x+12,y+20);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+19,y+13);ctx.lineTo(x+21,y+19);ctx.stroke();
+      // Layout variants: 1-peak, 2-peak, or 3-peak (like forest's 1/2/3 tree)
+      var mLayout = Math.floor(rng(341)*3);
+      // Jitter anchors per tile
+      var jx0 = Math.floor(rng(342)*4)-2;
+      var jx1 = Math.floor(rng(343)*4)-2;
+      var jy0 = Math.floor(rng(344)*3)-1;
 
-      // Scree at foot
-      for(let i=0;i<6;i++){
-        var sx2=x+2+Math.floor(rng(i+300)*26), sw=1+Math.floor(rng(i+310)*3);
-        var sy2=y+22+Math.floor(rng(i+320)*4);
+      if(mLayout===0){
+        // Single large peak, centered with jitter
+        drawPeak(x+16+jx0, y+2+jy0, 14, 22, true);
+      }else if(mLayout===1){
+        // Two peaks: back smaller, front taller
+        var backX = x+22+jx1, backY = y+8+Math.floor(rng(345)*3);
+        drawPeak(backX, backY, 9, 16, false);
+        var frontX = x+12+jx0, frontY = y+3+jy0;
+        drawPeak(frontX, frontY, 12, 21, true);
+      }else{
+        // Three peaks: back two + front dominant
+        drawPeak(x+8+jx1, y+10+Math.floor(rng(346)*2), 7, 14, false);
+        drawPeak(x+25+Math.floor(rng(347)*3)-1, y+9+Math.floor(rng(348)*2), 7, 15, false);
+        drawPeak(x+16+jx0, y+2+jy0, 11, 22, true);
+      }
+
+      // Rock texture: scattered micro-dots (like forest's leaf specks)
+      for(let i=0;i<18;i++){
+        var rx=x+2+Math.floor(rng(i+360)*28), ry=y+6+Math.floor(rng(i+380)*18);
+        if(rng(i+400)>0.35){
+          var rc=rng(i+420)>0.5?'#9a835c':'#7e6a49';
+          P(rx,ry,rc);
+          if(rng(i+440)>0.6) P(rx+1,ry,rc);
+        }
+      }
+
+      // Scree / rubble at foothills
+      for(let i=0;i<10;i++){
+        var sx2=x+1+Math.floor(rng(i+300)*28), sw=1+Math.floor(rng(i+310)*2);
+        var sy2=y+23+Math.floor(rng(i+320)*4);
         R(sx2,sy2,sw,1,rng(i+330)>0.5?'#9a835c':'#7e6a49');
+      }
+
+      // Grass tufts at base for natural blending
+      for(let i=0;i<4;i++){
+        var gx=x+3+Math.floor(rng(i+450)*24), gy=y+26+Math.floor(rng(i+460)*4);
+        P(gx,gy,'#68b858');P(gx-1,gy-1,'#58a848');P(gx+1,gy-1,'#58a848');
       }
 
     }else if(type==='wall'){
@@ -781,11 +875,7 @@ const Sprites = {
       // GBA FE-style flowing water with segmented waves
       R(x,y,s,s,'#3888d0');
       // Block-level tonal variation (4×4 blocks)
-      var rv=['#3080c8','#3888d0','#4090d8','#3484cc','#3c8cd4'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        var ri=Math.floor(rng(by*8+bx+400)*5);
-        R(x+bx*4,y+by*4,4,4,rv[ri]);
-      }
+      BV(['#3080c8','#3888d0','#4090d8','#3484cc','#3c8cd4'], 400);
       // Segmented wave bands (shorter 8-16px segments at offsets)
       for(let wi=0;wi<4;wi++){
         var wy=y+4+wi*7+Math.floor(rng(wi+410)*3);
@@ -826,41 +916,172 @@ const Sprites = {
       R(x+9,y+1,4,1,'#ddd8cc');R(x+17,y+9,4,1,'#ddd8cc');
 
     }else if(type==='hill'){
-      // GBA-style grassy hill with tonal variation
+      // Hill: forest-style 1/2/3 system — wide flat domes (half-ellipse), not tall bells
       R(x,y,s,s,'#58b848');
-      // Block-variation base
-      var hg=['#50b040','#58b848','#54b444'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,hg[Math.floor(rng(by*8+bx+600)*3)]);
+      BV(['#50b040','#58b848','#54b444','#5cbc4c'], 600);
+
+      // Ground scratches
+      for(let i=0;i<30;i++){
+        var sx2=x+1+Math.floor(rng(1200+i)*30), sy2=y+1+Math.floor(rng(1220+i)*30);
+        var lc=rng(1240+i)>0.5?'rgba(128,208,96,0.55)':'rgba(64,136,56,0.45)';
+        P(sx2,sy2,lc);
+        if(rng(1260+i)>0.5) P(sx2+1,sy2+1,lc); else P(sx2+1,sy2-1,lc);
       }
-      // Hill mound
-      ctx.fillStyle='#68c050';
-      ctx.beginPath();ctx.moveTo(x+4,y+28);ctx.quadraticCurveTo(x+16,y+6,x+28,y+28);ctx.fill();
-      // Highlight band
-      var hillVar=Math.floor(rng(610)*3);
-      if(hillVar===0){
-        ctx.fillStyle='#78d060';ctx.beginPath();ctx.moveTo(x+10,y+22);ctx.quadraticCurveTo(x+16,y+8,x+22,y+22);ctx.fill();
-      }else if(hillVar===1){
-        ctx.fillStyle='#50a840';ctx.beginPath();ctx.moveTo(x+6,y+24);ctx.quadraticCurveTo(x+16,y+12,x+26,y+24);ctx.fill();
+
+      // Yellow-green earthy palette — strong contrast against blue-green grass
+      var dark='#6a8830', mid='#8aaa48', light='#a8c860', hi='#c8e080', edgeShadow='#587828';
+
+      // Draw one dome hill: wide flat half-ellipse rising ABOVE baseY
+      // Draw one hill mound: flat bell shape (flat bottom, gentle curve up, rounded top)
+      // hw = half-width, h = height of the bell above baseY
+      function drawHillAt(cx, baseY, seedShift, hw, h){
+        // Clamp within tile
+        cx = Math.max(x+hw, Math.min(x+32-hw, cx));
+        baseY = Math.min(y+31, Math.max(y+h+2, baseY));
+        var top = baseY - h;
+
+        // Bell path: flat bottom, sides curve up gently, rounded peak
+        // Uses two quadratic curves: left side rises to peak, right side descends
+        function bellPath(ecx, eby, ehw, eh){
+          var etop = eby - eh;
+          ctx.beginPath();
+          ctx.moveTo(ecx - ehw, eby);              // bottom-left
+          // Left side: gentle curve from bottom-left up to peak
+          ctx.quadraticCurveTo(ecx - ehw*0.45, etop, ecx, etop);
+          // Right side: gentle curve from peak down to bottom-right
+          ctx.quadraticCurveTo(ecx + ehw*0.45, etop, ecx + ehw, eby);
+          ctx.closePath();                          // flat bottom line
+        }
+
+        // --- 1) Thick dark outline ---
+        ctx.fillStyle = dark;
+        bellPath(cx, baseY, hw+1, h+1);
+        ctx.fill();
+        // Extra outline pixels for pixel-art thickness
+        for(let i=0; i<=16; i++){
+          var t = i/16;  // 0..1 along the bell curve
+          var bx, by;
+          if(t <= 0.5){
+            // Left half: interpolate along left quadratic
+            var u = t*2;  // 0..1
+            var lx = cx-hw-1, ly = baseY;
+            var cpx = cx-(hw+1)*0.45, cpy = top-1;
+            var px2 = cx, py2 = top-1;
+            bx = Math.round((1-u)*(1-u)*lx + 2*(1-u)*u*cpx + u*u*px2);
+            by = Math.round((1-u)*(1-u)*ly + 2*(1-u)*u*cpy + u*u*py2);
+          } else {
+            var u = (t-0.5)*2;
+            var lx2 = cx, ly2 = top-1;
+            var cpx2 = cx+(hw+1)*0.45, cpy2 = top-1;
+            var px3 = cx+hw+1, py3 = baseY;
+            bx = Math.round((1-u)*(1-u)*lx2 + 2*(1-u)*u*cpx2 + u*u*px3);
+            by = Math.round((1-u)*(1-u)*ly2 + 2*(1-u)*u*cpy2 + u*u*py3);
+          }
+          P(bx, by, dark); P(bx, by-1, dark);
+          if(i%3===0){ P(bx-1, by, dark); P(bx+1, by, dark); }
+        }
+
+        // --- 2) Mid body fill ---
+        ctx.fillStyle = mid;
+        bellPath(cx, baseY, hw-1, h-1);
+        ctx.fill();
+
+        // --- 3) Lit left highlight ---
+        ctx.save();
+        bellPath(cx, baseY, hw-1, h-1);
+        ctx.clip();
+        ctx.fillStyle = light;
+        bellPath(cx - hw*0.25, baseY, hw*0.5, h*0.9);
+        ctx.fill();
+        // Specular dot near top-left
+        P(cx - Math.round(hw*0.15), top+2, hi);
+        P(cx - Math.round(hw*0.1), top+3, hi);
+        P(cx - Math.round(hw*0.2), top+3, hi);
+        ctx.restore();
+
+        // --- 4) Right shadow ---
+        ctx.save();
+        bellPath(cx, baseY, hw-1, h-1);
+        ctx.clip();
+        ctx.fillStyle = 'rgba(0,0,0,0.12)';
+        bellPath(cx + hw*0.35, baseY, hw*0.55, h*0.95);
+        ctx.fill();
+        ctx.restore();
+
+        // --- 5) Edge shadow pixels along right side ---
+        for(let a=0; a<5; a++){
+          var t2 = 0.55 + (a/5)*0.35;  // right half of bell
+          var u2 = (t2-0.5)*2;
+          var ex=Math.round((1-u2)*(1-u2)*cx + 2*(1-u2)*u2*(cx+(hw-2)*0.45) + u2*u2*(cx+hw-2));
+          var ey=Math.round((1-u2)*(1-u2)*(top+1) + 2*(1-u2)*u2*(top+1) + u2*u2*baseY);
+          P(ex,ey,edgeShadow);
+          if(a%2===0) P(ex+1,ey,edgeShadow);
+        }
+
+        // --- 6) Noise dots inside bell ---
+        for(let gi=0; gi<16; gi++){
+          var nx = cx - hw + 3 + Math.floor(rng(seedShift+870+gi*13) * (hw*2-6));
+          var ny = baseY - 2 - Math.floor(rng(seedShift+900+gi*17) * (h-3));
+          // Check if inside bell: at height ny, the bell width narrows
+          var frac = (baseY - ny) / h;  // 0 at base, 1 at top
+          var widthAtY = hw * (1 - frac*frac*0.7);  // narrower near top
+          if(Math.abs(nx - cx) > widthAtY - 2) continue;
+          var rDot = rng(seedShift+960+gi*37);
+          var c = rDot > 0.80 ? hi : (rDot > 0.45 ? '#5eb84e' : '#3d9a34');
+          P(nx,ny,c);
+          if(rng(seedShift+990+gi*29) > 0.55) P(nx+1,ny,c);
+        }
+
+        // --- 7) Optional rocky outcrop ---
+        if(rng(seedShift+1100) > 0.65){
+          var rrx = cx - 2 + Math.floor(rng(seedShift+1101)*5);
+          var rry = top + Math.round(h*0.35) + Math.floor(rng(seedShift+1102)*3);
+          R(rrx,rry,3,2,'#a09080'); R(rrx+1,rry,2,1,'#b8a898');
+        }
+      }
+
+      // 9-grid anchors — baseY is bottom of mound (where it meets ground)
+      var g = [ [6,11], [16,11], [26,11], [6,20], [16,20], [26,20], [6,29], [16,29], [26,29] ];
+      function putHillAt(anchorIdx, seed, wScale, hScale){
+        var a=g[anchorIdx];
+        var jx=Math.floor(rng(seed+11)*5)-2;
+        var jy=Math.floor(rng(seed+13)*3)-1;
+        // Base size: hw=13 (wide half-width), h=8 (short height) — flat bell
+        drawHillAt(x+a[0]+jx, y+a[1]+jy, seed, Math.round(13*wScale), Math.round(8*hScale));
+      }
+
+      // 1/2/3 layout roll
+      var roll = rng(1300);
+      var layout = roll < 0.30 ? 1 : (roll < 0.62 ? 2 : 3);
+
+      if(layout===1){
+        // 1 big mound, centered
+        putHillAt(4, 1500, 1.15, 1.30);
+      }else if(layout===2){
+        // 2 mounds, overlapping
+        putHillAt(3, 2000, 0.90, 1.0);
+        putHillAt(5, 3000, 0.90, 1.0);
       }else{
-        ctx.fillStyle='#60b848';ctx.beginPath();ctx.moveTo(x+8,y+26);ctx.quadraticCurveTo(x+14,y+10,x+24,y+26);ctx.fill();
+        // 3 mounds scattered
+        var p3 = [ [1,3,8], [0,5,7], [2,3,7], [1,5,6] ];
+        var pIdx = Math.floor(rng(1301) * p3.length);
+        var pick = p3[pIdx];
+        putHillAt(pick[0], 2000, 0.70, 0.85);
+        putHillAt(pick[1], 3000, 0.70, 0.85);
+        putHillAt(pick[2], 4000, 0.70, 0.85);
       }
-      // Shadow on hillside
-      ctx.fillStyle='rgba(0,0,0,0.08)';
-      ctx.beginPath();ctx.moveTo(x+4,y+28);ctx.quadraticCurveTo(x+10,y+14,x+16,y+28);ctx.fill();
-      // Grass tufts on hill
-      for(let i=0;i<2;i++){
-        var hx=x+8+Math.floor(rng(i+620)*14),hy=y+10+Math.floor(rng(i+630)*10);
-        P(hx,hy,'#80e068');P(hx-1,hy-1,'#70d058');P(hx+1,hy-1,'#70d058');
+
+      // Ground micro-specks
+      for(let i=0;i<20;i++) if(rng(1320+i)>0.40){
+        var bx=x+1+Math.floor(rng(1340+i)*30), by=y+1+Math.floor(rng(1360+i)*30);
+        var bc=rng(1380+i)>0.5?'#4ea842':'#3a8e32';
+        P(bx,by,bc);
       }
 
     }else if(type==='swamp'){
       // Murky swamp with varied dark greens and puddles
       R(x,y,s,s,'#3a5828');
-      var sg=['#2d4420','#3a5828','#344e24','#385428'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,sg[Math.floor(rng(by*8+bx+650)*4)]);
-      }
+      BV(['#2d4420','#3a5828','#344e24','#385428'], 650);
       // Dark murky puddle
       var px2=x+8+Math.floor(rng(660)*10),ppy=y+10+Math.floor(rng(661)*8);
       ctx.fillStyle='rgba(20,40,10,0.6)';
@@ -907,10 +1128,7 @@ const Sprites = {
       // Mountain pass with worn path
       R(x,y,s,s,'#a09070');
       // Block variation
-      var pg=['#988868','#a09070','#a89878','#9c8c6c'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,pg[Math.floor(rng(by*8+bx+750)*4)]);
-      }
+      BV(['#988868','#a09070','#a89878','#9c8c6c'], 750);
       // Worn path center
       R(x+8,y,16,s,'#b0a880');
       R(x+10,y,12,s,'#b8b088');
@@ -921,10 +1139,7 @@ const Sprites = {
     }else if(type==='road'){
       // Packed earth road with ruts
       R(x,y,s,s,'#c8b870');
-      var rdg=['#c0b068','#c8b870','#d0c078','#c4b46c'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,rdg[Math.floor(rng(by*8+bx+780)*4)]);
-      }
+      BV(['#c0b068','#c8b870','#d0c078','#c4b46c'], 780);
       // Scattered pebbles
       for(let i=0;i<3;i++){
         P(x+4+Math.floor(rng(i+790)*24),y+4+Math.floor(rng(i+800)*24),'#a89858');
@@ -951,10 +1166,7 @@ const Sprites = {
     }else if(type==='basin'){
       // Grass basin with small pond
       R(x,y,s,s,'#48a038');
-      var bg=['#409030','#48a038','#44983c'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,bg[Math.floor(rng(by*8+bx+820)*3)]);
-      }
+      BV(['#409030','#48a038','#44983c'], 820);
       // Pond with slight position variation
       var bpx=x+14+Math.floor(rng(830)*4),bpy=y+16+Math.floor(rng(831)*4);
       ctx.fillStyle='#3080b0';ctx.beginPath();ctx.arc(bpx,bpy,6,0,Math.PI*2);ctx.fill();
@@ -966,10 +1178,7 @@ const Sprites = {
     }else if(type==='sea'){
       // Deep ocean with wave variation
       R(x,y,s,s,'#1a5898');
-      var seag=['#144080','#1a5898','#1850a0','#1c5c98'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,seag[Math.floor(rng(by*8+bx+850)*4)]);
-      }
+      BV(['#144080','#1a5898','#1850a0','#1c5c98'], 850);
       // Wave highlights
       for(let wi=0;wi<3;wi++){
         var swx=x+Math.floor(rng(wi+860)*16),swy=y+4+wi*9+Math.floor(rng(wi+870)*3);
@@ -981,10 +1190,7 @@ const Sprites = {
     }else if(type==='desert'){
       // Sandy desert with dune contours
       R(x,y,s,s,'#d0b878');
-      var dg=['#c8a870','#d0b878','#d8c080','#ccb474'];
-      for(let by=0;by<8;by++)for(let bx=0;bx<8;bx++){
-        R(x+bx*4,y+by*4,4,4,dg[Math.floor(rng(by*8+bx+900)*4)]);
-      }
+      BV(['#c8a870','#d0b878','#d8c080','#ccb474'], 900);
       // Dune shadow lines
       ctx.strokeStyle='#b8a060';ctx.lineWidth=1;
       ctx.beginPath();ctx.moveTo(x+2,y+12+Math.floor(rng(910)*6));ctx.quadraticCurveTo(x+16,y+8+Math.floor(rng(911)*8),x+30,y+14+Math.floor(rng(912)*4));ctx.stroke();
