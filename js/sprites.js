@@ -56,7 +56,7 @@ const Sprites = {
   _terrainCategory: {
     river:'water', sea:'water', basin:'water',
     forest:'vegetation', swamp:'vegetation',
-    mountain:'rocky', cliff:'rocky', hill:'rocky',
+    mountain:'rocky', cliff:'rocky', hill:'land',
     wall:'structure',
     floor:'indoor',
     plain:'land', road:'land', pass:'land', desert:'land', bridge:'land'
