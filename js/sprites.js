@@ -342,14 +342,17 @@ const Sprites = {
     }
   },
 
-  _drawMountainToLandEdge: function(ctx, edge, seed, variant) {
+  _drawMountainToLandEdge: function(ctx, edge, seed, variant, neighborTerrain) {
     var v = variant || 0;
-    // Thick scree/rubble strip on the land side
-    this._drawIrregularEdge(ctx, edge, 4 + (v % 2), '#908870', seed, 6000 + v * 59);
-    this._drawIrregularEdge(ctx, edge, 2 + ((v >> 1) % 2), '#a89878', seed, 6030 + v * 61);
-    this._drawScatterPixels(ctx, edge, 3 + (v % 2), 7 + (v % 2), '#a89878', seed, 6050 + v * 67);
-    // Shadow from elevation
-    this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.1)', seed, 6100 + v * 71);
+    if (neighborTerrain === 'cliff') {
+      // Cliff: keep rocky rubble edge
+      this._drawIrregularEdge(ctx, edge, 3 + (v % 2), '#908870', seed, 6000 + v * 59);
+      this._drawScatterPixels(ctx, edge, 2 + (v % 2), 5 + (v % 2), '#a89878', seed, 6050 + v * 67);
+      this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.1)', seed, 6100 + v * 71);
+    } else {
+      // Mountain: subtle elevation shadow only (mountains have green bases)
+      this._drawIrregularEdge(ctx, edge, 2, 'rgba(0,0,0,0.08)', seed, 6100 + v * 71);
+    }
   },
 
   // Classify edge transition type — must mirror the dispatch if/else chain exactly
@@ -421,9 +424,9 @@ const Sprites = {
         else if (center.terrain === 'wall' && n.category !== 'structure') {
           this._drawWallEdge(ctx, side, n.terrain, eSeed, variant);
         }
-        // Land tile → mountain/rocky: rubble scatter
+        // Land tile → mountain/rocky: edge transition
         else if (center.category === 'land' && n.category === 'rocky') {
-          this._drawMountainToLandEdge(ctx, side, eSeed, variant);
+          this._drawMountainToLandEdge(ctx, side, eSeed, variant, n.terrain);
         }
         // Land tile → water: grass overhang onto water
         else if (center.category === 'land' && n.category === 'water') {
@@ -717,131 +720,162 @@ const Sprites = {
 
 
     }else if(type==='mountain'){
-      // GBA FE-style mountain with varied layouts (like forest system)
-      // Green base grass
+      // Mountain: forest-style 1/2/3 system with triangular peaks
       R(x,y,s,s,'#58b848');
       BV(['#50b040','#58b848','#54b444'], 350);
 
-      // Per-tile color palette shift for variety
+      // Ground scratches
+      for(let i=0;i<20;i++){
+        var gsx=x+1+Math.floor(rng(1400+i)*30), gsy=y+1+Math.floor(rng(1420+i)*30);
+        var glc=rng(1440+i)>0.5?'rgba(128,208,96,0.45)':'rgba(64,136,56,0.35)';
+        P(gsx,gsy,glc);
+      }
+
+      // Per-tile color palette shift
       var cShift = Math.floor(rng(340)*3);
+      var outline  = ['#4a3a25','#463622','#4e3e28'][cShift];
       var rockBase = ['#7e6744','#7a6040','#82704a'][cShift];
       var rockLit  = ['#b59662','#b08e58','#ba9a68'][cShift];
-      var rockMid  = ['#a98956','#a48250','#ae8e5c'][cShift];
-      var rockDark = ['#654f33','#604a30','#6a5438'][cShift];
-      var rockDeep = ['#5b452d','#56402a','#604a32'][cShift];
-      var snowHi   = ['#e8dcc8','#e4d8c4','#ecdec8'][cShift];
-      var snowLo   = ['#d8ccb0','#d4c8ac','#dcceb4'][cShift];
+      var rockDark = ['#5b452d','#56402a','#604a32'][cShift];
+      var snowCol  = ['#e8dcc8','#e4d8c4','#ecdec8'][cShift];
 
-      // Foothill grass zone
-      R(x,y+25,s,7,'#4a9a3c');
-      R(x,y+25,s,1,'#68b858');
+      // Draw one peak: triangle with thick outline, lit/shadow faces, snow cap, noise
+      function drawMtnAt(cx, baseY, seedShift, hw, h){
+        cx = Math.max(x+hw, Math.min(x+32-hw, cx));
+        baseY = Math.min(y+31, Math.max(y+h+2, baseY));
+        var top = baseY - h;
+        // Slight asymmetry per peak
+        var skew = Math.floor(rng(seedShift+50)*5)-2;
+        var peakX = cx + skew;
+        // Left/right shoulder jitter
+        var lsX = cx - hw + Math.floor(rng(seedShift+51)*3);
+        var rsX = cx + hw - Math.floor(rng(seedShift+52)*3);
+        // Optional mid-ridge point on left side
+        var hasRidge = rng(seedShift+53) > 0.5;
+        var ridgeX = cx - Math.round(hw*0.4) + Math.floor(rng(seedShift+54)*4);
+        var ridgeY = top + Math.round(h*0.35) + Math.floor(rng(seedShift+55)*3);
 
-      // Helper: draw a single peak at (cx,peakY) with given width/height
-      function drawPeak(cx, peakY, halfW, h, isFront){
-        var baseY = peakY + h;
-        var midL = cx - halfW * 0.3 + Math.floor(rng(350 + cx)* halfW*0.2);
-        var midR = cx + halfW * 0.3 + Math.floor(rng(351 + cx)* halfW*0.2);
-        // Base silhouette
+        // --- 1) Thick dark outline ---
+        function mtnPath(){
+          ctx.beginPath();
+          ctx.moveTo(lsX, baseY);
+          if(hasRidge){ ctx.lineTo(ridgeX-1, ridgeY+1); }
+          ctx.lineTo(peakX, top);
+          ctx.lineTo(rsX, baseY);
+          ctx.closePath();
+        }
+        // Outer outline (2px thick feel)
+        ctx.fillStyle = outline;
+        ctx.save();
+        ctx.translate(-1, 0); mtnPath(); ctx.fill();
+        ctx.translate(2, 0); mtnPath(); ctx.fill();
+        ctx.translate(-1, -1); mtnPath(); ctx.fill();
+        ctx.restore();
+        // Border pixels along edges for pixel-art thickness
+        for(let i=0; i<=10; i++){
+          var t = i/10;
+          // Left edge
+          var lx = Math.round(lsX*(1-t) + peakX*t);
+          var ly = Math.round(baseY*(1-t) + top*t);
+          P(lx-1,ly,outline); P(lx,ly,outline);
+          // Right edge
+          var rrx = Math.round(peakX*(1-t) + rsX*t);
+          var rry = Math.round(top*(1-t) + baseY*t);
+          P(rrx+1,rry,outline); P(rrx,rry,outline);
+        }
+
+        // --- 2) Base rock fill ---
         ctx.fillStyle = rockBase;
+        mtnPath(); ctx.fill();
+
+        // --- 3) Left lit face ---
+        ctx.save();
+        mtnPath(); ctx.clip();
+        ctx.fillStyle = rockLit;
         ctx.beginPath();
-        ctx.moveTo(cx - halfW, baseY);
-        ctx.lineTo(cx - halfW*0.6, peakY + h*0.55);
-        ctx.lineTo(cx - halfW*0.25, peakY + h*0.2);
-        ctx.lineTo(cx, peakY);
-        ctx.lineTo(cx + halfW*0.3, peakY + h*0.25);
-        ctx.lineTo(cx + halfW*0.65, peakY + h*0.5);
-        ctx.lineTo(cx + halfW, baseY);
-        ctx.closePath(); ctx.fill();
-        // Left lit face
-        ctx.fillStyle = isFront ? rockLit : rockMid;
-        ctx.beginPath();
-        ctx.moveTo(cx, peakY);
-        ctx.lineTo(cx - halfW*0.6, peakY + h*0.55);
-        ctx.lineTo(cx - halfW*0.15, baseY);
+        ctx.moveTo(lsX, baseY);
+        ctx.lineTo(peakX, top);
         ctx.lineTo(cx, baseY);
         ctx.closePath(); ctx.fill();
-        // Secondary lit
-        ctx.fillStyle = rockMid;
-        ctx.beginPath();
-        ctx.moveTo(cx - halfW*0.25, peakY + h*0.2);
-        ctx.lineTo(cx - halfW*0.7, peakY + h*0.65);
-        ctx.lineTo(cx - halfW*0.35, baseY);
-        ctx.lineTo(cx - halfW*0.15, baseY);
-        ctx.closePath(); ctx.fill();
-        // Right shadow
+        ctx.restore();
+
+        // --- 4) Right shadow face ---
+        ctx.save();
+        mtnPath(); ctx.clip();
         ctx.fillStyle = rockDark;
         ctx.beginPath();
-        ctx.moveTo(cx, peakY);
-        ctx.lineTo(cx + halfW*0.65, peakY + h*0.5);
-        ctx.lineTo(cx + halfW*0.15, baseY);
-        ctx.lineTo(cx, baseY);
+        ctx.moveTo(peakX, top);
+        ctx.lineTo(rsX, baseY);
+        ctx.lineTo(cx + Math.round(hw*0.15), baseY);
         ctx.closePath(); ctx.fill();
-        // Deeper shadow
-        ctx.fillStyle = rockDeep;
+        ctx.restore();
+
+        // --- 5) Snow cap ---
+        var capH = Math.max(2, Math.round(h*0.2));
+        ctx.fillStyle = snowCol;
         ctx.beginPath();
-        ctx.moveTo(cx + halfW*0.3, peakY + h*0.25);
-        ctx.lineTo(cx + halfW, baseY);
-        ctx.lineTo(cx + halfW*0.3, baseY);
+        ctx.moveTo(peakX, top);
+        ctx.lineTo(peakX - Math.round(hw*0.2), top + capH);
+        ctx.lineTo(peakX + Math.round(hw*0.25), top + capH);
         ctx.closePath(); ctx.fill();
-        // Snow cap
-        ctx.fillStyle = isFront ? snowHi : snowLo;
-        var capH = Math.max(2, Math.floor(h * 0.18));
-        ctx.beginPath();
-        ctx.moveTo(cx, peakY);
-        ctx.lineTo(cx - halfW*0.15, peakY + capH);
-        ctx.lineTo(cx, peakY + capH - 1);
-        ctx.lineTo(cx + halfW*0.2, peakY + capH);
-        ctx.closePath(); ctx.fill();
-        // Ridge highlight
-        if(isFront && h > 10){
-          R(cx - Math.floor(halfW*0.2), peakY + Math.floor(h*0.35), 2, 1, snowLo);
+        // Snow highlight pixel
+        P(peakX - 1, top + 1, '#fff');
+
+        // --- 6) Rock noise dots (clipped to triangle) ---
+        for(let gi=0; gi<12; gi++){
+          var nx = cx - hw + 2 + Math.floor(rng(seedShift+870+gi*13) * (hw*2-4));
+          var ny = top + Math.round(h*0.25) + Math.floor(rng(seedShift+900+gi*17) * (h*0.65));
+          // Check inside triangle roughly
+          var frac = (ny - top) / h;
+          var widthAtY = hw * frac;
+          if(Math.abs(nx - peakX) > widthAtY - 2) continue;
+          var rDot = rng(seedShift+960+gi*37);
+          var c = rDot > 0.7 ? rockLit : (rDot > 0.35 ? '#9a835c' : rockDark);
+          P(nx,ny,c);
+          if(rng(seedShift+990+gi*29) > 0.6) P(nx+1,ny,c);
+        }
+
+        // --- 7) Crack lines ---
+        if(h > 10){
+          ctx.strokeStyle = outline; ctx.lineWidth = 1;
+          var crx = cx - Math.round(hw*0.15) + Math.floor(rng(seedShift+1100)*Math.round(hw*0.3));
+          var cry = top + Math.round(h*0.4);
+          ctx.beginPath(); ctx.moveTo(crx, cry); ctx.lineTo(crx+2, cry+Math.round(h*0.25)); ctx.stroke();
         }
       }
 
-      // Layout variants: 1-peak, 2-peak, or 3-peak (like forest's 1/2/3 tree)
-      var mLayout = Math.floor(rng(341)*3);
-      // Jitter anchors per tile
-      var jx0 = Math.floor(rng(342)*4)-2;
-      var jx1 = Math.floor(rng(343)*4)-2;
-      var jy0 = Math.floor(rng(344)*3)-1;
+      // 9-grid anchors — baseY = bottom of peak
+      var g = [ [6,12], [16,12], [26,12], [6,22], [16,22], [26,22], [6,30], [16,30], [26,30] ];
+      function putMtnAt(anchorIdx, seed, wScale, hScale){
+        var a=g[anchorIdx];
+        var jx=Math.floor(rng(seed+11)*5)-2;
+        var jy=Math.floor(rng(seed+13)*3)-1;
+        drawMtnAt(x+a[0]+jx, y+a[1]+jy, seed, Math.round(11*wScale), Math.round(10*hScale));
+      }
 
-      if(mLayout===0){
-        // Single large peak, centered with jitter
-        drawPeak(x+16+jx0, y+2+jy0, 14, 22, true);
-      }else if(mLayout===1){
-        // Two peaks: back smaller, front taller
-        var backX = x+22+jx1, backY = y+8+Math.floor(rng(345)*3);
-        drawPeak(backX, backY, 9, 16, false);
-        var frontX = x+12+jx0, frontY = y+3+jy0;
-        drawPeak(frontX, frontY, 12, 21, true);
+      // 1/2/3 layout roll
+      var roll = rng(1500);
+      var layout = roll < 0.30 ? 1 : (roll < 0.62 ? 2 : 3);
+
+      if(layout===1){
+        putMtnAt(4, 1600, 1.30, 1.50);
+      }else if(layout===2){
+        putMtnAt(3, 1700, 0.95, 1.15);
+        putMtnAt(5, 1800, 0.95, 1.15);
       }else{
-        // Three peaks: back two + front dominant
-        drawPeak(x+8+jx1, y+10+Math.floor(rng(346)*2), 7, 14, false);
-        drawPeak(x+25+Math.floor(rng(347)*3)-1, y+9+Math.floor(rng(348)*2), 7, 15, false);
-        drawPeak(x+16+jx0, y+2+jy0, 11, 22, true);
+        var p3 = [ [1,3,8], [0,5,7], [2,3,7], [1,5,6] ];
+        var pIdx = Math.floor(rng(1501) * p3.length);
+        var pick = p3[pIdx];
+        putMtnAt(pick[0], 1700, 0.75, 0.90);
+        putMtnAt(pick[1], 1800, 0.75, 0.90);
+        putMtnAt(pick[2], 1900, 0.75, 0.90);
       }
 
-      // Rock texture: scattered micro-dots (like forest's leaf specks)
-      for(let i=0;i<18;i++){
-        var rx=x+2+Math.floor(rng(i+360)*28), ry=y+6+Math.floor(rng(i+380)*18);
-        if(rng(i+400)>0.35){
-          var rc=rng(i+420)>0.5?'#9a835c':'#7e6a49';
-          P(rx,ry,rc);
-          if(rng(i+440)>0.6) P(rx+1,ry,rc);
-        }
-      }
-
-      // Scree / rubble at foothills
-      for(let i=0;i<10;i++){
-        var sx2=x+1+Math.floor(rng(i+300)*28), sw=1+Math.floor(rng(i+310)*2);
-        var sy2=y+23+Math.floor(rng(i+320)*4);
-        R(sx2,sy2,sw,1,rng(i+330)>0.5?'#9a835c':'#7e6a49');
-      }
-
-      // Grass tufts at base for natural blending
-      for(let i=0;i<4;i++){
-        var gx=x+3+Math.floor(rng(i+450)*24), gy=y+26+Math.floor(rng(i+460)*4);
-        P(gx,gy,'#68b858');P(gx-1,gy-1,'#58a848');P(gx+1,gy-1,'#58a848');
+      // Ground micro-specks
+      for(let i=0;i<16;i++) if(rng(1520+i)>0.40){
+        var bx=x+1+Math.floor(rng(1540+i)*30), by=y+1+Math.floor(rng(1560+i)*30);
+        var bc=rng(1580+i)>0.5?'#4ea842':'#3a8e32';
+        P(bx,by,bc);
       }
 
     }else if(type==='wall'){
@@ -1095,34 +1129,122 @@ const Sprites = {
       R(x+Math.floor(rng(690)*20)+4,y+Math.floor(rng(691)*20)+6,3,2,'#4a4420');
 
     }else if(type==='cliff'){
-      // FE GBA-like cliff: stepped strata, strong top lip, right-side falloff shadow
+      // Cliff: forest-style 1/2/3 system — layered rock slabs with green top
+      // Brown rock base
       R(x,y,s,s,'#6d5a45');
-      // top grass lip
-      R(x,y,s,5,'#5aaa4a');
-      R(x,y+5,s,1,'#86c270');
-      R(x,y+6,s,1,'#4a7a3a');
+      BV(['#6a5742','#6d5a45','#705d48','#685540'], 2100);
 
-      // cliff body blocks
-      R(x+1,y+7,30,24,'#7a654c');
-      R(x+2,y+9,28,21,'#6e5a43');
-      // left light / right shadow
-      R(x+2,y+8,2,20,'#927b61');
-      R(x+28,y+8,2,20,'#4f4030');
+      // Per-tile color shift
+      var ccShift = Math.floor(rng(2110)*3);
+      var cliffOutline = ['#3d3025','#3a2d22','#403328'][ccShift];
+      var cliffBase    = ['#7a654c','#766148','#7e6950'][ccShift];
+      var cliffLit     = ['#9a8468','#968064','#9e886c'][ccShift];
+      var cliffDark    = ['#4f4030','#4c3d2d','#524333'][ccShift];
+      var cliffMid     = ['#6e5a43','#6a5640','#725e46'][ccShift];
 
-      // horizontal strata lines
-      R(x+3,y+12,25,1,'#5c4b38');
-      R(x+4,y+17,23,1,'#594936');
-      R(x+3,y+22,24,1,'#574633');
-      R(x+4,y+27,22,1,'#554431');
+      // Draw one cliff slab: layered strata block with thickness
+      function drawCliffAt(cx, baseY, seedShift, hw, h){
+        cx = Math.max(x+hw, Math.min(x+32-hw, cx));
+        baseY = Math.min(y+31, Math.max(y+h+2, baseY));
+        var top = baseY - h;
+        var left = cx - hw, right = cx + hw;
 
-      // broken ledges / chips
-      R(x+6,y+11,3,2,'#8f785d');R(x+12,y+16,2,2,'#8b745a');R(x+19,y+21,3,2,'#876f55');
-      R(x+23,y+14,2,2,'#4a3b2c');R(x+10,y+24,2,2,'#4d3d2e');
+        // --- 1) Dark outline ---
+        R(left-1, top-1, hw*2+2, h+2, cliffOutline);
+        // Extra border pixels
+        for(let i=0; i<3; i++){
+          R(left-1, top+Math.round(h*0.3*i), 1, 2, cliffOutline);
+          R(right, top+Math.round(h*0.3*i), 1, 2, cliffOutline);
+        }
 
-      // sparse cracks
-      ctx.strokeStyle='#443628';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x+9,y+13);ctx.lineTo(x+11,y+18);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x+20,y+18);ctx.lineTo(x+22,y+23);ctx.stroke();
+        // --- 2) Rock body fill ---
+        R(left, top, hw*2, h, cliffBase);
+
+        // --- 3) Left lit strip ---
+        R(left, top, Math.max(2, Math.round(hw*0.3)), h, cliffLit);
+
+        // --- 4) Right shadow strip ---
+        R(right - Math.max(2, Math.round(hw*0.25)), top, Math.max(2, Math.round(hw*0.25)), h, cliffDark);
+
+        // --- 5) Horizontal strata lines (2-4 per slab) ---
+        var nStrata = 2 + Math.floor(rng(seedShift+60)*3);
+        for(let si=0; si<nStrata; si++){
+          var sy = top + Math.round(h*0.2) + Math.round(si * h*0.7 / nStrata);
+          var sx = left + 1 + Math.floor(rng(seedShift+70+si)*3);
+          var sw = hw*2 - 2 - Math.floor(rng(seedShift+80+si)*4);
+          R(sx, sy, sw, 1, cliffOutline);
+          // Ledge highlight above line
+          R(sx+1, sy-1, Math.round(sw*0.6), 1, cliffLit);
+        }
+
+        // --- 6) Broken chip details ---
+        for(let ci=0; ci<3; ci++){
+          if(rng(seedShift+100+ci) > 0.4){
+            var cpx = left + 2 + Math.floor(rng(seedShift+110+ci)*(hw*2-6));
+            var cpy = top + 2 + Math.floor(rng(seedShift+120+ci)*(h-4));
+            R(cpx, cpy, 2+Math.floor(rng(seedShift+130+ci)*2), 2, rng(seedShift+140+ci)>0.5 ? cliffLit : cliffDark);
+          }
+        }
+
+        // --- 7) Noise dots ---
+        for(let gi=0; gi<8; gi++){
+          var nx = left + 2 + Math.floor(rng(seedShift+870+gi*13) * (hw*2-4));
+          var ny = top + 1 + Math.floor(rng(seedShift+900+gi*17) * (h-2));
+          var rDot = rng(seedShift+960+gi*37);
+          var c = rDot > 0.7 ? cliffLit : (rDot > 0.35 ? cliffMid : cliffDark);
+          P(nx,ny,c);
+        }
+
+        // --- 8) Crack line ---
+        if(h > 8 && rng(seedShift+1100) > 0.4){
+          ctx.strokeStyle = cliffOutline; ctx.lineWidth = 1;
+          var crx = left + 3 + Math.floor(rng(seedShift+1101)*(hw*2-6));
+          var cry = top + Math.round(h*0.3);
+          ctx.beginPath(); ctx.moveTo(crx, cry); ctx.lineTo(crx+Math.floor(rng(seedShift+1102)*3)-1, cry+Math.round(h*0.35)); ctx.stroke();
+        }
+
+        // --- 9) Green grass top lip ---
+        R(left, top-2, hw*2, 3, '#5aaa4a');
+        R(left, top, hw*2, 1, '#4a8a3a');
+        // Grass tufts hanging over
+        for(let ti=0; ti<3; ti++){
+          var tx2 = left + 2 + Math.floor(rng(seedShift+200+ti)*(hw*2-4));
+          P(tx2, top+1, '#5aaa4a'); P(tx2+1, top, '#68b858');
+        }
+      }
+
+      // 9-grid anchors
+      var g = [ [6,12], [16,12], [26,12], [6,22], [16,22], [26,22], [6,30], [16,30], [26,30] ];
+      function putCliffAt(anchorIdx, seed, wScale, hScale){
+        var a=g[anchorIdx];
+        var jx=Math.floor(rng(seed+11)*5)-2;
+        var jy=Math.floor(rng(seed+13)*3)-1;
+        drawCliffAt(x+a[0]+jx, y+a[1]+jy, seed, Math.round(11*wScale), Math.round(9*hScale));
+      }
+
+      // 1/2/3 layout roll
+      var roll = rng(2200);
+      var layout = roll < 0.30 ? 1 : (roll < 0.62 ? 2 : 3);
+
+      if(layout===1){
+        putCliffAt(4, 2300, 1.30, 1.40);
+      }else if(layout===2){
+        putCliffAt(3, 2400, 0.95, 1.10);
+        putCliffAt(5, 2500, 0.95, 1.10);
+      }else{
+        var p3 = [ [1,3,8], [0,5,7], [2,3,7], [1,5,6] ];
+        var pIdx = Math.floor(rng(2201) * p3.length);
+        var pick = p3[pIdx];
+        putCliffAt(pick[0], 2400, 0.75, 0.85);
+        putCliffAt(pick[1], 2500, 0.75, 0.85);
+        putCliffAt(pick[2], 2600, 0.75, 0.85);
+      }
+
+      // Ground fill around slabs
+      for(let i=0;i<12;i++) if(rng(2220+i)>0.40){
+        var bx=x+1+Math.floor(rng(2240+i)*30), by=y+1+Math.floor(rng(2260+i)*30);
+        P(bx,by,rng(2280+i)>0.5?'#5e4c3a':'#7a6550');
+      }
 
     }else if(type==='pass'){
       // Mountain pass with worn path
