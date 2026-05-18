@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/ShawTim/fire-emblem#readme",
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "@anthropic-ai/sdk": "^0.96.0",
+    "http-server": "^14.1.1",
+    "playwright": "^1.60.0"
   }
 }

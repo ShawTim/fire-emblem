@@ -190,6 +190,22 @@ class Game {
     };
   }
 
+  getEnemyTargets(unit, range) {
+    return this.units.filter(u => {
+      if (u.faction === 'player' || u.hp <= 0) return false;
+      const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
+      return range.includes(dist);
+    });
+  }
+
+  getHealTargets(unit, staff) {
+    return this.units.filter(u => {
+      if (u.faction !== 'player' || u.hp <= 0 || u.hp >= u.maxHp) return false;
+      const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
+      return staff.range.includes(dist);
+    });
+  }
+
   beginPlayerPhase() {
     this.phase = 'player';
     this.state = 'map';
@@ -524,11 +540,7 @@ class Game {
       case 'cmd_attack': {
         // Attack from current position (no move)
         const atkRange = unit.getAttackRange();
-        const targets = this.units.filter(u => {
-          if (u.faction === 'player' || u.hp <= 0) return false;
-          const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
-          return atkRange.includes(dist);
-        });
+        const targets = this.getEnemyTargets(unit, atkRange);
         if (targets.length > 0) {
           this.attackTargets = targets;
           this.attackRange = targets.map(t => ({ x: t.x, y: t.y }));
@@ -545,11 +557,7 @@ class Game {
       case 'cmd_heal': {
         const staff = unit.getHealStaff();
         if (staff) {
-          const hTargets = this.units.filter(u => {
-            if (u.faction !== 'player' || u.hp <= 0 || u.hp >= u.maxHp) return false;
-            const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
-            return staff.range.includes(dist);
-          });
+          const hTargets = this.getHealTargets(unit, staff);
           if (hTargets.length > 0) {
             this.healTargets = hTargets;
             this.attackRange = hTargets.map(u => ({ x: u.x, y: u.y }));
@@ -768,22 +776,14 @@ class Game {
     const atkRange = unit.getAttackRange();
 
     if (unit.canAttack()) {
-      const targets = this.units.filter(u => {
-        if (u.faction === 'player' || u.hp <= 0) return false;
-        const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
-        return atkRange.includes(dist);
-      });
+      const targets = this.getEnemyTargets(unit, atkRange);
       items.push({ label: '攻擊', action: 'attack', disabled: targets.length === 0 });
       this.attackTargets = targets;
     }
 
     if (unit.canHeal()) {
       const staff = unit.getHealStaff();
-      const hTargets = this.units.filter(u => {
-        if (u.faction !== 'player' || u.hp <= 0 || u.hp >= u.maxHp) return false;
-        const dist = Math.abs(unit.x - u.x) + Math.abs(unit.y - u.y);
-        return staff.range.includes(dist);
-      });
+      const hTargets = this.getHealTargets(unit, staff);
       items.push({ label: '治療', action: 'heal', disabled: hTargets.length === 0 });
       this.healTargets = hTargets;
     }

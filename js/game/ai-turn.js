@@ -28,6 +28,12 @@ var AITurn = {
    * Process next enemy action
    * @param {Game} game - Game instance
    */
+  _finishUnit: function(unit) {
+    unit.acted = true;
+    unit._direction = null;
+    unit._selected = false;
+  },
+
   processNextEnemyAction: function(game) {
     if (game.enemyActionIndex >= game.enemyActions.length) {
       game.turn++;
@@ -43,11 +49,7 @@ var AITurn = {
     game.enemyActionIndex++;
 
     if (action.type === 'wait') {
-      action.unit.acted = true;
-      action.unit._direction = null;
-      action.unit._selected = false;
-      action.unit._direction = null;
-      action.unit._selected = false;
+      AITurn._finishUnit(action.unit);
       setTimeout(() => AITurn.processNextEnemyAction(game), 100);
       return;
     }
@@ -58,11 +60,7 @@ var AITurn = {
       if (action.type === 'attack') {
         const target = action.target;
         if (!target || target.hp <= 0) {
-          action.unit.acted = true;
-      action.unit._direction = null;
-      action.unit._selected = false;
-          action.unit._direction = null;
-          action.unit._selected = false;
+          AITurn._finishUnit(action.unit);
           setTimeout(() => AITurn.processNextEnemyAction(game), 100);
           return;
         }
@@ -70,11 +68,7 @@ var AITurn = {
         const actualDist = Math.abs(action.unit.x - target.x) + Math.abs(action.unit.y - target.y);
         const atkRange = action.unit.getAttackRange();
         if (!atkRange.includes(actualDist)) {
-          action.unit.acted = true;
-      action.unit._direction = null;
-      action.unit._selected = false;
-          action.unit._direction = null;
-          action.unit._selected = false;
+          AITurn._finishUnit(action.unit);
           setTimeout(() => AITurn.processNextEnemyAction(game), 100);
           return;
         }
@@ -83,11 +77,7 @@ var AITurn = {
         game.selectedUnit = action.unit;
         setTimeout(() => game.startCombat(action.unit, action.target), needsMove ? 300 : 0);
       } else {
-        action.unit.acted = true;
-      action.unit._direction = null;
-      action.unit._selected = false;
-        action.unit._direction = null;
-        action.unit._selected = false;
+        AITurn._finishUnit(action.unit);
         setTimeout(() => AITurn.processNextEnemyAction(game), 250);
       }
     };
