@@ -29,6 +29,19 @@ class Game {
     this.debugStartChapter = null; // hidden query jump, set by main.js
     this._deferTurnEvents = false;
     this._deferTurnEventsMs = 0;
+    this.messageLog = [];
+    this.messageLogMax = 100;
+  }
+
+  logEvent(entry) {
+    this.messageLog.push({ turn: this.turn, phase: this.phase, ...entry });
+    if (this.messageLog.length > this.messageLogMax) {
+      this.messageLog.splice(0, this.messageLog.length - this.messageLogMax);
+    }
+  }
+
+  getRecentLog(n = 20) {
+    return this.messageLog.slice(-n);
   }
 
   init() {
@@ -213,6 +226,7 @@ class Game {
     for (const u of this.units) {
       if (u.faction === 'player' && u.hp > 0) u.reset();
     }
+    this.logEvent({ type: 'phase', phaseStart: 'player' });
     this.processTurnEvents();
     UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'player', this.chapterData.objective);
     UI.showPhaseBanner('player');
@@ -981,6 +995,22 @@ class Game {
     this.combatDefender = defender;
     this.combatResult = executeCombat(attacker, defender, GameMap);
     const forecast = calculateCombat(attacker, defender, GameMap);
+    this.logEvent({
+      type: 'combat',
+      attacker: attacker.name,
+      defender: defender.name,
+      attackerFaction: attacker.faction,
+      defenderFaction: defender.faction,
+      steps: this.combatResult.steps.map(s => ({
+        actor: s.actor.name,
+        target: s.target.name,
+        damage: s.damage,
+        hit: s.hit,
+        crit: s.crit,
+        killed: s.killed,
+      })),
+      exp: this.combatResult.exp,
+    });
     this.attackRange = [];
     this.healTargets = [];
     BGM.resumeTrack = BGM.currentTrackName;
@@ -1086,6 +1116,13 @@ class Game {
   doHeal(target) {
     const result = executeHeal(this.selectedUnit, target);
     if (result) {
+      this.logEvent({
+        type: 'heal',
+        healer: this.selectedUnit.name,
+        target: target.name,
+        healAmt: result.healAmt,
+        exp: result.exp,
+      });
       const ts = GameMap.tileSize * GameMap.scale;
       const sx = target.x * ts - GameMap.camX + ts / 2;
       const sy = target.y * ts - GameMap.camY;

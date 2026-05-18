@@ -8,6 +8,7 @@ var AITurn = {
   beginEnemyPhase: function(game) {
     game.phase = 'enemy';
     game.state = 'enemyPhase';
+    game.logEvent({ type: 'phase', phaseStart: 'enemy' });
     UI.updateTopBar(game.chapterData.title + '：' + game.chapterData.subtitle, game.turn, 'enemy', game.chapterData.objective);
     UI.showPhaseBanner('enemy');
     BGM.play('enemyPhase', true);
