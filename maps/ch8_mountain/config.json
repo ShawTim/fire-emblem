@@ -7,20 +7,71 @@
   "width": 20,
   "height": 18,
   "playerUnits": [
-    {"charId": "eirine", "x": 9, "y": 17},
-    {"charId": "marcus", "x": 8, "y": 17},
-    {"charId": "lina", "x": 10, "y": 17},
-    {"charId": "thor", "x": 9, "y": 16},
-    {"charId": "serra", "x": 8, "y": 16},
-    {"charId": "cain", "x": 10, "y": 16},
-    {"charId": "fran", "x": 11, "y": 17},
-    {"charId": "rex", "x": 7, "y": 17},
+    {"charId": "eirine",  "x": 9,  "y": 17},
+    {"charId": "marcus",  "x": 8,  "y": 17},
+    {"charId": "lina",    "x": 10, "y": 17},
+    {"charId": "thor",    "x": 9,  "y": 16},
+    {"charId": "serra",   "x": 8,  "y": 16},
+    {"charId": "cain",    "x": 10, "y": 16},
+    {"charId": "fran",    "x": 11, "y": 17},
+    {"charId": "rex",     "x": 7,  "y": 17},
     {"charId": "natasha", "x": 11, "y": 16},
     {"charId": "olivier", "x": 12, "y": 17}
   ],
-  "enemies": [
-    {"classId": "knight", "level": 10, "x": 7, "y": 14, "items": ["steelLance"], "ai": "defensive", "name": "要塞重裝兵"},
-    {"classId": "greatKnight", "level": 3, "x": 9, "y": 1, "items": ["silverLance", "silverSword"], "ai": "boss", "name": "要塞司令官ゲルハルト", "isBoss": true, "bonusStats": {"hp": 12, "str": 5, "skl": 3, "spd": 2, "def": 6, "res": 2}}
+  "newRecruits": [
+    {"charId": "helga", "x": 9, "y": 8, "turnJoin": 5}
   ],
-  "dialogues": {}
+  "enemies": [
+    {"classId": "sniper",     "level": 5,  "x": 3,  "y": 2,  "items": ["steelBow"],           "ai": "defensive",  "name": "要塞狙擊手"},
+    {"classId": "sniper",     "level": 5,  "x": 14, "y": 2,  "items": ["steelBow"],           "ai": "defensive",  "name": "要塞狙擊手"},
+    {"classId": "knight",     "level": 12, "x": 7,  "y": 3,  "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "knight",     "level": 12, "x": 10, "y": 3,  "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "knight",     "level": 12, "x": 5,  "y": 4,  "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "knight",     "level": 12, "x": 12, "y": 4,  "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "mageKnight", "level": 5,  "x": 6,  "y": 5,  "items": ["elfire"],             "ai": "aggressive", "name": "帝國魔法騎士"},
+    {"classId": "mageKnight", "level": 5,  "x": 13, "y": 5,  "items": ["elthunder"],          "ai": "aggressive", "name": "帝國魔法騎士"},
+    {"classId": "general",    "level": 7,  "x": 9,  "y": 6,  "items": ["silverLance","handAxe"], "ai": "defensive", "name": "鐵牆守將"},
+    {"classId": "paladin",    "level": 5,  "x": 4,  "y": 7,  "items": ["steelSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "paladin",    "level": 5,  "x": 15, "y": 7,  "items": ["steelSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "knight",     "level": 12, "x": 7,  "y": 8,  "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "knight",     "level": 12, "x": 11, "y": 8,  "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "general",    "level": 7,  "x": 9,  "y": 10, "items": ["steelLance","javelin"], "ai": "defensive", "name": "鐵牆守將"},
+    {"classId": "paladin",    "level": 7,  "x": 5,  "y": 11, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "paladin",    "level": 7,  "x": 13, "y": 11, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "sniper",     "level": 7,  "x": 7,  "y": 12, "items": ["steelBow"],           "ai": "defensive",  "name": "要塞狙擊手"},
+    {"classId": "sniper",     "level": 7,  "x": 11, "y": 12, "items": ["killerBow"],          "ai": "defensive",  "name": "精銳狙擊手"},
+    {"classId": "knight",     "level": 12, "x": 6,  "y": 13, "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "knight",     "level": 12, "x": 12, "y": 13, "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "general",    "level": 10, "x": 7,  "y": 14, "items": ["silverLance","javelin"], "ai": "defensive", "name": "鐵牆守將",
+      "bonusStats": {"hp": 5, "str": 2, "def": 8}},
+    {"classId": "knight",     "level": 12, "x": 9,  "y": 14, "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "knight",     "level": 12, "x": 5,  "y": 15, "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {"classId": "knight",     "level": 12, "x": 13, "y": 15, "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
+    {
+      "classId": "greatKnight", "level": 3, "x": 9, "y": 1,
+      "items": ["silverLance", "silverSword"],
+      "ai": "boss", "name": "要塞司令官ゲルハルト", "isBoss": true,
+      "bonusStats": {"hp": 18, "str": 8, "skl": 5, "spd": 3, "def": 10, "res": 4}
+    }
+  ],
+  "turnEvents": [
+    {
+      "turn": 4,
+      "type": "reinforce",
+      "enemies": [
+        {"classId": "paladin", "level": 7, "x": 16, "y": 11, "items": ["steelSword","javelin"], "ai": "aggressive", "name": "增援聖騎士"},
+        {"classId": "paladin", "level": 7, "x": 14, "y": 12, "items": ["steelSword","javelin"], "ai": "aggressive", "name": "增援聖騎士"},
+        {"classId": "knight",  "level": 12,"x": 15, "y": 13, "items": ["steelLance"],          "ai": "aggressive", "name": "增援重裝兵"}
+      ]
+    },
+    {
+      "turn": 5,
+      "type": "recruit",
+      "text": [
+        {"speaker": "helga",  "text": "你……你竟然突破了鐵牆？"},
+        {"speaker": "eirine", "text": "你是要阻止我嗎？"},
+        {"speaker": "helga",  "text": "不。我效忠的是正義，不是暴君。讓我加入你——從今日起，我守護你。"}
+      ]
+    }
+  ]
 }

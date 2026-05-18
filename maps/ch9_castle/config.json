@@ -7,21 +7,65 @@
   "width": 18,
   "height": 20,
   "playerUnits": [
-    {"charId": "eirine", "x": 8, "y": 19},
-    {"charId": "marcus", "x": 7, "y": 19},
-    {"charId": "lina", "x": 9, "y": 19},
-    {"charId": "thor", "x": 8, "y": 18},
-    {"charId": "serra", "x": 7, "y": 18},
-    {"charId": "cain", "x": 9, "y": 18},
-    {"charId": "fran", "x": 10, "y": 19},
-    {"charId": "rex", "x": 6, "y": 19},
+    {"charId": "eirine",  "x": 8,  "y": 19},
+    {"charId": "marcus",  "x": 7,  "y": 19},
+    {"charId": "lina",    "x": 9,  "y": 19},
+    {"charId": "thor",    "x": 8,  "y": 18},
+    {"charId": "serra",   "x": 7,  "y": 18},
+    {"charId": "cain",    "x": 9,  "y": 18},
+    {"charId": "fran",    "x": 10, "y": 19},
+    {"charId": "rex",     "x": 6,  "y": 19},
     {"charId": "natasha", "x": 10, "y": 18},
     {"charId": "olivier", "x": 11, "y": 19},
-    {"charId": "helga", "x": 12, "y": 18}
+    {"charId": "helga",   "x": 12, "y": 18}
   ],
   "enemies": [
-    {"classId": "skeleton", "level": 10, "x": 5, "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "亡靈騎士"},
-    {"classId": "sage", "level": 5, "x": 8, "y": 1, "items": ["fenrir", "nosferatu"], "ai": "boss", "name": "祭司長ザルバ", "isBoss": true, "bonusStats": {"hp": 12, "mag": 6, "skl": 4, "spd": 3, "def": 3, "res": 6}}
+    {"classId": "darkMage", "level": 12, "x": 5,  "y": 2,  "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "darkMage", "level": 12, "x": 11, "y": 2,  "items": ["dark"],       "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "skeleton", "level": 12, "x": 4,  "y": 3,  "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 12, "x": 12, "y": 3,  "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "darkMage", "level": 12, "x": 5,  "y": 4,  "items": ["nosferatu"],  "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "darkMage", "level": 11, "x": 6,  "y": 6,  "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "darkMage", "level": 11, "x": 10, "y": 6,  "items": ["dark"],       "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "skeleton", "level": 11, "x": 4,  "y": 7,  "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 11, "x": 12, "y": 7,  "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 11, "x": 6,  "y": 8,  "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 11, "x": 10, "y": 8,  "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "darkMage", "level": 10, "x": 7,  "y": 10, "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "darkMage", "level": 10, "x": 9,  "y": 10, "items": ["dark"],       "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "skeleton", "level": 10, "x": 4,  "y": 11, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 10, "x": 12, "y": 11, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 10, "x": 6,  "y": 12, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 10, "x": 10, "y": 12, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "darkMage", "level": 10, "x": 6,  "y": 14, "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "darkMage", "level": 10, "x": 10, "y": 14, "items": ["nosferatu"],  "ai": "defensive",  "name": "神殿暗法師"},
+    {"classId": "skeleton", "level": 10, "x": 4,  "y": 15, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 10, "x": 12, "y": 15, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 10, "x": 6,  "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 10, "x": 10, "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 9,  "x": 6,  "y": 17, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 9,  "x": 9,  "y": 17, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 9,  "x": 4,  "y": 18, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "skeleton", "level": 9,  "x": 6,  "y": 18, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
+    {"classId": "darkMage", "level": 9,  "x": 7,  "y": 17, "items": ["flux"],       "ai": "aggressive", "name": "神殿暗法師"},
+    {"classId": "darkMage", "level": 9,  "x": 8,  "y": 17, "items": ["dark"],       "ai": "aggressive", "name": "神殿暗法師"},
+    {
+      "classId": "darkMage", "level": 8, "x": 8, "y": 1,
+      "items": ["fenrir", "nosferatu"],
+      "ai": "boss", "name": "祭司長ザルバ", "isBoss": true,
+      "bonusStats": {"hp": 18, "mag": 10, "skl": 6, "spd": 5, "def": 5, "res": 10}
+    }
   ],
-  "dialogues": {}
+  "turnEvents": [
+    {
+      "turn": 4,
+      "type": "reinforce",
+      "enemies": [
+        {"classId": "skeleton", "level": 12, "x": 6,  "y": 15, "items": ["steelLance"], "ai": "aggressive", "name": "增援亡靈"},
+        {"classId": "skeleton", "level": 12, "x": 10, "y": 15, "items": ["steelAxe"],  "ai": "aggressive", "name": "增援亡靈"},
+        {"classId": "darkMage", "level": 12, "x": 5,  "y": 16, "items": ["flux"],       "ai": "aggressive", "name": "增援暗法師"},
+        {"classId": "darkMage", "level": 12, "x": 11, "y": 16, "items": ["dark"],       "ai": "aggressive", "name": "增援暗法師"}
+      ]
+    }
+  ]
 }

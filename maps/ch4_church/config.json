@@ -15,10 +15,49 @@
     {"charId": "serra", "x": 5, "y": 15},
     {"charId": "cain", "x": 7, "y": 15}
   ],
-  "newRecruits": [{"charId": "fran", "x": 7, "y": 1, "turnJoin": 1}],
-  "enemies": [],
+  "newRecruits": [
+    {"charId": "fran", "x": 7, "y": 1, "turnJoin": 1}
+  ],
+  "enemies": [
+    {"classId": "soldier", "level": 6, "x": 3, "y": 14, "items": ["steelLance"], "ai": "defensive", "name": "塔衛士兵"},
+    {"classId": "soldier", "level": 6, "x": 9, "y": 14, "items": ["steelLance"], "ai": "defensive", "name": "塔衛士兵"},
+    {"classId": "mage",    "level": 6, "x": 6, "y": 13, "items": ["fire"],       "ai": "defensive", "name": "守塔魔法師"},
+    {"classId": "knight",  "level": 6, "x": 2, "y": 12, "items": ["steelLance"], "ai": "defensive", "name": "裝甲衛兵"},
+    {"classId": "knight",  "level": 6, "x": 8, "y": 12, "items": ["steelLance"], "ai": "defensive", "name": "裝甲衛兵"},
+    {"classId": "mage",    "level": 7, "x": 3, "y": 11, "items": ["elfire"],     "ai": "aggressive","name": "帝國魔導師"},
+    {"classId": "mage",    "level": 7, "x": 9, "y": 11, "items": ["elthunder"],  "ai": "aggressive","name": "帝國魔導師"},
+    {"classId": "knight",  "level": 7, "x": 3, "y": 8,  "items": ["steelLance"], "ai": "defensive", "name": "裝甲衛兵"},
+    {"classId": "knight",  "level": 7, "x": 9, "y": 8,  "items": ["steelLance"], "ai": "defensive", "name": "裝甲衛兵"},
+    {"classId": "mage",    "level": 7, "x": 3, "y": 7,  "items": ["elfire"],     "ai": "aggressive","name": "帝國魔導師"},
+    {"classId": "mage",    "level": 7, "x": 9, "y": 7,  "items": ["elthunder"],  "ai": "aggressive","name": "帝國魔導師"},
+    {"classId": "darkMage","level": 7, "x": 3, "y": 5,  "items": ["flux"],       "ai": "defensive", "name": "暗黑魔導師"},
+    {"classId": "darkMage","level": 7, "x": 9, "y": 5,  "items": ["flux"],       "ai": "defensive", "name": "暗黑魔導師"},
+    {"classId": "soldier", "level": 7, "x": 2, "y": 4,  "items": ["steelLance"], "ai": "defensive", "name": "塔衛士兵"},
+    {"classId": "soldier", "level": 7, "x": 8, "y": 4,  "items": ["steelLance"], "ai": "defensive", "name": "塔衛士兵"},
+    {"classId": "darkMage","level": 8, "x": 3, "y": 3,  "items": ["dark","flux"],"ai": "defensive", "name": "近衛暗法師"},
+    {"classId": "darkMage","level": 8, "x": 9, "y": 3,  "items": ["dark","flux"],"ai": "defensive", "name": "近衛暗法師"},
+    {
+      "classId": "darkMage",
+      "level": 1,
+      "x": 6,
+      "y": 3,
+      "items": ["nosferatu", "flux"],
+      "ai": "boss",
+      "name": "首席魔導師澤諾",
+      "isBoss": true,
+      "bonusStats": {"hp": 8, "mag": 5, "skl": 3, "spd": 3, "def": 2, "res": 5}
+    }
+  ],
   "npcs": [],
   "talkEvents": [],
-  "turnEvents": [],
-  "dialogues": {}
+  "turnEvents": [
+    {
+      "turn": 3,
+      "type": "reinforce",
+      "enemies": [
+        {"classId": "skeleton", "level": 6, "x": 5, "y": 9, "items": ["ironLance"], "ai": "aggressive", "name": "亡靈士兵"},
+        {"classId": "skeleton", "level": 6, "x": 7, "y": 9, "items": ["ironLance"], "ai": "aggressive", "name": "亡靈士兵"}
+      ]
+    }
+  ]
 }

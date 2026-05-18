@@ -3,20 +3,60 @@
   "title": "第三章",
   "subtitle": "傭兵的試煉",
   "objective": "rout",
-  "objectiveDesc": "殲滅所有敵人或說服凱恩",
+  "objectiveDesc": "殲滅所有帝國追兵",
   "width": 16,
   "height": 14,
   "playerUnits": [
     {"charId": "eirine", "x": 1, "y": 12},
     {"charId": "marcus", "x": 0, "y": 12},
-    {"charId": "lina", "x": 2, "y": 13},
-    {"charId": "thor", "x": 1, "y": 13},
-    {"charId": "serra", "x": 0, "y": 13}
+    {"charId": "lina",   "x": 2, "y": 13},
+    {"charId": "thor",   "x": 1, "y": 13},
+    {"charId": "serra",  "x": 0, "y": 13}
   ],
-  "newRecruits": [],
-  "enemies": [],
+  "newRecruits": [
+    {"charId": "cain", "x": 7, "y": 6, "turnJoin": 1}
+  ],
+  "enemies": [
+    {"classId": "soldier", "level": 6, "x": 9,  "y": 1, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
+    {"classId": "archer",  "level": 6, "x": 13, "y": 1, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
+    {"classId": "soldier", "level": 6, "x": 2,  "y": 2, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
+    {"classId": "fighter", "level": 7, "x": 11, "y": 2, "items": ["steelAxe"],   "ai": "aggressive", "name": "帝國戰士"},
+    {"classId": "archer",  "level": 7, "x": 14, "y": 2, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
+    {"classId": "knight",  "level": 6, "x": 7,  "y": 3, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
+    {"classId": "soldier", "level": 6, "x": 10, "y": 3, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
+    {"classId": "fighter", "level": 7, "x": 14, "y": 4, "items": ["steelAxe"],   "ai": "aggressive", "name": "帝國戰士"},
+    {"classId": "knight",  "level": 7, "x": 9,  "y": 5, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
+    {"classId": "soldier", "level": 7, "x": 13, "y": 5, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
+    {"classId": "archer",  "level": 7, "x": 11, "y": 6, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
+    {"classId": "soldier", "level": 7, "x": 9,  "y": 7, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
+    {"classId": "fighter", "level": 7, "x": 13, "y": 8, "items": ["steelAxe"],   "ai": "aggressive", "name": "帝國戰士"},
+    {"classId": "knight",  "level": 7, "x": 10, "y": 9, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
+    {
+      "classId": "cavalier", "level": 8, "x": 8, "y": 4,
+      "items": ["silverSword", "javelin"],
+      "ai": "boss", "name": "追討騎士長", "isBoss": true,
+      "bonusStats": {"hp": 8, "str": 3, "skl": 2, "spd": 3, "def": 2, "res": 2}
+    }
+  ],
   "npcs": [],
   "talkEvents": [],
-  "turnEvents": [],
-  "dialogues": {}
+  "turnEvents": [
+    {
+      "turn": 1,
+      "type": "recruit",
+      "text": [
+        {"speaker": "cain",   "text": "前有狼後有虎……這位就是被帝國懸紅的公主？"},
+        {"speaker": "eirine", "text": "凱恩，帝國是你我共同的敵人。今日暫且聯手如何？"},
+        {"speaker": "cain",   "text": "……說的倒也不錯。行，算我欠你一次。"}
+      ]
+    },
+    {
+      "turn": 4,
+      "type": "reinforce",
+      "enemies": [
+        {"classId": "soldier", "level": 7, "x": 15, "y": 10, "items": ["ironLance"], "ai": "aggressive", "name": "增援士兵"},
+        {"classId": "archer",  "level": 7, "x": 15, "y": 11, "items": ["ironBow"],   "ai": "aggressive", "name": "增援弓兵"}
+      ]
+    }
+  ]
 }

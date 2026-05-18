@@ -7,21 +7,76 @@
   "width": 22,
   "height": 18,
   "playerUnits": [
-    {"charId": "eirine", "x": 10, "y": 17},
-    {"charId": "marcus", "x": 9, "y": 17},
-    {"charId": "lina", "x": 11, "y": 17},
-    {"charId": "thor", "x": 10, "y": 16},
-    {"charId": "serra", "x": 9, "y": 16},
-    {"charId": "cain", "x": 11, "y": 16},
-    {"charId": "fran", "x": 12, "y": 17},
-    {"charId": "rex", "x": 8, "y": 17},
+    {"charId": "eirine",  "x": 10, "y": 17},
+    {"charId": "marcus",  "x": 9,  "y": 17},
+    {"charId": "lina",    "x": 11, "y": 17},
+    {"charId": "thor",    "x": 10, "y": 16},
+    {"charId": "serra",   "x": 9,  "y": 16},
+    {"charId": "cain",    "x": 11, "y": 16},
+    {"charId": "fran",    "x": 12, "y": 17},
+    {"charId": "rex",     "x": 8,  "y": 17},
     {"charId": "natasha", "x": 12, "y": 16},
     {"charId": "olivier", "x": 13, "y": 17},
-    {"charId": "helga", "x": 8, "y": 16}
+    {"charId": "helga",   "x": 8,  "y": 16}
   ],
   "enemies": [
-    {"classId": "knight", "level": 12, "x": 8, "y": 10, "items": ["silverLance"], "ai": "aggressive", "name": "帝國近衛"},
-    {"classId": "knight", "level": 12, "x": 13, "y": 10, "items": ["silverLance"], "ai": "aggressive", "name": "帝國近衛"}
+    {"classId": "sage",         "level": 7,  "x": 6,  "y": 1,  "items": ["elfire"],             "ai": "defensive",  "name": "帝國賢者"},
+    {"classId": "sage",         "level": 7,  "x": 14, "y": 1,  "items": ["elthunder"],          "ai": "defensive",  "name": "帝國賢者"},
+    {"classId": "general",      "level": 7,  "x": 4,  "y": 2,  "items": ["silverLance","javelin"], "ai": "defensive", "name": "帝國將軍"},
+    {"classId": "general",      "level": 7,  "x": 17, "y": 2,  "items": ["silverLance","javelin"], "ai": "defensive", "name": "帝國將軍"},
+    {"classId": "swordmaster",  "level": 5,  "x": 7,  "y": 3,  "items": ["silverSword"],        "ai": "aggressive", "name": "帝國劍聖"},
+    {"classId": "swordmaster",  "level": 5,  "x": 11, "y": 3,  "items": ["silverSword"],        "ai": "aggressive", "name": "帝國劍聖"},
+    {"classId": "paladin",      "level": 7,  "x": 7,  "y": 4,  "items": ["silverLance"],        "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "paladin",      "level": 7,  "x": 14, "y": 4,  "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "sage",         "level": 7,  "x": 10, "y": 4,  "items": ["elthunder"],          "ai": "defensive",  "name": "帝國賢者"},
+    {"classId": "paladin",      "level": 7,  "x": 3,  "y": 5,  "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "paladin",      "level": 7,  "x": 18, "y": 5,  "items": ["silverLance"],        "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "darkMage",     "level": 12, "x": 3,  "y": 7,  "items": ["dark"],               "ai": "defensive",  "name": "帝國暗法師"},
+    {"classId": "darkMage",     "level": 12, "x": 18, "y": 7,  "items": ["nosferatu"],          "ai": "defensive",  "name": "帝國暗法師"},
+    {"classId": "swordmaster",  "level": 5,  "x": 8,  "y": 8,  "items": ["silverSword"],        "ai": "aggressive", "name": "帝國劍聖"},
+    {"classId": "swordmaster",  "level": 5,  "x": 13, "y": 8,  "items": ["silverSword"],        "ai": "aggressive", "name": "帝國劍聖"},
+    {"classId": "general",      "level": 10, "x": 5,  "y": 9,  "items": ["silverLance","steelAxe"], "ai": "defensive", "name": "帝國將軍"},
+    {"classId": "general",      "level": 10, "x": 16, "y": 9,  "items": ["silverLance","handAxe"],  "ai": "defensive", "name": "帝國將軍"},
+    {"classId": "knight",       "level": 12, "x": 8,  "y": 10, "items": ["silverLance"],        "ai": "aggressive", "name": "帝國近衛"},
+    {"classId": "knight",       "level": 12, "x": 13, "y": 10, "items": ["silverLance"],        "ai": "aggressive", "name": "帝國近衛"},
+    {"classId": "paladin",      "level": 7,  "x": 4,  "y": 11, "items": ["silverLance"],        "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "paladin",      "level": 7,  "x": 17, "y": 11, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "sage",         "level": 7,  "x": 10, "y": 11, "items": ["elfire"],             "ai": "defensive",  "name": "帝國賢者"},
+    {"classId": "paladin",      "level": 5,  "x": 7,  "y": 13, "items": ["steelLance"],         "ai": "aggressive", "name": "帝國騎士"},
+    {"classId": "paladin",      "level": 5,  "x": 14, "y": 13, "items": ["steelSword","javelin"], "ai": "aggressive", "name": "帝國騎士"},
+    {"classId": "darkMage",     "level": 12, "x": 5,  "y": 14, "items": ["flux"],               "ai": "aggressive", "name": "帝國暗法師"},
+    {"classId": "darkMage",     "level": 12, "x": 16, "y": 14, "items": ["dark"],               "ai": "aggressive", "name": "帝國暗法師"},
+    {"classId": "knight",       "level": 10, "x": 8,  "y": 15, "items": ["steelLance"],         "ai": "aggressive", "name": "帝國近衛"},
+    {"classId": "knight",       "level": 10, "x": 13, "y": 15, "items": ["steelLance"],         "ai": "aggressive", "name": "帝國近衛"},
+    {"classId": "soldier",      "level": 12, "x": 4,  "y": 16, "items": ["steelLance"],         "ai": "aggressive", "name": "帝國士兵"},
+    {"classId": "soldier",      "level": 12, "x": 10, "y": 15, "items": ["steelLance"],         "ai": "aggressive", "name": "帝國士兵"},
+    {"classId": "soldier",      "level": 12, "x": 17, "y": 16, "items": ["steelLance"],         "ai": "aggressive", "name": "帝國士兵"},
+    {
+      "classId": "darkMage", "level": 12, "x": 10, "y": 0,
+      "charId": "morgane",
+      "items": ["starCrest", "fenrir"],
+      "ai": "boss", "name": "莫爾甘", "isBoss": true,
+      "bonusStats": {"hp": 20, "mag": 10, "skl": 6, "spd": 6, "def": 6, "res": 12}
+    }
   ],
-  "dialogues": {}
+  "turnEvents": [
+    {
+      "turn": 3,
+      "type": "reinforce",
+      "enemies": [
+        {"classId": "paladin",  "level": 7, "x": 2,  "y": 6, "items": ["silverLance"],  "ai": "aggressive", "name": "增援聖騎士"},
+        {"classId": "paladin",  "level": 7, "x": 19, "y": 6, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "增援聖騎士"},
+        {"classId": "darkMage", "level": 12,"x": 10, "y": 5, "items": ["dark"],          "ai": "aggressive", "name": "增援暗法師"}
+      ]
+    },
+    {
+      "turn": 6,
+      "type": "reinforce",
+      "enemies": [
+        {"classId": "general",  "level": 10, "x": 2,  "y": 8, "items": ["silverLance","steelAxe"], "ai": "aggressive", "name": "增援將軍"},
+        {"classId": "general",  "level": 10, "x": 19, "y": 8, "items": ["silverLance","handAxe"],  "ai": "aggressive", "name": "增援將軍"},
+        {"classId": "sage",     "level": 7,  "x": 10, "y": 7, "items": ["elthunder"],              "ai": "aggressive", "name": "增援賢者"}
+      ]
+    }
+  ]
 }
