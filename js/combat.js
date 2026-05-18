@@ -66,19 +66,13 @@ function calculateCombat(attacker, defender, map) {
     defHit = Math.max(0, Math.min(100, defender.getHit() + triBonusDef.hit - attacker.getAvo(atkTerrain)));
     defCrit = Math.max(0, defender.getCrit() - attacker.lck);
     defDouble = defender.spd - attacker.spd >= 5;
-    // Effective for defender
-    if (defWpn.effective && defWpn.effective.length > 0) {
-      const atkCls = getClassData(attacker.classId);
-      const atkTags = atkCls.tags || [];
-      if (defWpn.effective.some(t => atkTags.includes(t))) defDmg *= 3;
-    }
   }
 
   // Weapon triangle direction: 1=advantage, -1=disadvantage, 0=neutral
   const triDir = triBonus.atk > 0 ? 1 : (triBonus.atk < 0 ? -1 : 0);
   return {
     attacker: { name: attacker.name, hp: attacker.hp, maxHp: attacker.maxHp, weapon: atkWpn.name,
-      damage: Math.floor(atkDmg * atkEffMult), hit: atkHit, crit: atkCrit, doubleAttack: atkDouble },
+      damage: Math.floor(atkDmg), hit: atkHit, crit: atkCrit, doubleAttack: atkDouble },
     defender: { name: defender.name, hp: defender.hp, maxHp: defender.maxHp, weapon: defWpn ? defWpn.name : null,
       damage: defDmg, hit: defHit, crit: defCrit, doubleAttack: defDouble, canCounter },
     weaponTriangle: triDir
