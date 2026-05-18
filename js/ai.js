@@ -58,16 +58,25 @@ function getAIAction(unit, game) {
         if (!forecast) continue;
 
         let score = forecast.attacker.damage;
-        // Can kill bonus
-        if (forecast.attacker.damage >= target.hp) score += 100;
+        // Kill bonus: only for guaranteed kills (accounting for doubles).
+        // Crit-kill is weighted by actual crit chance so the AI doesn't
+        // crit-fish a wounded Lord across the map for an RNG kill.
+        const hits = forecast.attacker.doubleAttack ? 2 : 1;
+        const expectedDmg = forecast.attacker.damage * hits;
+        if (expectedDmg >= target.hp) score += 100;
+        else if (forecast.attacker.crit > 0 && forecast.attacker.damage * 3 >= target.hp) {
+          score += 30 * (forecast.attacker.crit / 100);
+        }
         // Low HP target bonus
         score += (1 - target.hp / target.maxHp) * 20;
         // Weapon advantage
         if (forecast.attacker.hit > 70) score += 10;
         // Avoid dying
         if (forecast.defender.canCounter && forecast.defender.damage >= unit.hp) score -= 200;
-        // Prioritize lord
-        if (target.isLord) score += 15;
+        // Lord priority: only when target is healthy. A wounded Lord is
+        // already attractive via the low-HP bonus; piling on stacks the
+        // deck against new players relying on safe retreats.
+        if (target.isLord && target.hp / target.maxHp >= 0.5) score += 15;
 
         if (score > bestScore) {
           bestScore = score;
@@ -106,9 +115,14 @@ function pickBestTarget(unit, targets, game) {
     const forecast = calculateCombat(unit, t, GameMap);
     if (!forecast) continue;
     let score = forecast.attacker.damage;
-    if (forecast.attacker.damage >= t.hp) score += 100;
+    const hits = forecast.attacker.doubleAttack ? 2 : 1;
+    const expectedDmg = forecast.attacker.damage * hits;
+    if (expectedDmg >= t.hp) score += 100;
+    else if (forecast.attacker.crit > 0 && forecast.attacker.damage * 3 >= t.hp) {
+      score += 30 * (forecast.attacker.crit / 100);
+    }
     score += (1 - t.hp / t.maxHp) * 20;
-    if (t.isLord) score += 15;
+    if (t.isLord && t.hp / t.maxHp >= 0.5) score += 15;
     if (score > bestScore) { bestScore = score; best = t; }
   }
   return best;
