@@ -21,8 +21,8 @@
   "newRecruits": [
     {
       "charId": "lina",
-      "x": 5,
-      "y": 5,
+      "x": 3,
+      "y": 11,
       "turnJoin": 1
     }
   ],
@@ -163,7 +163,8 @@
       "bonusStats": {
         "hp": 3,
         "str": 1,
-        "def": 2
+        "def": 2,
+        "spd": -2
       },
       "charId": "guardCaptain"
     },
