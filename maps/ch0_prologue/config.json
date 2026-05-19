@@ -136,7 +136,8 @@
       "bonusStats": {
         "hp": 4,
         "str": 2,
-        "def": 2
+        "def": 2,
+        "spd": -1
       }
     }
   ],
