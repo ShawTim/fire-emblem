@@ -102,107 +102,167 @@
       "name": "帝國弓兵"
     },
     {
-      "classId": "fighter",
-      "level": 5,
-      "x": 5,
-      "y": 6,
-      "items": [
-        "ironAxe"
-      ],
-      "ai": "aggressive",
-      "name": "帝國斧兵"
-    },
-    {
-      "classId": "fighter",
-      "level": 5,
-      "x": 13,
-      "y": 6,
-      "items": [
-        "ironAxe"
-      ],
-      "ai": "aggressive",
-      "name": "帝國斧兵"
-    },
-    {
-      "classId": "soldier",
-      "level": 4,
-      "x": 7,
-      "y": 8,
-      "items": [
-        "slimLance"
-      ],
-      "ai": "aggressive",
-      "name": "帝國追兵"
-    },
-    {
-      "classId": "soldier",
-      "level": 4,
-      "x": 11,
-      "y": 8,
-      "items": [
-        "slimLance"
-      ],
-      "ai": "aggressive",
-      "name": "帝國追兵"
-    },
-    {
       "classId": "mage",
       "level": 5,
-      "x": 9,
-      "y": 4,
+      "x": 3,
+      "y": 1,
       "items": [
         "fire"
       ],
       "ai": "defensive",
-      "name": "帝國魔法兵"
-    },
-    {
-      "classId": "soldier",
-      "level": 5,
-      "x": 4,
-      "y": 5,
-      "items": [
-        "ironLance"
-      ],
-      "ai": "aggressive",
-      "name": "帝國槍兵"
+      "name": "帝國掠奪兵"
     },
     {
       "classId": "soldier",
       "level": 5,
       "x": 14,
-      "y": 5,
+      "y": 1,
       "items": [
         "ironLance"
       ],
-      "ai": "aggressive",
-      "name": "帝國槍兵"
+      "ai": "defensive",
+      "name": "帝國掠奪兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 5,
+      "x": 1,
+      "y": 4,
+      "items": [
+        "ironAxe"
+      ],
+      "ai": "defensive",
+      "name": "帝國掠奪兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 5,
+      "x": 16,
+      "y": 4,
+      "items": [
+        "ironAxe"
+      ],
+      "ai": "defensive",
+      "name": "帝國掠奪兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 4,
+      "x": 1,
+      "y": 9,
+      "items": [
+        "slimLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國掠奪兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 4,
+      "x": 16,
+      "y": 9,
+      "items": [
+        "slimLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國掠奪兵"
+    },
+    {
+      "classId": "mage",
+      "level": 6,
+      "x": 3,
+      "y": 10,
+      "items": [
+        "thunder"
+      ],
+      "ai": "defensive",
+      "name": "帝國掠奪兵"
     },
     {
       "classId": "fighter",
       "level": 6,
       "x": 8,
-      "y": 6,
+      "y": 10,
       "items": [
         "handAxe"
       ],
-      "ai": "aggressive",
-      "name": "帝國突擊兵"
+      "ai": "defensive",
+      "name": "帝國掠奪兵"
     },
     {
-      "classId": "mage",
-      "level": 6,
-      "x": 11,
-      "y": 6,
+      "classId": "soldier",
+      "level": 5,
+      "x": 14,
+      "y": 10,
       "items": [
-        "thunder"
+        "ironLance"
       ],
       "ai": "defensive",
-      "name": "帝國魔法兵"
+      "name": "帝國掠奪兵"
     }
   ],
   "npcs": [],
   "talkEvents": [],
+  "villageEvents": [
+    {
+      "x": 6,
+      "y": 7,
+      "reward": { "type": "item", "id": "vulnerary" },
+      "dialogue": [
+        { "speaker": null, "text": "村民從屋內探出頭來。" },
+        { "speaker": null, "text": "「你哋係嚟救我哋㗎！呢支傷藥俾你哋，希望幫得到手。」" }
+      ]
+    },
+    {
+      "x": 3,
+      "y": 1,
+      "reward": { "type": "item", "id": "vulnerary" },
+      "dialogue": [
+        { "speaker": null, "text": "屋裡傳出顫抖嘅聲音。" },
+        { "speaker": null, "text": "「魔法兵差啲燒咗成間屋⋯⋯多謝你哋。呢支傷藥俾返你。」" }
+      ]
+    },
+    {
+      "x": 14,
+      "y": 1,
+      "reward": { "type": "item", "id": "steelSword" },
+      "dialogue": [
+        { "speaker": null, "text": "「你哋竟然打到呢度⋯⋯我祖父留低嘅鋼劍，俾你哋。一定要打敗佢哋。」" }
+      ]
+    },
+    {
+      "x": 1,
+      "y": 4,
+      "reward": { "type": "item", "id": "vulnerary" },
+      "dialogue": [
+        { "speaker": null, "text": "「謝謝你打跑佢！呢支傷藥我留咗好耐，俾你哋啦。」" }
+      ]
+    },
+    {
+      "x": 16,
+      "y": 4,
+      "reward": { "type": "item", "id": "javelin" },
+      "dialogue": [
+        { "speaker": null, "text": "「呢支標槍係我阿爸留低嘅。我用唔到，你哋攞去啦。」" }
+      ]
+    },
+    {
+      "x": 16,
+      "y": 9,
+      "reward": { "type": "item", "id": "handAxe" },
+      "dialogue": [
+        { "speaker": null, "text": "「家人都收咗喺地窖度。呢支手斧，攞去用啦。」" }
+      ]
+    },
+    {
+      "x": 8,
+      "y": 10,
+      "reward": { "type": "item", "id": "vulnerary" },
+      "dialogue": [
+        { "speaker": null, "text": "「我老竇話呢間屋以前係驛站。剩低呢樽傷藥，俾你哋啦。」" }
+      ]
+    }
+  ],
   "turnEvents": [
     {
       "turn": 1,
@@ -211,6 +271,14 @@
         {
           "speaker": null,
           "text": "索爾與瑟拉加入隊伍。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "村莊已經陷入火海，帝國兵正喺各處搶掠。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "我哋要趕喺佢哋燒嗮啲屋之前救人。"
         }
       ]
     },

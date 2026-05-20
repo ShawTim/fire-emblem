@@ -121,6 +121,11 @@ class Game {
     this.units = [];
     this.state = 'chapterTitle';
 
+    // Reset per-run flags on cached chapter data (e.g. village visits) so retries start fresh.
+    if (chapter.villageEvents) {
+      for (const evt of chapter.villageEvents) evt._visited = false;
+    }
+
     Sprites.clearTerrainCache();
     GameMap.init(chapter);
 
@@ -523,6 +528,15 @@ class Game {
       }
     }
 
+    // Village visit check (pre-move: only if already standing on the tile)
+    if (this.chapterData.villageEvents) {
+      for (const evt of this.chapterData.villageEvents) {
+        if (!evt._visited && unit.x === evt.x && unit.y === evt.y) {
+          items.push({ label: '訪問', action: 'cmd_visit', event: evt });
+        }
+      }
+    }
+
     // Seize check
     if (unit.isLord && this.chapterData.seizePos) {
       const sp = this.chapterData.seizePos;
@@ -598,6 +612,10 @@ class Game {
 
       case 'cmd_talk':
         this.doTalk(menuItem.target, menuItem.event);
+        break;
+
+      case 'cmd_visit':
+        this.doVisit(menuItem.event);
         break;
 
       case 'cmd_seize':
@@ -817,6 +835,15 @@ class Game {
       }
     }
 
+    // Village visit check (post-move: unit just moved onto a village tile)
+    if (this.chapterData.villageEvents) {
+      for (const evt of this.chapterData.villageEvents) {
+        if (!evt._visited && unit.x === evt.x && unit.y === evt.y) {
+          items.push({ label: '訪問', action: 'visit', event: evt });
+        }
+      }
+    }
+
     if (unit.isLord && this.chapterData.seizePos) {
       const sp = this.chapterData.seizePos;
       if (unit.x === sp.x && unit.y === sp.y) {
@@ -869,6 +896,9 @@ class Game {
         break;
       case 'talk':
         this.doTalk(menuItem.target, menuItem.event);
+        break;
+      case 'visit':
+        this.doVisit(menuItem.event);
         break;
       case 'seize':
         this.doSeize();
@@ -1164,6 +1194,33 @@ class Game {
   doSeize() {
     if (this.selectedUnit) this.selectedUnit.acted = true;
     AITurn.onChapterClear(this);
+  }
+
+  doVisit(event) {
+    event._visited = true;
+    const unit = this.selectedUnit;
+
+    // Grant reward
+    if (event.reward && unit) {
+      const r = event.reward;
+      if (r.type === 'item' && r.id) {
+        const item = createItem(r.id);
+        if (item) {
+          if (r.usesLeft !== undefined) item.usesLeft = r.usesLeft;
+          unit.items.push(item);
+        }
+      }
+      // Future: gold, exp, stat-boost rewards can branch here.
+    }
+
+    // Run dialogue (supports either .dialogue or .text), then end unit's turn
+    const dlg = event.dialogue || event.text;
+    if (dlg && dlg.length > 0) {
+      this.state = 'dialogue';
+      this.dialogue.start(dlg, () => this.doWait());
+    } else {
+      this.doWait();
+    }
   }
 
   doWait() {
