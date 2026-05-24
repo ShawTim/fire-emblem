@@ -42,11 +42,11 @@
       "charId": "guardCaptain",
       "classId": "knight",
       "level": 6,
-      "x": 9,
-      "y": 1,
+      "x": 10,
+      "y": 2,
       "items": [
-        "steelLance",
-        "javelin"
+        "javelin",
+        "steelLance"
       ],
       "ai": "boss",
       "name": "帝國百夫長",
@@ -60,8 +60,8 @@
     {
       "classId": "soldier",
       "level": 5,
-      "x": 8,
-      "y": 2,
+      "x": 10,
+      "y": 1,
       "items": [
         "ironLance"
       ],
@@ -72,7 +72,7 @@
       "classId": "soldier",
       "level": 5,
       "x": 10,
-      "y": 2,
+      "y": 3,
       "items": [
         "ironLance"
       ],
@@ -82,8 +82,8 @@
     {
       "classId": "archer",
       "level": 5,
-      "x": 6,
-      "y": 3,
+      "x": 9,
+      "y": 2,
       "items": [
         "ironBow"
       ],
@@ -93,8 +93,8 @@
     {
       "classId": "archer",
       "level": 5,
-      "x": 12,
-      "y": 3,
+      "x": 11,
+      "y": 2,
       "items": [
         "ironBow"
       ],
@@ -317,17 +317,6 @@
         {
           "classId": "soldier",
           "level": 5,
-          "x": 2,
-          "y": 4,
-          "items": [
-            "ironLance"
-          ],
-          "ai": "aggressive",
-          "name": "帝國增援"
-        },
-        {
-          "classId": "soldier",
-          "level": 5,
           "x": 15,
           "y": 4,
           "items": [
@@ -335,56 +324,6 @@
           ],
           "ai": "aggressive",
           "name": "帝國增援"
-        },
-        {
-          "classId": "archer",
-          "level": 5,
-          "x": 16,
-          "y": 6,
-          "items": [
-            "ironBow"
-          ],
-          "ai": "defensive",
-          "name": "帝國弓兵增援"
-        }
-      ]
-    },
-    {
-      "turn": 4,
-      "type": "reinforce",
-      "enemies": [
-        {
-          "classId": "archer",
-          "level": 6,
-          "x": 2,
-          "y": 9,
-          "items": [
-            "steelBow"
-          ],
-          "ai": "defensive",
-          "name": "帝國弓增援"
-        },
-        {
-          "classId": "archer",
-          "level": 6,
-          "x": 15,
-          "y": 9,
-          "items": [
-            "steelBow"
-          ],
-          "ai": "defensive",
-          "name": "帝國弓增援"
-        },
-        {
-          "classId": "fighter",
-          "level": 6,
-          "x": 9,
-          "y": 12,
-          "items": [
-            "handAxe"
-          ],
-          "ai": "aggressive",
-          "name": "帝國突擊兵"
         }
       ]
     },
@@ -416,45 +355,6 @@
           ],
           "ai": "defensive",
           "name": "帝國近衛"
-        },
-        {
-          "classId": "soldier",
-          "level": 6,
-          "x": 8,
-          "y": 1,
-          "items": [
-            "steelLance"
-          ],
-          "ai": "aggressive",
-          "name": "帝國精銳"
-        }
-      ]
-    },
-    {
-      "turn": 7,
-      "type": "reinforce",
-      "enemies": [
-        {
-          "classId": "fighter",
-          "level": 6,
-          "x": 3,
-          "y": 9,
-          "items": [
-            "handAxe"
-          ],
-          "ai": "aggressive",
-          "name": "帝國重斧兵"
-        },
-        {
-          "classId": "fighter",
-          "level": 6,
-          "x": 14,
-          "y": 9,
-          "items": [
-            "handAxe"
-          ],
-          "ai": "aggressive",
-          "name": "帝國重斧兵"
         }
       ]
     }
