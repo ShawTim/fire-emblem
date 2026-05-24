@@ -37,6 +37,10 @@ class BattleScene {
     this.hitTriggered = false;
     this.vsAlpha = 0;
     this.hitDisplayShown = false;
+    this.attackerFlash = 0;
+    this.defenderFlash = 0;
+    this.critZoomTimer = 0;
+    this.critZoom = 0;
   }
 
   start(attacker, defender, combatResult, forecast, onComplete) {
@@ -71,6 +75,8 @@ class BattleScene {
     this.hitTriggered = false;
     this.vsAlpha = 0;
     this.hitDisplayShown = false;
+    this.attackerFlash = 0; this.defenderFlash = 0;
+    this.critZoomTimer = 0; this.critZoom = 0;
     const dt = GameMap.getEffectiveTerrain(defender.x, defender.y);
     this.terrainType = dt || 'plain';
     const at = GameMap.getEffectiveTerrain(attacker.x, attacker.y);
@@ -81,7 +87,7 @@ class BattleScene {
 
   setPhase(p) {
     this.phase = p; this.timer = 0; this.hitTriggered = false; this.hitDisplayShown = false;
-    const d = {intro:300,vs:800,ready:500,atk1:700,def1:700,atk2:700,def2:700,result:1000,outro:400};
+    const d = {intro:400,vs:1200,ready:600,atk1:1100,def1:1100,atk2:1100,def2:1100,result:1500,outro:500};
     this.phaseDuration = d[p] || 0;
   }
 
@@ -120,15 +126,23 @@ class BattleScene {
       this.shakeX = (Math.random()-0.5)*12*intensity; this.shakeY = (Math.random()-0.5)*10*intensity;
       if (this.shakeTimer <= 0) { this.shakeX=0; this.shakeY=0; }
     }
+    if (this.attackerFlash > 0) this.attackerFlash = Math.max(0, this.attackerFlash - dt);
+    if (this.defenderFlash > 0) this.defenderFlash = Math.max(0, this.defenderFlash - dt);
+    if (this.critZoomTimer > 0) {
+      this.critZoomTimer -= dt;
+      const zt = 1 - Math.max(0, this.critZoomTimer) / 280;
+      this.critZoom = Math.sin(zt * Math.PI) * 0.15;
+      if (this.critZoomTimer <= 0) { this.critZoom = 0; this.critZoomTimer = 0; }
+    }
     const hs = dt * 0.03;
     if (this.attackerHP > this.attackerTargetHP) {
       const diff = this.attackerHP - this.attackerTargetHP;
-      const speed = Math.max(0.5, diff * 0.08) * dt * 0.06;
+      const speed = Math.max(0.3, diff * 0.06) * dt * 0.035;
       this.attackerHP = Math.max(this.attackerTargetHP, this.attackerHP - speed);
     }
     if (this.defenderHP > this.defenderTargetHP) {
       const diff = this.defenderHP - this.defenderTargetHP;
-      const speed = Math.max(0.5, diff * 0.08) * dt * 0.06;
+      const speed = Math.max(0.3, diff * 0.06) * dt * 0.035;
       this.defenderHP = Math.max(this.defenderTargetHP, this.defenderHP - speed);
     }
     for (let i = this.effects.length-1; i >= 0; i--) {
@@ -194,6 +208,7 @@ class BattleScene {
       this.effects.push({type:'crit',x:400,y:160,text:'必殺！',color:'#ffd700',duration:1000,timer:0});
       this.effects.push({type:'damage',x:tx,y:ty-30,text:String(s.damage),color:'#ffd700',duration:1000,timer:0});
       this.shakeTimer=500;
+      this.critZoomTimer=280;
       if(typeof SFX!=='undefined')SFX.crit();
     } else {
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffffff',duration:150,timer:0});
@@ -201,13 +216,20 @@ class BattleScene {
       this.shakeTimer=150;
       if(typeof SFX!=='undefined')SFX.hit();
     }
+    if(s.target===this.defender) this.defenderFlash=260; else this.attackerFlash=260;
   }
 
   _eo(t){return 1-Math.pow(1-t,3);} _ei(t){return t*t*t;} isActive(){return this.active;}
 
   render(ctx, cw, ch) {
     if(!this.active) return;
-    ctx.save(); ctx.translate(this.shakeX, this.shakeY);
+    ctx.save();
+    if (this.critZoom !== 0) {
+      ctx.translate(cw/2, ch/2);
+      ctx.scale(1+this.critZoom, 1+this.critZoom);
+      ctx.translate(-cw/2, -ch/2);
+    }
+    ctx.translate(this.shakeX, this.shakeY);
     this._drawBg(ctx, this.terrainType, cw, ch);
     this._drawPlat(ctx, cw, ch);
     // Terrain labels
@@ -219,11 +241,11 @@ class BattleScene {
     var defS=(this.phase==='def1'||this.phase==='def2');
     if(!this.attackerDead||this.deathAlpha>0){
       ctx.save(); if(this.attackerDead){ctx.globalAlpha=this.deathAlpha;ctx.translate(0,this.deathFall);}
-      this._drawUnit(ctx,this.attacker,ax-sz/2,gy-sz,sz,'right',atkS); ctx.restore();
+      this._drawUnit(ctx,this.attacker,ax-sz/2,gy-sz,sz,'right',atkS,this.attackerFlash); ctx.restore();
     }
     if(!this.defenderDead||this.deathAlpha>0){
       ctx.save(); if(this.defenderDead){ctx.globalAlpha=this.deathAlpha;ctx.translate(0,this.deathFall);}
-      this._drawUnit(ctx,this.defender,dx-sz/2,gy-sz,sz,'left',defS); ctx.restore();
+      this._drawUnit(ctx,this.defender,dx-sz/2,gy-sz,sz,'left',defS,this.defenderFlash); ctx.restore();
     }
     if(this.panelAlpha>0){
       ctx.globalAlpha=this.panelAlpha;
@@ -300,7 +322,29 @@ class BattleScene {
     ctx.fillStyle=g;ctx.fillRect(0,gy,w,h-gy);
   }
 
-  _drawUnit(ctx, unit, x, y, size, facing, striking) {
+  _getOffscreen(w, h) {
+    if (!this._off) this._off = document.createElement('canvas');
+    if (this._off.width !== w || this._off.height !== h) {
+      this._off.width = w; this._off.height = h;
+    }
+    return this._off;
+  }
+
+  _drawUnit(ctx, unit, x, y, size, facing, striking, flash) {
+    if (flash > 0) {
+      var off = this._getOffscreen(size * 3, size * 3);
+      var oc = off.getContext('2d');
+      oc.clearRect(0, 0, off.width, off.height);
+      var ox = size, oy = size;
+      this._drawUnit(oc, unit, ox, oy, size, facing, striking, 0);
+      var fa = Math.min(1, flash / 260) * 0.75;
+      oc.globalCompositeOperation = 'source-atop';
+      oc.fillStyle = 'rgba(255,255,255,' + fa + ')';
+      oc.fillRect(0, 0, off.width, off.height);
+      oc.globalCompositeOperation = 'source-over';
+      ctx.drawImage(off, x - ox, y - oy);
+      return;
+    }
     var c=Sprites.getUnitColors(unit.faction);
     var hr=unit.portrait?unit.portrait.hair:c.accent;
     var ey=unit.portrait?unit.portrait.eyes:'#222';
