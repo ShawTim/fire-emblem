@@ -33,7 +33,7 @@
       "classId": "cavalier", "level": 8, "x": 8, "y": 4,
       "items": ["silverSword", "javelin"],
       "ai": "boss", "name": "追討騎士長", "isBoss": true,
-      "bonusStats": {"hp": 4, "str": 1, "skl": 2, "spd": 1, "def": 2, "res": 2}
+      "bonusStats": {"hp": 6, "str": 2, "skl": 2, "spd": 2, "def": 2, "res": 2}
     }
   ],
   "npcs": [],
