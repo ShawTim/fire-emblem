@@ -14,12 +14,11 @@
     {"charId": "serra",  "x": 0, "y": 13}
   ],
   "newRecruits": [
-    {"charId": "cain", "x": 7, "y": 6, "turnJoin": 1}
+    {"charId": "cain", "x": 3, "y": 8, "turnJoin": 1}
   ],
   "enemies": [
     {"classId": "soldier", "level": 6, "x": 9,  "y": 1, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
     {"classId": "archer",  "level": 6, "x": 13, "y": 1, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
-    {"classId": "soldier", "level": 6, "x": 2,  "y": 2, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
     {"classId": "fighter", "level": 7, "x": 11, "y": 2, "items": ["steelAxe"],   "ai": "aggressive", "name": "帝國戰士"},
     {"classId": "archer",  "level": 7, "x": 14, "y": 2, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
     {"classId": "knight",  "level": 6, "x": 7,  "y": 3, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
@@ -29,13 +28,12 @@
     {"classId": "soldier", "level": 7, "x": 13, "y": 5, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
     {"classId": "archer",  "level": 7, "x": 11, "y": 6, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
     {"classId": "soldier", "level": 7, "x": 9,  "y": 7, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
-    {"classId": "fighter", "level": 7, "x": 13, "y": 8, "items": ["steelAxe"],   "ai": "aggressive", "name": "帝國戰士"},
     {"classId": "knight",  "level": 7, "x": 10, "y": 9, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
     {
       "classId": "cavalier", "level": 8, "x": 8, "y": 4,
       "items": ["silverSword", "javelin"],
       "ai": "boss", "name": "追討騎士長", "isBoss": true,
-      "bonusStats": {"hp": 8, "str": 3, "skl": 2, "spd": 3, "def": 2, "res": 2}
+      "bonusStats": {"hp": 4, "str": 1, "skl": 2, "spd": 1, "def": 2, "res": 2}
     }
   ],
   "npcs": [],
