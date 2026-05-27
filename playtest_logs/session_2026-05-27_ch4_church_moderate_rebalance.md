@@ -115,6 +115,37 @@ This matches the "long climb" feel of a tower seize chapter. Not flagging as a b
 
 3. **Fran (7, 1) recruit safety** — verified T1 safe (all surrounding enemies defensive, closest is boss dist 3, darkMage (9, 3) dist 4). She must NOT walk into range of (9, 3) or (6, 3) boss on subsequent turns until party reinforces.
 
+## In-browser verification (post-fix)
+
+Drove ch4 in `localhost:8091/?chapter=5` with `Game.prototype.update` patched to expose `window.game`, and `BattleScene.prototype.start` patched to skip animations for fast EP turnover. Used direct state mutation to simulate "patient" T2 moves rather than driving the action menu click-by-click.
+
+**T1 PP → T1 EP (no-move test):** ended turn immediately with party at spawn.
+- Lina @(7, 16): **17/17 HP — survived** ✓ (the rebalance target)
+- Marcus @(5, 16): 14/28 HP (took 14 dmg from west elfire mage, as predicted)
+- All other players: full HP
+- Combat log: exactly 1 attack — west 帝國魔導師 (elfire) → Marcus, 14 dmg
+- East elthunder mage @(9, 11) **never moved, never attacked** — defensive flip confirmed
+
+**T2 PP → T2 EP:** healed Marcus, advanced Thor to (7, 14) (deliberately into the danger zone).
+- Thor took 14 dmg from mage (6, 13) + 20 dmg from another aggressive mage = 34 dmg, died (24 HP)
+- This was operator error, not a chapter balance issue — (7, 14) is in range of multiple aggressive mages once the (3, 7) / (9, 7) row activates. Note for future runs: do not park axe units in row 14 without backup.
+
+**T3:** skeleton reinforcements correctly spawned at (5, 9) and (7, 9). ✓
+
+## Bug found and fixed during verification — Fran never spawned
+
+`maps/ch4_church/config.json` declared `newRecruits: [{charId: "fran", turnJoin: 1, ...}]` but had **no matching `turnEvents` entry of type `"recruit"`**. Per `game.js:283`, recruits only spawn when a turnEvent of that type fires on the matching turn. So Fran never appeared on the map.
+
+**Fix:** added `{turn: 1, type: "recruit", text: [...]}` to `turnEvents`. Two-line dialogue: Fran shouts down from the tower, Eirine answers. Matches the pattern used in `ch3_castle/config.json` for Cain's turn-1 spawn.
+
+Both ch2 and ch3 follow the same pattern (`newRecruits` + matching `recruit` turnEvent). ch4 was the outlier — the chapter-fill commit added `newRecruits` but forgot the trigger.
+
+**Re-verification after recruit fix:** reloaded, started new game, advanced the prologue + recruit dialogue (26 clicks), confirmed Fran spawned at (7, 1) with 18/18 HP and fire+thunder. Then ended T1 PP with no moves to re-test T1 EP:
+- Lina @(7, 16): 17/17 — survived ✓
+- Fran @(7, 1): 18/18 — survived T1 EP ✓ (matches threat analysis: all surrounding enemies are defensive, closest aggressive attacker is too far)
+- Marcus @(5, 16): 14/28 — took the predicted west elfire hit (14 dmg)
+- Only 1 combat in T1 EP — east elthunder mage @(9, 11) confirmed silent
+
 ## Files modified
 
-- `maps/ch4_church/config.json` — one AI flip
+- `maps/ch4_church/config.json` — one AI flip (east mage 9,11 aggressive→defensive) + added missing turn-1 recruit turnEvent for Fran

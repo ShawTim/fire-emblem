@@ -52,6 +52,14 @@
   "talkEvents": [],
   "turnEvents": [
     {
+      "turn": 1,
+      "type": "recruit",
+      "text": [
+        {"speaker": "fran",   "text": "趁守衛換班，本天才逃出來了！喂——下面的人，是真心要打帝國的話，就快點上來會合！"},
+        {"speaker": "eirine", "text": "法蘭！撐住，我們會殺出一條路上來！"}
+      ]
+    },
+    {
       "turn": 3,
       "type": "reinforce",
       "enemies": [
