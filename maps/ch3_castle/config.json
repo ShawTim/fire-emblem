@@ -14,7 +14,7 @@
     {"charId": "serra",  "x": 0, "y": 13}
   ],
   "newRecruits": [
-    {"charId": "cain", "x": 3, "y": 8, "turnJoin": 1}
+    {"charId": "cain", "x": 13, "y": 9, "turnJoin": 1}
   ],
   "enemies": [
     {"classId": "soldier", "level": 6, "x": 9,  "y": 1, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
@@ -26,8 +26,8 @@
     {"classId": "fighter", "level": 7, "x": 14, "y": 4, "items": ["steelAxe"],   "ai": "aggressive", "name": "帝國戰士"},
     {"classId": "knight",  "level": 7, "x": 9,  "y": 5, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
     {"classId": "soldier", "level": 7, "x": 13, "y": 5, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
-    {"classId": "archer",  "level": 7, "x": 11, "y": 6, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
-    {"classId": "soldier", "level": 7, "x": 9,  "y": 7, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
+    {"classId": "archer",  "level": 7, "x": 11, "y": 9, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
+    {"classId": "soldier", "level": 7, "x": 14, "y": 9, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
     {"classId": "knight",  "level": 7, "x": 10, "y": 9, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
     {
       "classId": "cavalier", "level": 8, "x": 8, "y": 4,
@@ -46,6 +46,15 @@
         {"speaker": "cain",   "text": "前有狼後有虎……這位就是被帝國懸紅的公主？"},
         {"speaker": "eirine", "text": "凱恩，帝國是你我共同的敵人。今日暫且聯手如何？"},
         {"speaker": "cain",   "text": "……說的倒也不錯。行，算我欠你一次。"}
+      ]
+    },
+    {
+      "turn": 2,
+      "type": "dialogue",
+      "text": [
+        {"speaker": "eirine", "text": "馬庫斯！凱恩孤軍深入，已被帝國兵團團圍住——"},
+        {"speaker": "eirine", "text": "你的座騎最快，速去支援他！我們不能讓他孤軍奮戰。"},
+        {"speaker": "marcus", "text": "遵命，殿下。我這就去。"}
       ]
     },
     {

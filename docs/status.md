@@ -9,7 +9,7 @@ Every chapter has terrain, config, dialogues, and prologue. All chapters are now
 | ch0 序章 | 5 | — | Eirine, Marcus | guardCaptain | Tutorial chapter |
 | ch1 第一章 | ~10 | — | Lina | 追擊隊長 | |
 | ch2 第二章 | ~12 | turn 4 | Thor, Serra | 帝國百夫長 | |
-| ch3 第三章 | 15 | turn 4 (2) | Cain (t1) | 追討騎士長 cav lv8 | Was empty enemies; filled |
+| ch3 第三章 | 13 | turn 4 (2) | Cain (t1) | 追討騎士長 cav lv8 | Castle-themed terrain; Cain spawns at east-fort flank |
 | ch4 第四章 | 18 | turn 3 (2 skeletons) | Fran (t1) | 首席魔導師澤諾 darkMage | Was empty; filled |
 | ch5 第五章 | ~15 | — | Rex | 格倫 | |
 | ch6 第六章 | 21 | turn 4 (3) | Natasha (t3) | 提督巴爾薩 archer | Expanded from 4 enemies |
