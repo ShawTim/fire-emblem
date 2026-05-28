@@ -18,7 +18,7 @@
     {"charId": "natasha", "x": 5, "y": 14}
   ],
   "newRecruits": [
-    {"charId": "olivier", "x": 10, "y": 6, "turnJoin": 2}
+    {"charId": "olivier", "x": 10, "y": 6, "turnJoin": 4}
   ],
   "enemies": [
     {"classId": "darkMage", "level": 10, "x": 3,  "y": 0,  "items": ["flux"],            "ai": "aggressive", "name": "深林暗術士"},
@@ -32,7 +32,7 @@
     {"classId": "darkMage", "level": 11, "x": 18, "y": 5,  "items": ["dark"],            "ai": "aggressive", "name": "帝國暗法師"},
     {"classId": "brigand",  "level": 11, "x": 4,  "y": 6,  "items": ["steelAxe"],        "ai": "aggressive", "name": "森林盜賊"},
     {"classId": "archer",   "level": 11, "x": 14, "y": 6,  "items": ["steelBow"],        "ai": "defensive",  "name": "森林弓兵"},
-    {"classId": "darkMage", "level": 11, "x": 7,  "y": 7,  "items": ["flux"],            "ai": "aggressive", "name": "深林暗術士"},
+    {"classId": "darkMage", "level": 11, "x": 7,  "y": 7,  "items": ["flux"],            "ai": "defensive",  "name": "深林暗術士"},
     {"classId": "brigand",  "level": 11, "x": 17, "y": 7,  "items": ["handAxe"],         "ai": "aggressive", "name": "森林盜賊"},
     {"classId": "fighter",  "level": 12, "x": 2,  "y": 8,  "items": ["steelAxe"],        "ai": "aggressive", "name": "深林武夫"},
     {"classId": "warrior",  "level": 5,  "x": 12, "y": 8,  "items": ["steelAxe","handAxe"], "ai": "aggressive", "name": "盜賊首領"},
@@ -47,25 +47,25 @@
       "classId": "darkMage", "level": 12, "x": 9, "y": 2,
       "items": ["nosferatu", "fenrir"],
       "ai": "boss", "name": "深淵之主惡格尼斯", "isBoss": true,
-      "bonusStats": {"hp": 12, "mag": 6, "skl": 4, "spd": 4, "def": 3, "res": 8}
+      "bonusStats": {"hp": 12, "mag": 3, "skl": 4, "spd": 4, "def": 3, "res": 4}
     }
   ],
   "turnEvents": [
-    {
-      "turn": 2,
-      "type": "recruit",
-      "text": [
-        {"speaker": "olivier", "text": "你們是在對抗帝國的人？我在這片森林等這一刻很久了。"},
-        {"speaker": "eirine",  "text": "你是誰？"},
-        {"speaker": "olivier", "text": "我叫奧利維爾，是這村莊的守護者。這片森林被黑暗侵蝕已久，讓我加入你們，一起終結它。"}
-      ]
-    },
     {
       "turn": 3,
       "type": "reinforce",
       "enemies": [
         {"classId": "darkMage", "level": 11, "x": 0,  "y": 0, "items": ["flux"],    "ai": "aggressive", "name": "深林暗術士"},
         {"classId": "brigand",  "level": 11, "x": 19, "y": 2, "items": ["handAxe"], "ai": "aggressive", "name": "森林盜賊"}
+      ]
+    },
+    {
+      "turn": 4,
+      "type": "recruit",
+      "text": [
+        {"speaker": "olivier", "text": "你們是在對抗帝國的人？我在這片森林等這一刻很久了。"},
+        {"speaker": "eirine",  "text": "你是誰？"},
+        {"speaker": "olivier", "text": "我叫奧利維爾，是這村莊的守護者。這片森林被黑暗侵蝕已久，讓我加入你們，一起終結它。"}
       ]
     },
     {
