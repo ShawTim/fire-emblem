@@ -18,7 +18,7 @@
     {"charId": "rex",     "x": 7, "y": 14}
   ],
   "newRecruits": [
-    {"charId": "natasha", "x": 14, "y": 8, "turnJoin": 3}
+    {"charId": "natasha", "x": 15, "y": 14, "turnJoin": 3}
   ],
   "enemies": [
     {"classId": "knight",  "level": 10, "x": 4,  "y": 2, "items": ["steelLance"],           "ai": "defensive",  "name": "港口守衛"},
