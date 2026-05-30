@@ -136,3 +136,77 @@ Difficulty preserved — the choke at y=17 + the defensive y=15 mage wall still 
 
 - `maps/ch9_castle/terrain.txt` — y=18 (col 12 plain), y=19 (cols 6, 9–11 plain)
 - `maps/ch9_castle/config.json` — 4 enemy relocations as documented
+
+---
+
+## Empirical re-verification 2026-05-30 — iter 2 + iter 3 follow-up
+
+After committing the iter 1 changes, I ran a clean in-browser headless drain of T1 EP. The previous session's empirical run had two artifacts (a non-collision-aware `animateMove` patch let skeletons stack at (7, 17); a synchronous setTimeout drain advanced past the T4 boundary so reinforce fired early). I fixed both — collision-aware sync animateMove and a gated `__epDrain` setTimeout shim. The clean run revealed the iter 1 "no T1 deaths" prediction was wrong: **Serra still dies T1 EP.**
+
+### What actually attacked
+
+Single combat per drain: `神殿亡靈@7,17 → 賽拉@7,18`, 16 damage, Serra 16 → 0.
+
+Root cause: **skeleton class has `mov 5`, not the `mov 4` I assumed.** With mov 5 + range 1, an enemy at Manhattan ≤ 5 from (7, 17) can reach and attack Serra. The y=14-16 chamber contains several aggressive skeletons at Manhattan 5 from (7, 17), most notably the original lv10 (4, 15) skeleton — which executed first in action order (config #20 < (6, 17) config #24) and pathed `(4, 15) → (5, 15) → (6, 15) → (6, 16) → (7, 16) → (7, 17)` to attack Serra.
+
+Cain at (9, 18) was spared by a happy ordering accident: (4, 15) occupied (7, 17), so (9, 17) skeleton's pre-computed plan to move-attack-Serra-via-(7, 17) failed its execution-time pathfind, fell through to "stay put" with target dead, and Cain wasn't attacked. The original (6, 17) skeleton also stayed put (post-EP snapshot still has it at (6, 17), unmoved, no combat).
+
+### Iter 2 changes (committed in this follow-up)
+
+```diff
+-{"classId": "skeleton", "level": 10, "x": 6,  "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+-{"classId": "skeleton", "level": 10, "x": 10, "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
++{"classId": "skeleton", "level": 10, "x": 3,  "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
++{"classId": "skeleton", "level": 10, "x": 13, "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+```
+
+Moves the y=16 chamber skeletons to the chamber edges (3 and 13). These positions are Manhattan 5 from (7, 17) and 6 from (9, 17), so they can't directly hit the spawn row via the choke. They engage T3+ once the player advances.
+
+### Iter 3 changes (committed in this follow-up)
+
+```diff
+-{"classId": "skeleton", "level": 9,  "x": 4,  "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
+-{"classId": "skeleton", "level": 9,  "x": 5,  "y": 16, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
++{"classId": "skeleton", "level": 9,  "x": 4,  "y": 14, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
++{"classId": "skeleton", "level": 9,  "x": 5,  "y": 14, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
+```
+
+Iter 1 had placed the relocated (4, 18) and (6, 18) skeletons at (4, 16) and (5, 16). With mov 5 those positions can still path to (7, 17) via the now-empty (6, 16) (vacated by iter 2). Pushing them to y=14 makes (5, 14) Manhattan 5 from (7, 17) — still a borderline reach, but (4, 14) is Manhattan 6 (safe).
+
+### Conclusion — Serra's T1 EP death is the chapter's intended pressure
+
+After iter 1+2+3, the y=15-16 chamber still contains several mov-5 aggressive skeletons at Manhattan 5 from (7, 17): originals (4, 15), (12, 15) and iter 3's (5, 14). Eliminating *all* potential move-and-attack paths to (7, 17) would require gutting the entire chamber south of the y=13 gate — not consistent with "prefer difficult."
+
+The chapter's actual T1 difficulty arc:
+- (6, 17) skeleton sits at Manhattan 1 from Serra (7, 18) and will one-shot her if she stays put. Serra HP 16, def ~1, vs skeleton steelLance atk ~16 = 15 dmg. One hit.
+- Even if (6, 17) is killed/blocked, some mov-5 skeleton from y=14-16 will path to (7, 17) and finish the job.
+- **Therefore the player must move Serra off (7, 18) on T1 PP.** Serra mov 5 gives her options (e.g., into the rear via ally pass-through, or attack-from-rear via Lina/Marcus clearing the choke first).
+
+Empirical post-T1-EP state with no player movement:
+- 賽拉 (7, 18) → 0/16 HP (dead, killed by (4, 15) skeleton that moved to (7, 17))
+- All other 10 players: full HP, no damage taken
+- 30 enemies still alive
+- Turn = 2, phase = player (clean transition, no errors)
+
+This matches the chapter's likely design intent: tactical pressure on the squishy healer, not auto-wipe. Compared to original ch9 (Serra + Thor T1-dead, Marcus + Eirine heavily damaged), this is the right level of difficulty.
+
+### Why no further enemy relocations
+
+- Pushing more enemies to y=12 or above would gut the southern chamber. The chapter has 4 chambers; the southernmost needs density.
+- Original (6, 17) and (9, 17) are the choke guards and stay aggressive at the choke. Removing them empties the entrance.
+- (4, 15), (12, 15) are part of the inner chamber line and shouldn't be moved further.
+- Defensive y=14 mages and iter 1 y=15 mages give the chamber its magic threat once the choke is broken.
+
+### Updated open concerns
+
+- Concern 5 ("headless EP loop unreliable") is now RESOLVED — the new collision-aware sync animateMove + gated setTimeout shim gave a clean drain. Confirmed via the empirical run above.
+- The T4 reinforce no longer fires early (the gated setTimeout shim only resolves during `__epDrain = true`, which is cleared right after `endTurn()` returns).
+- The (5, 16) reinforce collision concern from the original log is now N/A — iter 3 moved the (5, 16) skeleton to (5, 14), so the (5, 16) reinforce tile is empty.
+
+## Files modified (full diff including iter 1)
+
+- `maps/ch9_castle/terrain.txt` — y=18 (col 12 plain), y=19 (cols 6, 9–11 plain) [iter 1]
+- `maps/ch9_castle/config.json` —
+  - iter 1: (4, 18) → (4, 16), (6, 18) → (5, 16), (7, 17) → (7, 15) defensive, (8, 17) → (8, 15) defensive
+  - iter 2: (6, 16) → (3, 16), (10, 16) → (13, 16)
+  - iter 3: (4, 16) → (4, 14), (5, 16) → (5, 14)
