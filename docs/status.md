@@ -8,15 +8,15 @@ Every chapter has terrain, config, dialogues, and prologue. All chapters are now
 |---|---|---|---|---|---|
 | ch0 序章 | 5 | — | Eirine, Marcus | guardCaptain | Tutorial chapter |
 | ch1 第一章 | ~10 | — | Lina | 追擊隊長 | |
-| ch2 第二章 | ~12 | turn 4 | Thor, Serra | 帝國百夫長 | |
-| ch3 第三章 | 13 | turn 4 (2) | Cain (t1) | 追討騎士長 cav lv8 | Castle-themed terrain; Cain spawns at east-fort flank |
-| ch4 第四章 | 18 | turn 3 (2 skeletons) | Fran (t1) | 首席魔導師澤諾 darkMage | Was empty; filled |
-| ch5 第五章 | ~15 | — | Rex | 格倫 | |
-| ch6 第六章 | 21 | turn 4 (3) | Natasha (t3) | 提督巴爾薩 archer | Expanded from 4 enemies |
-| ch7 第七章 | 23 | t3 (2), t5 (2) | Olivier (t2) | 深淵之主惡格尼斯 darkMage lv12 | Filled from 3 enemies |
-| ch8 第八章 | 25 | turn 4 (3) | Helga (t5) | ゲルハルト greatKnight lv3 | Filled from 2 enemies |
-| ch9 第九章 | 30 | turn 4 (4) | — | 祭司長ザルバ darkMage lv8 | Filled from 2 enemies |
-| ch10 最終章 | 32 | t3 (3), t6 (3) | — | 莫爾甘 darkMage lv12 | Filled from 2 enemies |
+| ch2 第二章 | ~12 | turn 2 (text added) | Thor, Serra | 帝國百夫長 | |
+| ch3 第三章 | 13 | turn 4 (3, text) | Cain (t1) | 追討騎士長 cav lv8 | Castle-themed terrain; Cain spawns at east-fort flank |
+| ch4 第四章 | 18 | turn 3 (2 skeletons, text) | Fran (t1) | 首席魔導師澤諾 darkMage | Was empty; filled |
+| ch5 第五章 | ~15 | turn 4 (6, text), turn 7 (3) | Rex (t2) | 格倫 paladin lv1 | Story-heavy chapter; Glen hostage-decree bossLines |
+| ch6 第六章 | 21 | turn 4 (5, text) | Natasha (t3) | 提督巴爾薩 archer | Marcus's sister Elena reveal in t3 recruit |
+| ch7 第七章 | 23 | t3 (2, text), t5 (4, text) | Olivier (t4) | 深淵之主惡格尼斯 darkMage lv12 | Olivier delayed to t4 |
+| ch8 第八章 | 25 | turn 4 (6, text), turn 6 (5, text) | Helga (t5) | ゲルハルト greatKnight lv3 | Helga rebuked-by-master recruit beat |
+| ch9 第九章 | 30 | turn 4 (6, text), turn 6 (5, text) | — | 祭司長ザルバ darkMage lv8 | Pre-rewrite removes Helga-as-stranger continuity bug |
+| ch10 最終章 | 32 | t3 (5, text), t6 (6, text) | — | 莫爾甘 darkMage lv12 | Uncle-reveal in t5 dialogue; Morgane bossLines added |
 
 Enemy counts include the boss. Reinforce counts are additional units.
 
@@ -107,3 +107,16 @@ Boss bonusStats scale up chapter by chapter:
 - `maps/ch10_final/config.json` — enemies expanded from 2 to 32 + Morgane final boss + 2 reinforce waves
 - `AGENTS.md` — rewritten to contain only non-obvious gotchas (previous version was a copy of CLAUDE.md)
 - `CLAUDE.md` — reduced to a single redirect line
+
+### 2026-05 story expansion (commit `0ef27db`)
+
+Mid-chapter `dialogue` turnEvents + bossLines added across ch0–ch10. Several reinforce waves gained extra enemies + `text` arrays. Key canon additions documented in [`story.md`](story.md) under "Morgane's true identity", "The hostage doctrine", and "Recurring Threads":
+
+- Morgane is先王's exiled half-brother (revealed ch10 turn 5)
+- Marcus's sister Elena died in Eirmela massacre (ch6 turn 3)
+- Lina's mother is an Askar refugee (ch1 turn 2; payoff ch10 turn 4)
+- Cain's lost lover backstory (ch3 turn 3)
+- Glen's family names 艾莉莎/伊凡/蕾娜 (ch5)
+- Helga was Gerhardt's apprentice, rebuked over the mural-burn order (ch8)
+- Zarba's spell-tail cue「コルガ・モーラ」+ blood-moon timing (ch9)
+- ch9 `dialogues.json` rewritten — removes continuity bug where Helga was re-introduced as a stranger
