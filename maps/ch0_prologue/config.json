@@ -151,11 +151,56 @@
       "text": [
         {
           "speaker": "guardCaptain",
-          "text": "還愣著做什麼！給我圍死他們！"
+          "text": "還愣著做什麼！給我圍死他們！公主一旦逃出王宮，莫爾甘大人就會殺了我們所有人的家眷！"
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "type": "dialogue",
+      "text": [
+        {
+          "speaker": "marcus",
+          "text": "殿下，前方就是暗門！再撐一會兒！"
+        },
+        {
+          "speaker": "eirine",
+          "text": "馬庫斯……父王還在後方……"
+        },
+        {
+          "speaker": "marcus",
+          "text": "陛下要您活下去。臣若回頭，便是違抗君命。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "……是。我們走。父王的犧牲，絕不能白費。"
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "type": "dialogue",
+      "text": [
+        {
+          "speaker": null,
+          "text": "宮殿深處傳來一聲巨響，火光沖天。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "陛下他……"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（緊握星印，淚水滑落）……莫爾甘。我會親手讓你付出代價。"
         }
       ]
     }
   ],
+  "bossLines": {
+    "opening": "公主殿下，請別怪罪臣下。莫爾甘大人答應過——只要殺了您，臣的妻兒便能活命。",
+    "mid": "再進一步，公主就死定了！臣不能讓您逃出去！",
+    "death": "莫爾甘大人……您答應的事……一定要做到啊……"
+  },
   "terrainRandomize": {
     "plainToForest": 0.0,
     "plainToHill": 0.03,

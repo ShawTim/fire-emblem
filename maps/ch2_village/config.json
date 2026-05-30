@@ -285,6 +285,32 @@
     {
       "turn": 2,
       "type": "reinforce",
+      "text": [
+        {
+          "speaker": "thor",
+          "text": "公主，那幫躲在房子裡放冷箭的，老子先去把他們挖出來！"
+        },
+        {
+          "speaker": "serra",
+          "text": "托爾，慢一點！你方才中的那一斧傷口還在流血！"
+        },
+        {
+          "speaker": "marcus",
+          "text": "托爾，掩護左翼村屋。莉娜的弓會幫你壓制屋頂的弓兵。"
+        },
+        {
+          "speaker": "thor",
+          "text": "嘁，又是這種戰術話。算了，老子先把那邊清乾淨。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "賽拉留在馬庫斯身邊接應傷者。其他人，跟我推進中央指揮點。"
+        },
+        {
+          "speaker": null,
+          "text": "村莊南北兩端的小巷竄出帝國增援。"
+        }
+      ],
       "enemies": [
         {
           "classId": "soldier",
@@ -307,6 +333,36 @@
           ],
           "ai": "aggressive",
           "name": "帝國增援"
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "type": "dialogue",
+      "text": [
+        {
+          "speaker": "serra",
+          "text": "公主殿下……剛才那個帝國兵，他臨死前還在喊一個女孩的名字。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "賽拉……我知道。每殺一個人，就有一個家庭破碎。"
+        },
+        {
+          "speaker": "thor",
+          "text": "別自責了，公主。如果今天不打他們，明天就是村裡的孩子被砍。是他們先選擇了當帝國的爪牙。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "戰爭沒有不流血的勝利。臣明白殿下的心情——但今天必須贏。"
+        },
+        {
+          "speaker": "lina",
+          "text": "（拉弓瞄向村口）……人，我母親也曾是這樣死的。公主，我幫您扛這份重量。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "……謝謝，大家。前進——奪回指揮點。"
         }
       ]
     },
@@ -361,9 +417,9 @@
   ],
   "dialogues": {},
   "bossLines": {
-    "opening": "你們逃不掉的。",
-    "mid": "別太囂張。",
-    "death": "還沒結束……"
+    "opening": "燒這種小村莊是公務。公主殿下若要妨礙公務，便是叛逆。",
+    "mid": "嘖——居然真有人為了這種破村子拼命？",
+    "death": "報告……上頭……北境……不穩……"
   },
   "terrainRandomize": {
     "plainToForest": 0.06,

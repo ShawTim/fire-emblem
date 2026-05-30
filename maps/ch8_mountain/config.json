@@ -56,22 +56,125 @@
   ],
   "turnEvents": [
     {
+      "turn": 1,
+      "type": "dialogue",
+      "text": [
+        {"speaker": null,     "text": "鋼鉄之要塞的城樓上插滿了帝國黑鷹旗。北風吹過石壁，發出尖銳的呼嘯聲。"},
+        {"speaker": "marcus", "text": "全員注意——這座要塞的弩砲射程比一般要塞遠三成。前進時保持散開隊形。"},
+        {"speaker": "rex",    "text": "（騎乘飛龍上升）臣下從空中先探一下塔頂部署……（俯衝回來）……塔頂三座弩砲，但只有兩名操作手。第三座是空的。"},
+        {"speaker": "olivier","text": "空的？要塞司令官居然會留弩砲沒人？這不像鐵壁ゲルハルト的作風。"},
+        {"speaker": "fran",   "text": "（按住魔導書）……星印對這座要塞有反應。法蘭認為——這裡面藏著比士兵更值得守的東西。"},
+        {"speaker": "eirine", "text": "石板說的封印之處應該就在這。馬庫斯，全軍按計畫推進。"}
+      ]
+    },
+    {
+      "turn": 2,
+      "type": "dialogue",
+      "text": [
+        {"speaker": null,     "text": "塔頂的弩砲齊射，箭矢在空中劃出鋒利的弧線。"},
+        {"speaker": "natasha","text": "（拉繮繩讓天馬橫飛閃避）……這密度的弩砲，連天馬都難飛近塔頂。"},
+        {"speaker": "cain",   "text": "（背靠石牆）那些弩兵——他們的射擊節奏完全一致。是受過嚴格訓練的精銳，不像格倫那邊的徵召兵。"},
+        {"speaker": "rex",    "text": "ゲルハルト的部下都是『鐵壁軍團』。當年我在軍校時，曾與他們同場演習——他們的紀律僅次於皇帝近衛。"},
+        {"speaker": "thor",   "text": "管他什麼軍團——鋼是鐵，鐵會碎。老子的大斧告訴他們什麼叫『真正的鐵壁』。"},
+        {"speaker": "serra",  "text": "（合掌）……願這座要塞的死者，無論敵我，都能得到安息。"},
+        {"speaker": "olivier","text": "（小聲）那位修女姐姐每次戰前都要禱告——這次連敵人也禱告。臣下……有點被打動了。"}
+      ]
+    },
+    {
+      "turn": 3,
+      "type": "dialogue",
+      "text": [
+        {"speaker": null,      "text": "突然，要塞中層的瞭望塔有一個影子翻過石牆——是一名披著黑斗篷的女將軍，鎧甲下露出帝國副將的徽章。"},
+        {"speaker": "olivier", "text": "（瞇眼）那是……鐵壁軍團的副將？她怎麼會單獨出現在牆外？"},
+        {"speaker": "marcus",  "text": "（拔出長槍警戒）……她沒帶武器。並非偷襲。"},
+        {"speaker": "rex",     "text": "（仔細看）……是ヘルガ副將。她——是ゲルハルト的學生。我在軍校時與她同期。"},
+        {"speaker": "eirine",  "text": "雷克斯，她可信嗎？"},
+        {"speaker": "rex",     "text": "（沉默片刻）……ヘルガ從前是最痛恨叛徒的人。如果她真的要倒戈——必然有非倒戈不可的理由。讓臣下與她接觸。"}
+      ]
+    },
+    {
       "turn": 4,
       "type": "reinforce",
+      "text": [
+        {"speaker": null,     "text": "要塞東翼的側門突然打開，帝國聖騎士疾馳而出——明顯是想包抄艾琳的側翼。"},
+        {"speaker": "marcus", "text": "聖騎士編隊三騎！殿下，他們繞側門了——這是『鐵壁軍團』的鉗形戰術。"},
+        {"speaker": "natasha","text": "（騰空）臣下從空中切斷他們的後援。雷克斯，左翼鉗口由你應對。"},
+        {"speaker": "rex",    "text": "明白。順便——尋找ヘルガ的下落。"},
+        {"speaker": "thor",   "text": "嘁——這群穿銀甲的小白臉，老子最看不爽了。一斧一個。"}
+      ],
       "enemies": [
-        {"classId": "paladin", "level": 7, "x": 16, "y": 11, "items": ["steelSword","javelin"], "ai": "aggressive", "name": "增援聖騎士"},
-        {"classId": "paladin", "level": 7, "x": 14, "y": 12, "items": ["steelSword","javelin"], "ai": "aggressive", "name": "增援聖騎士"},
-        {"classId": "knight",  "level": 12,"x": 15, "y": 13, "items": ["steelLance"],          "ai": "aggressive", "name": "增援重裝兵"}
+        {"classId": "paladin", "level": 7,  "x": 16, "y": 11, "items": ["steelSword","javelin"], "ai": "aggressive", "name": "增援聖騎士"},
+        {"classId": "paladin", "level": 7,  "x": 14, "y": 12, "items": ["steelSword","javelin"], "ai": "aggressive", "name": "增援聖騎士"},
+        {"classId": "knight",  "level": 12, "x": 15, "y": 13, "items": ["steelLance"],           "ai": "aggressive", "name": "增援重裝兵"},
+        {"classId": "paladin", "level": 7,  "x": 3,  "y": 11, "items": ["steelSword","javelin"], "ai": "aggressive", "name": "增援聖騎士"},
+        {"classId": "knight",  "level": 12, "x": 4,  "y": 13, "items": ["steelLance"],           "ai": "aggressive", "name": "增援重裝兵"},
+        {"classId": "mageKnight","level": 6,"x": 2,  "y": 12, "items": ["elfire"],               "ai": "aggressive", "name": "增援魔法騎士"}
       ]
     },
     {
       "turn": 5,
       "type": "recruit",
       "text": [
-        {"speaker": "helga",  "text": "你……你竟然突破了鐵牆？"},
-        {"speaker": "eirine", "text": "你是要阻止我嗎？"},
-        {"speaker": "helga",  "text": "不。我效忠的是正義，不是暴君。讓我加入你——從今日起，我守護你。"}
+        {"speaker": null,     "text": "黑斗篷的女將軍翻下石牆，落地時單膝跪在艾琳面前——她的鎧甲下露出右肩的鞭痕，傷口尚新。"},
+        {"speaker": "helga",  "text": "艾琳殿下。臣下『鐵壁軍團』副將ヘルガ——請殿下收留。"},
+        {"speaker": "eirine", "text": "你是ゲルハルト的副將。為什麼倒戈？"},
+        {"speaker": "helga",  "text": "（咬牙）……三天前，臣下質疑了師父的命令。莫爾甘下了一道密令——將要塞地下的『翠星之鑰』壁畫銷毀。"},
+        {"speaker": "helga",  "text": "臣下問師父：『那不是先王交給我們守護的嗎？為什麼要銷毀？』師父——師父當眾鞭笞了臣下二十下，命令臣下『不得質疑莫爾甘大人』。"},
+        {"speaker": "rex",    "text": "（震驚）……ゲルハルト鞭打你？他不是把你視如己出嗎？"},
+        {"speaker": "helga",  "text": "雷克斯——師父現在不是師父了。莫爾甘對他下了什麼，臣下不知道——但那不是臣下認識的鐵壁將軍。"},
+        {"speaker": "helga",  "text": "公主殿下，臣下不是為了報復師父。臣下是為了——守住先王留下的、真正的東西。"},
+        {"speaker": "eirine", "text": "ヘルガ，謝謝你。一起來吧。我需要你告訴我們——壁畫究竟畫的是什麼。"},
+        {"speaker": "helga",  "text": "壁畫上——是翠星之神殿的位置。在王都北方雪山之巔。莫爾甘要的，是讓所有人忘記它的存在。"},
+        {"speaker": "fran",   "text": "（眼睛發亮）翠星之神殿……『翠星之鑰』指的就是它！殿下，找到了——這就是星印覺醒的地方！"}
+      ]
+    },
+    {
+      "turn": 6,
+      "type": "reinforce",
+      "text": [
+        {"speaker": null,     "text": "要塞主樓的鐘聲響起——ゲルハルト調動內城預備隊，封死艾琳前往主樓的路。"},
+        {"speaker": "helga",  "text": "（拔出長槍）那是內城預備隊——『鐵衛』。是師父最後的籌碼。"},
+        {"speaker": "helga",  "text": "公主殿下，請讓臣下打頭陣。臣下熟悉他們的隊形——一個破綻臣下都不會放過。"},
+        {"speaker": "marcus", "text": "ヘルガ副將，跟我並肩。老騎士與你師父同代——這把長槍會替你撐住右翼。"}
+      ],
+      "enemies": [
+        {"classId": "knight",  "level": 13, "x": 7,  "y": 5,  "items": ["silverLance"],          "ai": "defensive",  "name": "鐵衛重裝兵"},
+        {"classId": "knight",  "level": 13, "x": 11, "y": 5,  "items": ["silverLance"],          "ai": "defensive",  "name": "鐵衛重裝兵"},
+        {"classId": "general", "level": 8,  "x": 9,  "y": 4,  "items": ["silverLance","javelin"],"ai": "defensive",  "name": "鐵衛統領"},
+        {"classId": "sniper",  "level": 8,  "x": 5,  "y": 3,  "items": ["killerBow"],            "ai": "defensive",  "name": "鐵衛狙擊手"},
+        {"classId": "sniper",  "level": 8,  "x": 13, "y": 3,  "items": ["killerBow"],            "ai": "defensive",  "name": "鐵衛狙擊手"}
+      ]
+    },
+    {
+      "turn": 7,
+      "type": "dialogue",
+      "text": [
+        {"speaker": null,     "text": "塔頂的魔法陣突然亮起，一道冰冷的聲音直接灌入艾琳腦中。"},
+        {"speaker": "morgane","text": "ゲルハルト，朕的『鐵壁』。壁畫銷毀了沒？"},
+        {"speaker": null,     "text": "塔頂傳出ゲルハルト沉穩的聲音：「莫爾甘大人——艾琳公主已抵達內城。臣下將親手了結她，再執行壁畫處置。」"},
+        {"speaker": "morgane","text": "順序錯了。先銷毀壁畫，再殺公主。若她看到壁畫的位置，朕三十年的布局就崩了。"},
+        {"speaker": null,     "text": "ゲルハルト沉默片刻：「……遵命。」"},
+        {"speaker": "fran",   "text": "（捂住星印）公主，莫爾甘剛剛——又透過共鳴喊話了。他比我們想的更急。"},
+        {"speaker": "eirine", "text": "（緊握星印）莫爾甘怕我們知道翠星之神殿在哪裡。ヘルガ——帶我們抄近路衝進主樓，搶在壁畫被毀之前。"},
+        {"speaker": "helga",  "text": "明白。走中央迴廊——師父會在大門前等公主。臣下知道怎麼穿。"}
+      ]
+    },
+    {
+      "turn": 9,
+      "type": "dialogue",
+      "text": [
+        {"speaker": "olivier","text": "（小聲對ヘルガ）副將大人——剛才那位『莫爾甘大人』的聲音，臣下聽得寒毛直豎。"},
+        {"speaker": "helga",  "text": "那是他的『遠距咒語』。據說只有對星印有共鳴的人才能聽見——所以你也聽到了，奧利維爾？"},
+        {"speaker": "olivier","text": "嗯……可能臣下祖上有點魔導血脈？反正聽得清清楚楚。"},
+        {"speaker": "lina",   "text": "（拉弓）莫爾甘把這片大陸當成棋盤。我們每個人——都是他想抹掉的棋子。"},
+        {"speaker": "serra",  "text": "棋子也可以反過來吞掉棋手。願神看見我們的祈禱。"},
+        {"speaker": "thor",   "text": "（咧嘴）說得好，修女。等砸開鐵壁，老子請大家喝酒。"}
       ]
     }
-  ]
+  ],
+  "bossLines": {
+    "opening": "公主殿下，您與您父王相似的眼神，臣下今日見了。但臣下守的不是先王，是莫爾甘大人。請殿下別怪臣下這把長槍。",
+    "mid": "（鎧甲裂開）……ヘルガ……為師沒看錯你——但為師選錯了主上。原諒師父……最後再教你一次……『鐵壁』該怎麼倒下。",
+    "death": "（倒地，緩緩開口）公主……要塞地下的壁畫……臣下沒燒。莫爾甘的命令……臣下違背了最後一次……翠星之神殿……在雪山之巔……求殿下……走到底……"
+  }
 }

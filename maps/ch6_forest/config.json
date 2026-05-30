@@ -50,21 +50,74 @@
   ],
   "turnEvents": [
     {
+      "turn": 2,
+      "type": "dialogue",
+      "text": [
+        {"speaker": "rex",    "text": "（指向碼頭遠處的旗艦）那艘黑帆船——是巴爾薩提督的『海狼號』。船尾有帝國旗，但船頭掛的是私旗。"},
+        {"speaker": "cain",   "text": "私旗？提督不是帝國正規軍嗎？"},
+        {"speaker": "rex",    "text": "他是。但他同時與三支海盜團簽了密約。莫爾甘默許這種勾當——因為港口的補給對北境帝國軍很關鍵。"},
+        {"speaker": "thor",   "text": "提督勾結海盜？嘁，這算什麼帝國軍人。"},
+        {"speaker": "fran",   "text": "（看向遠方）……奇怪，那艘『海狼號』的桅杆上有魔法陣的痕跡。是用來定位星印的儀器嗎？"},
+        {"speaker": "eirine", "text": "莫爾甘已經把獵捕星印的網撒到海上了。馬庫斯——加快推進，奪下指揮所。"}
+      ]
+    },
+    {
       "turn": 3,
       "type": "recruit",
       "text": [
-        {"speaker": "natasha", "text": "你們是反抗軍嗎？我是天馬騎士那塔莎！讓我加入你們！"},
-        {"speaker": "eirine",  "text": "從天而降的援軍……太好了！歡迎！"}
+        {"speaker": null,      "text": "南方天際飛來一頭白鬃天馬——騎士的鎧甲已破，斗篷上滿是煙灰。"},
+        {"speaker": "natasha", "text": "（俯衝著陸）反抗軍！請收留我——我是來自南方自由城邦『艾爾梅拉』的天馬騎士那塔莎！"},
+        {"speaker": "natasha", "text": "三天前——莫爾甘的軍隊夷平了我的城邦。守軍三百人、市民兩千人——全部……全部沒了。"},
+        {"speaker": "eirine",  "text": "（震驚）夷平……整座城邦？！"},
+        {"speaker": "natasha", "text": "莫爾甘下了命令：『艾爾梅拉與艾爾法利亞通謀，視同叛逆，雞犬不留』。理由是——三十年前我們收留過艾爾法利亞的逃難民。"},
+        {"speaker": "marcus",  "text": "（沉默良久）……三十年前那一波難民裡，就有臣下的妹妹。她當時就是嫁去艾爾梅拉的。"},
+        {"speaker": "natasha", "text": "（看著馬庫斯）……將軍，您的妹妹是叫艾蓮娜嗎？她是我母親的好友。她……她也在那三天前。"},
+        {"speaker": "marcus",  "text": "……（深吸一口氣，扶住長槍）……知道了。謝謝妳告訴我。"},
+        {"speaker": "eirine",  "text": "那塔莎，從今天起，這支隊伍就是妳的歸宿。馬庫斯，這份仇——我們一起算。"},
+        {"speaker": "natasha", "text": "公主殿下……謝謝。讓臣為艾爾梅拉的兩千名亡魂——舉這支槍。"}
       ]
     },
     {
       "turn": 4,
       "type": "reinforce",
+      "text": [
+        {"speaker": null,     "text": "港口東側竄出帝國援軍，碼頭旁也躲出一群手持砍刀的海盜。"},
+        {"speaker": "lina",   "text": "東邊援軍三人——交給我。"},
+        {"speaker": "natasha","text": "（騎乘天馬升空）海盜由臣下從上方壓制。馬庫斯，臣下護您的右翼。"}
+      ],
       "enemies": [
         {"classId": "soldier", "level": 10, "x": 16, "y": 11, "items": ["steelLance"], "ai": "aggressive", "name": "增援帝國兵"},
         {"classId": "archer",  "level": 10, "x": 17, "y": 11, "items": ["steelBow"],  "ai": "aggressive", "name": "增援弓兵"},
-        {"classId": "brigand", "level": 10, "x": 16, "y": 10, "items": ["handAxe"],   "ai": "aggressive", "name": "增援海賊"}
+        {"classId": "brigand", "level": 10, "x": 16, "y": 10, "items": ["handAxe"],   "ai": "aggressive", "name": "增援海賊"},
+        {"classId": "brigand", "level": 10, "x": 1,  "y": 10, "items": ["handAxe"],   "ai": "aggressive", "name": "增援海賊"},
+        {"classId": "fighter", "level": 10, "x": 0,  "y": 11, "items": ["steelAxe"],  "ai": "aggressive", "name": "海賊頭目"}
+      ]
+    },
+    {
+      "turn": 5,
+      "type": "dialogue",
+      "text": [
+        {"speaker": "marcus",  "text": "（小聲）……艾蓮娜走的時候，臣連最後一面都沒見上。"},
+        {"speaker": "eirine",  "text": "馬庫斯，今晚我守夜。你休息。"},
+        {"speaker": "marcus",  "text": "殿下，不必。臣下還能打。將仇恨化為劍——這是騎士的修行。"},
+        {"speaker": "thor",    "text": "（拍馬庫斯肩膀）老子也賠你三杯酒。等仗打完。"},
+        {"speaker": "serra",   "text": "（合掌）……願艾爾梅拉的兩千名亡魂安息。今夜的港口，將有他們的目光。"}
+      ]
+    },
+    {
+      "turn": 6,
+      "type": "dialogue",
+      "text": [
+        {"speaker": "natasha", "text": "巴爾薩——三天前下令屠城的就是這個男人。"},
+        {"speaker": "natasha", "text": "他從船上指揮，炮火打了七十二個小時。連產婦的病房都沒放過。"},
+        {"speaker": "rex",     "text": "（按住那塔莎肩膀）……那塔莎，這一仗——讓臣與妳一起取他項上人頭。"},
+        {"speaker": "natasha", "text": "（眼眶泛紅）……謝謝你，雷克斯。"}
       ]
     }
-  ]
+  ],
+  "bossLines": {
+    "opening": "公主殿下，您動作真快——上週剛屠完艾爾梅拉，這週就追到港口來了。要塞我守不住，但您也別想全身而退。",
+    "mid": "（拉緊弓弦）……天馬騎士那個丫頭——她是艾爾梅拉的最後一個倖存者吧？嘖，那麼她今天就是來陪葬的。",
+    "death": "（笑）……莫爾甘大人……承諾過我……南方總督的位子……可惜了……"
+  }
 }

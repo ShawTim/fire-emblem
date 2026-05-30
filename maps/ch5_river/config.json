@@ -252,57 +252,170 @@
   ],
   "turnEvents": [
     {
+      "turn": 1,
+      "type": "dialogue",
+      "text": [
+        {
+          "speaker": "格倫",
+          "text": "全軍——上弓！上弦！艾爾法利亞公主已至——莫爾甘大人的死令，今日必須執行。"
+        },
+        {
+          "speaker": "格倫",
+          "text": "聽令：守住吊橋與門樓，無命令不得撤退。若臣陣亡，由百夫長代為傳令——莫爾甘的家眷威脅，臣以一人之命承擔。"
+        },
+        {
+          "speaker": null,
+          "text": "要塞守兵齊聲應諾。守將格倫拔出長槍，立於要塞主樓前。"
+        }
+      ]
+    },
+    {
       "turn": 2,
       "type": "recruit",
       "text": [
         {
+          "speaker": null,
+          "text": "東方天際傳來翼影聲——一頭白鱗飛龍貼著河面俯衝，騎士在鞍上拉開斗篷。"
+        },
+        {
           "speaker": "rex",
-          "text": "艾琳殿下！我是飛龍騎士團副團長雷克斯！帝國的暴行我再也看不下去了！"
+          "text": "艾琳殿下！臣是帝國南方飛龍騎士團副團長雷克斯——昨夜叛離駐地，特來投奔殿下！"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（警戒）飛龍騎士團是帝國精銳。雷克斯，何以證明非詐降？"
+        },
+        {
+          "speaker": "rex",
+          "text": "（取下徽章遞出）此乃飛龍騎士團副團長令牌。臣可以一條命起誓——也可以憑這個。"
+        },
+        {
+          "speaker": null,
+          "text": "雷克斯從懷裡掏出一封信，墨跡未乾。"
+        },
+        {
+          "speaker": "rex",
+          "text": "這是昨夜臣下接到的密令：『協助清剿艾琳殿下之餘黨，事成可保飛龍騎士團全員家眷』。臣的妹妹也在那份名單上。"
         },
         {
           "speaker": "eirine",
-          "text": "雷克斯……太好了，有你的幫助，我們一定能攻下這座要塞！"
+          "text": "（接過信讀畢，緊握星印）……又是這種手段。雷克斯，謝謝你選擇站在這邊。"
+        },
+        {
+          "speaker": "rex",
+          "text": "請殿下下令。臣的飛龍能從要塞上空切斷主樓與東塔的聯絡——可破格倫的指揮系統。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "好。雷克斯掌空中切割，馬庫斯率騎兵正面衝擊吊橋，法蘭與莉娜壓制兩翼弓塔。賽拉留守支援。"
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "type": "dialogue",
+      "text": [
+        {
+          "speaker": "lina",
+          "text": "（在山丘上拉弓）……格倫將軍的部屬，明明知道是死局，還是在拼。"
+        },
+        {
+          "speaker": "thor",
+          "text": "他們的家人都在莫爾甘手上。你射的不是士兵——是被綁架的人質。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（按住魔法書）……本天才的火焰術可以一次清光半座吊橋。但會燒到要塞守兵的補給庫。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "法蘭，留著補給庫。我們攻下要塞之後，那些是莫爾甘要不到的物資——可以發給因戰亂流離的村民。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（罕見地沒反駁）……知道了。本天才換成精準魔法。"
         }
       ]
     },
     {
       "turn": 4,
       "type": "reinforce",
+      "text": [
+        {
+          "speaker": null,
+          "text": "要塞兩翼山道揚起塵土——帝國援軍如期而至。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "援軍到了。三方夾擊——殿下，今天必須在援軍合圍前破城。"
+        },
+        {
+          "speaker": "rex",
+          "text": "（騎乘飛龍）臣下這就攔截援軍的弓兵。馬庫斯，左翼交給臣。"
+        }
+      ],
       "enemies": [
+        {"classId": "soldier", "level": 7, "x": 0,  "y": 9,  "items": ["ironLance"], "ai": "aggressive", "name": "增援兵"},
+        {"classId": "soldier", "level": 7, "x": 19, "y": 9,  "items": ["ironLance"], "ai": "aggressive", "name": "增援兵"},
+        {"classId": "archer",  "level": 7, "x": 0,  "y": 10, "items": ["ironBow"],   "ai": "aggressive", "name": "增援弓兵"},
+        {"classId": "archer",  "level": 7, "x": 19, "y": 10, "items": ["ironBow"],   "ai": "aggressive", "name": "增援弓兵"},
+        {"classId": "fighter", "level": 8, "x": 1,  "y": 11, "items": ["steelAxe"],  "ai": "aggressive", "name": "增援戰士"},
+        {"classId": "fighter", "level": 8, "x": 18, "y": 11, "items": ["steelAxe"],  "ai": "aggressive", "name": "增援戰士"}
+      ]
+    },
+    {
+      "turn": 5,
+      "type": "dialogue",
+      "text": [
         {
-          "classId": "soldier",
-          "level": 7,
-          "x": 0,
-          "y": 9,
-          "items": [
-            "ironLance"
-          ],
-          "ai": "aggressive",
-          "name": "增援兵"
+          "speaker": "rex",
+          "text": "格倫將軍的指揮聲——三十年沒變過。當年臣下還是新兵，他就是這樣喊號令的。"
         },
         {
-          "classId": "soldier",
-          "level": 7,
-          "x": 19,
-          "y": 9,
-          "items": [
-            "ironLance"
-          ],
-          "ai": "aggressive",
-          "name": "增援兵"
+          "speaker": "cain",
+          "text": "雷克斯，你是他帶出來的兵？"
         },
         {
-          "classId": "archer",
-          "level": 7,
-          "x": 0,
-          "y": 10,
-          "items": [
-            "ironBow"
-          ],
-          "ai": "aggressive",
-          "name": "增援弓兵"
+          "speaker": "rex",
+          "text": "舊帝國的軍校，臣下入學第一天，他是教官。畢業時他親自為臣下別上飛龍騎士團徽章。"
+        },
+        {
+          "speaker": "rex",
+          "text": "今天，臣下的劍要對著他了。但他比誰都清楚——這是他親手教出來的兵，前來終結他不願背叛的職責。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "雷克斯……如果你下不了手，告訴我。我來。"
+        },
+        {
+          "speaker": "rex",
+          "text": "不。殿下，這一槍，由臣下親自送。這是學生唯一能為老師做的事。"
         }
       ]
+    },
+    {
+      "turn": 7,
+      "type": "reinforce",
+      "text": [
+        {
+          "speaker": null,
+          "text": "要塞主樓塔頂響起號角——格倫最後的預備隊。"
+        },
+        {
+          "speaker": "格倫",
+          "text": "（從塔頂大喊）公主殿下！臣下的部屬絕不投降——但若殿下取臣首級，他們會放下武器。請速戰！"
+        }
+      ],
+      "enemies": [
+        {"classId": "knight",  "level": 9, "x": 8,  "y": 16, "items": ["silverLance"], "ai": "defensive", "name": "格倫近衛"},
+        {"classId": "knight",  "level": 9, "x": 11, "y": 16, "items": ["silverLance"], "ai": "defensive", "name": "格倫近衛"},
+        {"classId": "paladin", "level": 6, "x": 9,  "y": 17, "items": ["silverLance","javelin"], "ai": "aggressive", "name": "預備隊長"}
+      ]
     }
-  ]
+  ],
+  "bossLines": {
+    "opening": "公主殿下，臣下未曾失守過一座要塞。但今日——若臣下勝，公主死；若臣下敗，臣的家眷死。臣下選擇後者。請賜臣下一個軍人之死。",
+    "mid": "（吐血）……公主的劍，比想像中更利。果然是星印之主……",
+    "death": "艾莉莎……伊凡、蕾娜……父親……守住了承諾……公主殿下，拜託您……"
+  }
 }

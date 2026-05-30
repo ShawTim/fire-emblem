@@ -52,8 +52,36 @@
   ],
   "turnEvents": [
     {
+      "turn": 1,
+      "type": "dialogue",
+      "text": [
+        {"speaker": null,    "text": "深淵之森的樹冠遮蔽了陽光，地面上漂浮著詭異的紫色霧氣。空氣中傳來低沉的吟唱聲。"},
+        {"speaker": "fran",  "text": "（按住魔導書）……這裡的魔力密度，是普通森林的二十倍。星印對這片地域有反應——它在發燙。"},
+        {"speaker": "natasha","text": "（拉緊韁繩）天馬不肯飛——空氣中有讓它害怕的東西。"},
+        {"speaker": "rex",   "text": "情報屬實。這片森林深處有古代魔法陣的遺跡——莫爾甘的人就是來找這個的。"},
+        {"speaker": "eirine","text": "馬庫斯，分隊推進。莉娜、奧利維爾若藏在哪裡——應該會自己現身。"}
+      ]
+    },
+    {
+      "turn": 2,
+      "type": "dialogue",
+      "text": [
+        {"speaker": null,    "text": "森林深處傳來低沉的咒語聲。每念一句，紫色霧氣便濃一分。"},
+        {"speaker": "morgane","text": "（自遠處的聲音）惡格尼斯，星印的鑰匙在艾琳手上——她會親自送來。你只要守好古代石板。"},
+        {"speaker": null,    "text": "深處傳出一個沙啞的回應：「莫爾甘大人……您要的『翠星之鑰』就埋在祭壇下。一旦取出——這片森林的所有亡靈都將復甦。」"},
+        {"speaker": "morgane","text": "讓它們復甦吧。艾琳若不從祭壇上撤離，便讓亡靈先取她的命。"},
+        {"speaker": "fran",  "text": "（捂住耳朵）……星印共鳴。又是莫爾甘的聲音直接灌進來。"},
+        {"speaker": "eirine","text": "莫爾甘——你以為這種伎倆能嚇住我？馬庫斯，加快推進，我們搶在亡靈復甦前奪下石板！"}
+      ]
+    },
+    {
       "turn": 3,
       "type": "reinforce",
+      "text": [
+        {"speaker": null,    "text": "森林兩翼的霧氣中竄出深林暗術士與盜賊。"},
+        {"speaker": "marcus","text": "敵方援軍從兩翼包抄——奧利維爾呢？情報說他應該在這附近。"},
+        {"speaker": "cain",  "text": "盜賊的人在動向裡——大概是被『深淵之主』掌控的。注意，他們眼神空洞。"}
+      ],
       "enemies": [
         {"classId": "darkMage", "level": 11, "x": 0,  "y": 0, "items": ["flux"],    "ai": "aggressive", "name": "深林暗術士"},
         {"classId": "brigand",  "level": 11, "x": 19, "y": 2, "items": ["handAxe"], "ai": "aggressive", "name": "森林盜賊"}
@@ -63,18 +91,46 @@
       "turn": 4,
       "type": "recruit",
       "text": [
-        {"speaker": "olivier", "text": "你們是在對抗帝國的人？我在這片森林等這一刻很久了。"},
-        {"speaker": "eirine",  "text": "你是誰？"},
-        {"speaker": "olivier", "text": "我叫奧利維爾，是這村莊的守護者。這片森林被黑暗侵蝕已久，讓我加入你們，一起終結它。"}
+        {"speaker": null,     "text": "中央村屋的暗門被自內推開——一個身披灰斗篷的青年提著一塊石板出現。"},
+        {"speaker": "olivier","text": "哎呀哎呀——你們動作真慢，臣下都快被『深淵之主』的爪牙包圍了。"},
+        {"speaker": "olivier","text": "自我介紹一下：奧利維爾，自由的『回收專家』。剛從那位『深淵之主』的祭壇下回收了這個。"},
+        {"speaker": "fran",   "text": "（湊近看石板）……這是『翠星之鑰』的拓本！莫爾甘要的就是這個。"},
+        {"speaker": "eirine", "text": "奧利維爾——你怎麼會在森林裡？你又為什麼要拿這塊石板？"},
+        {"speaker": "olivier","text": "公主殿下，臣下家鄉在三年前被莫爾甘的人滅了。從那之後——只要是莫爾甘想要的，臣下就先一步去拿走。"},
+        {"speaker": "olivier","text": "聽說公主在對抗帝國——這塊石板交給您，比埋在臣下的破口袋裡有用多了。"},
+        {"speaker": "eirine", "text": "奧利維爾，謝謝你。跟我們一起走吧——這片大陸需要更多像你這樣的『回收專家』。"},
+        {"speaker": "olivier","text": "成交。但說好了——分贓的時候，臣下要先挑。"},
+        {"speaker": "thor",   "text": "（白眼）……果然是個小偷。"}
       ]
     },
     {
       "turn": 5,
       "type": "reinforce",
+      "text": [
+        {"speaker": null,    "text": "東邊樹叢轟然倒下——深淵之主已開始召喚亡靈援軍。"},
+        {"speaker": "olivier","text": "好戲開場了。臣下先去後方接應賽拉——她那邊已經有兩名暗術士盯上她了。"}
+      ],
       "enemies": [
         {"classId": "fighter",  "level": 12, "x": 19, "y": 9, "items": ["steelAxe"],  "ai": "aggressive", "name": "增援武夫"},
-        {"classId": "archer",   "level": 12, "x": 19, "y": 7, "items": ["killerBow"], "ai": "aggressive", "name": "增援弓兵"}
+        {"classId": "archer",   "level": 12, "x": 19, "y": 7, "items": ["killerBow"], "ai": "aggressive", "name": "增援弓兵"},
+        {"classId": "skeleton", "level": 8,  "x": 10, "y": 13, "items": ["ironLance"], "ai": "aggressive", "name": "復甦亡靈"},
+        {"classId": "skeleton", "level": 8,  "x": 9,  "y": 13, "items": ["ironLance"], "ai": "aggressive", "name": "復甦亡靈"}
+      ]
+    },
+    {
+      "turn": 7,
+      "type": "dialogue",
+      "text": [
+        {"speaker": "natasha","text": "（從空中俯視）莫爾甘的影子越來越深了。連這片森林的樹根都被他的暗黑魔法侵蝕。"},
+        {"speaker": "serra",  "text": "（合掌念禱）……願這片森林的死者得到安息。"},
+        {"speaker": "olivier","text": "（小聲對莉娜）那位修女姐姐——是真心相信她念的禱詞嗎？這年頭還有這種人？"},
+        {"speaker": "lina",   "text": "（拉弓）她是。所以我們才要替她擋住前面那些亡靈。"}
       ]
     }
-  ]
+  ],
+  "bossLines": {
+    "opening": "公主殿下，您與星印——便是『翠星之鑰』的最後一片拼圖。莫爾甘大人吩咐臣下，等的就是您親手送到祭壇來。",
+    "mid": "（喘息）……艾琳殿下，您的星印共鳴居然能撼動本座的魔法陣……難不成您已經開始覺醒？",
+    "death": "（化為黑霧）……翠星之鑰……莫爾甘大人……快、快取……"
+  }
 }
