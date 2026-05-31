@@ -9,7 +9,7 @@ Every chapter has terrain, config, dialogues, and prologue. All chapters are now
 | ch0 序章 | 5 | — | Eirine, Marcus | guardCaptain | Tutorial chapter |
 | ch1 第一章 | ~10 | — | Lina | 追擊隊長 | |
 | ch2 第二章 | ~12 | turn 2 (text added) | Thor, Serra | 帝國百夫長 | |
-| ch3 第三章 | 13 | turn 4 (3, text) | Cain (t1) | 追討騎士長 cav lv8 | Castle-themed terrain; Cain spawns at east-fort flank |
+| ch3 第三章 | 13 | turn 4 (2, text) | Cain (t1) | 追討騎士長 cav lv8 | Castle-themed terrain; Cain spawns at east-fort flank |
 | ch4 第四章 | 18 | turn 3 (2 skeletons, text) | Fran (t1) | 首席魔導師澤諾 darkMage | Was empty; filled |
 | ch5 第五章 | ~15 | turn 4 (6, text), turn 7 (3) | Rex (t2) | 格倫 paladin lv1 | Story-heavy chapter; Glen hostage-decree bossLines |
 | ch6 第六章 | 21 | turn 4 (5, text) | Natasha (t3) | 提督巴爾薩 archer | Marcus's sister Elena reveal in t3 recruit |
@@ -72,6 +72,9 @@ Boss bonusStats scale up chapter by chapter:
 | Dialogue system with portraits | ✅ Complete |
 | Prologue cinematic text player | ✅ Complete |
 | Turn events (recruit, reinforce, dialogue) | ✅ Complete |
+| Turn events (allyReinforce, starCrestSurge) | ✅ Complete (ch10 T4 / T7) |
+| Boss lines (opening / mid-HP / death triggers) | ✅ Complete |
+| Dark-magic suppression window (Star Crest) | ✅ Complete (`game.darkSuppressUntilTurn`) |
 | Nosferatu HP drain | ✅ Complete (combat.js:106-107) |
 | Save / load (localStorage) | ✅ Complete |
 | BGM (Web Audio oscillator synthesis) | ✅ Complete |
@@ -120,3 +123,97 @@ Mid-chapter `dialogue` turnEvents + bossLines added across ch0–ch10. Several r
 - Helga was Gerhardt's apprentice, rebuked over the mural-burn order (ch8)
 - Zarba's spell-tail cue「コルガ・モーラ」+ blood-moon timing (ch9)
 - ch9 `dialogues.json` rewritten — removes continuity bug where Helga was re-introduced as a stranger
+
+### 2026-05 T1 EP balance pass (ch3, ch4, ch6, ch7, ch8, ch9, ch10)
+
+After the chapter expansion above, T1 enemy phase was audited per-chapter using an in-browser threat model that combines AI behaviour (`defensive`/`boss` stay put; `aggressive` BFS movement + attack tiles) with full damage/hit math (`atk + might − def/res`, doubles at +4 spd). Three chapters had T1 wipes and were rebalanced by flipping specific frontline enemies from `aggressive` to `defensive` — preserving enemy population and stat lines, only removing the T1 charge.
+
+| Chapter | Pre-fix worst case | Fix applied | Post-fix verified |
+|---|---|---|---|
+| ch7 desert | 2 brigands killed Lina/Fran/Eirine T1 EP | (4,11) brigand + (6,13) brigand → `defensive` | all 9 units SAFE except Natasha MED (10.3 dmg) |
+| ch8 mountain | 2 paladins (mov 8) reached Thor for 64.1 dmg DEATH | (5,11) paladin + (13,11) paladin → `defensive` | all 10 units SAFE |
+| ch9 temple | Serra 161.7 dmg DEATH (10.11× HP), Thor/Rex also DEATH | 8 skeletons at y=14–17 flipped to `defensive` (lv9–10 at (4,15)/(12,15)/(3,16)/(13,16)/(6,17)/(9,17)/(4,14)/(5,14)) | all 11 units SAFE except Cain MED (10.9 dmg) |
+
+ch3/ch4/ch6/ch10 passed audit without changes. The "Cain MED" outcome in ch9 is intentional — Cain is a frontline cavalier with high HP/def and the player can retreat or counter-attack; no SAFE→DEATH cliff remains.
+
+### 2026-05 bossLines wire-up
+
+`chapterData.bossLines.{opening, mid, death}` had been written into every chapter config but was never read. Hooks added in `game.js`:
+
+- **opening** — fires once in `startCombat` when boss is first engaged (either as attacker or defender). Gates the combat animation behind dialogue.
+- **mid** — fires once in `finishCombat` when boss survives a hit with `hp/maxHp < 0.5`.
+- **death** — fires once in `finishCombat` when boss `hp <= 0`, before the dead-enemy filter removes the boss from the unit list (so the speaker is still resolvable).
+
+State flag `game.bossLinesShown = {opening, mid, death}` is reset on every `startChapter`. The speaker shown in the dialogue box is the boss's `name` field; the dialogue system falls back to a plain text label + placeholder portrait when the speaker is not in `CHARACTERS`.
+
+Verified in-browser on ch4 (boss 首席魔導師澤諾): all three lines fire in correct order, post-dialogue state restoration works, boss removal from `game.units` happens after death line is dismissed.
+
+### 2026-05 flee→counter-attack pivot (A + D1 + D2 + D3 + D4)
+
+Story-coherence pass addressing "why does a fleeing princess suddenly take the offensive?". Five threads added across ch5 → ch10. Engine got two new `turnEvents` types and one Unit-flag.
+
+**A — "no longer fleeing" pivot dialogues (dialogue-only)**
+
+| Chapter | Turn | Content |
+|---|---|---|
+| ch5 river | 6 | Marcus declares 星辰要塞 the resistance's first territory; Eirine "我不是逃。我是回去"; Cain volunteers as fortress 代理司令; Fran inventories captured supplies + craftsmen |
+| ch7 desert | 6 | 8 deserters from 北方屯駐軍第三十七隊 surrender; Eirine releases them with "這片大陸，從今天起不再以人質支配人" |
+| ch9 castle | 8 | Star Crest awakens; 10 companions kneel; Marcus calls Eirine 「陛下」; Eirine "莫爾甘三十年用人質壓住的這片大陸，今天每一個被他壓住的人，都站在我這邊了" |
+
+**D1 — empire decay beats (dialogue + narrative context)**
+
+| Chapter | Turn | Content |
+|---|---|---|
+| ch6 forest | 7 | Port supply officer surrenders; 3 southern marquis families return hostage lists; Olivier promises recovery-network extraction |
+| ch7 desert | 6 | (combined with A.2 above — deserters establish surface-level decay)  |
+| ch8 mountain | 8 | 10 iron-wall soldiers surrender + 300 lower-rank defection via Olivier's network; Eirine declares fortress 2nd resistance stronghold |
+
+**D2 — three coalition letters (ch9 T8, combined with A.3)**
+
+After Star Crest awakening, Helga delivers three letters:
+- 那塔莎 — Eirmela 500 survivors organising under remaining captain
+- 格倫 — old舊王國 troops, ~300 cavalry/paladins, marching north
+- 奧利維爾 — recovery-network smugglers, 300+ embedded in王都 underground
+
+**D3 — Star Crest battlefield demonstration (engine + ch10 T7)**
+
+New `turnEvents` type `starCrestSurge`:
+- Heals every `faction === 'player'` unit to `maxHp`
+- Sets `game.darkSuppressUntilTurn = game.turn`
+- `getAIAction` bails (`type: 'wait'`) for any unit whose equipped weapon has `type === 'dark'` while the suppression window is active — so the immediately-following enemy phase has every `darkMage` silenced
+
+Initialization: `game.darkSuppressUntilTurn = 0` set in `startChapter`. Reset window naturally expires when `game.turn` advances past the stored value.
+
+ch10 T7 dialogue: Eirine 翠光 awakens around the team, Fran identifies the dark suppression, Marcus addresses 父王陛下, Eirine rallies for the throne breach.
+
+**D4 — ally reinforcement wave (engine + ch10 T4)**
+
+New `turnEvents` type `allyReinforce`. Spawns units from `evt.allies` array as `faction: 'player'`, `isAlly: true`, stats from `generateEnemyStats` (no `charId` required). User controls them like normal player units. Added `isAlly` field to `Unit` constructor.
+
+ch10 T4 spawns 4 allies from the south gate sewer entrance, narratively triggered when Lina shoots down the signal flag:
+
+| Name | Class | Lvl | Pos | Weapon |
+|---|---|---|---|---|
+| 艾爾梅拉隊長 | mercenary | 9 | (2, 17) | silverSword |
+| 格倫舊部 | paladin | 9 | (4, 17) | silverLance |
+| 鐵壁守軍 | knight | 9 | (17, 17) | silverLance |
+| 回收網密使 | fighter | 9 | (19, 17) | steelAxe |
+
+Each ally's faction = `player` so they obey player commands; `isAlly: true` is reserved for future divergence (e.g. tinting, AI auto-control).
+
+**Verification — `scripts/verify_d3_d4.js`**
+
+Headless Playwright harness drives game internals (no UI clicks) to confirm side-effects:
+1. ch10 startChapter — `darkSuppressUntilTurn` initialised to 0
+2. T4 processTurnEvents — `units[].filter(faction === 'player')` grows from 11 → 15; all 4 allies present with `isAlly: true`, correct positions
+3. After damaging all players to hp=1, T7 processTurnEvents — every player back to `maxHp`, `darkSuppressUntilTurn === 7`
+4. `getAIAction` on a `darkMage` enemy returns `{type: 'wait'}` while suppression is active
+
+All four checks pass. Default server port moved to 8081 (`npm start` → `http-server -p 8081 -c-1 -o`) to avoid the common 8080 conflict with nginx on shared dev machines.
+
+**Ally visual differentiation** — engine already had full `'ally'` faction tint support (green hue-rotate in `Sprites.drawUnit` + `.map-unit--ally` CSS class). Wired up `isAlly === true` to reuse that path:
+
+- `unit-layer.js` — `.map-unit--ally` CSS class now toggles on `faction === 'ally' || isAlly === true`
+- `map.js` — canvas-fallback `Sprites.drawUnit` call passes `unit.isAlly ? 'ally' : unit.faction` as effective faction
+
+ch10 T4 allies now render green; their `faction` stays `'player'` so player controls them and enemies target them like any party member.

@@ -164,7 +164,7 @@ const UnitLayer = {
       );
       el.classList.toggle('map-unit--grayed', showGray);
       el.classList.toggle('map-unit--enemy', !showGray && unit.faction === 'enemy');
-      el.classList.toggle('map-unit--ally', !showGray && unit.faction === 'ally');
+      el.classList.toggle('map-unit--ally', !showGray && (unit.faction === 'ally' || unit.isAlly === true));
 
       // HP bar
       this._updateHP(unit, el);

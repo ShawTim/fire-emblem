@@ -23,7 +23,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CHAPTER = parseInt(process.argv[2] ?? '1');
-const PORT    = parseInt(process.argv[3] ?? '8080');
+const PORT    = parseInt(process.argv[3] ?? '8081');
 const MODEL   = 'claude-sonnet-4-6';
 const MAX_ACTIONS = 250;
 const ACTION_DELAY_MS = 700;   // wait after each click

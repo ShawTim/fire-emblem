@@ -36,8 +36,8 @@
     {"classId": "knight",     "level": 12, "x": 7,  "y": 8,  "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
     {"classId": "knight",     "level": 12, "x": 11, "y": 8,  "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
     {"classId": "general",    "level": 7,  "x": 9,  "y": 10, "items": ["steelLance","javelin"], "ai": "defensive", "name": "鐵牆守將"},
-    {"classId": "paladin",    "level": 7,  "x": 5,  "y": 11, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
-    {"classId": "paladin",    "level": 7,  "x": 13, "y": 11, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
+    {"classId": "paladin",    "level": 7,  "x": 5,  "y": 11, "items": ["silverSword","javelin"], "ai": "defensive",  "name": "帝國聖騎士"},
+    {"classId": "paladin",    "level": 7,  "x": 13, "y": 11, "items": ["silverSword","javelin"], "ai": "defensive",  "name": "帝國聖騎士"},
     {"classId": "sniper",     "level": 7,  "x": 7,  "y": 12, "items": ["steelBow"],           "ai": "defensive",  "name": "要塞狙擊手"},
     {"classId": "sniper",     "level": 7,  "x": 11, "y": 12, "items": ["killerBow"],          "ai": "defensive",  "name": "精銳狙擊手"},
     {"classId": "knight",     "level": 12, "x": 6,  "y": 13, "items": ["steelLance"],         "ai": "defensive",  "name": "要塞重裝兵"},
@@ -157,6 +157,23 @@
         {"speaker": "fran",   "text": "（捂住星印）公主，莫爾甘剛剛——又透過共鳴喊話了。他比我們想的更急。"},
         {"speaker": "eirine", "text": "（緊握星印）莫爾甘怕我們知道翠星之神殿在哪裡。ヘルガ——帶我們抄近路衝進主樓，搶在壁畫被毀之前。"},
         {"speaker": "helga",  "text": "明白。走中央迴廊——師父會在大門前等公主。臣下知道怎麼穿。"}
+      ]
+    },
+    {
+      "turn": 8,
+      "type": "dialogue",
+      "text": [
+        {"speaker": null,    "text": "要塞下層大門突然從內側緩緩推開——出來的不是預想中的反衝鋒，而是十幾名放下武器、舉手投降的鐵壁軍團士兵。"},
+        {"speaker": "helga", "text": "（震驚）……鐵衛下層的兵——他們居然投降了？"},
+        {"speaker": null,    "text": "領頭的什長走到ヘルガ面前單膝跪下：「ヘルガ副將——您離開後第二天，奧利維爾公子的人就把我們八個人的家眷從王都監牢偷出來了。今天早上，第三十三、三十四中隊的家眷也跟著南境逃亡潮出了帝國。」"},
+        {"speaker": null,    "text": "什長抬頭：「副將大人，鐵壁軍團下層三百人——人質支配對我們已經失效了。我們不再為莫爾甘大人賣命。」"},
+        {"speaker": "olivier","text": "（少見地正色）……公主，這是臣下答應您的『回收網』在港口戰後布的第二批線。鐵壁要塞下層三百人——從這一刻起，是反抗軍的後援。"},
+        {"speaker": "marcus", "text": "（深吸一口氣）……三百人。莫爾甘的『鐵壁』從內部裂了。"},
+        {"speaker": "helga",  "text": "（雙手按住什長肩膀，聲音顫抖）……謝謝你們。師父若知道——他會欣慰的。"},
+        {"speaker": "eirine", "text": "（向投降的鐵壁兵）你們從今天起是自由的。要塞的下層由你們暫時看守。我們會在這裡建立反抗軍的第二個據點——星辰要塞是第一個，鐵壁要塞是第二個。"},
+        {"speaker": "rex",    "text": "（驚訝）公主——這代表前往翠星神殿的補給線，從我們的後方一路鋪到南方港口了。"},
+        {"speaker": "fran",   "text": "（按住星印）……公主，我們真的不再是十一個人對抗一個帝國了。我們現在是一張網。"},
+        {"speaker": "eirine", "text": "（眼神更堅定）馬庫斯——把要塞下層的指揮交給ヘルガ的舊部信任的人。然後集結，上樓會師父。"}
       ]
     },
     {

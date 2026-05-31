@@ -106,6 +106,23 @@
     },
     {
       "turn": 4,
+      "type": "allyReinforce",
+      "text": [
+        {"speaker": null,      "text": "莉娜的箭射穿黑色信號旗的瞬間——王都南門的下水道湧出四支隊伍。她們高舉的旗幟分別是艾爾梅拉、舊王國格倫部、鐵壁、以及一面從未見過的盜賊網黑底白星旗。"},
+        {"speaker": "helga",   "text": "（驚喜）那塔莎傳的信——艾爾梅拉殘部今天清晨抵達王都！"},
+        {"speaker": "marcus",  "text": "（看向左翼）格倫的旗——是臣下三十年前的同袍！他們真的把人手送到了！"},
+        {"speaker": "olivier", "text": "（吹口哨）……右翼那面黑底白星旗，是臣下『回收網』的暗號。三百名兄弟今天全到了王都地下。"},
+        {"speaker": "eirine",  "text": "（看向南門）……朋友們，謝謝你們。這場仗，不再是十一個人的仗了。"}
+      ],
+      "allies": [
+        {"classId": "mercenary", "level": 9, "x": 2,  "y": 17, "items": ["silverSword"],  "name": "艾爾梅拉隊長"},
+        {"classId": "paladin",   "level": 9, "x": 4,  "y": 17, "items": ["silverLance"], "name": "格倫舊部"},
+        {"classId": "knight",    "level": 9, "x": 17, "y": 17, "items": ["silverLance"], "name": "鐵壁守軍"},
+        {"classId": "fighter",   "level": 9, "x": 19, "y": 17, "items": ["steelAxe"],   "name": "回收網密使"}
+      ]
+    },
+    {
+      "turn": 4,
       "type": "dialogue",
       "text": [
         {"speaker": "lina",    "text": "（拉弓瞄準塔頂）……公主，王宮塔頂有黑色信號旗。每隔三十秒揮一次——莫爾甘在用這個指揮王宮內所有部隊。"},
@@ -149,6 +166,18 @@
         {"classId": "swordmaster","level": 6,"x": 5,  "y": 7,  "items": ["silverSword"],            "ai": "aggressive", "name": "黑鷹劍聖"},
         {"classId": "swordmaster","level": 6,"x": 15, "y": 7,  "items": ["silverSword"],            "ai": "aggressive", "name": "黑鷹劍聖"},
         {"classId": "darkMage", "level": 13, "x": 10, "y": 6,  "items": ["fenrir"],                 "ai": "aggressive", "name": "深淵祭司"}
+      ]
+    },
+    {
+      "turn": 7,
+      "type": "starCrestSurge",
+      "text": [
+        {"speaker": null,      "text": "艾琳的眼瞳爆射翠光——星印懸浮在她掌心之上，釋放出一道環繞整支隊伍的光環。"},
+        {"speaker": "eirine",  "text": "（光環擴散）……這力量是父王留給我的。今天我把它分給夥伴們。"},
+        {"speaker": null,      "text": "全隊的傷勢瞬間癒合。莫爾甘從王宮深處發出的暗黑共鳴——被翠光的環抵銷。"},
+        {"speaker": "fran",    "text": "（震驚）公主——星印的覺醒之力把暗黑共鳴壓住了！下一輪他們的暗法師——全都施不了法！"},
+        {"speaker": "marcus",  "text": "（仰望光環）……陛下，您看到了嗎。殿下的星印——真的醒了。"},
+        {"speaker": "eirine",  "text": "（轉向同伴）夥伴們——莫爾甘的最後一道防線就在前方。借這道光——我們一起走完最後一段路。"}
       ]
     },
     {

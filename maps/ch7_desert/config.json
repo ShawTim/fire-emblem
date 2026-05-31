@@ -39,10 +39,10 @@
     {"classId": "fighter",  "level": 11, "x": 8,  "y": 9,  "items": ["steelAxe"],        "ai": "aggressive", "name": "深林武夫"},
     {"classId": "archer",   "level": 11, "x": 15, "y": 9,  "items": ["killerBow"],       "ai": "defensive",  "name": "精銳弓兵"},
     {"classId": "darkMage", "level": 12, "x": 16, "y": 9,  "items": ["nosferatu"],       "ai": "defensive",  "name": "深淵術士"},
-    {"classId": "brigand",  "level": 12, "x": 4,  "y": 11, "items": ["steelAxe"],        "ai": "aggressive", "name": "森林盜賊"},
+    {"classId": "brigand",  "level": 12, "x": 4,  "y": 11, "items": ["steelAxe"],        "ai": "defensive",  "name": "森林盜賊"},
     {"classId": "darkMage", "level": 12, "x": 10, "y": 11, "items": ["dark"],            "ai": "defensive",  "name": "深淵術士"},
     {"classId": "fighter",  "level": 11, "x": 14, "y": 12, "items": ["steelAxe"],        "ai": "aggressive", "name": "深林武夫"},
-    {"classId": "brigand",  "level": 12, "x": 6,  "y": 13, "items": ["handAxe"],         "ai": "aggressive", "name": "森林盜賊"},
+    {"classId": "brigand",  "level": 12, "x": 6,  "y": 13, "items": ["handAxe"],         "ai": "defensive",  "name": "森林盜賊"},
     {
       "classId": "darkMage", "level": 12, "x": 9, "y": 2,
       "items": ["nosferatu", "fenrir"],
@@ -115,6 +115,23 @@
         {"classId": "archer",   "level": 12, "x": 19, "y": 7, "items": ["killerBow"], "ai": "aggressive", "name": "增援弓兵"},
         {"classId": "skeleton", "level": 8,  "x": 10, "y": 13, "items": ["ironLance"], "ai": "aggressive", "name": "復甦亡靈"},
         {"classId": "skeleton", "level": 8,  "x": 9,  "y": 13, "items": ["ironLance"], "ai": "aggressive", "name": "復甦亡靈"}
+      ]
+    },
+    {
+      "turn": 6,
+      "type": "dialogue",
+      "text": [
+        {"speaker": null,     "text": "森林東側的灌木叢突然劇烈搖動——七、八名穿著破爛帝國軍服的男子跌跌撞撞地走出來，盔甲掉了一半，手裡的劍都沒拔。"},
+        {"speaker": "marcus", "text": "（舉長槍警戒）站住——身份。"},
+        {"speaker": null,     "text": "領頭的小隊長雙膝跪下：「公主殿下——求您放我們走。我們是帝國北方屯駐軍第三十七隊。三天前接到調令南下，路上聽到南境侯爵退人質的消息——」"},
+        {"speaker": null,     "text": "他抬頭，眼眶通紅：「我們家裡的人——三天前已經跟著南境的逃亡潮逃出領地了。沒人再扣著我們。我們不想再為莫爾甘殺人。」"},
+        {"speaker": "eirine", "text": "（沉默片刻）……你們真的不再受莫爾甘控制？"},
+        {"speaker": null,     "text": "小隊長：「殿下，我們八個人，連兩個月的軍餉都沒拿到。莫爾甘的人質支配崩了，我們就只剩這條命想留給自己。」"},
+        {"speaker": "rex",    "text": "（落地檢查徽章）……是真的。北方屯駐軍三十七隊的徽記，這群人沒造假。"},
+        {"speaker": "eirine", "text": "走吧。沿森林南緣繞行，不要再北上。告訴你們碰見的每一隊帝國兵——這片大陸，從今天起不再以人質支配人。"},
+        {"speaker": null,     "text": "八名逃兵深深一鞠躬，消失在森林深處。"},
+        {"speaker": "fran",   "text": "（按住星印）……公主，星印在共鳴。它在認同剛才的決定。"},
+        {"speaker": "eirine", "text": "（眼神更堅定）我們不再只是逃難的隊伍。我們是這片大陸唯一還在替人說話的人——也是莫爾甘三十年布局的反面。"}
       ]
     },
     {

@@ -45,6 +45,7 @@ class Unit {
     this.isLord = data.isLord || false;
     this.isBoss = data.isBoss || false;
     this.isCain = data.isCain || false;
+    this.isAlly = data.isAlly || false;
     this.recruitableBy = data.recruitableBy || null;
     this.recruited = false;
     this.ai = data.ai || null;

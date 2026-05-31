@@ -15,6 +15,7 @@ function getAIAction(unit, game) {
   const ai = unit.ai || 'aggressive';
   const wpn = unit.getEquippedWeapon();
   if (!wpn || wpn.type === 'staff') return { unit, type: 'wait' };
+  if ((game.darkSuppressUntilTurn || 0) >= game.turn && wpn.type === 'dark') return { unit, type: 'wait' };
 
   const targets = game.units.filter(u => u.faction === 'player' && u.hp > 0);
   if (targets.length === 0) return { unit, type: 'wait' };

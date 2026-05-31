@@ -125,6 +125,10 @@ class Game {
     if (chapter.villageEvents) {
       for (const evt of chapter.villageEvents) evt._visited = false;
     }
+    // Reset bossLines firing flags (chapterData.bossLines.{opening,mid,death} fire at most once per chapter).
+    this.bossLinesShown = { opening: false, mid: false, death: false };
+    // Dark-magic suppression window (Star Crest surge). Enemy AI skips wpn.type === 'dark' while turn <= this.
+    this.darkSuppressUntilTurn = 0;
 
     Sprites.clearTerrainCache();
     GameMap.init(chapter);
@@ -318,6 +322,26 @@ class Game {
         if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
 
       } else if (evt.type === 'dialogue') {
+        if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
+
+      } else if (evt.type === 'allyReinforce') {
+        for (const ad of (evt.allies || [])) {
+          const unit = new Unit({
+            charId: ad.charId || null,
+            name: ad.name || '盟軍', classId: ad.classId, level: ad.level || 1,
+            faction: 'player', x: ad.x, y: ad.y,
+            isAlly: true, items: ad.items,
+            baseStats: this.generateEnemyStats(ad.classId, ad.level),
+          });
+          this.units.push(unit);
+        }
+        if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
+
+      } else if (evt.type === 'starCrestSurge') {
+        for (const u of this.units) {
+          if (u.faction === 'player' && u.hp > 0) u.hp = u.maxHp;
+        }
+        this.darkSuppressUntilTurn = this.turn;
         if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
       }
     }
@@ -1020,6 +1044,24 @@ class Game {
   }
 
   startCombat(attacker, defender) {
+    // bossLines.opening — fire once, only when boss is first engaged in combat.
+    const bossLines = this.chapterData && this.chapterData.bossLines;
+    if (bossLines && bossLines.opening && this.bossLinesShown && !this.bossLinesShown.opening
+        && (defender.isBoss || attacker.isBoss)) {
+      this.bossLinesShown.opening = true;
+      const boss = defender.isBoss ? defender : attacker;
+      const prev = this.state;
+      this.state = 'dialogue';
+      this.dialogue.start(
+        [{ speaker: boss.name, text: bossLines.opening }],
+        () => { this.state = prev; this._startCombatBody(attacker, defender); }
+      );
+      return;
+    }
+    this._startCombatBody(attacker, defender);
+  }
+
+  _startCombatBody(attacker, defender) {
     this.state = 'combatAnim';
     this.combatAttacker = attacker;
     this.combatDefender = defender;
@@ -1053,6 +1095,39 @@ class Game {
   }
 
   finishCombat() {
+    // bossLines.death — fire once, before removing dead boss from list.
+    // bossLines.mid — fire once, after damage lands but only if boss still alive at <50% HP.
+    const bossLines = this.chapterData && this.chapterData.bossLines;
+    if (bossLines && this.bossLinesShown) {
+      const boss = this.units.find(u => u.isBoss);
+      if (boss) {
+        if (!this.bossLinesShown.death && boss.hp <= 0 && bossLines.death) {
+          this.bossLinesShown.death = true;
+          const prev = this.state;
+          this.state = 'dialogue';
+          this.dialogue.start(
+            [{ speaker: boss.name, text: bossLines.death }],
+            () => { this.state = prev; this._finishCombatBody(); }
+          );
+          return;
+        }
+        if (!this.bossLinesShown.mid && boss.hp > 0 && bossLines.mid
+            && boss.hp / boss.maxHp < 0.5) {
+          this.bossLinesShown.mid = true;
+          const prev = this.state;
+          this.state = 'dialogue';
+          this.dialogue.start(
+            [{ speaker: boss.name, text: bossLines.mid }],
+            () => { this.state = prev; this._finishCombatBody(); }
+          );
+          return;
+        }
+      }
+    }
+    this._finishCombatBody();
+  }
+
+  _finishCombatBody() {
     // Remove dead units from DOM layer before filtering
     for (var i = 0; i < this.units.length; i++) {
       if (this.units[i].hp <= 0) UnitLayer.removeUnit(this.units[i]);
