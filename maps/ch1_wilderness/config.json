@@ -4,25 +4,25 @@
   "subtitle": "荒野的邂逅",
   "objective": "seize",
   "objectiveDesc": "擊破追擊隊長並制壓據點",
-  "width": 16,
-  "height": 14,
+  "width": 24,
+  "height": 18,
   "playerUnits": [
     {
       "charId": "eirine",
-      "x": 1,
-      "y": 12
+      "x": 3,
+      "y": 15
     },
     {
       "charId": "marcus",
       "x": 2,
-      "y": 13
+      "y": 16
     }
   ],
   "newRecruits": [
     {
       "charId": "lina",
-      "x": 3,
-      "y": 11,
+      "x": 4,
+      "y": 14,
       "turnJoin": 1
     }
   ],
@@ -30,8 +30,8 @@
     {
       "classId": "soldier",
       "level": 1,
-      "x": 7,
-      "y": 8,
+      "x": 6,
+      "y": 9,
       "items": [
         "slimLance"
       ],
@@ -41,8 +41,8 @@
     {
       "classId": "soldier",
       "level": 1,
-      "x": 9,
-      "y": 7,
+      "x": 17,
+      "y": 9,
       "items": [
         "slimLance"
       ],
@@ -52,8 +52,8 @@
     {
       "classId": "soldier",
       "level": 2,
-      "x": 5,
-      "y": 8,
+      "x": 9,
+      "y": 7,
       "items": [
         "ironLance"
       ],
@@ -64,7 +64,7 @@
       "classId": "fighter",
       "level": 1,
       "x": 12,
-      "y": 7,
+      "y": 8,
       "items": [
         "ironAxe"
       ],
@@ -74,8 +74,8 @@
     {
       "classId": "fighter",
       "level": 2,
-      "x": 10,
-      "y": 5,
+      "x": 14,
+      "y": 6,
       "items": [
         "ironAxe"
       ],
@@ -85,7 +85,7 @@
     {
       "classId": "archer",
       "level": 2,
-      "x": 13,
+      "x": 15,
       "y": 4,
       "items": [
         "ironBow"
@@ -96,8 +96,8 @@
     {
       "classId": "soldier",
       "level": 2,
-      "x": 4,
-      "y": 3,
+      "x": 8,
+      "y": 5,
       "items": [
         "ironLance"
       ],
@@ -107,8 +107,8 @@
     {
       "classId": "soldier",
       "level": 3,
-      "x": 8,
-      "y": 3,
+      "x": 11,
+      "y": 4,
       "items": [
         "ironLance"
       ],
@@ -118,8 +118,8 @@
     {
       "classId": "fighter",
       "level": 3,
-      "x": 11,
-      "y": 2,
+      "x": 16,
+      "y": 3,
       "items": [
         "ironAxe",
         "handAxe"
@@ -130,8 +130,8 @@
     {
       "classId": "archer",
       "level": 3,
-      "x": 6,
-      "y": 1,
+      "x": 20,
+      "y": 4,
       "items": [
         "ironBow"
       ],
@@ -141,8 +141,8 @@
     {
       "classId": "soldier",
       "level": 3,
-      "x": 3,
-      "y": 1,
+      "x": 18,
+      "y": 4,
       "items": [
         "ironLance"
       ],
@@ -152,7 +152,7 @@
     {
       "classId": "knight",
       "level": 4,
-      "x": 5,
+      "x": 19,
       "y": 2,
       "items": [
         "ironLance"
@@ -171,8 +171,8 @@
     {
       "classId": "soldier",
       "level": 2,
-      "x": 10,
-      "y": 8,
+      "x": 21,
+      "y": 3,
       "items": [
         "ironLance"
       ],
@@ -182,8 +182,8 @@
     {
       "classId": "archer",
       "level": 2,
-      "x": 12,
-      "y": 5,
+      "x": 13,
+      "y": 6,
       "items": [
         "ironBow"
       ],
@@ -286,7 +286,7 @@
           "classId": "soldier",
           "level": 3,
           "x": 0,
-          "y": 9,
+          "y": 8,
           "items": [
             "ironLance"
           ],
@@ -296,8 +296,8 @@
         {
           "classId": "soldier",
           "level": 3,
-          "x": 15,
-          "y": 9,
+          "x": 23,
+          "y": 8,
           "items": [
             "ironLance"
           ],
@@ -307,7 +307,7 @@
         {
           "classId": "fighter",
           "level": 3,
-          "x": 15,
+          "x": 23,
           "y": 11,
           "items": [
             "ironAxe"
@@ -324,7 +324,7 @@
         {
           "classId": "archer",
           "level": 4,
-          "x": 2,
+          "x": 21,
           "y": 0,
           "items": [
             "ironBow"
@@ -335,7 +335,7 @@
         {
           "classId": "soldier",
           "level": 4,
-          "x": 14,
+          "x": 16,
           "y": 0,
           "items": [
             "steelLance"
@@ -353,12 +353,12 @@
     "death": "對不起……月華……父親無能……"
   },
   "terrainRandomize": {
-    "plainToForest": 0.08,
-    "plainToHill": 0.03,
+    "plainToForest": 0.05,
+    "plainToHill": 0.02,
     "safeRadius": 1
   },
   "seizePos": {
-    "x": 5,
+    "x": 19,
     "y": 2
   }
 }
