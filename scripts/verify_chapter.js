@@ -72,10 +72,27 @@ const PORT = parseInt(process.argv[3] ?? '8081');
       .filter(v => !(O[v.y] && O[v.y][v.x] === 'village'))
       .map(v => `${v.x},${v.y}=${T[v.y][v.x]}/${O[v.y] ? O[v.y][v.x] : ''}`);
 
+    // connectivity: flood-fill from player starts over walkable tiles
+    const walkable = (x, y) => getMovementCost(T[y][x], { flying: false }, O ? O[y][x] : null) < 999;
+    const seen = new Set(); const q = [];
+    players.forEach(p => { seen.add(`${p.x},${p.y}`); q.push([p.x, p.y]); });
+    while (q.length) {
+      const [x, y] = q.shift();
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+        const k = `${nx},${ny}`;
+        if (seen.has(k) || !walkable(nx, ny)) continue;
+        seen.add(k); q.push([nx, ny]);
+      }
+    }
+    const seizeReachable = seize ? seen.has(`${seize.x},${seize.y}`) : null;
+    const enemiesUnreachable = enemies.filter(e => !seen.has(`${e.x},${e.y}`)).map(e => `${e.name}@${e.x},${e.y}`);
+
     return {
       size: `${W}x${H}`, nPlayers: players.length, nEnemies: enemies.length,
       players: players.map(p => `${p.name}(${p.classId}) @${p.x},${p.y} hp${p.hp}/${p.maxHp} mov${p.mov}`),
-      onBad, seize, villageBad,
+      onBad, seize, seizeReachable, enemiesUnreachable, villageBad,
       threatened: Object.entries(threat).filter(([, r]) => r.byEnemies.length)
         .map(([k, r]) => `${r.lethal ? '☠LETHAL ' : ''}${r.isLord ? '👑 ' : ''}${k}: ${r.sumDmg}/${r.hp} dmg from [${r.byEnemies.join(', ')}]`),
     };

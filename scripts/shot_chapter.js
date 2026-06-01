@@ -28,9 +28,13 @@ if (!fs.existsSync(SHOT)) fs.mkdirSync(SHOT, { recursive: true });
   while (await page.evaluate(() => game.dialogue.isActive()) && s-- > 0) {
     await page.evaluate(() => game.dialogue.advance()); await sleep(6);
   }
+  await page.addStyleTag({ content: '.map-unit,.map-cursor{display:none!important}' });
   await page.evaluate(() => {
-    const fit = Math.min(1040 / (game.chapterData.width * GameMap.tileSize),
-                         600 / (game.chapterData.height * GameMap.tileSize));
+    // terrain-only art view: the DOM unit layer doesn't track GameMap.scale, so hide it
+    if (typeof UnitLayer !== 'undefined' && UnitLayer.container) UnitLayer.container.style.display = 'none';
+    const W = game.canvasW || 800, H = game.canvasH || 600;
+    const fit = 0.98 * Math.min(W / (game.chapterData.width * GameMap.tileSize),
+                                H / (game.chapterData.height * GameMap.tileSize));
     GameMap.scale = fit; GameMap.camX = 0; GameMap.camY = 0;
   });
   await sleep(500);

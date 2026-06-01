@@ -4,48 +4,262 @@
   "subtitle": "魔法塔",
   "objective": "seize",
   "objectiveDesc": "艾琳到達塔頂",
-  "seizePos": {"x": 6, "y": 0},
-  "width": 14,
-  "height": 18,
+  "seizePos": {
+    "x": 8,
+    "y": 0
+  },
+  "width": 16,
+  "height": 24,
   "playerUnits": [
-    {"charId": "eirine", "x": 6, "y": 17},
-    {"charId": "marcus", "x": 5, "y": 16},
-    {"charId": "lina", "x": 7, "y": 16},
-    {"charId": "thor", "x": 6, "y": 16},
-    {"charId": "serra", "x": 5, "y": 15},
-    {"charId": "cain", "x": 7, "y": 15}
+    {
+      "charId": "eirine",
+      "x": 8,
+      "y": 22
+    },
+    {
+      "charId": "marcus",
+      "x": 7,
+      "y": 21
+    },
+    {
+      "charId": "lina",
+      "x": 9,
+      "y": 21
+    },
+    {
+      "charId": "thor",
+      "x": 8,
+      "y": 21
+    },
+    {
+      "charId": "serra",
+      "x": 7,
+      "y": 22
+    },
+    {
+      "charId": "cain",
+      "x": 9,
+      "y": 22
+    }
   ],
   "newRecruits": [
-    {"charId": "fran", "x": 7, "y": 1, "turnJoin": 1}
+    {
+      "charId": "fran",
+      "x": 2,
+      "y": 1,
+      "turnJoin": 1
+    }
   ],
   "enemies": [
-    {"classId": "soldier", "level": 6, "x": 3, "y": 14, "items": ["steelLance"], "ai": "defensive", "name": "塔衛士兵"},
-    {"classId": "soldier", "level": 6, "x": 9, "y": 14, "items": ["steelLance"], "ai": "defensive", "name": "塔衛士兵"},
-    {"classId": "mage",    "level": 6, "x": 6, "y": 13, "items": ["fire"],       "ai": "defensive", "name": "守塔魔法師"},
-    {"classId": "knight",  "level": 6, "x": 2, "y": 12, "items": ["steelLance"], "ai": "defensive", "name": "裝甲衛兵"},
-    {"classId": "knight",  "level": 6, "x": 8, "y": 12, "items": ["steelLance"], "ai": "defensive", "name": "裝甲衛兵"},
-    {"classId": "mage",    "level": 7, "x": 3, "y": 11, "items": ["elfire"],     "ai": "aggressive","name": "帝國魔導師"},
-    {"classId": "mage",    "level": 7, "x": 9, "y": 11, "items": ["elthunder"],  "ai": "defensive", "name": "帝國魔導師"},
-    {"classId": "knight",  "level": 7, "x": 3, "y": 8,  "items": ["steelLance"], "ai": "defensive", "name": "裝甲衛兵"},
-    {"classId": "knight",  "level": 7, "x": 9, "y": 8,  "items": ["steelLance"], "ai": "defensive", "name": "裝甲衛兵"},
-    {"classId": "mage",    "level": 7, "x": 3, "y": 7,  "items": ["elfire"],     "ai": "aggressive","name": "帝國魔導師"},
-    {"classId": "mage",    "level": 7, "x": 9, "y": 7,  "items": ["elthunder"],  "ai": "aggressive","name": "帝國魔導師"},
-    {"classId": "darkMage","level": 7, "x": 3, "y": 5,  "items": ["flux"],       "ai": "defensive", "name": "暗黑魔導師"},
-    {"classId": "darkMage","level": 7, "x": 9, "y": 5,  "items": ["flux"],       "ai": "defensive", "name": "暗黑魔導師"},
-    {"classId": "soldier", "level": 7, "x": 2, "y": 4,  "items": ["steelLance"], "ai": "defensive", "name": "塔衛士兵"},
-    {"classId": "soldier", "level": 7, "x": 8, "y": 4,  "items": ["steelLance"], "ai": "defensive", "name": "塔衛士兵"},
-    {"classId": "darkMage","level": 8, "x": 3, "y": 3,  "items": ["dark","flux"],"ai": "defensive", "name": "近衛暗法師"},
-    {"classId": "darkMage","level": 8, "x": 9, "y": 3,  "items": ["dark","flux"],"ai": "defensive", "name": "近衛暗法師"},
+    {
+      "classId": "soldier",
+      "level": 6,
+      "x": 3,
+      "y": 17,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "塔衛士兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 6,
+      "x": 12,
+      "y": 17,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "塔衛士兵"
+    },
+    {
+      "classId": "mage",
+      "level": 6,
+      "x": 8,
+      "y": 13,
+      "items": [
+        "fire"
+      ],
+      "ai": "defensive",
+      "name": "守塔魔法師"
+    },
+    {
+      "classId": "knight",
+      "level": 6,
+      "x": 3,
+      "y": 13,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "裝甲衛兵"
+    },
+    {
+      "classId": "knight",
+      "level": 6,
+      "x": 12,
+      "y": 13,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "裝甲衛兵"
+    },
+    {
+      "classId": "mage",
+      "level": 7,
+      "x": 3,
+      "y": 9,
+      "items": [
+        "elfire"
+      ],
+      "ai": "aggressive",
+      "name": "帝國魔導師"
+    },
+    {
+      "classId": "mage",
+      "level": 7,
+      "x": 12,
+      "y": 9,
+      "items": [
+        "elthunder"
+      ],
+      "ai": "defensive",
+      "name": "帝國魔導師"
+    },
+    {
+      "classId": "knight",
+      "level": 7,
+      "x": 5,
+      "y": 9,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "裝甲衛兵"
+    },
+    {
+      "classId": "knight",
+      "level": 7,
+      "x": 10,
+      "y": 9,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "裝甲衛兵"
+    },
+    {
+      "classId": "mage",
+      "level": 7,
+      "x": 3,
+      "y": 5,
+      "items": [
+        "elfire"
+      ],
+      "ai": "aggressive",
+      "name": "帝國魔導師"
+    },
+    {
+      "classId": "mage",
+      "level": 7,
+      "x": 12,
+      "y": 5,
+      "items": [
+        "elthunder"
+      ],
+      "ai": "aggressive",
+      "name": "帝國魔導師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 7,
+      "x": 5,
+      "y": 5,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "暗黑魔導師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 7,
+      "x": 10,
+      "y": 5,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "暗黑魔導師"
+    },
+    {
+      "classId": "soldier",
+      "level": 7,
+      "x": 3,
+      "y": 2,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "塔衛士兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 7,
+      "x": 12,
+      "y": 2,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "塔衛士兵"
+    },
+    {
+      "classId": "darkMage",
+      "level": 8,
+      "x": 5,
+      "y": 2,
+      "items": [
+        "dark",
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "近衛暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 8,
+      "x": 10,
+      "y": 2,
+      "items": [
+        "dark",
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "近衛暗法師"
+    },
     {
       "classId": "darkMage",
       "level": 1,
-      "x": 6,
-      "y": 3,
-      "items": ["nosferatu", "flux"],
+      "x": 8,
+      "y": 2,
+      "items": [
+        "nosferatu",
+        "flux"
+      ],
       "ai": "boss",
       "name": "首席魔導師澤諾",
       "isBoss": true,
-      "bonusStats": {"hp": 8, "mag": 5, "skl": 3, "spd": 3, "def": 2, "res": 5}
+      "bonusStats": {
+        "hp": 8,
+        "mag": 5,
+        "skl": 3,
+        "spd": 3,
+        "def": 2,
+        "res": 5
+      }
     }
   ],
   "npcs": [],
@@ -55,48 +269,128 @@
       "turn": 1,
       "type": "recruit",
       "text": [
-        {"speaker": "fran",   "text": "趁守衛換班，本天才逃出來了！喂——下面的人，是真心要打帝國的話，就快點上來會合！"},
-        {"speaker": "eirine", "text": "法蘭！撐住，我們會殺出一條路上來！"}
+        {
+          "speaker": "fran",
+          "text": "趁守衛換班，本天才逃出來了！喂——下面的人，是真心要打帝國的話，就快點上來會合！"
+        },
+        {
+          "speaker": "eirine",
+          "text": "法蘭！撐住，我們會殺出一條路上來！"
+        }
       ]
     },
     {
       "turn": 2,
       "type": "dialogue",
       "text": [
-        {"speaker": null,     "text": "塔內中層的魔法陣突然發光，一道冰冷的聲音透過陣紋傳出。"},
-        {"speaker": "morgane","text": "澤諾，研究進度如何？"},
-        {"speaker": null,     "text": "塔頂傳來澤諾的聲音：「莫爾甘大人，星印的解析還差最後一步——」"},
-        {"speaker": "morgane","text": "公主已抵達塔下。給你三天時間。若到時手中還沒有星印的構造圖，你就跟法蘭一起被『回收』。"},
-        {"speaker": null,     "text": "澤諾的聲音顫抖：「臣……明白……」"},
-        {"speaker": "morgane","text": "還有——告訴她。告訴艾琳：她父親在咽氣前，是叫著朕的名字走的。"},
-        {"speaker": null,     "text": "魔法陣熄滅。塔下，艾琳忽然頓住——星印在她掌心微微震動，彷彿剛才那段話真的傳到了她耳邊。"},
-        {"speaker": "eirine", "text": "馬庫斯……剛才……是我的錯覺嗎？"},
-        {"speaker": "marcus", "text": "（皺眉）……不是錯覺。星印對黑魔法有共鳴。莫爾甘剛剛——直接對殿下喊話了。"},
-        {"speaker": "eirine", "text": "（緊握星印）……他想用父王的死激怒我。他不知道——這樣只會讓我更不會手軟。"}
+        {
+          "speaker": null,
+          "text": "塔內中層的魔法陣突然發光，一道冰冷的聲音透過陣紋傳出。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "澤諾，研究進度如何？"
+        },
+        {
+          "speaker": null,
+          "text": "塔頂傳來澤諾的聲音：「莫爾甘大人，星印的解析還差最後一步——」"
+        },
+        {
+          "speaker": "morgane",
+          "text": "公主已抵達塔下。給你三天時間。若到時手中還沒有星印的構造圖，你就跟法蘭一起被『回收』。"
+        },
+        {
+          "speaker": null,
+          "text": "澤諾的聲音顫抖：「臣……明白……」"
+        },
+        {
+          "speaker": "morgane",
+          "text": "還有——告訴她。告訴艾琳：她父親在咽氣前，是叫著朕的名字走的。"
+        },
+        {
+          "speaker": null,
+          "text": "魔法陣熄滅。塔下，艾琳忽然頓住——星印在她掌心微微震動，彷彿剛才那段話真的傳到了她耳邊。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "馬庫斯……剛才……是我的錯覺嗎？"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（皺眉）……不是錯覺。星印對黑魔法有共鳴。莫爾甘剛剛——直接對殿下喊話了。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（緊握星印）……他想用父王的死激怒我。他不知道——這樣只會讓我更不會手軟。"
+        }
       ]
     },
     {
       "turn": 3,
       "type": "reinforce",
       "text": [
-        {"speaker": null,    "text": "塔內魔法陣再次發光，地板上湧出腐臭的白霧——亡靈士兵被召喚而出。"},
-        {"speaker": "fran",  "text": "（塔頂）澤諾在用『屍兵召喚術』——快上來，本天才把他的儲魔水晶藏起來了！"}
+        {
+          "speaker": null,
+          "text": "塔內魔法陣再次發光，地板上湧出腐臭的白霧——亡靈士兵被召喚而出。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（塔頂）澤諾在用『屍兵召喚術』——快上來，本天才把他的儲魔水晶藏起來了！"
+        }
       ],
       "enemies": [
-        {"classId": "skeleton", "level": 6, "x": 5, "y": 9, "items": ["ironLance"], "ai": "aggressive", "name": "亡靈士兵"},
-        {"classId": "skeleton", "level": 6, "x": 7, "y": 9, "items": ["ironLance"], "ai": "aggressive", "name": "亡靈士兵"}
+        {
+          "classId": "skeleton",
+          "level": 6,
+          "x": 4,
+          "y": 12,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "亡靈士兵"
+        },
+        {
+          "classId": "skeleton",
+          "level": 6,
+          "x": 11,
+          "y": 12,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "亡靈士兵"
+        }
       ]
     },
     {
       "turn": 5,
       "type": "dialogue",
       "text": [
-        {"speaker": "thor",   "text": "公主，這層守門那個重裝兵——他鎧甲上有『血色軍團』的徽記。老子認得這群人。"},
-        {"speaker": "cain",   "text": "血色軍團……？托爾，你連那種傭兵都認得？"},
-        {"speaker": "thor",   "text": "嘁，老子年輕時也漂泊過幾年。北邊的酒館裡跟他們喝過酒，可惜後來他們投靠了帝國。"},
-        {"speaker": "serra",  "text": "（治療中）每個人都有自己的過去呢……托爾，那他們認得你嗎？"},
-        {"speaker": "thor",   "text": "認得。等下衝過去，老子親自跟他們算帳——當年欠老子三杯酒沒還。"},
-        {"speaker": "lina",   "text": "（拉弓）……所以是私人恩怨。托爾，這支箭算我幫你討利息。"}
+        {
+          "speaker": "thor",
+          "text": "公主，這層守門那個重裝兵——他鎧甲上有『血色軍團』的徽記。老子認得這群人。"
+        },
+        {
+          "speaker": "cain",
+          "text": "血色軍團……？托爾，你連那種傭兵都認得？"
+        },
+        {
+          "speaker": "thor",
+          "text": "嘁，老子年輕時也漂泊過幾年。北邊的酒館裡跟他們喝過酒，可惜後來他們投靠了帝國。"
+        },
+        {
+          "speaker": "serra",
+          "text": "（治療中）每個人都有自己的過去呢……托爾，那他們認得你嗎？"
+        },
+        {
+          "speaker": "thor",
+          "text": "認得。等下衝過去，老子親自跟他們算帳——當年欠老子三杯酒沒還。"
+        },
+        {
+          "speaker": "lina",
+          "text": "（拉弓）……所以是私人恩怨。托爾，這支箭算我幫你討利息。"
+        }
       ]
     }
   ],
