@@ -4,36 +4,196 @@
   "subtitle": "傭兵的試煉",
   "objective": "rout",
   "objectiveDesc": "殲滅所有帝國追兵",
-  "width": 16,
-  "height": 14,
+  "width": 20,
+  "height": 16,
   "playerUnits": [
-    {"charId": "eirine", "x": 1, "y": 12},
-    {"charId": "marcus", "x": 0, "y": 12},
-    {"charId": "lina",   "x": 2, "y": 13},
-    {"charId": "thor",   "x": 1, "y": 13},
-    {"charId": "serra",  "x": 0, "y": 13}
+    {
+      "charId": "eirine",
+      "x": 1,
+      "y": 14
+    },
+    {
+      "charId": "marcus",
+      "x": 0,
+      "y": 14
+    },
+    {
+      "charId": "lina",
+      "x": 2,
+      "y": 15
+    },
+    {
+      "charId": "thor",
+      "x": 1,
+      "y": 15
+    },
+    {
+      "charId": "serra",
+      "x": 0,
+      "y": 15
+    }
   ],
   "newRecruits": [
-    {"charId": "cain", "x": 13, "y": 9, "turnJoin": 1}
+    {
+      "charId": "cain",
+      "x": 17,
+      "y": 10,
+      "turnJoin": 1
+    }
   ],
   "enemies": [
-    {"classId": "soldier", "level": 6, "x": 9,  "y": 1, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
-    {"classId": "archer",  "level": 6, "x": 13, "y": 1, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
-    {"classId": "fighter", "level": 7, "x": 11, "y": 2, "items": ["steelAxe"],   "ai": "aggressive", "name": "帝國戰士"},
-    {"classId": "archer",  "level": 7, "x": 14, "y": 2, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
-    {"classId": "knight",  "level": 6, "x": 7,  "y": 3, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
-    {"classId": "soldier", "level": 6, "x": 10, "y": 3, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
-    {"classId": "fighter", "level": 7, "x": 14, "y": 4, "items": ["steelAxe"],   "ai": "aggressive", "name": "帝國戰士"},
-    {"classId": "knight",  "level": 7, "x": 9,  "y": 5, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
-    {"classId": "soldier", "level": 7, "x": 13, "y": 5, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
-    {"classId": "archer",  "level": 7, "x": 11, "y": 9, "items": ["steelBow"],   "ai": "defensive",  "name": "帝國弓兵"},
-    {"classId": "soldier", "level": 7, "x": 14, "y": 9, "items": ["steelLance"], "ai": "aggressive", "name": "帝國士兵"},
-    {"classId": "knight",  "level": 7, "x": 10, "y": 9, "items": ["steelLance"], "ai": "defensive",  "name": "帝國重裝兵"},
     {
-      "classId": "cavalier", "level": 8, "x": 8, "y": 4,
-      "items": ["silverSword", "javelin"],
-      "ai": "boss", "name": "追討騎士長", "isBoss": true,
-      "bonusStats": {"hp": 6, "str": 2, "skl": 2, "spd": 2, "def": 2, "res": 2}
+      "classId": "soldier",
+      "level": 6,
+      "x": 7,
+      "y": 2,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國士兵"
+    },
+    {
+      "classId": "archer",
+      "level": 6,
+      "x": 13,
+      "y": 2,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "帝國弓兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 7,
+      "x": 11,
+      "y": 3,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "帝國戰士"
+    },
+    {
+      "classId": "archer",
+      "level": 7,
+      "x": 13,
+      "y": 4,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "帝國弓兵"
+    },
+    {
+      "classId": "knight",
+      "level": 6,
+      "x": 8,
+      "y": 5,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國重裝兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 6,
+      "x": 10,
+      "y": 3,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國士兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 7,
+      "x": 12,
+      "y": 4,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "帝國戰士"
+    },
+    {
+      "classId": "knight",
+      "level": 7,
+      "x": 11,
+      "y": 5,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國重裝兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 7,
+      "x": 6,
+      "y": 4,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國士兵"
+    },
+    {
+      "classId": "archer",
+      "level": 7,
+      "x": 15,
+      "y": 9,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "帝國弓兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 7,
+      "x": 18,
+      "y": 9,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國士兵"
+    },
+    {
+      "classId": "knight",
+      "level": 7,
+      "x": 15,
+      "y": 11,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國重裝兵"
+    },
+    {
+      "classId": "cavalier",
+      "level": 8,
+      "x": 9,
+      "y": 3,
+      "items": [
+        "silverSword",
+        "javelin"
+      ],
+      "ai": "boss",
+      "name": "追討騎士長",
+      "isBoss": true,
+      "bonusStats": {
+        "hp": 6,
+        "str": 2,
+        "skl": 2,
+        "spd": 2,
+        "def": 2,
+        "res": 2
+      }
     }
   ],
   "npcs": [],
@@ -43,55 +203,138 @@
       "turn": 1,
       "type": "recruit",
       "text": [
-        {"speaker": "cain",   "text": "前有狼後有虎……這位就是被帝國懸紅的公主？"},
-        {"speaker": "eirine", "text": "凱恩，帝國是你我共同的敵人。今日暫且聯手如何？"},
-        {"speaker": "cain",   "text": "……說的倒也不錯。行，算我欠你一次。"}
+        {
+          "speaker": "cain",
+          "text": "前有狼後有虎……這位就是被帝國懸紅的公主？"
+        },
+        {
+          "speaker": "eirine",
+          "text": "凱恩，帝國是你我共同的敵人。今日暫且聯手如何？"
+        },
+        {
+          "speaker": "cain",
+          "text": "……說的倒也不錯。行，算我欠你一次。"
+        }
       ]
     },
     {
       "turn": 2,
       "type": "dialogue",
       "text": [
-        {"speaker": "eirine", "text": "馬庫斯！凱恩孤軍深入，已被帝國兵團團圍住——"},
-        {"speaker": "eirine", "text": "你的座騎最快，速去支援他！我們不能讓他孤軍奮戰。"},
-        {"speaker": "marcus", "text": "遵命，殿下。我這就去。"}
+        {
+          "speaker": "eirine",
+          "text": "馬庫斯！凱恩孤軍深入，已被帝國兵團團圍住——"
+        },
+        {
+          "speaker": "eirine",
+          "text": "你的座騎最快，速去支援他！我們不能讓他孤軍奮戰。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "遵命，殿下。我這就去。"
+        }
       ]
     },
     {
       "turn": 3,
       "type": "dialogue",
       "text": [
-        {"speaker": "cain",   "text": "馬庫斯……當年王宮舊識，沒想到還會以這種方式相遇。"},
-        {"speaker": "marcus", "text": "凱恩，你曾是王國的近衛騎士——為什麼後來會去當傭兵？"},
-        {"speaker": "cain",   "text": "為了一個女人。她死在帝國邊境的攻城戰裡，那一戰之後，我也下了戰場。"},
-        {"speaker": "cain",   "text": "在王宮裡每天看見的，是一個個官員爭功的嘴臉。我留下也沒意義。"},
-        {"speaker": "serra",  "text": "（小聲）……原來凱恩先生不是普通的傭兵。"},
-        {"speaker": "thor",   "text": "嘖，原來是個有故事的傢伙。老子以為又是個只會數錢的痞子。"},
-        {"speaker": "cain",   "text": "別誤會。我答應公主，是因為帝國的手段越來越骯髒。不是為了什麼忠誠。"}
+        {
+          "speaker": "cain",
+          "text": "馬庫斯……當年王宮舊識，沒想到還會以這種方式相遇。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "凱恩，你曾是王國的近衛騎士——為什麼後來會去當傭兵？"
+        },
+        {
+          "speaker": "cain",
+          "text": "為了一個女人。她死在帝國邊境的攻城戰裡，那一戰之後，我也下了戰場。"
+        },
+        {
+          "speaker": "cain",
+          "text": "在王宮裡每天看見的，是一個個官員爭功的嘴臉。我留下也沒意義。"
+        },
+        {
+          "speaker": "serra",
+          "text": "（小聲）……原來凱恩先生不是普通的傭兵。"
+        },
+        {
+          "speaker": "thor",
+          "text": "嘖，原來是個有故事的傢伙。老子以為又是個只會數錢的痞子。"
+        },
+        {
+          "speaker": "cain",
+          "text": "別誤會。我答應公主，是因為帝國的手段越來越骯髒。不是為了什麼忠誠。"
+        }
       ]
     },
     {
       "turn": 4,
       "type": "reinforce",
       "text": [
-        {"speaker": null, "text": "東方山道揚起塵土，帝國援軍至。"},
-        {"speaker": "marcus", "text": "殿下，敵方援軍從東面切入——莉娜，山丘高地交給妳壓制。"},
-        {"speaker": "lina",   "text": "明白。賽拉，這邊有兩個傷兵需要妳。"}
+        {
+          "speaker": null,
+          "text": "東方山道揚起塵土，帝國援軍至。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "殿下，敵方援軍從東面切入——莉娜，山丘高地交給妳壓制。"
+        },
+        {
+          "speaker": "lina",
+          "text": "明白。賽拉，這邊有兩個傷兵需要妳。"
+        }
       ],
       "enemies": [
-        {"classId": "soldier", "level": 7, "x": 15, "y": 10, "items": ["ironLance"], "ai": "aggressive", "name": "增援士兵"},
-        {"classId": "archer",  "level": 7, "x": 15, "y": 11, "items": ["ironBow"],   "ai": "aggressive", "name": "增援弓兵"}
+        {
+          "classId": "soldier",
+          "level": 7,
+          "x": 19,
+          "y": 11,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "增援士兵"
+        },
+        {
+          "classId": "archer",
+          "level": 7,
+          "x": 19,
+          "y": 12,
+          "items": [
+            "ironBow"
+          ],
+          "ai": "aggressive",
+          "name": "增援弓兵"
+        }
       ]
     },
     {
       "turn": 5,
       "type": "dialogue",
       "text": [
-        {"speaker": "lina",   "text": "凱恩，你說過去過東邊魔法塔——那裡的魔導師是誰？"},
-        {"speaker": "cain",   "text": "首席名叫澤諾。手段陰狠，研究的是黑魔法。聽說他被莫爾甘下令——"},
-        {"speaker": "cain",   "text": "——研究『星印』。"},
-        {"speaker": "eirine", "text": "莫爾甘已經派人研究星印了……他果然不是臨時起意。"},
-        {"speaker": "marcus", "text": "殿下，這個情報太重要了。打完這一仗，下一站務必是魔法塔。"}
+        {
+          "speaker": "lina",
+          "text": "凱恩，你說過去過東邊魔法塔——那裡的魔導師是誰？"
+        },
+        {
+          "speaker": "cain",
+          "text": "首席名叫澤諾。手段陰狠，研究的是黑魔法。聽說他被莫爾甘下令——"
+        },
+        {
+          "speaker": "cain",
+          "text": "——研究『星印』。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "莫爾甘已經派人研究星印了……他果然不是臨時起意。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "殿下，這個情報太重要了。打完這一仗，下一站務必是魔法塔。"
+        }
       ]
     }
   ],
