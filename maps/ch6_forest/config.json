@@ -4,48 +4,302 @@
   "subtitle": "裏切之港",
   "objective": "seize",
   "objectiveDesc": "佔領港口",
-  "seizePos": {"x": 8, "y": 1},
-  "width": 18,
-  "height": 16,
+  "seizePos": {
+    "x": 8,
+    "y": 2
+  },
+  "width": 22,
+  "height": 18,
   "playerUnits": [
-    {"charId": "eirine",  "x": 4, "y": 14},
-    {"charId": "marcus",  "x": 3, "y": 14},
-    {"charId": "lina",    "x": 5, "y": 14},
-    {"charId": "thor",    "x": 4, "y": 15},
-    {"charId": "serra",   "x": 3, "y": 15},
-    {"charId": "cain",    "x": 5, "y": 15},
-    {"charId": "fran",    "x": 6, "y": 15},
-    {"charId": "rex",     "x": 7, "y": 14}
+    {
+      "charId": "eirine",
+      "x": 4,
+      "y": 15
+    },
+    {
+      "charId": "marcus",
+      "x": 3,
+      "y": 15
+    },
+    {
+      "charId": "lina",
+      "x": 5,
+      "y": 15
+    },
+    {
+      "charId": "thor",
+      "x": 4,
+      "y": 16
+    },
+    {
+      "charId": "serra",
+      "x": 3,
+      "y": 16
+    },
+    {
+      "charId": "cain",
+      "x": 5,
+      "y": 16
+    },
+    {
+      "charId": "fran",
+      "x": 6,
+      "y": 16
+    },
+    {
+      "charId": "rex",
+      "x": 7,
+      "y": 15
+    }
   ],
   "newRecruits": [
-    {"charId": "natasha", "x": 15, "y": 14, "turnJoin": 3}
+    {
+      "charId": "natasha",
+      "x": 16,
+      "y": 15,
+      "turnJoin": 3
+    }
   ],
   "enemies": [
-    {"classId": "knight",  "level": 10, "x": 4,  "y": 2, "items": ["steelLance"],           "ai": "defensive",  "name": "港口守衛"},
-    {"classId": "knight",  "level": 10, "x": 12, "y": 2, "items": ["steelLance"],           "ai": "defensive",  "name": "港口守衛"},
-    {"classId": "mage",    "level": 10, "x": 6,  "y": 2, "items": ["elfire"],               "ai": "defensive",  "name": "港口魔法師"},
-    {"classId": "mage",    "level": 10, "x": 10, "y": 2, "items": ["elthunder"],            "ai": "defensive",  "name": "港口魔法師"},
-    {"classId": "brigand", "level": 9,  "x": 3,  "y": 3, "items": ["steelAxe"],             "ai": "aggressive", "name": "海賊"},
-    {"classId": "brigand", "level": 9,  "x": 14, "y": 3, "items": ["steelAxe"],             "ai": "aggressive", "name": "海賊"},
-    {"classId": "soldier", "level": 9,  "x": 7,  "y": 4, "items": ["steelLance"],           "ai": "aggressive", "name": "港口守兵"},
-    {"classId": "soldier", "level": 9,  "x": 9,  "y": 4, "items": ["steelLance"],           "ai": "aggressive", "name": "港口守兵"},
-    {"classId": "soldier", "level": 9,  "x": 6,  "y": 5, "items": ["steelLance"],           "ai": "defensive",  "name": "港口守兵"},
-    {"classId": "soldier", "level": 9,  "x": 12, "y": 5, "items": ["steelLance"],           "ai": "defensive",  "name": "港口守兵"},
-    {"classId": "fighter", "level": 10, "x": 8,  "y": 6, "items": ["steelAxe"],             "ai": "aggressive", "name": "碼頭粗漢"},
-    {"classId": "brigand", "level": 10, "x": 3,  "y": 7, "items": ["handAxe"],              "ai": "aggressive", "name": "海賊"},
-    {"classId": "archer",  "level": 10, "x": 6,  "y": 7, "items": ["steelBow"],             "ai": "defensive",  "name": "港口弓兵"},
-    {"classId": "knight",  "level": 10, "x": 9,  "y": 7, "items": ["steelLance"],           "ai": "defensive",  "name": "港口守衛"},
-    {"classId": "soldier", "level": 10, "x": 13, "y": 7, "items": ["steelLance"],           "ai": "aggressive", "name": "港口守兵"},
-    {"classId": "knight",  "level": 10, "x": 7,  "y": 8, "items": ["steelLance"],           "ai": "defensive",  "name": "港口守衛"},
-    {"classId": "archer",  "level": 10, "x": 12, "y": 8, "items": ["killerBow"],            "ai": "defensive",  "name": "精銳弓兵"},
-    {"classId": "fighter", "level": 10, "x": 15, "y": 9, "items": ["steelAxe"],             "ai": "aggressive", "name": "碼頭粗漢"},
-    {"classId": "archer",  "level": 10, "x": 13, "y": 9, "items": ["steelBow"],             "ai": "defensive",  "name": "港口弓兵"},
-    {"classId": "soldier", "level": 10, "x": 9,  "y": 10, "items": ["steelLance"],          "ai": "defensive",  "name": "港口守兵"},
     {
-      "classId": "archer", "level": 9, "x": 9, "y": 1,
-      "items": ["killerBow"],
-      "ai": "boss", "name": "提督巴爾薩", "isBoss": true,
-      "bonusStats": {"hp": 8, "str": 4, "skl": 5, "spd": 3, "def": 3, "res": 2}
+      "classId": "knight",
+      "level": 10,
+      "x": 5,
+      "y": 3,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "港口守衛"
+    },
+    {
+      "classId": "knight",
+      "level": 10,
+      "x": 13,
+      "y": 3,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "港口守衛"
+    },
+    {
+      "classId": "mage",
+      "level": 10,
+      "x": 7,
+      "y": 3,
+      "items": [
+        "elfire"
+      ],
+      "ai": "defensive",
+      "name": "港口魔法師"
+    },
+    {
+      "classId": "mage",
+      "level": 10,
+      "x": 11,
+      "y": 3,
+      "items": [
+        "elthunder"
+      ],
+      "ai": "defensive",
+      "name": "港口魔法師"
+    },
+    {
+      "classId": "brigand",
+      "level": 9,
+      "x": 4,
+      "y": 4,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "海賊"
+    },
+    {
+      "classId": "brigand",
+      "level": 9,
+      "x": 15,
+      "y": 4,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "海賊"
+    },
+    {
+      "classId": "soldier",
+      "level": 9,
+      "x": 8,
+      "y": 5,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "港口守兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 9,
+      "x": 11,
+      "y": 5,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "港口守兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 9,
+      "x": 5,
+      "y": 6,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "港口守兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 9,
+      "x": 14,
+      "y": 6,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "港口守兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 10,
+      "x": 9,
+      "y": 7,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "碼頭粗漢"
+    },
+    {
+      "classId": "brigand",
+      "level": 10,
+      "x": 3,
+      "y": 8,
+      "items": [
+        "handAxe"
+      ],
+      "ai": "aggressive",
+      "name": "海賊"
+    },
+    {
+      "classId": "archer",
+      "level": 10,
+      "x": 8,
+      "y": 7,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "港口弓兵"
+    },
+    {
+      "classId": "knight",
+      "level": 10,
+      "x": 12,
+      "y": 8,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "港口守衛"
+    },
+    {
+      "classId": "soldier",
+      "level": 10,
+      "x": 16,
+      "y": 8,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "港口守兵"
+    },
+    {
+      "classId": "knight",
+      "level": 10,
+      "x": 10,
+      "y": 9,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "港口守衛"
+    },
+    {
+      "classId": "archer",
+      "level": 10,
+      "x": 13,
+      "y": 9,
+      "items": [
+        "killerBow"
+      ],
+      "ai": "defensive",
+      "name": "精銳弓兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 10,
+      "x": 16,
+      "y": 9,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "碼頭粗漢"
+    },
+    {
+      "classId": "archer",
+      "level": 10,
+      "x": 12,
+      "y": 10,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "港口弓兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 10,
+      "x": 10,
+      "y": 10,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "港口守兵"
+    },
+    {
+      "classId": "archer",
+      "level": 9,
+      "x": 9,
+      "y": 2,
+      "items": [
+        "killerBow"
+      ],
+      "ai": "boss",
+      "name": "提督巴爾薩",
+      "isBoss": true,
+      "bonusStats": {
+        "hp": 8,
+        "str": 4,
+        "skl": 5,
+        "spd": 3,
+        "def": 3,
+        "res": 2
+      }
     }
   ],
   "turnEvents": [
@@ -53,81 +307,245 @@
       "turn": 2,
       "type": "dialogue",
       "text": [
-        {"speaker": "rex",    "text": "（指向碼頭遠處的旗艦）那艘黑帆船——是巴爾薩提督的『海狼號』。船尾有帝國旗，但船頭掛的是私旗。"},
-        {"speaker": "cain",   "text": "私旗？提督不是帝國正規軍嗎？"},
-        {"speaker": "rex",    "text": "他是。但他同時與三支海盜團簽了密約。莫爾甘默許這種勾當——因為港口的補給對北境帝國軍很關鍵。"},
-        {"speaker": "thor",   "text": "提督勾結海盜？嘁，這算什麼帝國軍人。"},
-        {"speaker": "fran",   "text": "（看向遠方）……奇怪，那艘『海狼號』的桅杆上有魔法陣的痕跡。是用來定位星印的儀器嗎？"},
-        {"speaker": "eirine", "text": "莫爾甘已經把獵捕星印的網撒到海上了。馬庫斯——加快推進，奪下指揮所。"}
+        {
+          "speaker": "rex",
+          "text": "（指向碼頭遠處的旗艦）那艘黑帆船——是巴爾薩提督的『海狼號』。船尾有帝國旗，但船頭掛的是私旗。"
+        },
+        {
+          "speaker": "cain",
+          "text": "私旗？提督不是帝國正規軍嗎？"
+        },
+        {
+          "speaker": "rex",
+          "text": "他是。但他同時與三支海盜團簽了密約。莫爾甘默許這種勾當——因為港口的補給對北境帝國軍很關鍵。"
+        },
+        {
+          "speaker": "thor",
+          "text": "提督勾結海盜？嘁，這算什麼帝國軍人。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（看向遠方）……奇怪，那艘『海狼號』的桅杆上有魔法陣的痕跡。是用來定位星印的儀器嗎？"
+        },
+        {
+          "speaker": "eirine",
+          "text": "莫爾甘已經把獵捕星印的網撒到海上了。馬庫斯——加快推進，奪下指揮所。"
+        }
       ]
     },
     {
       "turn": 3,
       "type": "recruit",
       "text": [
-        {"speaker": null,      "text": "南方天際飛來一頭白鬃天馬——騎士的鎧甲已破，斗篷上滿是煙灰。"},
-        {"speaker": "natasha", "text": "（俯衝著陸）反抗軍！請收留我——我是來自南方自由城邦『艾爾梅拉』的天馬騎士那塔莎！"},
-        {"speaker": "natasha", "text": "三天前——莫爾甘的軍隊夷平了我的城邦。守軍三百人、市民兩千人——全部……全部沒了。"},
-        {"speaker": "eirine",  "text": "（震驚）夷平……整座城邦？！"},
-        {"speaker": "natasha", "text": "莫爾甘下了命令：『艾爾梅拉與艾爾法利亞通謀，視同叛逆，雞犬不留』。理由是——三十年前我們收留過艾爾法利亞的逃難民。"},
-        {"speaker": "marcus",  "text": "（沉默良久）……三十年前那一波難民裡，就有臣下的妹妹。她當時就是嫁去艾爾梅拉的。"},
-        {"speaker": "natasha", "text": "（看著馬庫斯）……將軍，您的妹妹是叫艾蓮娜嗎？她是我母親的好友。她……她也在那三天前。"},
-        {"speaker": "marcus",  "text": "……（深吸一口氣，扶住長槍）……知道了。謝謝妳告訴我。"},
-        {"speaker": "eirine",  "text": "那塔莎，從今天起，這支隊伍就是妳的歸宿。馬庫斯，這份仇——我們一起算。"},
-        {"speaker": "natasha", "text": "公主殿下……謝謝。讓臣為艾爾梅拉的兩千名亡魂——舉這支槍。"}
+        {
+          "speaker": null,
+          "text": "南方天際飛來一頭白鬃天馬——騎士的鎧甲已破，斗篷上滿是煙灰。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "（俯衝著陸）反抗軍！請收留我——我是來自南方自由城邦『艾爾梅拉』的天馬騎士那塔莎！"
+        },
+        {
+          "speaker": "natasha",
+          "text": "三天前——莫爾甘的軍隊夷平了我的城邦。守軍三百人、市民兩千人——全部……全部沒了。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（震驚）夷平……整座城邦？！"
+        },
+        {
+          "speaker": "natasha",
+          "text": "莫爾甘下了命令：『艾爾梅拉與艾爾法利亞通謀，視同叛逆，雞犬不留』。理由是——三十年前我們收留過艾爾法利亞的逃難民。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（沉默良久）……三十年前那一波難民裡，就有臣下的妹妹。她當時就是嫁去艾爾梅拉的。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "（看著馬庫斯）……將軍，您的妹妹是叫艾蓮娜嗎？她是我母親的好友。她……她也在那三天前。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "……（深吸一口氣，扶住長槍）……知道了。謝謝妳告訴我。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "那塔莎，從今天起，這支隊伍就是妳的歸宿。馬庫斯，這份仇——我們一起算。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "公主殿下……謝謝。讓臣為艾爾梅拉的兩千名亡魂——舉這支槍。"
+        }
       ]
     },
     {
       "turn": 4,
       "type": "reinforce",
       "text": [
-        {"speaker": null,     "text": "港口東側竄出帝國援軍，碼頭旁也躲出一群手持砍刀的海盜。"},
-        {"speaker": "lina",   "text": "東邊援軍三人——交給我。"},
-        {"speaker": "natasha","text": "（騎乘天馬升空）海盜由臣下從上方壓制。馬庫斯，臣下護您的右翼。"}
+        {
+          "speaker": null,
+          "text": "港口東側竄出帝國援軍，碼頭旁也躲出一群手持砍刀的海盜。"
+        },
+        {
+          "speaker": "lina",
+          "text": "東邊援軍三人——交給我。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "（騎乘天馬升空）海盜由臣下從上方壓制。馬庫斯，臣下護您的右翼。"
+        }
       ],
       "enemies": [
-        {"classId": "soldier", "level": 10, "x": 16, "y": 11, "items": ["steelLance"], "ai": "aggressive", "name": "增援帝國兵"},
-        {"classId": "archer",  "level": 10, "x": 17, "y": 11, "items": ["steelBow"],  "ai": "aggressive", "name": "增援弓兵"},
-        {"classId": "brigand", "level": 10, "x": 16, "y": 10, "items": ["handAxe"],   "ai": "aggressive", "name": "增援海賊"},
-        {"classId": "brigand", "level": 10, "x": 1,  "y": 10, "items": ["handAxe"],   "ai": "aggressive", "name": "增援海賊"},
-        {"classId": "fighter", "level": 10, "x": 0,  "y": 11, "items": ["steelAxe"],  "ai": "aggressive", "name": "海賊頭目"}
+        {
+          "classId": "soldier",
+          "level": 10,
+          "x": 20,
+          "y": 11,
+          "items": [
+            "steelLance"
+          ],
+          "ai": "aggressive",
+          "name": "增援帝國兵"
+        },
+        {
+          "classId": "archer",
+          "level": 10,
+          "x": 21,
+          "y": 11,
+          "items": [
+            "steelBow"
+          ],
+          "ai": "aggressive",
+          "name": "增援弓兵"
+        },
+        {
+          "classId": "brigand",
+          "level": 10,
+          "x": 20,
+          "y": 10,
+          "items": [
+            "handAxe"
+          ],
+          "ai": "aggressive",
+          "name": "增援海賊"
+        },
+        {
+          "classId": "brigand",
+          "level": 10,
+          "x": 1,
+          "y": 11,
+          "items": [
+            "handAxe"
+          ],
+          "ai": "aggressive",
+          "name": "增援海賊"
+        },
+        {
+          "classId": "fighter",
+          "level": 10,
+          "x": 0,
+          "y": 12,
+          "items": [
+            "steelAxe"
+          ],
+          "ai": "aggressive",
+          "name": "海賊頭目"
+        }
       ]
     },
     {
       "turn": 5,
       "type": "dialogue",
       "text": [
-        {"speaker": "marcus",  "text": "（小聲）……艾蓮娜走的時候，臣連最後一面都沒見上。"},
-        {"speaker": "eirine",  "text": "馬庫斯，今晚我守夜。你休息。"},
-        {"speaker": "marcus",  "text": "殿下，不必。臣下還能打。將仇恨化為劍——這是騎士的修行。"},
-        {"speaker": "thor",    "text": "（拍馬庫斯肩膀）老子也賠你三杯酒。等仗打完。"},
-        {"speaker": "serra",   "text": "（合掌）……願艾爾梅拉的兩千名亡魂安息。今夜的港口，將有他們的目光。"}
+        {
+          "speaker": "marcus",
+          "text": "（小聲）……艾蓮娜走的時候，臣連最後一面都沒見上。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "馬庫斯，今晚我守夜。你休息。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "殿下，不必。臣下還能打。將仇恨化為劍——這是騎士的修行。"
+        },
+        {
+          "speaker": "thor",
+          "text": "（拍馬庫斯肩膀）老子也賠你三杯酒。等仗打完。"
+        },
+        {
+          "speaker": "serra",
+          "text": "（合掌）……願艾爾梅拉的兩千名亡魂安息。今夜的港口，將有他們的目光。"
+        }
       ]
     },
     {
       "turn": 6,
       "type": "dialogue",
       "text": [
-        {"speaker": "natasha", "text": "巴爾薩——三天前下令屠城的就是這個男人。"},
-        {"speaker": "natasha", "text": "他從船上指揮，炮火打了七十二個小時。連產婦的病房都沒放過。"},
-        {"speaker": "rex",     "text": "（按住那塔莎肩膀）……那塔莎，這一仗——讓臣與妳一起取他項上人頭。"},
-        {"speaker": "natasha", "text": "（眼眶泛紅）……謝謝你，雷克斯。"}
+        {
+          "speaker": "natasha",
+          "text": "巴爾薩——三天前下令屠城的就是這個男人。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "他從船上指揮，炮火打了七十二個小時。連產婦的病房都沒放過。"
+        },
+        {
+          "speaker": "rex",
+          "text": "（按住那塔莎肩膀）……那塔莎，這一仗——讓臣與妳一起取他項上人頭。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "（眼眶泛紅）……謝謝你，雷克斯。"
+        }
       ]
     },
     {
       "turn": 7,
       "type": "dialogue",
       "text": [
-        {"speaker": null,     "text": "港口指揮所的後門突然被推開——一個披著粗布的中年男子衝進來，雙手舉高表示無武器。"},
-        {"speaker": null,     "text": "他自稱是港口的補給官，三十年沒離開過崗位。"},
-        {"speaker": "cain",   "text": "（拔劍警戒）站住——身份。"},
-        {"speaker": null,     "text": "補給官顫抖著從懷裡掏出一份文書：「南境三個侯爵家族——昨夜聯名宣布中立。他們把人質名單原樣退回王都，附了一句『我們家族的命，不再是莫爾甘的籌碼』。」"},
-        {"speaker": "marcus", "text": "（震驚）三個侯爵……一夜之間都退人質？"},
-        {"speaker": null,     "text": "補給官：「公主殿下拿下星辰要塞之後，南境的風向變了。大家在等——等公主走到下一步。臣下今天投降，是因為臣下的兒子也在王都的監牢——但臣下不再相信乖乖聽話能保住他。」"},
-        {"speaker": "eirine", "text": "（接過名單）……補給官，謝謝你。從今天起，這份名單上的人，都是反抗軍的責任。"},
-        {"speaker": "fran",   "text": "（按住星印）公主——這份名單裡，有法蘭認識的兩個名字。是塔上跟法蘭關在一起的同伴的家人。"},
-        {"speaker": "olivier","text": "（少見地正色）……公主，臣下的『回收網』可以暗中疏通這些家眷。給臣下一個月——南境監牢的人能跑一半。"},
-        {"speaker": "eirine", "text": "成交。莫爾甘三十年壓住的網——今天開始爆裂。"}
+        {
+          "speaker": null,
+          "text": "港口指揮所的後門突然被推開——一個披著粗布的中年男子衝進來，雙手舉高表示無武器。"
+        },
+        {
+          "speaker": null,
+          "text": "他自稱是港口的補給官，三十年沒離開過崗位。"
+        },
+        {
+          "speaker": "cain",
+          "text": "（拔劍警戒）站住——身份。"
+        },
+        {
+          "speaker": null,
+          "text": "補給官顫抖著從懷裡掏出一份文書：「南境三個侯爵家族——昨夜聯名宣布中立。他們把人質名單原樣退回王都，附了一句『我們家族的命，不再是莫爾甘的籌碼』。」"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（震驚）三個侯爵……一夜之間都退人質？"
+        },
+        {
+          "speaker": null,
+          "text": "補給官：「公主殿下拿下星辰要塞之後，南境的風向變了。大家在等——等公主走到下一步。臣下今天投降，是因為臣下的兒子也在王都的監牢——但臣下不再相信乖乖聽話能保住他。」"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（接過名單）……補給官，謝謝你。從今天起，這份名單上的人，都是反抗軍的責任。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（按住星印）公主——這份名單裡，有法蘭認識的兩個名字。是塔上跟法蘭關在一起的同伴的家人。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "（少見地正色）……公主，臣下的『回收網』可以暗中疏通這些家眷。給臣下一個月——南境監牢的人能跑一半。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "成交。莫爾甘三十年壓住的網——今天開始爆裂。"
+        }
       ]
     }
   ],
