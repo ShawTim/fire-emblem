@@ -1951,8 +1951,8 @@ const Sprites = {
           // Blue sprites -> Red for enemies (hue-rotate 140deg + saturate for vivid red)
           ctx.filter = 'hue-rotate(140deg) saturate(1.3) brightness(1.1)';
         } else if (faction === 'ally') {
-          // Blue sprites -> Green for allies
-          ctx.filter = 'hue-rotate(60deg) saturate(1.2)';
+          // Blue sprites -> Green for allies (240° from blue lands on green)
+          ctx.filter = 'hue-rotate(240deg) saturate(1.2)';
         }
         
         // Map sprites usually don't need scaling down if they are 16x32, we just draw them centered
