@@ -4,49 +4,49 @@
   "subtitle": "星辰要塞",
   "objective": "boss",
   "objectiveDesc": "擊敗要塞守將",
-  "width": 20,
-  "height": 18,
+  "width": 22,
+  "height": 20,
   "playerUnits": [
     {
       "charId": "eirine",
-      "x": 9,
-      "y": 0
+      "x": 10,
+      "y": 1
     },
     {
       "charId": "marcus",
-      "x": 8,
-      "y": 0
-    },
-    {
-      "charId": "lina",
-      "x": 10,
-      "y": 0
-    },
-    {
-      "charId": "thor",
       "x": 9,
       "y": 1
     },
     {
-      "charId": "serra",
-      "x": 8,
+      "charId": "lina",
+      "x": 11,
       "y": 1
+    },
+    {
+      "charId": "thor",
+      "x": 10,
+      "y": 0
+    },
+    {
+      "charId": "serra",
+      "x": 9,
+      "y": 0
     },
     {
       "charId": "cain",
-      "x": 10,
-      "y": 1
+      "x": 11,
+      "y": 0
     },
     {
       "charId": "fran",
-      "x": 11,
+      "x": 8,
       "y": 1
     }
   ],
   "newRecruits": [
     {
       "charId": "rex",
-      "x": 15,
+      "x": 18,
       "y": 3,
       "turnJoin": 2
     }
@@ -66,7 +66,7 @@
     {
       "classId": "soldier",
       "level": 7,
-      "x": 11,
+      "x": 13,
       "y": 8,
       "items": [
         "steelLance"
@@ -88,7 +88,7 @@
     {
       "classId": "knight",
       "level": 7,
-      "x": 13,
+      "x": 15,
       "y": 10,
       "items": [
         "steelLance"
@@ -99,7 +99,7 @@
     {
       "classId": "archer",
       "level": 7,
-      "x": 5,
+      "x": 3,
       "y": 9,
       "items": [
         "steelBow"
@@ -110,7 +110,7 @@
     {
       "classId": "archer",
       "level": 7,
-      "x": 14,
+      "x": 18,
       "y": 9,
       "items": [
         "steelBow"
@@ -121,7 +121,7 @@
     {
       "classId": "mage",
       "level": 7,
-      "x": 7,
+      "x": 8,
       "y": 12,
       "items": [
         "elfire"
@@ -132,7 +132,7 @@
     {
       "classId": "mage",
       "level": 7,
-      "x": 12,
+      "x": 13,
       "y": 12,
       "items": [
         "elthunder"
@@ -143,7 +143,7 @@
     {
       "classId": "soldier",
       "level": 8,
-      "x": 5,
+      "x": 6,
       "y": 11,
       "items": [
         "steelLance"
@@ -154,7 +154,7 @@
     {
       "classId": "soldier",
       "level": 8,
-      "x": 14,
+      "x": 15,
       "y": 11,
       "items": [
         "steelLance"
@@ -165,8 +165,8 @@
     {
       "classId": "knight",
       "level": 8,
-      "x": 8,
-      "y": 14,
+      "x": 9,
+      "y": 15,
       "items": [
         "steelLance"
       ],
@@ -176,8 +176,8 @@
     {
       "classId": "knight",
       "level": 8,
-      "x": 11,
-      "y": 14,
+      "x": 12,
+      "y": 15,
       "items": [
         "steelLance"
       ],
@@ -187,7 +187,7 @@
     {
       "classId": "fighter",
       "level": 7,
-      "x": 3,
+      "x": 9,
       "y": 7,
       "items": [
         "steelAxe"
@@ -198,7 +198,7 @@
     {
       "classId": "fighter",
       "level": 7,
-      "x": 16,
+      "x": 12,
       "y": 7,
       "items": [
         "steelAxe"
@@ -209,7 +209,7 @@
     {
       "classId": "archer",
       "level": 8,
-      "x": 9,
+      "x": 10,
       "y": 13,
       "items": [
         "steelBow"
@@ -220,8 +220,8 @@
     {
       "classId": "paladin",
       "level": 1,
-      "x": 9,
-      "y": 15,
+      "x": 10,
+      "y": 17,
       "items": [
         "silverLance",
         "javelin"
@@ -241,8 +241,8 @@
     {
       "classId": "soldier",
       "level": 8,
-      "x": 10,
-      "y": 15,
+      "x": 11,
+      "y": 17,
       "items": [
         "steelLance"
       ],
@@ -355,12 +355,72 @@
         }
       ],
       "enemies": [
-        {"classId": "soldier", "level": 7, "x": 0,  "y": 9,  "items": ["ironLance"], "ai": "aggressive", "name": "增援兵"},
-        {"classId": "soldier", "level": 7, "x": 19, "y": 9,  "items": ["ironLance"], "ai": "aggressive", "name": "增援兵"},
-        {"classId": "archer",  "level": 7, "x": 0,  "y": 10, "items": ["ironBow"],   "ai": "aggressive", "name": "增援弓兵"},
-        {"classId": "archer",  "level": 7, "x": 19, "y": 10, "items": ["ironBow"],   "ai": "aggressive", "name": "增援弓兵"},
-        {"classId": "fighter", "level": 8, "x": 1,  "y": 11, "items": ["steelAxe"],  "ai": "aggressive", "name": "增援戰士"},
-        {"classId": "fighter", "level": 8, "x": 18, "y": 11, "items": ["steelAxe"],  "ai": "aggressive", "name": "增援戰士"}
+        {
+          "classId": "soldier",
+          "level": 7,
+          "x": 0,
+          "y": 8,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "增援兵"
+        },
+        {
+          "classId": "soldier",
+          "level": 7,
+          "x": 21,
+          "y": 8,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "增援兵"
+        },
+        {
+          "classId": "archer",
+          "level": 7,
+          "x": 0,
+          "y": 10,
+          "items": [
+            "ironBow"
+          ],
+          "ai": "aggressive",
+          "name": "增援弓兵"
+        },
+        {
+          "classId": "archer",
+          "level": 7,
+          "x": 21,
+          "y": 10,
+          "items": [
+            "ironBow"
+          ],
+          "ai": "aggressive",
+          "name": "增援弓兵"
+        },
+        {
+          "classId": "fighter",
+          "level": 8,
+          "x": 1,
+          "y": 12,
+          "items": [
+            "steelAxe"
+          ],
+          "ai": "aggressive",
+          "name": "增援戰士"
+        },
+        {
+          "classId": "fighter",
+          "level": 8,
+          "x": 20,
+          "y": 12,
+          "items": [
+            "steelAxe"
+          ],
+          "ai": "aggressive",
+          "name": "增援戰士"
+        }
       ]
     },
     {
@@ -397,13 +457,34 @@
       "turn": 6,
       "type": "dialogue",
       "text": [
-        {"speaker": null,     "text": "要塞中庭的吊橋被馬庫斯的長槍頂落——艾琳第一次踏入帝國正規軍的據點內側。風從要塞主樓的旗桿上吹來，帝國黑鷹旗已半倒。"},
-        {"speaker": "marcus", "text": "（深吸一口氣）殿下——從這一刻起，星辰要塞是反抗軍的第一塊領土。"},
-        {"speaker": "eirine", "text": "（凝視倒下的黑鷹旗）……三個月前，我從王宮逃出來。那時候只想活下去。"},
-        {"speaker": "eirine", "text": "現在我想清楚了——我不是逃。我是回去。回到父王把星印交給我的那個王座。"},
-        {"speaker": "cain",   "text": "（拔劍立正）公主——若這座要塞是第一塊領土，請准許臣下作為要塞代理司令官，留下信使網。莫爾甘的死令一日不撤，臣下就讓格倫的部下家眷能從這條補給線逃出來。"},
-        {"speaker": "fran",   "text": "（瞇眼）……本天才補充：要塞的物資與工匠也歸我們了。莫爾甘想要的軍糧，從今天起每一袋都不會北上。"},
-        {"speaker": "marcus", "text": "（罕見地露出微笑）……殿下，這就是『反攻』的第一步。"}
+        {
+          "speaker": null,
+          "text": "要塞中庭的吊橋被馬庫斯的長槍頂落——艾琳第一次踏入帝國正規軍的據點內側。風從要塞主樓的旗桿上吹來，帝國黑鷹旗已半倒。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（深吸一口氣）殿下——從這一刻起，星辰要塞是反抗軍的第一塊領土。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（凝視倒下的黑鷹旗）……三個月前，我從王宮逃出來。那時候只想活下去。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "現在我想清楚了——我不是逃。我是回去。回到父王把星印交給我的那個王座。"
+        },
+        {
+          "speaker": "cain",
+          "text": "（拔劍立正）公主——若這座要塞是第一塊領土，請准許臣下作為要塞代理司令官，留下信使網。莫爾甘的死令一日不撤，臣下就讓格倫的部下家眷能從這條補給線逃出來。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（瞇眼）……本天才補充：要塞的物資與工匠也歸我們了。莫爾甘想要的軍糧，從今天起每一袋都不會北上。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（罕見地露出微笑）……殿下，這就是『反攻』的第一步。"
+        }
       ]
     },
     {
@@ -420,9 +501,40 @@
         }
       ],
       "enemies": [
-        {"classId": "knight",  "level": 9, "x": 8,  "y": 16, "items": ["silverLance"], "ai": "defensive", "name": "格倫近衛"},
-        {"classId": "knight",  "level": 9, "x": 11, "y": 16, "items": ["silverLance"], "ai": "defensive", "name": "格倫近衛"},
-        {"classId": "paladin", "level": 6, "x": 9,  "y": 17, "items": ["silverLance","javelin"], "ai": "aggressive", "name": "預備隊長"}
+        {
+          "classId": "knight",
+          "level": 9,
+          "x": 9,
+          "y": 18,
+          "items": [
+            "silverLance"
+          ],
+          "ai": "defensive",
+          "name": "格倫近衛"
+        },
+        {
+          "classId": "knight",
+          "level": 9,
+          "x": 12,
+          "y": 18,
+          "items": [
+            "silverLance"
+          ],
+          "ai": "defensive",
+          "name": "格倫近衛"
+        },
+        {
+          "classId": "paladin",
+          "level": 6,
+          "x": 10,
+          "y": 18,
+          "items": [
+            "silverLance",
+            "javelin"
+          ],
+          "ai": "aggressive",
+          "name": "預備隊長"
+        }
       ]
     }
   ],
