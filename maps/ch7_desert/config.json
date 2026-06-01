@@ -4,50 +4,327 @@
   "subtitle": "深淵之森",
   "objective": "rout",
   "objectiveDesc": "殲滅所有敵人",
-  "width": 20,
-  "height": 16,
+  "width": 24,
+  "height": 18,
   "playerUnits": [
-    {"charId": "eirine",  "x": 2, "y": 14},
-    {"charId": "marcus",  "x": 1, "y": 14},
-    {"charId": "lina",    "x": 3, "y": 14},
-    {"charId": "thor",    "x": 2, "y": 15},
-    {"charId": "serra",   "x": 1, "y": 15},
-    {"charId": "cain",    "x": 3, "y": 15},
-    {"charId": "fran",    "x": 4, "y": 14},
-    {"charId": "rex",     "x": 4, "y": 15},
-    {"charId": "natasha", "x": 5, "y": 14}
+    {
+      "charId": "eirine",
+      "x": 2,
+      "y": 15
+    },
+    {
+      "charId": "marcus",
+      "x": 1,
+      "y": 15
+    },
+    {
+      "charId": "lina",
+      "x": 3,
+      "y": 15
+    },
+    {
+      "charId": "thor",
+      "x": 2,
+      "y": 16
+    },
+    {
+      "charId": "serra",
+      "x": 1,
+      "y": 16
+    },
+    {
+      "charId": "cain",
+      "x": 3,
+      "y": 16
+    },
+    {
+      "charId": "fran",
+      "x": 4,
+      "y": 15
+    },
+    {
+      "charId": "rex",
+      "x": 4,
+      "y": 16
+    },
+    {
+      "charId": "natasha",
+      "x": 5,
+      "y": 15
+    }
   ],
   "newRecruits": [
-    {"charId": "olivier", "x": 10, "y": 6, "turnJoin": 4}
+    {
+      "charId": "olivier",
+      "x": 12,
+      "y": 8,
+      "turnJoin": 4
+    }
   ],
   "enemies": [
-    {"classId": "darkMage", "level": 10, "x": 3,  "y": 0,  "items": ["flux"],            "ai": "aggressive", "name": "深林暗術士"},
-    {"classId": "archer",   "level": 10, "x": 17, "y": 0,  "items": ["steelBow"],        "ai": "defensive",  "name": "森林弓兵"},
-    {"classId": "brigand",  "level": 10, "x": 8,  "y": 1,  "items": ["steelAxe"],        "ai": "aggressive", "name": "森林盜賊"},
-    {"classId": "darkMage", "level": 11, "x": 13, "y": 1,  "items": ["dark"],            "ai": "defensive",  "name": "帝國暗法師"},
-    {"classId": "brigand",  "level": 11, "x": 5,  "y": 2,  "items": ["handAxe"],         "ai": "aggressive", "name": "森林盜賊"},
-    {"classId": "darkMage", "level": 10, "x": 15, "y": 3,  "items": ["flux"],            "ai": "defensive",  "name": "深林暗術士"},
-    {"classId": "archer",   "level": 11, "x": 1,  "y": 4,  "items": ["steelBow"],        "ai": "defensive",  "name": "森林弓兵"},
-    {"classId": "fighter",  "level": 11, "x": 11, "y": 4,  "items": ["steelAxe"],        "ai": "aggressive", "name": "深林武夫"},
-    {"classId": "darkMage", "level": 11, "x": 18, "y": 5,  "items": ["dark"],            "ai": "aggressive", "name": "帝國暗法師"},
-    {"classId": "brigand",  "level": 11, "x": 4,  "y": 6,  "items": ["steelAxe"],        "ai": "aggressive", "name": "森林盜賊"},
-    {"classId": "archer",   "level": 11, "x": 14, "y": 6,  "items": ["steelBow"],        "ai": "defensive",  "name": "森林弓兵"},
-    {"classId": "darkMage", "level": 11, "x": 7,  "y": 7,  "items": ["flux"],            "ai": "defensive",  "name": "深林暗術士"},
-    {"classId": "brigand",  "level": 11, "x": 17, "y": 7,  "items": ["handAxe"],         "ai": "aggressive", "name": "森林盜賊"},
-    {"classId": "fighter",  "level": 12, "x": 2,  "y": 8,  "items": ["steelAxe"],        "ai": "aggressive", "name": "深林武夫"},
-    {"classId": "warrior",  "level": 5,  "x": 12, "y": 8,  "items": ["steelAxe","handAxe"], "ai": "aggressive", "name": "盜賊首領"},
-    {"classId": "fighter",  "level": 11, "x": 8,  "y": 9,  "items": ["steelAxe"],        "ai": "aggressive", "name": "深林武夫"},
-    {"classId": "archer",   "level": 11, "x": 15, "y": 9,  "items": ["killerBow"],       "ai": "defensive",  "name": "精銳弓兵"},
-    {"classId": "darkMage", "level": 12, "x": 16, "y": 9,  "items": ["nosferatu"],       "ai": "defensive",  "name": "深淵術士"},
-    {"classId": "brigand",  "level": 12, "x": 4,  "y": 11, "items": ["steelAxe"],        "ai": "defensive",  "name": "森林盜賊"},
-    {"classId": "darkMage", "level": 12, "x": 10, "y": 11, "items": ["dark"],            "ai": "defensive",  "name": "深淵術士"},
-    {"classId": "fighter",  "level": 11, "x": 14, "y": 12, "items": ["steelAxe"],        "ai": "aggressive", "name": "深林武夫"},
-    {"classId": "brigand",  "level": 12, "x": 6,  "y": 13, "items": ["handAxe"],         "ai": "defensive",  "name": "森林盜賊"},
     {
-      "classId": "darkMage", "level": 12, "x": 9, "y": 2,
-      "items": ["nosferatu", "fenrir"],
-      "ai": "boss", "name": "深淵之主惡格尼斯", "isBoss": true,
-      "bonusStats": {"hp": 12, "mag": 3, "skl": 4, "spd": 4, "def": 3, "res": 4}
+      "classId": "darkMage",
+      "level": 10,
+      "x": 4,
+      "y": 1,
+      "items": [
+        "flux"
+      ],
+      "ai": "aggressive",
+      "name": "深林暗術士"
+    },
+    {
+      "classId": "archer",
+      "level": 10,
+      "x": 20,
+      "y": 1,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "森林弓兵"
+    },
+    {
+      "classId": "brigand",
+      "level": 10,
+      "x": 8,
+      "y": 2,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "森林盜賊"
+    },
+    {
+      "classId": "darkMage",
+      "level": 11,
+      "x": 14,
+      "y": 2,
+      "items": [
+        "dark"
+      ],
+      "ai": "defensive",
+      "name": "帝國暗法師"
+    },
+    {
+      "classId": "brigand",
+      "level": 11,
+      "x": 6,
+      "y": 4,
+      "items": [
+        "handAxe"
+      ],
+      "ai": "aggressive",
+      "name": "森林盜賊"
+    },
+    {
+      "classId": "darkMage",
+      "level": 10,
+      "x": 16,
+      "y": 3,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "深林暗術士"
+    },
+    {
+      "classId": "archer",
+      "level": 11,
+      "x": 2,
+      "y": 5,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "森林弓兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 11,
+      "x": 12,
+      "y": 4,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "深林武夫"
+    },
+    {
+      "classId": "darkMage",
+      "level": 11,
+      "x": 21,
+      "y": 6,
+      "items": [
+        "dark"
+      ],
+      "ai": "aggressive",
+      "name": "帝國暗法師"
+    },
+    {
+      "classId": "brigand",
+      "level": 11,
+      "x": 6,
+      "y": 7,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "森林盜賊"
+    },
+    {
+      "classId": "archer",
+      "level": 11,
+      "x": 17,
+      "y": 6,
+      "items": [
+        "steelBow"
+      ],
+      "ai": "defensive",
+      "name": "森林弓兵"
+    },
+    {
+      "classId": "darkMage",
+      "level": 11,
+      "x": 9,
+      "y": 8,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "深林暗術士"
+    },
+    {
+      "classId": "brigand",
+      "level": 11,
+      "x": 21,
+      "y": 9,
+      "items": [
+        "handAxe"
+      ],
+      "ai": "aggressive",
+      "name": "森林盜賊"
+    },
+    {
+      "classId": "fighter",
+      "level": 12,
+      "x": 5,
+      "y": 8,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "深林武夫"
+    },
+    {
+      "classId": "warrior",
+      "level": 5,
+      "x": 13,
+      "y": 9,
+      "items": [
+        "steelAxe",
+        "handAxe"
+      ],
+      "ai": "aggressive",
+      "name": "盜賊首領"
+    },
+    {
+      "classId": "fighter",
+      "level": 11,
+      "x": 10,
+      "y": 10,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "深林武夫"
+    },
+    {
+      "classId": "archer",
+      "level": 11,
+      "x": 17,
+      "y": 10,
+      "items": [
+        "killerBow"
+      ],
+      "ai": "defensive",
+      "name": "精銳弓兵"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 19,
+      "y": 11,
+      "items": [
+        "nosferatu"
+      ],
+      "ai": "defensive",
+      "name": "深淵術士"
+    },
+    {
+      "classId": "brigand",
+      "level": 12,
+      "x": 8,
+      "y": 11,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "defensive",
+      "name": "森林盜賊"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 12,
+      "y": 13,
+      "items": [
+        "dark"
+      ],
+      "ai": "defensive",
+      "name": "深淵術士"
+    },
+    {
+      "classId": "fighter",
+      "level": 11,
+      "x": 15,
+      "y": 12,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "深林武夫"
+    },
+    {
+      "classId": "brigand",
+      "level": 12,
+      "x": 10,
+      "y": 12,
+      "items": [
+        "handAxe"
+      ],
+      "ai": "defensive",
+      "name": "森林盜賊"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 11,
+      "y": 2,
+      "items": [
+        "nosferatu",
+        "fenrir"
+      ],
+      "ai": "boss",
+      "name": "深淵之主惡格尼斯",
+      "isBoss": true,
+      "bonusStats": {
+        "hp": 12,
+        "mag": 3,
+        "skl": 4,
+        "spd": 4,
+        "def": 3,
+        "res": 4
+      }
     }
   ],
   "turnEvents": [
@@ -55,93 +332,276 @@
       "turn": 1,
       "type": "dialogue",
       "text": [
-        {"speaker": null,    "text": "深淵之森的樹冠遮蔽了陽光，地面上漂浮著詭異的紫色霧氣。空氣中傳來低沉的吟唱聲。"},
-        {"speaker": "fran",  "text": "（按住魔導書）……這裡的魔力密度，是普通森林的二十倍。星印對這片地域有反應——它在發燙。"},
-        {"speaker": "natasha","text": "（拉緊韁繩）天馬不肯飛——空氣中有讓它害怕的東西。"},
-        {"speaker": "rex",   "text": "情報屬實。這片森林深處有古代魔法陣的遺跡——莫爾甘的人就是來找這個的。"},
-        {"speaker": "eirine","text": "馬庫斯，分隊推進。莉娜、奧利維爾若藏在哪裡——應該會自己現身。"}
+        {
+          "speaker": null,
+          "text": "深淵之森的樹冠遮蔽了陽光，地面上漂浮著詭異的紫色霧氣。空氣中傳來低沉的吟唱聲。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（按住魔導書）……這裡的魔力密度，是普通森林的二十倍。星印對這片地域有反應——它在發燙。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "（拉緊韁繩）天馬不肯飛——空氣中有讓它害怕的東西。"
+        },
+        {
+          "speaker": "rex",
+          "text": "情報屬實。這片森林深處有古代魔法陣的遺跡——莫爾甘的人就是來找這個的。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "馬庫斯，分隊推進。莉娜、奧利維爾若藏在哪裡——應該會自己現身。"
+        }
       ]
     },
     {
       "turn": 2,
       "type": "dialogue",
       "text": [
-        {"speaker": null,    "text": "森林深處傳來低沉的咒語聲。每念一句，紫色霧氣便濃一分。"},
-        {"speaker": "morgane","text": "（自遠處的聲音）惡格尼斯，星印的鑰匙在艾琳手上——她會親自送來。你只要守好古代石板。"},
-        {"speaker": null,    "text": "深處傳出一個沙啞的回應：「莫爾甘大人……您要的『翠星之鑰』就埋在祭壇下。一旦取出——這片森林的所有亡靈都將復甦。」"},
-        {"speaker": "morgane","text": "讓它們復甦吧。艾琳若不從祭壇上撤離，便讓亡靈先取她的命。"},
-        {"speaker": "fran",  "text": "（捂住耳朵）……星印共鳴。又是莫爾甘的聲音直接灌進來。"},
-        {"speaker": "eirine","text": "莫爾甘——你以為這種伎倆能嚇住我？馬庫斯，加快推進，我們搶在亡靈復甦前奪下石板！"}
+        {
+          "speaker": null,
+          "text": "森林深處傳來低沉的咒語聲。每念一句，紫色霧氣便濃一分。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "（自遠處的聲音）惡格尼斯，星印的鑰匙在艾琳手上——她會親自送來。你只要守好古代石板。"
+        },
+        {
+          "speaker": null,
+          "text": "深處傳出一個沙啞的回應：「莫爾甘大人……您要的『翠星之鑰』就埋在祭壇下。一旦取出——這片森林的所有亡靈都將復甦。」"
+        },
+        {
+          "speaker": "morgane",
+          "text": "讓它們復甦吧。艾琳若不從祭壇上撤離，便讓亡靈先取她的命。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（捂住耳朵）……星印共鳴。又是莫爾甘的聲音直接灌進來。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "莫爾甘——你以為這種伎倆能嚇住我？馬庫斯，加快推進，我們搶在亡靈復甦前奪下石板！"
+        }
       ]
     },
     {
       "turn": 3,
       "type": "reinforce",
       "text": [
-        {"speaker": null,    "text": "森林兩翼的霧氣中竄出深林暗術士與盜賊。"},
-        {"speaker": "marcus","text": "敵方援軍從兩翼包抄——奧利維爾呢？情報說他應該在這附近。"},
-        {"speaker": "cain",  "text": "盜賊的人在動向裡——大概是被『深淵之主』掌控的。注意，他們眼神空洞。"}
+        {
+          "speaker": null,
+          "text": "森林兩翼的霧氣中竄出深林暗術士與盜賊。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "敵方援軍從兩翼包抄——奧利維爾呢？情報說他應該在這附近。"
+        },
+        {
+          "speaker": "cain",
+          "text": "盜賊的人在動向裡——大概是被『深淵之主』掌控的。注意，他們眼神空洞。"
+        }
       ],
       "enemies": [
-        {"classId": "darkMage", "level": 11, "x": 0,  "y": 0, "items": ["flux"],    "ai": "aggressive", "name": "深林暗術士"},
-        {"classId": "brigand",  "level": 11, "x": 19, "y": 2, "items": ["handAxe"], "ai": "aggressive", "name": "森林盜賊"}
+        {
+          "classId": "darkMage",
+          "level": 11,
+          "x": 0,
+          "y": 0,
+          "items": [
+            "flux"
+          ],
+          "ai": "aggressive",
+          "name": "深林暗術士"
+        },
+        {
+          "classId": "brigand",
+          "level": 11,
+          "x": 23,
+          "y": 2,
+          "items": [
+            "handAxe"
+          ],
+          "ai": "aggressive",
+          "name": "森林盜賊"
+        }
       ]
     },
     {
       "turn": 4,
       "type": "recruit",
       "text": [
-        {"speaker": null,     "text": "中央村屋的暗門被自內推開——一個身披灰斗篷的青年提著一塊石板出現。"},
-        {"speaker": "olivier","text": "哎呀哎呀——你們動作真慢，臣下都快被『深淵之主』的爪牙包圍了。"},
-        {"speaker": "olivier","text": "自我介紹一下：奧利維爾，自由的『回收專家』。剛從那位『深淵之主』的祭壇下回收了這個。"},
-        {"speaker": "fran",   "text": "（湊近看石板）……這是『翠星之鑰』的拓本！莫爾甘要的就是這個。"},
-        {"speaker": "eirine", "text": "奧利維爾——你怎麼會在森林裡？你又為什麼要拿這塊石板？"},
-        {"speaker": "olivier","text": "公主殿下，臣下家鄉在三年前被莫爾甘的人滅了。從那之後——只要是莫爾甘想要的，臣下就先一步去拿走。"},
-        {"speaker": "olivier","text": "聽說公主在對抗帝國——這塊石板交給您，比埋在臣下的破口袋裡有用多了。"},
-        {"speaker": "eirine", "text": "奧利維爾，謝謝你。跟我們一起走吧——這片大陸需要更多像你這樣的『回收專家』。"},
-        {"speaker": "olivier","text": "成交。但說好了——分贓的時候，臣下要先挑。"},
-        {"speaker": "thor",   "text": "（白眼）……果然是個小偷。"}
+        {
+          "speaker": null,
+          "text": "中央村屋的暗門被自內推開——一個身披灰斗篷的青年提著一塊石板出現。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "哎呀哎呀——你們動作真慢，臣下都快被『深淵之主』的爪牙包圍了。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "自我介紹一下：奧利維爾，自由的『回收專家』。剛從那位『深淵之主』的祭壇下回收了這個。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（湊近看石板）……這是『翠星之鑰』的拓本！莫爾甘要的就是這個。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "奧利維爾——你怎麼會在森林裡？你又為什麼要拿這塊石板？"
+        },
+        {
+          "speaker": "olivier",
+          "text": "公主殿下，臣下家鄉在三年前被莫爾甘的人滅了。從那之後——只要是莫爾甘想要的，臣下就先一步去拿走。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "聽說公主在對抗帝國——這塊石板交給您，比埋在臣下的破口袋裡有用多了。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "奧利維爾，謝謝你。跟我們一起走吧——這片大陸需要更多像你這樣的『回收專家』。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "成交。但說好了——分贓的時候，臣下要先挑。"
+        },
+        {
+          "speaker": "thor",
+          "text": "（白眼）……果然是個小偷。"
+        }
       ]
     },
     {
       "turn": 5,
       "type": "reinforce",
       "text": [
-        {"speaker": null,    "text": "東邊樹叢轟然倒下——深淵之主已開始召喚亡靈援軍。"},
-        {"speaker": "olivier","text": "好戲開場了。臣下先去後方接應賽拉——她那邊已經有兩名暗術士盯上她了。"}
+        {
+          "speaker": null,
+          "text": "東邊樹叢轟然倒下——深淵之主已開始召喚亡靈援軍。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "好戲開場了。臣下先去後方接應賽拉——她那邊已經有兩名暗術士盯上她了。"
+        }
       ],
       "enemies": [
-        {"classId": "fighter",  "level": 12, "x": 19, "y": 9, "items": ["steelAxe"],  "ai": "aggressive", "name": "增援武夫"},
-        {"classId": "archer",   "level": 12, "x": 19, "y": 7, "items": ["killerBow"], "ai": "aggressive", "name": "增援弓兵"},
-        {"classId": "skeleton", "level": 8,  "x": 10, "y": 13, "items": ["ironLance"], "ai": "aggressive", "name": "復甦亡靈"},
-        {"classId": "skeleton", "level": 8,  "x": 9,  "y": 13, "items": ["ironLance"], "ai": "aggressive", "name": "復甦亡靈"}
+        {
+          "classId": "fighter",
+          "level": 12,
+          "x": 23,
+          "y": 9,
+          "items": [
+            "steelAxe"
+          ],
+          "ai": "aggressive",
+          "name": "增援武夫"
+        },
+        {
+          "classId": "archer",
+          "level": 12,
+          "x": 23,
+          "y": 7,
+          "items": [
+            "killerBow"
+          ],
+          "ai": "aggressive",
+          "name": "增援弓兵"
+        },
+        {
+          "classId": "skeleton",
+          "level": 8,
+          "x": 11,
+          "y": 14,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "復甦亡靈"
+        },
+        {
+          "classId": "skeleton",
+          "level": 8,
+          "x": 12,
+          "y": 14,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "復甦亡靈"
+        }
       ]
     },
     {
       "turn": 6,
       "type": "dialogue",
       "text": [
-        {"speaker": null,     "text": "森林東側的灌木叢突然劇烈搖動——七、八名穿著破爛帝國軍服的男子跌跌撞撞地走出來，盔甲掉了一半，手裡的劍都沒拔。"},
-        {"speaker": "marcus", "text": "（舉長槍警戒）站住——身份。"},
-        {"speaker": null,     "text": "領頭的小隊長雙膝跪下：「公主殿下——求您放我們走。我們是帝國北方屯駐軍第三十七隊。三天前接到調令南下，路上聽到南境侯爵退人質的消息——」"},
-        {"speaker": null,     "text": "他抬頭，眼眶通紅：「我們家裡的人——三天前已經跟著南境的逃亡潮逃出領地了。沒人再扣著我們。我們不想再為莫爾甘殺人。」"},
-        {"speaker": "eirine", "text": "（沉默片刻）……你們真的不再受莫爾甘控制？"},
-        {"speaker": null,     "text": "小隊長：「殿下，我們八個人，連兩個月的軍餉都沒拿到。莫爾甘的人質支配崩了，我們就只剩這條命想留給自己。」"},
-        {"speaker": "rex",    "text": "（落地檢查徽章）……是真的。北方屯駐軍三十七隊的徽記，這群人沒造假。"},
-        {"speaker": "eirine", "text": "走吧。沿森林南緣繞行，不要再北上。告訴你們碰見的每一隊帝國兵——這片大陸，從今天起不再以人質支配人。"},
-        {"speaker": null,     "text": "八名逃兵深深一鞠躬，消失在森林深處。"},
-        {"speaker": "fran",   "text": "（按住星印）……公主，星印在共鳴。它在認同剛才的決定。"},
-        {"speaker": "eirine", "text": "（眼神更堅定）我們不再只是逃難的隊伍。我們是這片大陸唯一還在替人說話的人——也是莫爾甘三十年布局的反面。"}
+        {
+          "speaker": null,
+          "text": "森林東側的灌木叢突然劇烈搖動——七、八名穿著破爛帝國軍服的男子跌跌撞撞地走出來，盔甲掉了一半，手裡的劍都沒拔。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（舉長槍警戒）站住——身份。"
+        },
+        {
+          "speaker": null,
+          "text": "領頭的小隊長雙膝跪下：「公主殿下——求您放我們走。我們是帝國北方屯駐軍第三十七隊。三天前接到調令南下，路上聽到南境侯爵退人質的消息——」"
+        },
+        {
+          "speaker": null,
+          "text": "他抬頭，眼眶通紅：「我們家裡的人——三天前已經跟著南境的逃亡潮逃出領地了。沒人再扣著我們。我們不想再為莫爾甘殺人。」"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（沉默片刻）……你們真的不再受莫爾甘控制？"
+        },
+        {
+          "speaker": null,
+          "text": "小隊長：「殿下，我們八個人，連兩個月的軍餉都沒拿到。莫爾甘的人質支配崩了，我們就只剩這條命想留給自己。」"
+        },
+        {
+          "speaker": "rex",
+          "text": "（落地檢查徽章）……是真的。北方屯駐軍三十七隊的徽記，這群人沒造假。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "走吧。沿森林南緣繞行，不要再北上。告訴你們碰見的每一隊帝國兵——這片大陸，從今天起不再以人質支配人。"
+        },
+        {
+          "speaker": null,
+          "text": "八名逃兵深深一鞠躬，消失在森林深處。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（按住星印）……公主，星印在共鳴。它在認同剛才的決定。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（眼神更堅定）我們不再只是逃難的隊伍。我們是這片大陸唯一還在替人說話的人——也是莫爾甘三十年布局的反面。"
+        }
       ]
     },
     {
       "turn": 7,
       "type": "dialogue",
       "text": [
-        {"speaker": "natasha","text": "（從空中俯視）莫爾甘的影子越來越深了。連這片森林的樹根都被他的暗黑魔法侵蝕。"},
-        {"speaker": "serra",  "text": "（合掌念禱）……願這片森林的死者得到安息。"},
-        {"speaker": "olivier","text": "（小聲對莉娜）那位修女姐姐——是真心相信她念的禱詞嗎？這年頭還有這種人？"},
-        {"speaker": "lina",   "text": "（拉弓）她是。所以我們才要替她擋住前面那些亡靈。"}
+        {
+          "speaker": "natasha",
+          "text": "（從空中俯視）莫爾甘的影子越來越深了。連這片森林的樹根都被他的暗黑魔法侵蝕。"
+        },
+        {
+          "speaker": "serra",
+          "text": "（合掌念禱）……願這片森林的死者得到安息。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "（小聲對莉娜）那位修女姐姐——是真心相信她念的禱詞嗎？這年頭還有這種人？"
+        },
+        {
+          "speaker": "lina",
+          "text": "（拉弓）她是。所以我們才要替她擋住前面那些亡靈。"
+        }
       ]
     }
   ],
