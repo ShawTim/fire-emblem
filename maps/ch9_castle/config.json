@@ -4,56 +4,405 @@
   "subtitle": "翠星之神殿",
   "objective": "boss",
   "objectiveDesc": "擊敗莫爾甘的副官",
-  "width": 18,
-  "height": 20,
+  "width": 20,
+  "height": 22,
   "playerUnits": [
-    {"charId": "eirine",  "x": 8,  "y": 19},
-    {"charId": "marcus",  "x": 7,  "y": 19},
-    {"charId": "lina",    "x": 9,  "y": 19},
-    {"charId": "thor",    "x": 8,  "y": 18},
-    {"charId": "serra",   "x": 7,  "y": 18},
-    {"charId": "cain",    "x": 9,  "y": 18},
-    {"charId": "fran",    "x": 10, "y": 19},
-    {"charId": "rex",     "x": 6,  "y": 19},
-    {"charId": "natasha", "x": 10, "y": 18},
-    {"charId": "olivier", "x": 11, "y": 19},
-    {"charId": "helga",   "x": 12, "y": 18}
+    {
+      "charId": "eirine",
+      "x": 9,
+      "y": 20
+    },
+    {
+      "charId": "marcus",
+      "x": 8,
+      "y": 20
+    },
+    {
+      "charId": "lina",
+      "x": 10,
+      "y": 20
+    },
+    {
+      "charId": "thor",
+      "x": 8,
+      "y": 19
+    },
+    {
+      "charId": "serra",
+      "x": 7,
+      "y": 20
+    },
+    {
+      "charId": "cain",
+      "x": 10,
+      "y": 19
+    },
+    {
+      "charId": "fran",
+      "x": 11,
+      "y": 20
+    },
+    {
+      "charId": "rex",
+      "x": 7,
+      "y": 19
+    },
+    {
+      "charId": "natasha",
+      "x": 11,
+      "y": 19
+    },
+    {
+      "charId": "olivier",
+      "x": 12,
+      "y": 20
+    },
+    {
+      "charId": "helga",
+      "x": 6,
+      "y": 20
+    }
   ],
   "enemies": [
-    {"classId": "darkMage", "level": 12, "x": 5,  "y": 2,  "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "darkMage", "level": 12, "x": 11, "y": 2,  "items": ["dark"],       "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "skeleton", "level": 12, "x": 4,  "y": 3,  "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 12, "x": 12, "y": 3,  "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "darkMage", "level": 12, "x": 5,  "y": 4,  "items": ["nosferatu"],  "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "darkMage", "level": 11, "x": 6,  "y": 6,  "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "darkMage", "level": 11, "x": 10, "y": 6,  "items": ["dark"],       "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "skeleton", "level": 11, "x": 4,  "y": 7,  "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 11, "x": 12, "y": 7,  "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 11, "x": 6,  "y": 8,  "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 11, "x": 10, "y": 8,  "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "darkMage", "level": 10, "x": 7,  "y": 10, "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "darkMage", "level": 10, "x": 9,  "y": 10, "items": ["dark"],       "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "skeleton", "level": 10, "x": 4,  "y": 11, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 10, "x": 12, "y": 11, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 10, "x": 6,  "y": 12, "items": ["steelLance"], "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 10, "x": 10, "y": 12, "items": ["steelAxe"],  "ai": "aggressive", "name": "神殿亡靈"},
-    {"classId": "darkMage", "level": 10, "x": 6,  "y": 14, "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "darkMage", "level": 10, "x": 10, "y": 14, "items": ["nosferatu"],  "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "skeleton", "level": 10, "x": 4,  "y": 15, "items": ["steelLance"], "ai": "defensive",  "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 10, "x": 12, "y": 15, "items": ["steelAxe"],  "ai": "defensive",  "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 10, "x": 3,  "y": 16, "items": ["steelLance"], "ai": "defensive",  "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 10, "x": 13, "y": 16, "items": ["steelLance"], "ai": "defensive",  "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 9,  "x": 6,  "y": 17, "items": ["steelLance"], "ai": "defensive",  "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 9,  "x": 9,  "y": 17, "items": ["steelAxe"],  "ai": "defensive",  "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 9,  "x": 4,  "y": 14, "items": ["steelLance"], "ai": "defensive",  "name": "神殿亡靈"},
-    {"classId": "skeleton", "level": 9,  "x": 5,  "y": 14, "items": ["steelAxe"],  "ai": "defensive",  "name": "神殿亡靈"},
-    {"classId": "darkMage", "level": 9,  "x": 7,  "y": 15, "items": ["flux"],       "ai": "defensive",  "name": "神殿暗法師"},
-    {"classId": "darkMage", "level": 9,  "x": 8,  "y": 15, "items": ["dark"],       "ai": "defensive",  "name": "神殿暗法師"},
     {
-      "classId": "darkMage", "level": 8, "x": 8, "y": 1,
-      "items": ["fenrir", "nosferatu"],
-      "ai": "boss", "name": "祭司長ザルバ", "isBoss": true,
-      "bonusStats": {"hp": 18, "mag": 10, "skl": 6, "spd": 5, "def": 5, "res": 10}
+      "classId": "darkMage",
+      "level": 12,
+      "x": 5,
+      "y": 3,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 14,
+      "y": 3,
+      "items": [
+        "dark"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "skeleton",
+      "level": 12,
+      "x": 7,
+      "y": 4,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 12,
+      "x": 12,
+      "y": 4,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 9,
+      "y": 5,
+      "items": [
+        "nosferatu"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 11,
+      "x": 5,
+      "y": 6,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 11,
+      "x": 14,
+      "y": 6,
+      "items": [
+        "dark"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "skeleton",
+      "level": 11,
+      "x": 3,
+      "y": 6,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 11,
+      "x": 16,
+      "y": 6,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 11,
+      "x": 8,
+      "y": 7,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 11,
+      "x": 11,
+      "y": 7,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "darkMage",
+      "level": 10,
+      "x": 6,
+      "y": 8,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 10,
+      "x": 13,
+      "y": 8,
+      "items": [
+        "dark"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "skeleton",
+      "level": 10,
+      "x": 3,
+      "y": 9,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 10,
+      "x": 16,
+      "y": 9,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 10,
+      "x": 8,
+      "y": 9,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 10,
+      "x": 11,
+      "y": 9,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "aggressive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "darkMage",
+      "level": 10,
+      "x": 6,
+      "y": 11,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 10,
+      "x": 13,
+      "y": 11,
+      "items": [
+        "nosferatu"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "skeleton",
+      "level": 10,
+      "x": 4,
+      "y": 11,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 10,
+      "x": 15,
+      "y": 11,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "defensive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 10,
+      "x": 3,
+      "y": 12,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 10,
+      "x": 16,
+      "y": 12,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 9,
+      "x": 7,
+      "y": 13,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 9,
+      "x": 12,
+      "y": 13,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "defensive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 9,
+      "x": 4,
+      "y": 13,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "skeleton",
+      "level": 9,
+      "x": 15,
+      "y": 13,
+      "items": [
+        "steelAxe"
+      ],
+      "ai": "defensive",
+      "name": "神殿亡靈"
+    },
+    {
+      "classId": "darkMage",
+      "level": 9,
+      "x": 8,
+      "y": 14,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 9,
+      "x": 11,
+      "y": 14,
+      "items": [
+        "dark"
+      ],
+      "ai": "defensive",
+      "name": "神殿暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 8,
+      "x": 9,
+      "y": 1,
+      "items": [
+        "fenrir",
+        "nosferatu"
+      ],
+      "ai": "boss",
+      "name": "祭司長ザルバ",
+      "isBoss": true,
+      "bonusStats": {
+        "hp": 18,
+        "mag": 10,
+        "skl": 6,
+        "spd": 5,
+        "def": 5,
+        "res": 10
+      }
     }
   ],
   "turnEvents": [
@@ -61,123 +410,413 @@
       "turn": 1,
       "type": "dialogue",
       "text": [
-        {"speaker": null,     "text": "神殿深處傳來祭司長ザルバ的咒語聲——每念一句，神殿的翡翠石柱便黯淡一分。"},
-        {"speaker": "fran",   "text": "（手指顫抖）……他已經念到第三段咒文了。每段需要兩個時辰——意味著他四個時辰前就開始了。"},
-        {"speaker": "helga",  "text": "（指向側殿）祭司軍團的部署——左翼是亡靈先鋒，中央是暗法師護陣，右翼是反射護盾。臣下知道弱點。"},
-        {"speaker": "rex",    "text": "（駕飛龍俯衝偵察）祭壇上方有一道封閉式法陣——進不去。必須從正門推進。"},
-        {"speaker": "eirine", "text": "馬庫斯、ヘルガ前鋒。法蘭與莉娜遠程壓制。雷克斯切斷後援。全員出擊！"}
+        {
+          "speaker": null,
+          "text": "神殿深處傳來祭司長ザルバ的咒語聲——每念一句，神殿的翡翠石柱便黯淡一分。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（手指顫抖）……他已經念到第三段咒文了。每段需要兩個時辰——意味著他四個時辰前就開始了。"
+        },
+        {
+          "speaker": "helga",
+          "text": "（指向側殿）祭司軍團的部署——左翼是亡靈先鋒，中央是暗法師護陣，右翼是反射護盾。臣下知道弱點。"
+        },
+        {
+          "speaker": "rex",
+          "text": "（駕飛龍俯衝偵察）祭壇上方有一道封閉式法陣——進不去。必須從正門推進。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "馬庫斯、ヘルガ前鋒。法蘭與莉娜遠程壓制。雷克斯切斷後援。全員出擊！"
+        }
       ]
     },
     {
       "turn": 2,
       "type": "dialogue",
       "text": [
-        {"speaker": null,      "text": "祭壇方向傳來ザルバ尖銳的笑聲。"},
-        {"speaker": "ザルバ",  "text": "（遠處的聲音）公主殿下——您終於來了。本祭司等的就是這一刻。"},
-        {"speaker": "ザルバ",  "text": "莫爾甘大人說過——星印的覺醒儀式需要一個『活祭』。公主殿下，您剛好趕上了。"},
-        {"speaker": "helga",   "text": "（咬牙）ザルバ——你把我師團的士兵變成亡靈，現在又要拿公主獻祭？！"},
-        {"speaker": "ザルバ",  "text": "（笑）ヘルガ副將，您師團的小兵——本祭司用得很順手。他們現在是『暗黑之門』儀式的『燃料』。"},
-        {"speaker": "natasha", "text": "（壓抑怒火）……拿活人當燃料的祭司——這片大陸不能容下他。"},
-        {"speaker": "thor",    "text": "嘁——說那麼多廢話。老子的大斧告訴他什麼叫『活祭』。"}
+        {
+          "speaker": null,
+          "text": "祭壇方向傳來ザルバ尖銳的笑聲。"
+        },
+        {
+          "speaker": "ザルバ",
+          "text": "（遠處的聲音）公主殿下——您終於來了。本祭司等的就是這一刻。"
+        },
+        {
+          "speaker": "ザルバ",
+          "text": "莫爾甘大人說過——星印的覺醒儀式需要一個『活祭』。公主殿下，您剛好趕上了。"
+        },
+        {
+          "speaker": "helga",
+          "text": "（咬牙）ザルバ——你把我師團的士兵變成亡靈，現在又要拿公主獻祭？！"
+        },
+        {
+          "speaker": "ザルバ",
+          "text": "（笑）ヘルガ副將，您師團的小兵——本祭司用得很順手。他們現在是『暗黑之門』儀式的『燃料』。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "（壓抑怒火）……拿活人當燃料的祭司——這片大陸不能容下他。"
+        },
+        {
+          "speaker": "thor",
+          "text": "嘁——說那麼多廢話。老子的大斧告訴他什麼叫『活祭』。"
+        }
       ]
     },
     {
       "turn": 3,
       "type": "dialogue",
       "text": [
-        {"speaker": "helga",   "text": "（小聲對艾琳）公主，臣下要說一件事——ザルバ的反射護盾有一個盲點。每念完一段咒文，他必須抬頭看星——那五秒護盾會降下。"},
-        {"speaker": "eirine",  "text": "五秒……夠莉娜射一箭。"},
-        {"speaker": "lina",    "text": "（拉弓瞄準）……三段咒文之間的間隔不固定。但我能聽聲音。ヘルガ，咒語結尾的音節是什麼？"},
-        {"speaker": "helga",   "text": "結尾是『コルガ・モーラ』——拖長的兩個音節。"},
-        {"speaker": "lina",    "text": "（半閉眼睛）記住了。下次他念到那兩個音節——我的箭就出去。"},
-        {"speaker": "marcus",  "text": "（眼神讚許）……莉娜，你父王教你射箭的時候，他知道有一天你會替公主救命。"}
+        {
+          "speaker": "helga",
+          "text": "（小聲對艾琳）公主，臣下要說一件事——ザルバ的反射護盾有一個盲點。每念完一段咒文，他必須抬頭看星——那五秒護盾會降下。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "五秒……夠莉娜射一箭。"
+        },
+        {
+          "speaker": "lina",
+          "text": "（拉弓瞄準）……三段咒文之間的間隔不固定。但我能聽聲音。ヘルガ，咒語結尾的音節是什麼？"
+        },
+        {
+          "speaker": "helga",
+          "text": "結尾是『コルガ・モーラ』——拖長的兩個音節。"
+        },
+        {
+          "speaker": "lina",
+          "text": "（半閉眼睛）記住了。下次他念到那兩個音節——我的箭就出去。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（眼神讚許）……莉娜，你父王教你射箭的時候，他知道有一天你會替公主救命。"
+        }
       ]
     },
     {
       "turn": 4,
       "type": "reinforce",
       "text": [
-        {"speaker": null,     "text": "祭壇後方的暗門打開，更多被腐化的師團亡靈湧出——它們的鎧甲上還繡著鐵壁軍團的徽記。"},
-        {"speaker": "helga",  "text": "（眼眶泛紅）……那些都是我的兵。對不起——讓你們再死一次。但今天，是讓你們真正安息的一次。"},
-        {"speaker": "serra",  "text": "（合掌念禱）ヘルガ姊，我會為他們念往生咒。每一個倒下的亡靈——都會聽見我的祈禱。"},
-        {"speaker": "olivier","text": "（小聲）……臣下從來沒見過這麼悲傷的戰場。"}
+        {
+          "speaker": null,
+          "text": "祭壇後方的暗門打開，更多被腐化的師團亡靈湧出——它們的鎧甲上還繡著鐵壁軍團的徽記。"
+        },
+        {
+          "speaker": "helga",
+          "text": "（眼眶泛紅）……那些都是我的兵。對不起——讓你們再死一次。但今天，是讓你們真正安息的一次。"
+        },
+        {
+          "speaker": "serra",
+          "text": "（合掌念禱）ヘルガ姊，我會為他們念往生咒。每一個倒下的亡靈——都會聽見我的祈禱。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "（小聲）……臣下從來沒見過這麼悲傷的戰場。"
+        }
       ],
       "enemies": [
-        {"classId": "skeleton", "level": 12, "x": 6,  "y": 15, "items": ["steelLance"], "ai": "aggressive", "name": "鐵壁亡靈"},
-        {"classId": "skeleton", "level": 12, "x": 10, "y": 15, "items": ["steelAxe"],  "ai": "aggressive", "name": "鐵壁亡靈"},
-        {"classId": "darkMage", "level": 12, "x": 5,  "y": 16, "items": ["flux"],       "ai": "aggressive", "name": "增援暗法師"},
-        {"classId": "darkMage", "level": 12, "x": 11, "y": 16, "items": ["dark"],       "ai": "aggressive", "name": "增援暗法師"},
-        {"classId": "skeleton", "level": 12, "x": 7,  "y": 16, "items": ["steelLance"], "ai": "aggressive", "name": "鐵壁亡靈"},
-        {"classId": "skeleton", "level": 12, "x": 9,  "y": 16, "items": ["steelAxe"],  "ai": "aggressive", "name": "鐵壁亡靈"}
+        {
+          "classId": "skeleton",
+          "level": 12,
+          "x": 5,
+          "y": 12,
+          "items": [
+            "steelLance"
+          ],
+          "ai": "aggressive",
+          "name": "鐵壁亡靈"
+        },
+        {
+          "classId": "skeleton",
+          "level": 12,
+          "x": 14,
+          "y": 12,
+          "items": [
+            "steelAxe"
+          ],
+          "ai": "aggressive",
+          "name": "鐵壁亡靈"
+        },
+        {
+          "classId": "darkMage",
+          "level": 12,
+          "x": 4,
+          "y": 13,
+          "items": [
+            "flux"
+          ],
+          "ai": "aggressive",
+          "name": "增援暗法師"
+        },
+        {
+          "classId": "darkMage",
+          "level": 12,
+          "x": 15,
+          "y": 13,
+          "items": [
+            "dark"
+          ],
+          "ai": "aggressive",
+          "name": "增援暗法師"
+        },
+        {
+          "classId": "skeleton",
+          "level": 12,
+          "x": 6,
+          "y": 13,
+          "items": [
+            "steelLance"
+          ],
+          "ai": "aggressive",
+          "name": "鐵壁亡靈"
+        },
+        {
+          "classId": "skeleton",
+          "level": 12,
+          "x": 13,
+          "y": 13,
+          "items": [
+            "steelAxe"
+          ],
+          "ai": "aggressive",
+          "name": "鐵壁亡靈"
+        }
       ]
     },
     {
       "turn": 5,
       "type": "dialogue",
       "text": [
-        {"speaker": null,      "text": "神殿頂部的天窗突然亮起紫光——莫爾甘的聲音再次直接灌入艾琳腦中。"},
-        {"speaker": "morgane", "text": "ザルバ。儀式進度如何？"},
-        {"speaker": "ザルバ",  "text": "（遠處）莫爾甘大人——再有兩段咒文便可開啟暗黑之門。但艾琳公主已經到祭壇外圍——"},
-        {"speaker": "morgane", "text": "讓她進來。把她拖入祭壇——星印的覺醒之力與暗黑之門的反噬，可以同時取她性命。"},
-        {"speaker": "ザルバ",  "text": "（戰慄）……可是莫爾甘大人，公主的星印若覺醒——"},
-        {"speaker": "morgane", "text": "ザルバ，你三十年前向朕宣誓的時候，沒有『可是』兩個字。"},
-        {"speaker": "fran",    "text": "（捂住星印）……公主，莫爾甘要把你拖入祭壇。但他不知道——本天才在塔上偷了一段星印的構造圖。他算錯了一個變數。"},
-        {"speaker": "eirine",  "text": "（緊握星印）法蘭，那個變數是什麼？"},
-        {"speaker": "fran",    "text": "（眨眼）……『信任』。星印對持有者的『信任』有共鳴——你身後這十個人，就是莫爾甘算不到的變數。"}
+        {
+          "speaker": null,
+          "text": "神殿頂部的天窗突然亮起紫光——莫爾甘的聲音再次直接灌入艾琳腦中。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "ザルバ。儀式進度如何？"
+        },
+        {
+          "speaker": "ザルバ",
+          "text": "（遠處）莫爾甘大人——再有兩段咒文便可開啟暗黑之門。但艾琳公主已經到祭壇外圍——"
+        },
+        {
+          "speaker": "morgane",
+          "text": "讓她進來。把她拖入祭壇——星印的覺醒之力與暗黑之門的反噬，可以同時取她性命。"
+        },
+        {
+          "speaker": "ザルバ",
+          "text": "（戰慄）……可是莫爾甘大人，公主的星印若覺醒——"
+        },
+        {
+          "speaker": "morgane",
+          "text": "ザルバ，你三十年前向朕宣誓的時候，沒有『可是』兩個字。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（捂住星印）……公主，莫爾甘要把你拖入祭壇。但他不知道——本天才在塔上偷了一段星印的構造圖。他算錯了一個變數。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（緊握星印）法蘭，那個變數是什麼？"
+        },
+        {
+          "speaker": "fran",
+          "text": "（眨眼）……『信任』。星印對持有者的『信任』有共鳴——你身後這十個人，就是莫爾甘算不到的變數。"
+        }
       ]
     },
     {
       "turn": 6,
       "type": "reinforce",
       "text": [
-        {"speaker": null,    "text": "祭壇兩翼的石柱裂開——更多亡靈與祭司湧出。ザルバ拼盡全力，要在艾琳抵達祭壇前完成儀式。"},
-        {"speaker": "cain",  "text": "（拔劍）公主，從這裡到祭壇——還有十二步。臣下護衛右翼。"},
-        {"speaker": "marcus","text": "左翼交給臣下。賽拉與法蘭守在公主身後——莉娜選好射擊位置。"},
-        {"speaker": "rex",   "text": "（駕飛龍）臣下從空中拖住兩翼的祭司。雷克斯之名——今日不會讓任何亡靈靠近公主。"}
+        {
+          "speaker": null,
+          "text": "祭壇兩翼的石柱裂開——更多亡靈與祭司湧出。ザルバ拼盡全力，要在艾琳抵達祭壇前完成儀式。"
+        },
+        {
+          "speaker": "cain",
+          "text": "（拔劍）公主，從這裡到祭壇——還有十二步。臣下護衛右翼。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "左翼交給臣下。賽拉與法蘭守在公主身後——莉娜選好射擊位置。"
+        },
+        {
+          "speaker": "rex",
+          "text": "（駕飛龍）臣下從空中拖住兩翼的祭司。雷克斯之名——今日不會讓任何亡靈靠近公主。"
+        }
       ],
       "enemies": [
-        {"classId": "skeleton", "level": 11, "x": 3,  "y": 10, "items": ["steelLance"], "ai": "aggressive", "name": "祭壇亡靈"},
-        {"classId": "skeleton", "level": 11, "x": 13, "y": 10, "items": ["steelAxe"],  "ai": "aggressive", "name": "祭壇亡靈"},
-        {"classId": "darkMage", "level": 12, "x": 2,  "y": 8,  "items": ["nosferatu"],  "ai": "aggressive", "name": "深淵祭司"},
-        {"classId": "darkMage", "level": 12, "x": 14, "y": 8,  "items": ["fenrir"],     "ai": "aggressive", "name": "深淵祭司"},
-        {"classId": "skeleton", "level": 11, "x": 8,  "y": 9,  "items": ["killerBow"],  "ai": "aggressive", "name": "亡靈狙擊手"}
+        {
+          "classId": "skeleton",
+          "level": 11,
+          "x": 3,
+          "y": 9,
+          "items": [
+            "steelLance"
+          ],
+          "ai": "aggressive",
+          "name": "祭壇亡靈"
+        },
+        {
+          "classId": "skeleton",
+          "level": 11,
+          "x": 16,
+          "y": 9,
+          "items": [
+            "steelAxe"
+          ],
+          "ai": "aggressive",
+          "name": "祭壇亡靈"
+        },
+        {
+          "classId": "darkMage",
+          "level": 12,
+          "x": 2,
+          "y": 7,
+          "items": [
+            "nosferatu"
+          ],
+          "ai": "aggressive",
+          "name": "深淵祭司"
+        },
+        {
+          "classId": "darkMage",
+          "level": 12,
+          "x": 17,
+          "y": 7,
+          "items": [
+            "fenrir"
+          ],
+          "ai": "aggressive",
+          "name": "深淵祭司"
+        },
+        {
+          "classId": "skeleton",
+          "level": 11,
+          "x": 9,
+          "y": 8,
+          "items": [
+            "killerBow"
+          ],
+          "ai": "aggressive",
+          "name": "亡靈狙擊手"
+        }
       ]
     },
     {
       "turn": 7,
       "type": "dialogue",
       "text": [
-        {"speaker": "serra",   "text": "（合掌念禱，從祭壇外圍跟隨艾琳前進）……願這座神殿千年的祝福，與公主同在。"},
-        {"speaker": "lina",    "text": "（半閉眼，弓已上弦，等待咒語尾音）……『コルガ・モーラ』……快了。"},
-        {"speaker": "fran",    "text": "（按住魔導書）……本天才在此承諾——這場仗結束後，把莫爾甘塔上偷的所有研究筆記，全部燒掉。"},
-        {"speaker": "thor",    "text": "（揮舞大斧）老子也承諾——回王都之後，請大家喝三天三夜的酒。"},
-        {"speaker": "olivier", "text": "（眨眼）這個提案臣下投贊成票。"},
-        {"speaker": "eirine",  "text": "（凝視祭壇深處的ザルバ）……莫爾甘，你以為這片大陸只有你一個會布局？我有十個夥伴——你算不過我們任何一個。"}
+        {
+          "speaker": "serra",
+          "text": "（合掌念禱，從祭壇外圍跟隨艾琳前進）……願這座神殿千年的祝福，與公主同在。"
+        },
+        {
+          "speaker": "lina",
+          "text": "（半閉眼，弓已上弦，等待咒語尾音）……『コルガ・モーラ』……快了。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（按住魔導書）……本天才在此承諾——這場仗結束後，把莫爾甘塔上偷的所有研究筆記，全部燒掉。"
+        },
+        {
+          "speaker": "thor",
+          "text": "（揮舞大斧）老子也承諾——回王都之後，請大家喝三天三夜的酒。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "（眨眼）這個提案臣下投贊成票。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（凝視祭壇深處的ザルバ）……莫爾甘，你以為這片大陸只有你一個會布局？我有十個夥伴——你算不過我們任何一個。"
+        }
       ]
     },
     {
       "turn": 8,
       "type": "dialogue",
       "text": [
-        {"speaker": null,      "text": "ザルバ倒地，祭壇崩塌。艾琳走上中央石階——星印發出柔和的翠光，與祭壇上方的光柱共鳴。"},
-        {"speaker": null,      "text": "歷代星印持有者的記憶湧入她腦中——千年前第一位持有者立於敵潮之前的影像、父王在書房裡擦拭星印的午後、祖父教她父親使劍的清晨——一幕一幕，無聲流過。"},
-        {"speaker": "eirine",  "text": "（雙手伸入光柱，瞳色泛起翠光）……父王。我聽見您了。"},
-        {"speaker": null,      "text": "光柱熄滅，艾琳轉身——十名夥伴依序單膝跪下。"},
-        {"speaker": "marcus",  "text": "（單膝）公主——不，陛下。臣下三十年前向先王宣誓——今日再向您宣誓一次。"},
-        {"speaker": "eirine",  "text": "（搖頭）馬庫斯，現在不是陛下。是『艾琳』。等王座收回，我們再說『陛下』。"},
-        {"speaker": null,      "text": "神殿外，三隻信鴿同時降落在ヘルガ肩上。她解下三封信，依序遞給艾琳。"},
-        {"speaker": "helga",   "text": "公主——這三封信，是您過去三場仗種下的回音。"},
-        {"speaker": null,      "text": "第一封信，用艾爾梅拉的家徽封蠟。"},
-        {"speaker": "natasha", "text": "（接過讀完，聲音顫抖）……艾爾梅拉殘軍——五百倖存者已集結於南境，候公主號令。」"},
-        {"speaker": null,      "text": "第二封信，沒有徽記，但內頁的筆跡端正肅穆。"},
-        {"speaker": "rex",     "text": "（讀畢）……格倫將軍的舊部。星辰要塞被反抗軍接管後，他們暗中等了三個月——『副將大人轉達：請告訴艾琳殿下，要塞的兵願為公主開北門』。"},
-        {"speaker": null,      "text": "第三封信，封皮上印著一個歪斜的鎖頭符號——奧利維爾的盜賊網標記。"},
-        {"speaker": "olivier", "text": "（讀畢，得意一笑）王都地下水道四百二十六條，臣下的網偵察完畢。鐵壁要塞下層三百名舊部已沿水道南北兩翼布防。再加上南境補給官那條線送出來的兩千名脫籠者——公主，您身後不再只有十個人了。"},
-        {"speaker": "eirine",  "text": "（沉默片刻，聲音輕但堅定）……艾爾梅拉五百、要塞舊部七百、奧利維爾的網兩千——加上我們十一個。"},
-        {"speaker": "eirine",  "text": "莫爾甘三十年用人質壓住的這片大陸，今天每一個被他壓住的人，都站在我這邊了。"},
-        {"speaker": "fran",    "text": "（眼睛發亮）公主——這就是星印告訴我們的事。它不是『一個人的力量』。它是『把分散的人聚起來』的力量。"},
-        {"speaker": "marcus",  "text": "（凝視艾琳的翠光瞳色）……陛下——抱歉，公主。從這一刻起，這不是反攻。這是回家。"},
-        {"speaker": "eirine",  "text": "（轉身面向南方王都的方向）……夥伴們。回王都吧。"}
+        {
+          "speaker": null,
+          "text": "ザルバ倒地，祭壇崩塌。艾琳走上中央石階——星印發出柔和的翠光，與祭壇上方的光柱共鳴。"
+        },
+        {
+          "speaker": null,
+          "text": "歷代星印持有者的記憶湧入她腦中——千年前第一位持有者立於敵潮之前的影像、父王在書房裡擦拭星印的午後、祖父教她父親使劍的清晨——一幕一幕，無聲流過。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（雙手伸入光柱，瞳色泛起翠光）……父王。我聽見您了。"
+        },
+        {
+          "speaker": null,
+          "text": "光柱熄滅，艾琳轉身——十名夥伴依序單膝跪下。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（單膝）公主——不，陛下。臣下三十年前向先王宣誓——今日再向您宣誓一次。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（搖頭）馬庫斯，現在不是陛下。是『艾琳』。等王座收回，我們再說『陛下』。"
+        },
+        {
+          "speaker": null,
+          "text": "神殿外，三隻信鴿同時降落在ヘルガ肩上。她解下三封信，依序遞給艾琳。"
+        },
+        {
+          "speaker": "helga",
+          "text": "公主——這三封信，是您過去三場仗種下的回音。"
+        },
+        {
+          "speaker": null,
+          "text": "第一封信，用艾爾梅拉的家徽封蠟。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "（接過讀完，聲音顫抖）……艾爾梅拉殘軍——五百倖存者已集結於南境，候公主號令。」"
+        },
+        {
+          "speaker": null,
+          "text": "第二封信，沒有徽記，但內頁的筆跡端正肅穆。"
+        },
+        {
+          "speaker": "rex",
+          "text": "（讀畢）……格倫將軍的舊部。星辰要塞被反抗軍接管後，他們暗中等了三個月——『副將大人轉達：請告訴艾琳殿下，要塞的兵願為公主開北門』。"
+        },
+        {
+          "speaker": null,
+          "text": "第三封信，封皮上印著一個歪斜的鎖頭符號——奧利維爾的盜賊網標記。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "（讀畢，得意一笑）王都地下水道四百二十六條，臣下的網偵察完畢。鐵壁要塞下層三百名舊部已沿水道南北兩翼布防。再加上南境補給官那條線送出來的兩千名脫籠者——公主，您身後不再只有十個人了。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（沉默片刻，聲音輕但堅定）……艾爾梅拉五百、要塞舊部七百、奧利維爾的網兩千——加上我們十一個。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "莫爾甘三十年用人質壓住的這片大陸，今天每一個被他壓住的人，都站在我這邊了。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（眼睛發亮）公主——這就是星印告訴我們的事。它不是『一個人的力量』。它是『把分散的人聚起來』的力量。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（凝視艾琳的翠光瞳色）……陛下——抱歉，公主。從這一刻起，這不是反攻。這是回家。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（轉身面向南方王都的方向）……夥伴們。回王都吧。"
+        }
       ]
     }
   ],
