@@ -41,6 +41,8 @@ class BattleScene {
     this.defenderFlash = 0;
     this.critZoomTimer = 0;
     this.critZoom = 0;
+    this.atkSwing = 0;
+    this.defSwing = 0;
   }
 
   start(attacker, defender, combatResult, forecast, onComplete) {
@@ -77,6 +79,7 @@ class BattleScene {
     this.hitDisplayShown = false;
     this.attackerFlash = 0; this.defenderFlash = 0;
     this.critZoomTimer = 0; this.critZoom = 0;
+    this.atkSwing = 0; this.defSwing = 0;
     const dt = GameMap.getEffectiveTerrain(defender.x, defender.y);
     this.terrainType = dt || 'plain';
     const at = GameMap.getEffectiveTerrain(attacker.x, attacker.y);
@@ -188,6 +191,11 @@ class BattleScene {
         if(critPct > 0) this.effects.push({type:'hitpct',x:tx,y:200,text:'必殺'+critPct+'%',color:'#ff8',duration:500,timer:0});
       }
     }
+    // weapon swing: wind-up (-1) -> strike-through (+1) -> settle (0)
+    var sw = (t < 0.3) ? -this._eo(t / 0.3)
+           : (t < 0.5) ? (-1 + 2 * this._ei((t - 0.3) / 0.2))
+           : (t < 0.75) ? (1 - this._eo((t - 0.5) / 0.25)) : 0;
+    if (a) { this.atkSwing = sw; this.defSwing = 0; } else { this.defSwing = sw; this.atkSwing = 0; }
     if (t<0.3) { var d=t/0.3; if(a) this.attackerAnimOffset=this._eo(d)*50; else this.defenderAnimOffset=-this._eo(d)*50; }
     else if (t<0.5) {
       if(a) this.attackerAnimOffset=50; else this.defenderAnimOffset=-50;
@@ -202,6 +210,8 @@ class BattleScene {
   _hit(s, a) {
     var tx=a?560:240, ty=240;
     if(!s.hit){this.effects.push({type:'miss',x:tx,y:ty,text:'MISS',color:'#999',duration:800,timer:0});if(typeof SFX!=='undefined')SFX.miss();return;}
+    var aw=(a?this.attacker:this.defender).getEquippedWeapon();
+    if(aw && (aw.type==='sword'||aw.type==='axe'||aw.type==='lance')) this.effects.push({type:'slash',x:tx,y:330,dir:a?1:-1,color:s.crit?'#ffe680':'#ffffff',duration:240,timer:0});
     if(s.crit){
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffff00',duration:250,timer:0});
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffffff',duration:100,timer:0});
@@ -239,13 +249,14 @@ class BattleScene {
     var dx=cw-180+this.defenderSlide+this.defenderAnimOffset, sz=64;
     var atkS=(this.phase==='atk1'||this.phase==='atk2');
     var defS=(this.phase==='def1'||this.phase==='def2');
+    var bobA=Math.sin(this.timer*0.006)*2, bobD=Math.sin(this.timer*0.006+1.7)*2; // idle breathing
     if(!this.attackerDead||this.deathAlpha>0){
       ctx.save(); if(this.attackerDead){ctx.globalAlpha=this.deathAlpha;ctx.translate(0,this.deathFall);}
-      this._drawUnit(ctx,this.attacker,ax-sz/2,gy-sz,sz,'right',atkS,this.attackerFlash); ctx.restore();
+      this._drawUnit(ctx,this.attacker,ax-sz/2,gy-sz+(atkS?0:bobA),sz,'right',atkS,this.attackerFlash,atkS?this.atkSwing:0); ctx.restore();
     }
     if(!this.defenderDead||this.deathAlpha>0){
       ctx.save(); if(this.defenderDead){ctx.globalAlpha=this.deathAlpha;ctx.translate(0,this.deathFall);}
-      this._drawUnit(ctx,this.defender,dx-sz/2,gy-sz,sz,'left',defS,this.defenderFlash); ctx.restore();
+      this._drawUnit(ctx,this.defender,dx-sz/2,gy-sz+(defS?0:bobD),sz,'left',defS,this.defenderFlash,defS?this.defSwing:0); ctx.restore();
     }
     if(this.panelAlpha>0){
       ctx.globalAlpha=this.panelAlpha;
@@ -630,13 +641,13 @@ class BattleScene {
     return this._off;
   }
 
-  _drawUnit(ctx, unit, x, y, size, facing, striking, flash) {
+  _drawUnit(ctx, unit, x, y, size, facing, striking, flash, swing) {
     if (flash > 0) {
       var off = this._getOffscreen(size * 3, size * 3);
       var oc = off.getContext('2d');
       oc.clearRect(0, 0, off.width, off.height);
       var ox = size, oy = size;
-      this._drawUnit(oc, unit, ox, oy, size, facing, striking, 0);
+      this._drawUnit(oc, unit, ox, oy, size, facing, striking, 0, swing);
       var fa = Math.min(1, flash / 260) * 0.75;
       oc.globalCompositeOperation = 'source-atop';
       oc.fillStyle = 'rgba(255,255,255,' + fa + ')';
@@ -651,6 +662,7 @@ class BattleScene {
     var sk=(unit.portrait&&unit.portrait.skin)?unit.portrait.skin:c.skin;
     var fl=facing==='left'?-1:1, sc=size/16;
     ctx.save(); ctx.translate(x+size/2,y+size); ctx.scale(fl,1);
+    ctx.fillStyle='rgba(0,0,0,0.22)';ctx.beginPath();ctx.ellipse(0,1*sc,6.5*sc,2*sc,0,0,7);ctx.fill();
     var cls=getClassData(unit.classId), tags=cls.tags||[];
     if(tags.includes('mounted')||tags.includes('flying')){
       var fly=tags.includes('flying');
@@ -686,15 +698,18 @@ class BattleScene {
     ctx.fillStyle='#c88';ctx.fillRect(-0.5*sc,-11.5*sc,2*sc,0.5*sc);
     if(unit.isBoss){ctx.fillStyle='#ffd700';ctx.fillRect(-2.5*sc,-17.5*sc,5*sc,1.5*sc);
       ctx.fillRect(-2.5*sc,-18.5*sc,1*sc,1*sc);ctx.fillRect(-0.5*sc,-19*sc,1*sc,1.5*sc);ctx.fillRect(1.5*sc,-18.5*sc,1*sc,1*sc);}
-    this._drawWpn(ctx,unit,sc,striking);
+    this._drawWpn(ctx,unit,sc,striking,swing);
     ctx.restore();
   }
 
-  _drawWpn(ctx, unit, sc, striking) {
+  _drawWpn(ctx, unit, sc, striking, swing) {
     const cls = getClassData(unit.classId), weps = cls.weapons||[];
     const wpn = unit.getEquippedWeapon();
     const wt = wpn ? wpn.type : (weps[0]||'sword');
     const mag = ['fire','thunder','wind','dark','light'].includes(wt);
+    var melee = (wt==='sword'||wt==='axe'||wt==='lance');
+    var rot = (striking && melee && swing) ? swing * (wt==='lance' ? 0.5 : 1.45) : 0;
+    if (rot) { ctx.save(); var pvx=3.8*sc, pvy=-8*sc; ctx.translate(pvx,pvy); ctx.rotate(rot); ctx.translate(-pvx,-pvy); }
     if (wt==='sword') {
       if(striking){ctx.fillStyle='#ccc';ctx.fillRect(4*sc,-15*sc,1*sc,9*sc);
         ctx.fillStyle='#eee';ctx.fillRect(4.2*sc,-15*sc,0.6*sc,7*sc);
@@ -729,6 +744,7 @@ class BattleScene {
       else{ctx.fillStyle=mc;ctx.beginPath();ctx.arc(6*sc,-6*sc,2*sc,0,Math.PI*2);ctx.fill();
         ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(5.5*sc,-7*sc,0.7*sc,0,Math.PI*2);ctx.fill();}
     }
+    if (rot) ctx.restore();
   }
 
   _drawHP(ctx, unit, hp, px, py, isRight, cw) {
@@ -804,6 +820,12 @@ class BattleScene {
       } else if(e.type==='hitpct'){
         ctx.fillStyle=e.color;ctx.font='bold 14px sans-serif';ctx.textAlign='center';
         ctx.fillText(e.text,e.x,e.y);
+      } else if(e.type==='slash'){
+        var pr=e.timer/e.duration; ctx.save(); ctx.translate(e.x,e.y); ctx.lineCap='round';
+        ctx.globalAlpha=alpha*0.95; ctx.strokeStyle=e.color;
+        ctx.lineWidth=6*(1-pr)+1; ctx.beginPath(); ctx.arc(0,0,30+pr*16,(-1.0)*e.dir,(1.0)*e.dir,e.dir<0); ctx.stroke();
+        ctx.globalAlpha=alpha; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,30+pr*16,(-0.7)*e.dir,(0.7)*e.dir,e.dir<0); ctx.stroke();
+        ctx.restore();
       }
     }
     ctx.globalAlpha=1;
