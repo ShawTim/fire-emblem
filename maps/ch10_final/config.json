@@ -4,59 +4,436 @@
   "subtitle": "翠星之戰",
   "objective": "boss",
   "objectiveDesc": "擊敗莫爾甘",
-  "width": 22,
-  "height": 18,
+  "width": 24,
+  "height": 20,
   "playerUnits": [
-    {"charId": "eirine",  "x": 10, "y": 17},
-    {"charId": "marcus",  "x": 9,  "y": 17},
-    {"charId": "lina",    "x": 11, "y": 17},
-    {"charId": "thor",    "x": 10, "y": 16},
-    {"charId": "serra",   "x": 9,  "y": 16},
-    {"charId": "cain",    "x": 11, "y": 16},
-    {"charId": "fran",    "x": 12, "y": 17},
-    {"charId": "rex",     "x": 8,  "y": 17},
-    {"charId": "natasha", "x": 12, "y": 16},
-    {"charId": "olivier", "x": 13, "y": 17},
-    {"charId": "helga",   "x": 8,  "y": 16}
+    {
+      "charId": "eirine",
+      "x": 11,
+      "y": 18
+    },
+    {
+      "charId": "marcus",
+      "x": 10,
+      "y": 18
+    },
+    {
+      "charId": "lina",
+      "x": 12,
+      "y": 18
+    },
+    {
+      "charId": "thor",
+      "x": 10,
+      "y": 17
+    },
+    {
+      "charId": "serra",
+      "x": 9,
+      "y": 18
+    },
+    {
+      "charId": "cain",
+      "x": 13,
+      "y": 18
+    },
+    {
+      "charId": "fran",
+      "x": 13,
+      "y": 17
+    },
+    {
+      "charId": "rex",
+      "x": 9,
+      "y": 17
+    },
+    {
+      "charId": "natasha",
+      "x": 14,
+      "y": 18
+    },
+    {
+      "charId": "olivier",
+      "x": 14,
+      "y": 17
+    },
+    {
+      "charId": "helga",
+      "x": 8,
+      "y": 18
+    }
   ],
   "enemies": [
-    {"classId": "sage",         "level": 7,  "x": 6,  "y": 1,  "items": ["elfire"],             "ai": "defensive",  "name": "帝國賢者"},
-    {"classId": "sage",         "level": 7,  "x": 14, "y": 1,  "items": ["elthunder"],          "ai": "defensive",  "name": "帝國賢者"},
-    {"classId": "general",      "level": 7,  "x": 4,  "y": 2,  "items": ["silverLance","javelin"], "ai": "defensive", "name": "帝國將軍"},
-    {"classId": "general",      "level": 7,  "x": 17, "y": 2,  "items": ["silverLance","javelin"], "ai": "defensive", "name": "帝國將軍"},
-    {"classId": "swordmaster",  "level": 5,  "x": 7,  "y": 3,  "items": ["silverSword"],        "ai": "aggressive", "name": "帝國劍聖"},
-    {"classId": "swordmaster",  "level": 5,  "x": 11, "y": 3,  "items": ["silverSword"],        "ai": "aggressive", "name": "帝國劍聖"},
-    {"classId": "paladin",      "level": 7,  "x": 7,  "y": 4,  "items": ["silverLance"],        "ai": "aggressive", "name": "帝國聖騎士"},
-    {"classId": "paladin",      "level": 7,  "x": 14, "y": 4,  "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
-    {"classId": "sage",         "level": 7,  "x": 10, "y": 4,  "items": ["elthunder"],          "ai": "defensive",  "name": "帝國賢者"},
-    {"classId": "paladin",      "level": 7,  "x": 3,  "y": 5,  "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
-    {"classId": "paladin",      "level": 7,  "x": 18, "y": 5,  "items": ["silverLance"],        "ai": "aggressive", "name": "帝國聖騎士"},
-    {"classId": "darkMage",     "level": 12, "x": 3,  "y": 7,  "items": ["dark"],               "ai": "defensive",  "name": "帝國暗法師"},
-    {"classId": "darkMage",     "level": 12, "x": 18, "y": 7,  "items": ["nosferatu"],          "ai": "defensive",  "name": "帝國暗法師"},
-    {"classId": "swordmaster",  "level": 5,  "x": 8,  "y": 8,  "items": ["silverSword"],        "ai": "aggressive", "name": "帝國劍聖"},
-    {"classId": "swordmaster",  "level": 5,  "x": 13, "y": 8,  "items": ["silverSword"],        "ai": "aggressive", "name": "帝國劍聖"},
-    {"classId": "general",      "level": 10, "x": 5,  "y": 9,  "items": ["silverLance","steelAxe"], "ai": "defensive", "name": "帝國將軍"},
-    {"classId": "general",      "level": 10, "x": 16, "y": 9,  "items": ["silverLance","handAxe"],  "ai": "defensive", "name": "帝國將軍"},
-    {"classId": "knight",       "level": 12, "x": 8,  "y": 10, "items": ["silverLance"],        "ai": "aggressive", "name": "帝國近衛"},
-    {"classId": "knight",       "level": 12, "x": 13, "y": 10, "items": ["silverLance"],        "ai": "aggressive", "name": "帝國近衛"},
-    {"classId": "paladin",      "level": 7,  "x": 4,  "y": 11, "items": ["silverLance"],        "ai": "aggressive", "name": "帝國聖騎士"},
-    {"classId": "paladin",      "level": 7,  "x": 17, "y": 11, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "帝國聖騎士"},
-    {"classId": "sage",         "level": 7,  "x": 10, "y": 11, "items": ["elfire"],             "ai": "defensive",  "name": "帝國賢者"},
-    {"classId": "paladin",      "level": 5,  "x": 7,  "y": 13, "items": ["steelLance"],         "ai": "defensive",  "name": "帝國騎士"},
-    {"classId": "paladin",      "level": 5,  "x": 14, "y": 13, "items": ["steelSword","javelin"], "ai": "defensive", "name": "帝國騎士"},
-    {"classId": "soldier",      "level": 12, "x": 10, "y": 13, "items": ["steelLance"],         "ai": "defensive",  "name": "帝國士兵"},
-    {"classId": "darkMage",     "level": 12, "x": 5,  "y": 14, "items": ["flux"],               "ai": "defensive",  "name": "帝國暗法師"},
-    {"classId": "darkMage",     "level": 12, "x": 16, "y": 14, "items": ["dark"],               "ai": "defensive",  "name": "帝國暗法師"},
-    {"classId": "knight",       "level": 10, "x": 8,  "y": 15, "items": ["steelLance"],         "ai": "defensive",  "name": "帝國近衛"},
-    {"classId": "knight",       "level": 10, "x": 13, "y": 15, "items": ["steelLance"],         "ai": "defensive",  "name": "帝國近衛"},
-    {"classId": "soldier",      "level": 12, "x": 4,  "y": 16, "items": ["steelLance"],         "ai": "defensive",  "name": "帝國士兵"},
-    {"classId": "soldier",      "level": 12, "x": 17, "y": 16, "items": ["steelLance"],         "ai": "defensive",  "name": "帝國士兵"},
     {
-      "classId": "darkMage", "level": 12, "x": 10, "y": 0,
+      "classId": "sage",
+      "level": 7,
+      "x": 7,
+      "y": 2,
+      "items": [
+        "elfire"
+      ],
+      "ai": "defensive",
+      "name": "帝國賢者"
+    },
+    {
+      "classId": "sage",
+      "level": 7,
+      "x": 16,
+      "y": 2,
+      "items": [
+        "elthunder"
+      ],
+      "ai": "defensive",
+      "name": "帝國賢者"
+    },
+    {
+      "classId": "general",
+      "level": 7,
+      "x": 5,
+      "y": 2,
+      "items": [
+        "silverLance",
+        "javelin"
+      ],
+      "ai": "defensive",
+      "name": "帝國將軍"
+    },
+    {
+      "classId": "general",
+      "level": 7,
+      "x": 18,
+      "y": 2,
+      "items": [
+        "silverLance",
+        "javelin"
+      ],
+      "ai": "defensive",
+      "name": "帝國將軍"
+    },
+    {
+      "classId": "swordmaster",
+      "level": 5,
+      "x": 9,
+      "y": 3,
+      "items": [
+        "silverSword"
+      ],
+      "ai": "aggressive",
+      "name": "帝國劍聖"
+    },
+    {
+      "classId": "swordmaster",
+      "level": 5,
+      "x": 14,
+      "y": 3,
+      "items": [
+        "silverSword"
+      ],
+      "ai": "aggressive",
+      "name": "帝國劍聖"
+    },
+    {
+      "classId": "paladin",
+      "level": 7,
+      "x": 8,
+      "y": 4,
+      "items": [
+        "silverLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國聖騎士"
+    },
+    {
+      "classId": "paladin",
+      "level": 7,
+      "x": 15,
+      "y": 4,
+      "items": [
+        "silverSword",
+        "javelin"
+      ],
+      "ai": "aggressive",
+      "name": "帝國聖騎士"
+    },
+    {
+      "classId": "sage",
+      "level": 7,
+      "x": 11,
+      "y": 4,
+      "items": [
+        "elthunder"
+      ],
+      "ai": "defensive",
+      "name": "帝國賢者"
+    },
+    {
+      "classId": "paladin",
+      "level": 7,
+      "x": 4,
+      "y": 5,
+      "items": [
+        "silverSword",
+        "javelin"
+      ],
+      "ai": "aggressive",
+      "name": "帝國聖騎士"
+    },
+    {
+      "classId": "paladin",
+      "level": 7,
+      "x": 19,
+      "y": 5,
+      "items": [
+        "silverLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國聖騎士"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 4,
+      "y": 7,
+      "items": [
+        "dark"
+      ],
+      "ai": "defensive",
+      "name": "帝國暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 19,
+      "y": 7,
+      "items": [
+        "nosferatu"
+      ],
+      "ai": "defensive",
+      "name": "帝國暗法師"
+    },
+    {
+      "classId": "swordmaster",
+      "level": 5,
+      "x": 9,
+      "y": 8,
+      "items": [
+        "silverSword"
+      ],
+      "ai": "aggressive",
+      "name": "帝國劍聖"
+    },
+    {
+      "classId": "swordmaster",
+      "level": 5,
+      "x": 14,
+      "y": 8,
+      "items": [
+        "silverSword"
+      ],
+      "ai": "aggressive",
+      "name": "帝國劍聖"
+    },
+    {
+      "classId": "general",
+      "level": 10,
+      "x": 6,
+      "y": 9,
+      "items": [
+        "silverLance",
+        "steelAxe"
+      ],
+      "ai": "defensive",
+      "name": "帝國將軍"
+    },
+    {
+      "classId": "general",
+      "level": 10,
+      "x": 17,
+      "y": 9,
+      "items": [
+        "silverLance",
+        "handAxe"
+      ],
+      "ai": "defensive",
+      "name": "帝國將軍"
+    },
+    {
+      "classId": "knight",
+      "level": 12,
+      "x": 10,
+      "y": 10,
+      "items": [
+        "silverLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國近衛"
+    },
+    {
+      "classId": "knight",
+      "level": 12,
+      "x": 13,
+      "y": 10,
+      "items": [
+        "silverLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國近衛"
+    },
+    {
+      "classId": "paladin",
+      "level": 7,
+      "x": 4,
+      "y": 11,
+      "items": [
+        "silverLance"
+      ],
+      "ai": "aggressive",
+      "name": "帝國聖騎士"
+    },
+    {
+      "classId": "paladin",
+      "level": 7,
+      "x": 19,
+      "y": 11,
+      "items": [
+        "silverSword",
+        "javelin"
+      ],
+      "ai": "aggressive",
+      "name": "帝國聖騎士"
+    },
+    {
+      "classId": "sage",
+      "level": 7,
+      "x": 11,
+      "y": 11,
+      "items": [
+        "elfire"
+      ],
+      "ai": "defensive",
+      "name": "帝國賢者"
+    },
+    {
+      "classId": "paladin",
+      "level": 5,
+      "x": 7,
+      "y": 13,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國騎士"
+    },
+    {
+      "classId": "paladin",
+      "level": 5,
+      "x": 16,
+      "y": 13,
+      "items": [
+        "steelSword",
+        "javelin"
+      ],
+      "ai": "defensive",
+      "name": "帝國騎士"
+    },
+    {
+      "classId": "soldier",
+      "level": 12,
+      "x": 12,
+      "y": 13,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國士兵"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 5,
+      "y": 14,
+      "items": [
+        "flux"
+      ],
+      "ai": "defensive",
+      "name": "帝國暗法師"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 18,
+      "y": 14,
+      "items": [
+        "dark"
+      ],
+      "ai": "defensive",
+      "name": "帝國暗法師"
+    },
+    {
+      "classId": "knight",
+      "level": 10,
+      "x": 9,
+      "y": 15,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國近衛"
+    },
+    {
+      "classId": "knight",
+      "level": 10,
+      "x": 14,
+      "y": 15,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國近衛"
+    },
+    {
+      "classId": "soldier",
+      "level": 12,
+      "x": 6,
+      "y": 16,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國士兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 12,
+      "x": 17,
+      "y": 16,
+      "items": [
+        "steelLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國士兵"
+    },
+    {
+      "classId": "darkMage",
+      "level": 12,
+      "x": 11,
+      "y": 1,
       "charId": "morgane",
-      "items": ["starCrest", "fenrir"],
-      "ai": "boss", "name": "莫爾甘", "isBoss": true,
-      "bonusStats": {"hp": 20, "mag": 10, "skl": 6, "spd": 6, "def": 6, "res": 12}
+      "items": [
+        "starCrest",
+        "fenrir"
+      ],
+      "ai": "boss",
+      "name": "莫爾甘",
+      "isBoss": true,
+      "bonusStats": {
+        "hp": 20,
+        "mag": 10,
+        "skl": 6,
+        "spd": 6,
+        "def": 6,
+        "res": 12
+      }
     }
   ],
   "turnEvents": [
@@ -64,144 +441,483 @@
       "turn": 1,
       "type": "dialogue",
       "text": [
-        {"speaker": null,     "text": "王都的街道上，曾經熟悉的市場、麵包店、噴泉廣場——全部空無一人。莫爾甘把全部國民驅趕到地下，王都成了死城。"},
-        {"speaker": "marcus", "text": "（深呼吸）……殿下，這條街，臣下三十年前每天牽著您的小手走過。麵包店的老闆娘最喜歡您。"},
-        {"speaker": "eirine", "text": "（凝視空蕩的廣場）……麵包店的奧黛麗阿姨。她的女兒安娜跟我同齡。她們——還活著嗎？"},
-        {"speaker": "rex",    "text": "（按住艾琳肩膀）公主，先打完仗。打完仗之後，臣下陪您走遍王都每一條街——把每一位國民接回來。"},
-        {"speaker": "helga",  "text": "王宮正門守衛是『黑鷹近衛』——莫爾甘最忠誠的部隊。他們的家眷都在王宮地下監牢。投降不可能。"},
-        {"speaker": "fran",   "text": "（手指顫抖）……星印對王宮有強烈共鳴。莫爾甘在王座上——他在等公主走進去。"},
-        {"speaker": "eirine", "text": "（緊握星印，眼中翠光更亮）夥伴們——進攻。"}
+        {
+          "speaker": null,
+          "text": "王都的街道上，曾經熟悉的市場、麵包店、噴泉廣場——全部空無一人。莫爾甘把全部國民驅趕到地下，王都成了死城。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（深呼吸）……殿下，這條街，臣下三十年前每天牽著您的小手走過。麵包店的老闆娘最喜歡您。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（凝視空蕩的廣場）……麵包店的奧黛麗阿姨。她的女兒安娜跟我同齡。她們——還活著嗎？"
+        },
+        {
+          "speaker": "rex",
+          "text": "（按住艾琳肩膀）公主，先打完仗。打完仗之後，臣下陪您走遍王都每一條街——把每一位國民接回來。"
+        },
+        {
+          "speaker": "helga",
+          "text": "王宮正門守衛是『黑鷹近衛』——莫爾甘最忠誠的部隊。他們的家眷都在王宮地下監牢。投降不可能。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（手指顫抖）……星印對王宮有強烈共鳴。莫爾甘在王座上——他在等公主走進去。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（緊握星印，眼中翠光更亮）夥伴們——進攻。"
+        }
       ]
     },
     {
       "turn": 2,
       "type": "dialogue",
       "text": [
-        {"speaker": null,      "text": "王宮尖塔上的黑霧突然濃郁起來——莫爾甘的聲音直接從王座傳到所有人的耳朵。"},
-        {"speaker": "morgane", "text": "艾琳——歡迎回家。三十年了，王宮的大門終於為你再次打開。"},
-        {"speaker": "morgane", "text": "你帶來了十個人。逃亡的公主、王宮老騎士、森林獵手、村莊的醉漢、教會的修女、退役的傭兵、被朕關了三年的小天才、叛變的飛龍騎士、亡國的天馬、影中的小偷、鐵壁的學生——朕全部認得。"},
-        {"speaker": "eirine",  "text": "（直視王宮尖塔）莫爾甘——你忘了一個人。你忘了你自己。三十年前你也曾經是父王最信任的『莫爾甘叔叔』。"},
-        {"speaker": "morgane", "text": "……『叔叔』。三十年了，沒人這樣叫過朕。"},
-        {"speaker": "morgane", "text": "艾琳——走進來。朕在王座上等你。但你身後那十個人——一個都別想活著踏進王宮。"},
-        {"speaker": "marcus",  "text": "（拔出長槍）殿下別聽他。他想動搖殿下心智——這是他的舊伎倆。"},
-        {"speaker": "eirine",  "text": "（緊握星印）馬庫斯，我沒被動搖。我只是更清楚——今天的對手是誰。"}
+        {
+          "speaker": null,
+          "text": "王宮尖塔上的黑霧突然濃郁起來——莫爾甘的聲音直接從王座傳到所有人的耳朵。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "艾琳——歡迎回家。三十年了，王宮的大門終於為你再次打開。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "你帶來了十個人。逃亡的公主、王宮老騎士、森林獵手、村莊的醉漢、教會的修女、退役的傭兵、被朕關了三年的小天才、叛變的飛龍騎士、亡國的天馬、影中的小偷、鐵壁的學生——朕全部認得。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（直視王宮尖塔）莫爾甘——你忘了一個人。你忘了你自己。三十年前你也曾經是父王最信任的『莫爾甘叔叔』。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "……『叔叔』。三十年了，沒人這樣叫過朕。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "艾琳——走進來。朕在王座上等你。但你身後那十個人——一個都別想活著踏進王宮。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（拔出長槍）殿下別聽他。他想動搖殿下心智——這是他的舊伎倆。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（緊握星印）馬庫斯，我沒被動搖。我只是更清楚——今天的對手是誰。"
+        }
       ]
     },
     {
       "turn": 3,
       "type": "reinforce",
       "text": [
-        {"speaker": null,    "text": "王宮兩翼的暗門打開——『黑鷹近衛』衝出，每一名都是聖騎士級的精銳。"},
-        {"speaker": "helga", "text": "（拔長槍）黑鷹近衛——師父當年也訓練過他們。他們的弱點是右腋下護甲的接縫。"},
-        {"speaker": "rex",   "text": "（駕飛龍升空）臣下從空中切斷他們的隊形。馬庫斯，左翼。"},
-        {"speaker": "thor",  "text": "（大笑）老子最愛打『精銳』！來啊——讓老子的大斧開開葷！"}
+        {
+          "speaker": null,
+          "text": "王宮兩翼的暗門打開——『黑鷹近衛』衝出，每一名都是聖騎士級的精銳。"
+        },
+        {
+          "speaker": "helga",
+          "text": "（拔長槍）黑鷹近衛——師父當年也訓練過他們。他們的弱點是右腋下護甲的接縫。"
+        },
+        {
+          "speaker": "rex",
+          "text": "（駕飛龍升空）臣下從空中切斷他們的隊形。馬庫斯，左翼。"
+        },
+        {
+          "speaker": "thor",
+          "text": "（大笑）老子最愛打『精銳』！來啊——讓老子的大斧開開葷！"
+        }
       ],
       "enemies": [
-        {"classId": "paladin",  "level": 7,  "x": 2,  "y": 6, "items": ["silverLance"],            "ai": "aggressive", "name": "黑鷹近衛"},
-        {"classId": "paladin",  "level": 7,  "x": 19, "y": 6, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "黑鷹近衛"},
-        {"classId": "darkMage", "level": 12, "x": 10, "y": 5, "items": ["dark"],                   "ai": "aggressive", "name": "黑鷹暗法師"},
-        {"classId": "paladin",  "level": 7,  "x": 3,  "y": 7, "items": ["silverSword","javelin"], "ai": "aggressive", "name": "黑鷹近衛"},
-        {"classId": "paladin",  "level": 7,  "x": 18, "y": 7, "items": ["silverLance"],            "ai": "aggressive", "name": "黑鷹近衛"}
+        {
+          "classId": "paladin",
+          "level": 7,
+          "x": 2,
+          "y": 6,
+          "items": [
+            "silverLance"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹近衛"
+        },
+        {
+          "classId": "paladin",
+          "level": 7,
+          "x": 21,
+          "y": 6,
+          "items": [
+            "silverSword",
+            "javelin"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹近衛"
+        },
+        {
+          "classId": "darkMage",
+          "level": 12,
+          "x": 11,
+          "y": 5,
+          "items": [
+            "dark"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹暗法師"
+        },
+        {
+          "classId": "paladin",
+          "level": 7,
+          "x": 3,
+          "y": 7,
+          "items": [
+            "silverSword",
+            "javelin"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹近衛"
+        },
+        {
+          "classId": "paladin",
+          "level": 7,
+          "x": 20,
+          "y": 7,
+          "items": [
+            "silverLance"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹近衛"
+        }
       ]
     },
     {
       "turn": 4,
       "type": "allyReinforce",
       "text": [
-        {"speaker": null,      "text": "莉娜的箭射穿黑色信號旗的瞬間——王都南門的下水道湧出四支隊伍。她們高舉的旗幟分別是艾爾梅拉、舊王國格倫部、鐵壁、以及一面從未見過的盜賊網黑底白星旗。"},
-        {"speaker": "helga",   "text": "（驚喜）那塔莎傳的信——艾爾梅拉殘部今天清晨抵達王都！"},
-        {"speaker": "marcus",  "text": "（看向左翼）格倫的旗——是臣下三十年前的同袍！他們真的把人手送到了！"},
-        {"speaker": "olivier", "text": "（吹口哨）……右翼那面黑底白星旗，是臣下『回收網』的暗號。三百名兄弟今天全到了王都地下。"},
-        {"speaker": "eirine",  "text": "（看向南門）……朋友們，謝謝你們。這場仗，不再是十一個人的仗了。"}
+        {
+          "speaker": null,
+          "text": "莉娜的箭射穿黑色信號旗的瞬間——王都南門的下水道湧出四支隊伍。她們高舉的旗幟分別是艾爾梅拉、舊王國格倫部、鐵壁、以及一面從未見過的盜賊網黑底白星旗。"
+        },
+        {
+          "speaker": "helga",
+          "text": "（驚喜）那塔莎傳的信——艾爾梅拉殘部今天清晨抵達王都！"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（看向左翼）格倫的旗——是臣下三十年前的同袍！他們真的把人手送到了！"
+        },
+        {
+          "speaker": "olivier",
+          "text": "（吹口哨）……右翼那面黑底白星旗，是臣下『回收網』的暗號。三百名兄弟今天全到了王都地下。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（看向南門）……朋友們，謝謝你們。這場仗，不再是十一個人的仗了。"
+        }
       ],
       "allies": [
-        {"classId": "mercenary", "level": 9, "x": 2,  "y": 17, "items": ["silverSword"],  "name": "艾爾梅拉隊長"},
-        {"classId": "paladin",   "level": 9, "x": 4,  "y": 17, "items": ["silverLance"], "name": "格倫舊部"},
-        {"classId": "knight",    "level": 9, "x": 17, "y": 17, "items": ["silverLance"], "name": "鐵壁守軍"},
-        {"classId": "fighter",   "level": 9, "x": 19, "y": 17, "items": ["steelAxe"],   "name": "回收網密使"}
+        {
+          "classId": "mercenary",
+          "level": 9,
+          "x": 2,
+          "y": 18,
+          "items": [
+            "silverSword"
+          ],
+          "name": "艾爾梅拉隊長"
+        },
+        {
+          "classId": "paladin",
+          "level": 9,
+          "x": 4,
+          "y": 18,
+          "items": [
+            "silverLance"
+          ],
+          "name": "格倫舊部"
+        },
+        {
+          "classId": "knight",
+          "level": 9,
+          "x": 19,
+          "y": 18,
+          "items": [
+            "silverLance"
+          ],
+          "name": "鐵壁守軍"
+        },
+        {
+          "classId": "fighter",
+          "level": 9,
+          "x": 21,
+          "y": 18,
+          "items": [
+            "steelAxe"
+          ],
+          "name": "回收網密使"
+        }
       ]
     },
     {
       "turn": 4,
       "type": "dialogue",
       "text": [
-        {"speaker": "lina",    "text": "（拉弓瞄準塔頂）……公主，王宮塔頂有黑色信號旗。每隔三十秒揮一次——莫爾甘在用這個指揮王宮內所有部隊。"},
-        {"speaker": "fran",    "text": "（眯眼）那旗子上有共鳴符——莫爾甘在透過旗子施法。如果擊落它——王宮所有受魔法控制的近衛會自由片刻。"},
-        {"speaker": "lina",    "text": "（拉弓更滿）……距離有點遠。但我能射。"},
-        {"speaker": "natasha", "text": "（駕天馬升空）臣下把莉娜送上塔！從上往下射——三秒內結束。"},
-        {"speaker": "olivier", "text": "（讚許）那位『森林獵手』姐姐——果然是公主的右手。"},
-        {"speaker": "lina",    "text": "（小聲對艾琳）公主，我母親是阿斯卡王國的人。三十年前莫爾甘也滅了阿斯卡——這一箭，替我母親射。"}
+        {
+          "speaker": "lina",
+          "text": "（拉弓瞄準塔頂）……公主，王宮塔頂有黑色信號旗。每隔三十秒揮一次——莫爾甘在用這個指揮王宮內所有部隊。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（眯眼）那旗子上有共鳴符——莫爾甘在透過旗子施法。如果擊落它——王宮所有受魔法控制的近衛會自由片刻。"
+        },
+        {
+          "speaker": "lina",
+          "text": "（拉弓更滿）……距離有點遠。但我能射。"
+        },
+        {
+          "speaker": "natasha",
+          "text": "（駕天馬升空）臣下把莉娜送上塔！從上往下射——三秒內結束。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "（讚許）那位『森林獵手』姐姐——果然是公主的右手。"
+        },
+        {
+          "speaker": "lina",
+          "text": "（小聲對艾琳）公主，我母親是阿斯卡王國的人。三十年前莫爾甘也滅了阿斯卡——這一箭，替我母親射。"
+        }
       ]
     },
     {
       "turn": 5,
       "type": "dialogue",
       "text": [
-        {"speaker": null,      "text": "王宮深處傳來莫爾甘低沉的吟詠聲——他在召喚『暗黑共鳴』，企圖直接擊穿星印的覺醒之力。"},
-        {"speaker": "morgane", "text": "艾琳。朕對你父王發誓效忠的那一晚——你才三歲。你在他膝上睡著了，朕替他把你抱回搖籃。"},
-        {"speaker": "morgane", "text": "那一夜，朕第一次想到——『朕為什麼要效忠這個人？朕的星印血脈，比他更純。』"},
-        {"speaker": "eirine",  "text": "（震驚）……什麼？你也有星印血脈？"},
-        {"speaker": "morgane", "text": "（冷笑）艾琳，你以為朕為什麼要奪你的星印？星印只回應血脈。朕是先王的庶弟——你的親叔叔。"},
-        {"speaker": "marcus",  "text": "（震驚）……庶弟？！陛下從未對任何人提起——"},
-        {"speaker": "morgane", "text": "因為祖王把朕逐出王室。朕的母親是個樂坊女子——祖王嫌朕『血統不潔』。先王知道，但他沒替朕說過一句話。"},
-        {"speaker": "morgane", "text": "艾琳——朕奪的是朕本來就該有的。"},
-        {"speaker": "eirine",  "text": "（沉默片刻，緊握星印）……莫爾甘叔叔。如果三十年前你跟父王說，他不會拒絕你。"},
-        {"speaker": "eirine",  "text": "但你選擇了篡位、屠城、滅國、把無數家眷當人質。這條路——不是『被祖王逐出』能解釋的。"},
-        {"speaker": "morgane", "text": "（沉默）……或許。但走到這一步，沒有回頭路了。艾琳——進王宮來。叔叔在王座上等你。"}
+        {
+          "speaker": null,
+          "text": "王宮深處傳來莫爾甘低沉的吟詠聲——他在召喚『暗黑共鳴』，企圖直接擊穿星印的覺醒之力。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "艾琳。朕對你父王發誓效忠的那一晚——你才三歲。你在他膝上睡著了，朕替他把你抱回搖籃。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "那一夜，朕第一次想到——『朕為什麼要效忠這個人？朕的星印血脈，比他更純。』"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（震驚）……什麼？你也有星印血脈？"
+        },
+        {
+          "speaker": "morgane",
+          "text": "（冷笑）艾琳，你以為朕為什麼要奪你的星印？星印只回應血脈。朕是先王的庶弟——你的親叔叔。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（震驚）……庶弟？！陛下從未對任何人提起——"
+        },
+        {
+          "speaker": "morgane",
+          "text": "因為祖王把朕逐出王室。朕的母親是個樂坊女子——祖王嫌朕『血統不潔』。先王知道，但他沒替朕說過一句話。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "艾琳——朕奪的是朕本來就該有的。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（沉默片刻，緊握星印）……莫爾甘叔叔。如果三十年前你跟父王說，他不會拒絕你。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "但你選擇了篡位、屠城、滅國、把無數家眷當人質。這條路——不是『被祖王逐出』能解釋的。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "（沉默）……或許。但走到這一步，沒有回頭路了。艾琳——進王宮來。叔叔在王座上等你。"
+        }
       ]
     },
     {
       "turn": 6,
       "type": "reinforce",
       "text": [
-        {"speaker": null,     "text": "王宮兩翼的塔頂同時放下吊橋——更多『黑鷹近衛』與帝國將軍衝下來。"},
-        {"speaker": "cain",   "text": "（拔劍）這是莫爾甘的最後一道防線。突破這裡——就是王座。"},
-        {"speaker": "marcus", "text": "（深吸一口氣）殿下，剩下的路——讓老臣為您開。"},
-        {"speaker": "helga",  "text": "（並肩馬庫斯）馬庫斯將軍，今日讓臣下與您並肩。鐵壁與舊王國的長槍——同在公主前方。"}
+        {
+          "speaker": null,
+          "text": "王宮兩翼的塔頂同時放下吊橋——更多『黑鷹近衛』與帝國將軍衝下來。"
+        },
+        {
+          "speaker": "cain",
+          "text": "（拔劍）這是莫爾甘的最後一道防線。突破這裡——就是王座。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（深吸一口氣）殿下，剩下的路——讓老臣為您開。"
+        },
+        {
+          "speaker": "helga",
+          "text": "（並肩馬庫斯）馬庫斯將軍，今日讓臣下與您並肩。鐵壁與舊王國的長槍——同在公主前方。"
+        }
       ],
       "enemies": [
-        {"classId": "general",  "level": 10, "x": 2,  "y": 8,  "items": ["silverLance","steelAxe"], "ai": "aggressive", "name": "黑鷹將軍"},
-        {"classId": "general",  "level": 10, "x": 19, "y": 8,  "items": ["silverLance","handAxe"],  "ai": "aggressive", "name": "黑鷹將軍"},
-        {"classId": "sage",     "level": 7,  "x": 10, "y": 7,  "items": ["elthunder"],              "ai": "aggressive", "name": "黑鷹賢者"},
-        {"classId": "swordmaster","level": 6,"x": 5,  "y": 7,  "items": ["silverSword"],            "ai": "aggressive", "name": "黑鷹劍聖"},
-        {"classId": "swordmaster","level": 6,"x": 15, "y": 7,  "items": ["silverSword"],            "ai": "aggressive", "name": "黑鷹劍聖"},
-        {"classId": "darkMage", "level": 13, "x": 10, "y": 6,  "items": ["fenrir"],                 "ai": "aggressive", "name": "深淵祭司"}
+        {
+          "classId": "general",
+          "level": 10,
+          "x": 2,
+          "y": 8,
+          "items": [
+            "silverLance",
+            "steelAxe"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹將軍"
+        },
+        {
+          "classId": "general",
+          "level": 10,
+          "x": 21,
+          "y": 8,
+          "items": [
+            "silverLance",
+            "handAxe"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹將軍"
+        },
+        {
+          "classId": "sage",
+          "level": 7,
+          "x": 11,
+          "y": 7,
+          "items": [
+            "elthunder"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹賢者"
+        },
+        {
+          "classId": "swordmaster",
+          "level": 6,
+          "x": 5,
+          "y": 7,
+          "items": [
+            "silverSword"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹劍聖"
+        },
+        {
+          "classId": "swordmaster",
+          "level": 6,
+          "x": 18,
+          "y": 7,
+          "items": [
+            "silverSword"
+          ],
+          "ai": "aggressive",
+          "name": "黑鷹劍聖"
+        },
+        {
+          "classId": "darkMage",
+          "level": 13,
+          "x": 11,
+          "y": 6,
+          "items": [
+            "fenrir"
+          ],
+          "ai": "aggressive",
+          "name": "深淵祭司"
+        }
       ]
     },
     {
       "turn": 7,
       "type": "starCrestSurge",
       "text": [
-        {"speaker": null,      "text": "艾琳的眼瞳爆射翠光——星印懸浮在她掌心之上，釋放出一道環繞整支隊伍的光環。"},
-        {"speaker": "eirine",  "text": "（光環擴散）……這力量是父王留給我的。今天我把它分給夥伴們。"},
-        {"speaker": null,      "text": "全隊的傷勢瞬間癒合。莫爾甘從王宮深處發出的暗黑共鳴——被翠光的環抵銷。"},
-        {"speaker": "fran",    "text": "（震驚）公主——星印的覺醒之力把暗黑共鳴壓住了！下一輪他們的暗法師——全都施不了法！"},
-        {"speaker": "marcus",  "text": "（仰望光環）……陛下，您看到了嗎。殿下的星印——真的醒了。"},
-        {"speaker": "eirine",  "text": "（轉向同伴）夥伴們——莫爾甘的最後一道防線就在前方。借這道光——我們一起走完最後一段路。"}
+        {
+          "speaker": null,
+          "text": "艾琳的眼瞳爆射翠光——星印懸浮在她掌心之上，釋放出一道環繞整支隊伍的光環。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（光環擴散）……這力量是父王留給我的。今天我把它分給夥伴們。"
+        },
+        {
+          "speaker": null,
+          "text": "全隊的傷勢瞬間癒合。莫爾甘從王宮深處發出的暗黑共鳴——被翠光的環抵銷。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（震驚）公主——星印的覺醒之力把暗黑共鳴壓住了！下一輪他們的暗法師——全都施不了法！"
+        },
+        {
+          "speaker": "marcus",
+          "text": "（仰望光環）……陛下，您看到了嗎。殿下的星印——真的醒了。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（轉向同伴）夥伴們——莫爾甘的最後一道防線就在前方。借這道光——我們一起走完最後一段路。"
+        }
       ]
     },
     {
       "turn": 7,
       "type": "dialogue",
       "text": [
-        {"speaker": "serra",   "text": "（合掌念禱）……願這座王宮所有亡魂得到安息。先王陛下、奧黛麗阿姨、安娜——願您們今夜聽見公主的腳步聲。"},
-        {"speaker": "olivier", "text": "（少見地正色）……公主，臣下說真的——這片大陸下次再有『莫爾甘』那種人，臣下還會找您。"},
-        {"speaker": "eirine",  "text": "（含淚微笑）奧利維爾，不會有下一個莫爾甘的。從今天起——這片大陸不再養野心。"},
-        {"speaker": "thor",    "text": "（用大斧敲地）公主，最後一段路——老子打頭陣。莫爾甘要過老子的大斧才能碰你一根頭髮。"},
-        {"speaker": "fran",    "text": "（按住魔導書）本天才在後方。星印的覺醒之力——配本天才偷來的雷魔法構造圖——這一發，全給莫爾甘。"}
+        {
+          "speaker": "serra",
+          "text": "（合掌念禱）……願這座王宮所有亡魂得到安息。先王陛下、奧黛麗阿姨、安娜——願您們今夜聽見公主的腳步聲。"
+        },
+        {
+          "speaker": "olivier",
+          "text": "（少見地正色）……公主，臣下說真的——這片大陸下次再有『莫爾甘』那種人，臣下還會找您。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（含淚微笑）奧利維爾，不會有下一個莫爾甘的。從今天起——這片大陸不再養野心。"
+        },
+        {
+          "speaker": "thor",
+          "text": "（用大斧敲地）公主，最後一段路——老子打頭陣。莫爾甘要過老子的大斧才能碰你一根頭髮。"
+        },
+        {
+          "speaker": "fran",
+          "text": "（按住魔導書）本天才在後方。星印的覺醒之力——配本天才偷來的雷魔法構造圖——這一發，全給莫爾甘。"
+        }
       ]
     },
     {
       "turn": 8,
       "type": "dialogue",
       "text": [
-        {"speaker": null,      "text": "王座大廳的大門被馬庫斯的長槍頂開——莫爾甘端坐在王座上，手中握著一枚漆黑的星印偽造品。"},
-        {"speaker": "morgane", "text": "艾琳。三十年了。你父王坐在這個位子的時候——朕站在他左邊。今天你來了——叔叔親自從王座上下來迎你。"},
-        {"speaker": "eirine",  "text": "（拔出星印）莫爾甘——這枚是真的。你手上那枚——是假的。"},
-        {"speaker": "morgane", "text": "（笑）朕知道。朕只是想看看——你會不會在最後一刻心軟。畢竟，朕是你親叔叔。"},
-        {"speaker": "eirine",  "text": "（眼中翠光閃爍）……叔叔。父王在我心裡。他現在問我一句話：『艾琳，你會原諒莫爾甘嗎？』"},
-        {"speaker": "eirine",  "text": "我的答案是——不會。但我會親手送你回到父王身邊。讓你們兄弟在另一邊把話說完。"},
-        {"speaker": "morgane", "text": "（站起，黑霧環繞）……好。叔叔奉陪。讓朕看看——先王留給你的星印，到底有沒有用。"}
+        {
+          "speaker": null,
+          "text": "王座大廳的大門被馬庫斯的長槍頂開——莫爾甘端坐在王座上，手中握著一枚漆黑的星印偽造品。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "艾琳。三十年了。你父王坐在這個位子的時候——朕站在他左邊。今天你來了——叔叔親自從王座上下來迎你。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（拔出星印）莫爾甘——這枚是真的。你手上那枚——是假的。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "（笑）朕知道。朕只是想看看——你會不會在最後一刻心軟。畢竟，朕是你親叔叔。"
+        },
+        {
+          "speaker": "eirine",
+          "text": "（眼中翠光閃爍）……叔叔。父王在我心裡。他現在問我一句話：『艾琳，你會原諒莫爾甘嗎？』"
+        },
+        {
+          "speaker": "eirine",
+          "text": "我的答案是——不會。但我會親手送你回到父王身邊。讓你們兄弟在另一邊把話說完。"
+        },
+        {
+          "speaker": "morgane",
+          "text": "（站起，黑霧環繞）……好。叔叔奉陪。讓朕看看——先王留給你的星印，到底有沒有用。"
+        }
       ]
     }
   ],
