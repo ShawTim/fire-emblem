@@ -5,20 +5,20 @@
   "objective": "seize",
   "objectiveDesc": "艾琳到達暗門出口",
   "seizePos": {
-    "x": 9,
-    "y": 10
+    "x": 10,
+    "y": 12
   },
-  "width": 18,
-  "height": 11,
+  "width": 20,
+  "height": 13,
   "playerUnits": [
     {
       "charId": "eirine",
-      "x": 0,
+      "x": 1,
       "y": 1
     },
     {
       "charId": "marcus",
-      "x": 1,
+      "x": 2,
       "y": 1
     }
   ],
@@ -26,7 +26,7 @@
     {
       "classId": "soldier",
       "level": 1,
-      "x": 6,
+      "x": 5,
       "y": 2,
       "items": [
         "slimLance"
@@ -37,8 +37,8 @@
     {
       "classId": "soldier",
       "level": 1,
-      "x": 5,
-      "y": 1,
+      "x": 7,
+      "y": 2,
       "items": [
         "slimLance"
       ],
@@ -48,7 +48,7 @@
     {
       "classId": "soldier",
       "level": 2,
-      "x": 15,
+      "x": 16,
       "y": 3,
       "items": [
         "slimLance"
@@ -59,7 +59,7 @@
     {
       "classId": "soldier",
       "level": 2,
-      "x": 13,
+      "x": 15,
       "y": 6,
       "items": [
         "slimLance"
@@ -70,7 +70,7 @@
     {
       "classId": "soldier",
       "level": 3,
-      "x": 8,
+      "x": 9,
       "y": 6,
       "items": [
         "ironLance"
@@ -81,7 +81,7 @@
     {
       "classId": "soldier",
       "level": 3,
-      "x": 3,
+      "x": 4,
       "y": 8,
       "items": [
         "ironLance"
@@ -92,7 +92,7 @@
     {
       "classId": "archer",
       "level": 3,
-      "x": 9,
+      "x": 11,
       "y": 8,
       "items": [
         "ironBow"
@@ -103,8 +103,8 @@
     {
       "classId": "soldier",
       "level": 3,
-      "x": 13,
-      "y": 8,
+      "x": 15,
+      "y": 9,
       "items": [
         "ironLance"
       ],
@@ -114,8 +114,8 @@
     {
       "classId": "knight",
       "level": 3,
-      "x": 8,
-      "y": 10,
+      "x": 9,
+      "y": 11,
       "items": [
         "ironLance"
       ],
@@ -125,8 +125,8 @@
     {
       "classId": "knight",
       "level": 3,
-      "x": 9,
-      "y": 10,
+      "x": 10,
+      "y": 12,
       "items": [
         "ironLance"
       ],
@@ -202,7 +202,7 @@
     "death": "莫爾甘大人……您答應的事……一定要做到啊……"
   },
   "terrainRandomize": {
-    "plainToForest": 0.0,
+    "plainToForest": 0,
     "plainToHill": 0.03,
     "safeRadius": 1
   }
