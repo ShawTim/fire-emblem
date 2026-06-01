@@ -6,8 +6,9 @@ const SHOT = '/tmp/battle_bgs';
 if (!fs.existsSync(SHOT)) fs.mkdirSync(SHOT, { recursive: true });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-const TERRAINS = ['plain', 'forest', 'hill', 'mountain', 'river', 'desert',
-  'fort', 'village', 'wall', 'gate', 'floor', 'throne', 'ruins', 'swamp'];
+const TERRAINS = ['plain', 'hill', 'forest', 'mountain', 'river', 'sea', 'desert',
+  'fort', 'wall', 'gate', 'village', 'floor', 'pillar', 'throne', 'ruins', 'swamp',
+  'cliff', 'road', 'basin', 'pass', 'bridge', 'stairs', 'brazier'];
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
