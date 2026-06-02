@@ -43,6 +43,7 @@ class BattleScene {
     this.critZoom = 0;
     this.atkSwing = 0;
     this.defSwing = 0;
+    this.projProg = -1;
   }
 
   start(attacker, defender, combatResult, forecast, onComplete) {
@@ -196,15 +197,21 @@ class BattleScene {
            : (t < 0.5) ? (-1 + 2 * this._ei((t - 0.3) / 0.2))
            : (t < 0.75) ? (1 - this._eo((t - 0.5) / 0.25)) : 0;
     if (a) { this.atkSwing = sw; this.defSwing = 0; } else { this.defSwing = sw; this.atkSwing = 0; }
-    if (t<0.3) { var d=t/0.3; if(a) this.attackerAnimOffset=this._eo(d)*50; else this.defenderAnimOffset=-this._eo(d)*50; }
+    var aw = (a ? this.attacker : this.defender).getEquippedWeapon();
+    var ranged = aw && (aw.type === 'bow' || ['fire','thunder','wind','dark','light'].includes(aw.type));
+    this.strikeActorIsA = a; this.projType = aw ? aw.type : '';
+    var L = ranged ? 14 : 50;          // ranged barely steps; melee lunges in
+    var K = (s.crit ? 30 : 20);        // knockback on the struck unit
+    if (t<0.3) { var d=this._eo(t/0.3); if(a) this.attackerAnimOffset=d*L; else this.defenderAnimOffset=-d*L; }
     else if (t<0.5) {
-      if(a) this.attackerAnimOffset=50; else this.defenderAnimOffset=-50;
+      if(a) this.attackerAnimOffset=L; else this.defenderAnimOffset=-L;
       if(!this.hitTriggered){this.hitTriggered=true;this._hit(s,a);}
     } else if (t<0.75) {
       var r=(t-0.5)/0.25;
-      if(a) this.attackerAnimOffset=50*(1-this._ei(r)); else this.defenderAnimOffset=-50*(1-this._ei(r));
-      if(s.hit){var k=(t-0.5)/0.25; if(a) this.defenderAnimOffset=15*Math.sin(k*Math.PI); else this.attackerAnimOffset=-15*Math.sin(k*Math.PI);}
+      if(a) this.attackerAnimOffset=L*(1-this._ei(r)); else this.defenderAnimOffset=-L*(1-this._ei(r));
+      if(s.hit){var kk=Math.sin(r*Math.PI); if(a) this.defenderAnimOffset=K*kk; else this.attackerAnimOffset=-K*kk;}
     } else { this.attackerAnimOffset=0; this.defenderAnimOffset=0; }
+    this.projProg = (ranged && t>=0.22 && t<0.46) ? (t-0.22)/0.24 : -1;
   }
 
   _hit(s, a) {
@@ -212,6 +219,7 @@ class BattleScene {
     if(!s.hit){this.effects.push({type:'miss',x:tx,y:ty,text:'MISS',color:'#999',duration:800,timer:0});if(typeof SFX!=='undefined')SFX.miss();return;}
     var aw=(a?this.attacker:this.defender).getEquippedWeapon();
     if(aw && (aw.type==='sword'||aw.type==='axe'||aw.type==='lance')) this.effects.push({type:'slash',x:tx,y:330,dir:a?1:-1,color:s.crit?'#ffe680':'#ffffff',duration:240,timer:0});
+    this.effects.push({type:'sparks',x:tx,y:330,color:s.crit?'#ffe066':'#ffd0a0',n:s.crit?16:9,duration:s.crit?720:460,timer:0});
     if(s.crit){
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffff00',duration:250,timer:0});
       this.effects.push({type:'flash',x:0,y:0,text:'',color:'#ffffff',duration:100,timer:0});
@@ -257,6 +265,22 @@ class BattleScene {
     if(!this.defenderDead||this.deathAlpha>0){
       ctx.save(); if(this.defenderDead){ctx.globalAlpha=this.deathAlpha;ctx.translate(0,this.deathFall);}
       this._drawUnit(ctx,this.defender,dx-sz/2,gy-sz+(defS?0:bobD),sz,'left',defS,this.defenderFlash,defS?this.defSwing:0); ctx.restore();
+    }
+    if((atkS||defS) && this.projProg>=0){
+      var srcX=this.strikeActorIsA?ax:dx, tgtX=this.strikeActorIsA?dx:ax;
+      var pjx=srcX+(tgtX-srcX)*this.projProg, pjy=gy-sz*0.5-Math.sin(this.projProg*Math.PI)*8, pdir=this.strikeActorIsA?1:-1;
+      if(this.projType==='bow'){
+        ctx.save();ctx.translate(pjx,pjy);ctx.scale(pdir,1);
+        ctx.fillStyle='#caa';ctx.fillRect(-12,-1.5,16,3);
+        ctx.fillStyle='#eee';ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(2,-3.5);ctx.lineTo(2,3.5);ctx.fill();
+        ctx.fillStyle='#a55';ctx.fillRect(-12,-3,3,6);
+        ctx.restore();
+      } else {
+        var mc={fire:'#ff7a3a',thunder:'#7ab8ff',wind:'#8ff0a0',dark:'#b070ff',light:'#ffe680'}[this.projType]||'#ff7a3a';
+        ctx.globalAlpha=0.4;ctx.fillStyle=mc;ctx.beginPath();ctx.arc(pjx-pdir*12,pjy,5,0,7);ctx.fill();ctx.globalAlpha=1;
+        ctx.fillStyle=mc;ctx.beginPath();ctx.arc(pjx,pjy,7,0,7);ctx.fill();
+        ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(pjx-pdir*2,pjy-1,2.5,0,7);ctx.fill();
+      }
     }
     if(this.panelAlpha>0){
       ctx.globalAlpha=this.panelAlpha;
@@ -826,6 +850,14 @@ class BattleScene {
         ctx.lineWidth=6*(1-pr)+1; ctx.beginPath(); ctx.arc(0,0,30+pr*16,(-1.0)*e.dir,(1.0)*e.dir,e.dir<0); ctx.stroke();
         ctx.globalAlpha=alpha; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,30+pr*16,(-0.7)*e.dir,(0.7)*e.dir,e.dir<0); ctx.stroke();
         ctx.restore();
+      } else if(e.type==='sparks'){
+        var pr=e.timer/e.duration;
+        for(var i=0;i<e.n;i++){
+          var ang=(i/e.n)*6.283+i, dd=pr*(38+(i%4)*14);
+          var sx=e.x+Math.cos(ang)*dd, sy=e.y+Math.sin(ang)*dd+pr*pr*34;
+          ctx.globalAlpha=alpha*(1-pr); ctx.fillStyle=e.color;
+          var rr=Math.max(1,3.5*(1-pr)); ctx.fillRect(sx-rr/2,sy-rr/2,rr,rr);
+        }
       }
     }
     ctx.globalAlpha=1;

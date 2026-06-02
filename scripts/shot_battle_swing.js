@@ -57,11 +57,39 @@ const FRAMES = [
       b.phase = fr.phase; b.phaseDuration = 1100; b.stepIndex = fr.step;
       b.timer = fr.t * b.phaseDuration;
       b._upStrike(fr.t);
-      b.effects = b.effects.filter(e => e.type !== 'flash'); // keep slash/damage, drop full-screen flash for the still
+      b.effects = b.effects.filter(e => e.type !== 'flash'); // keep slash/sparks/damage, drop full-screen flash for the still
+      b.effects.forEach(e => { if (e.type === 'sparks') e.timer = e.duration * 0.42; if (e.type === 'slash') e.timer = e.duration * 0.3; });
     }, f);
     await sleep(160);
     await page.screenshot({ path: `${SHOT}/swing_${f.label}.png`, clip: { x: 55, y: 150, width: 800, height: 310 } });
     console.log('saved swing_' + f.label + '.png');
+  }
+
+  // ---- ranged pass: a bow user fires a projectile instead of lunging ----
+  await page.evaluate(() => {
+    const atk = game.units.find(u => u.faction === 'player' && (u.getEquippedWeapon() || {}).type === 'bow') || game.units.find(u => u.name === '莉娜');
+    const tgt = game.units.find(u => u.faction === 'enemy' && u.hp > 0);
+    atk.x = tgt.x; atk.y = tgt.y - 1; game.startCombat(atk, tgt);
+  });
+  await page.waitForFunction(() => game.battleScene && game.battleScene.isActive(), { timeout: 8000 });
+  await page.evaluate(() => {
+    const b = game.battleScene;
+    b.update = function () {}; b.fadeAlpha = 0; b.vsAlpha = 0; b.panelAlpha = 1;
+    b.attackerSlide = 0; b.defenderSlide = 0; b.deathAlpha = 1; b.attackerDead = false; b.defenderDead = false;
+    b.combatSteps = [{ actor: b.attacker, target: b.defender, hit: true, crit: false, damage: 7, killed: false }];
+  });
+  for (const rf of [{ label: 'r1_flight', t: 0.34 }, { label: 'r2_connect', t: 0.46 }]) {
+    await page.evaluate((fr) => {
+      const b = game.battleScene;
+      b.effects = []; b.hitTriggered = false; b.hitDisplayShown = true; b.attackerFlash = 0; b.defenderFlash = 0;
+      b.phase = 'atk1'; b.phaseDuration = 1100; b.stepIndex = 1; b.timer = fr.t * b.phaseDuration;
+      b._upStrike(fr.t);
+      b.effects = b.effects.filter(e => e.type !== 'flash');
+      b.effects.forEach(e => { if (e.type === 'sparks') e.timer = e.duration * 0.42; });
+    }, rf);
+    await sleep(160);
+    await page.screenshot({ path: `${SHOT}/swing_${rf.label}.png`, clip: { x: 55, y: 150, width: 800, height: 310 } });
+    console.log('saved swing_' + rf.label + '.png');
   }
   await browser.close();
 })();
