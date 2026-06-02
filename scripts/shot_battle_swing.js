@@ -11,6 +11,8 @@ const FRAMES = [
   { label: '3_connect', phase: 'atk1', step: 1, t: 0.43 },
   { label: '4_follow', phase: 'atk1', step: 1, t: 0.62 },
   { label: '5_def_connect', phase: 'def1', step: 2, t: 0.43 },
+  { label: '6_crit', phase: 'atk1', step: 1, t: 0.42, crit: true },
+  { label: '7_miss_dodge', phase: 'atk1', step: 1, t: 0.46, hit: false },
 ];
 
 (async () => {
@@ -55,10 +57,11 @@ const FRAMES = [
       b.effects = []; b.hitTriggered = false; b.hitDisplayShown = true;
       b.attackerFlash = 0; b.defenderFlash = 0;
       b.phase = fr.phase; b.phaseDuration = 1100; b.stepIndex = fr.step;
+      var st = b.combatSteps[fr.step - 1]; st.crit = !!fr.crit; st.hit = (fr.hit !== false);
       b.timer = fr.t * b.phaseDuration;
       b._upStrike(fr.t);
-      b.effects = b.effects.filter(e => e.type !== 'flash'); // keep slash/sparks/damage, drop full-screen flash for the still
-      b.effects.forEach(e => { if (e.type === 'sparks') e.timer = e.duration * 0.42; if (e.type === 'slash') e.timer = e.duration * 0.3; });
+      b.effects = b.effects.filter(e => e.type !== 'flash'); // keep slash/sparks/ring/damage, drop full-screen flash for the still
+      b.effects.forEach(e => { if (e.type === 'sparks') e.timer = e.duration * 0.42; if (e.type === 'slash') e.timer = e.duration * 0.3; if (e.type === 'ring') e.timer = e.duration * 0.45; });
     }, f);
     await sleep(160);
     await page.screenshot({ path: `${SHOT}/swing_${f.label}.png`, clip: { x: 55, y: 150, width: 800, height: 310 } });
@@ -91,5 +94,15 @@ const FRAMES = [
     await page.screenshot({ path: `${SHOT}/swing_${rf.label}.png`, clip: { x: 55, y: 150, width: 800, height: 310 } });
     console.log('saved swing_' + rf.label + '.png');
   }
+
+  // HP-bar damage trail: the lighter chunk shows recently-lost HP draining down
+  await page.evaluate(() => {
+    const b = game.battleScene;
+    b.phase = 'ready'; b.panelAlpha = 1; b.fadeAlpha = 0; b.attackerSlide = 0; b.defenderSlide = 0; b.projProg = -1;
+    b.defenderTargetHP = Math.max(0, b.defenderMaxHP - 11); b.defenderHP = b.defenderTargetHP + 7;
+  });
+  await sleep(160);
+  await page.screenshot({ path: `${SHOT}/swing_8_hptrail.png` });
+  console.log('saved swing_8_hptrail.png');
   await browser.close();
 })();
