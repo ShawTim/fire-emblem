@@ -281,36 +281,62 @@ const UI = {
       ['HP', 'hp', unit.maxHp], ['力量', 'str', unit.str], ['魔力', 'mag', unit.mag], ['技巧', 'skl', unit.skl],
       ['速度', 'spd', unit.spd], ['幸運', 'lck', unit.lck], ['防禦', 'def', unit.def], ['魔防', 'res', unit.res]
     ];
-    const growths = unit.growths || {};
     let html = `<div class="lvup-title">🎉 Level Up! → Lv.${unit.level}</div>`;
     let totalGains = 0;
     for (const [label, key, val] of stats) {
       const inc = gains[key] || 0;
       totalGains += inc;
-      const cls = inc > 0 ? 'increased' : 'same';
-      const incText = inc > 1 ? '<span style="color:#ffd700;font-weight:bold">+' + inc + '</span>'
-                    : inc === 1 ? '<span style="color:#4f4;font-weight:bold">+1</span>'
-                    : '<span style="color:#444">—</span>';
-      html += `<div class="lvup-stat ${cls}" style="display:flex;justify-content:space-between;padding:1px 0">
+      // value starts at the OLD value and counts up; the +N badge pops in on reveal
+      const badge = inc > 0
+        ? `<span class="lvbadge" style="width:54px;text-align:center;font-weight:bold;color:${inc > 1 ? '#ffd700' : '#4f4'};opacity:0;transform:scale(0.4);display:inline-block;transition:opacity .25s,transform .25s">▲+${inc}</span>`
+        : `<span style="width:54px;text-align:center;color:#444">—</span>`;
+      html += `<div class="lvup-stat ${inc > 0 ? 'increased' : 'same'}" data-inc="${inc}" data-new="${val}" style="display:flex;justify-content:space-between;padding:1px 4px;border-radius:4px;transition:background .35s">
         <span>${label}</span>
-        <span style="flex:1;text-align:right;margin-right:8px">${val}</span>
-        <span style="width:40px;text-align:center">${incText}</span>
+        <span class="lvval" style="flex:1;text-align:right;margin-right:8px">${val - inc}</span>
+        ${badge}
       </div>`;
     }
-    // Rating
-    let rating = '';
-    if (totalGains >= 6) rating = '<div style="color:#ffd700;margin-top:6px;font-size:14px">★ 大豐收！</div>';
-    else if (totalGains >= 4) rating = '<div style="color:#4f4;margin-top:6px;font-size:12px">不錯的成長</div>';
-    else if (totalGains <= 1) rating = '<div style="color:#c44;margin-top:6px;font-size:12px">……</div>';
-    html += rating;
+    html += `<div class="lvup-rating" style="margin-top:6px;font-size:13px;min-height:18px;opacity:0;transition:opacity .4s"></div>`;
     this.levelUpScreen.innerHTML = html;
     this.levelUpScreen.classList.remove('hidden');
     if (typeof SFX !== 'undefined') SFX.levelUp();
-    // Click or tap to dismiss, or auto-dismiss after 4s
+
+    const timers = [];
+    // sequentially reveal each gained stat: count the value up + pop the ▲+N badge + flash the row
+    const rows = Array.from(this.levelUpScreen.querySelectorAll('.lvup-stat'));
+    let delay = 450;
+    rows.forEach(row => {
+      const inc = +row.dataset.inc;
+      if (inc <= 0) return;
+      timers.push(setTimeout(() => {
+        const valEl = row.querySelector('.lvval');
+        const target = +row.dataset.new;
+        let cur = target - inc;
+        const cnt = setInterval(() => { cur++; valEl.textContent = cur; if (cur >= target) clearInterval(cnt); }, 95);
+        timers.push(cnt);
+        const badge = row.querySelector('.lvbadge');
+        if (badge) { badge.style.opacity = '1'; badge.style.transform = 'scale(1.2)'; timers.push(setTimeout(() => { badge.style.transform = 'scale(1)'; }, 230)); }
+        row.style.background = 'rgba(255,215,0,0.22)';
+        timers.push(setTimeout(() => { row.style.background = 'transparent'; }, 480));
+      }, delay));
+      delay += 320;
+    });
+    // rating fades in after the gains finish
+    let rating = '';
+    if (totalGains >= 6) rating = '<span style="color:#ffd700">★ 大豐收！</span>';
+    else if (totalGains >= 4) rating = '<span style="color:#4f4">不錯的成長</span>';
+    else if (totalGains <= 1) rating = '<span style="color:#c44">……</span>';
+    timers.push(setTimeout(() => {
+      const r = this.levelUpScreen.querySelector('.lvup-rating');
+      if (r) { r.innerHTML = rating; r.style.opacity = '1'; }
+    }, delay + 150));
+
+    // Click or tap to dismiss (skips straight to done), or auto-dismiss once the reveal finishes
     let dismissed = false;
     const dismiss = () => {
       if (dismissed) return;
       dismissed = true;
+      timers.forEach(t => { clearTimeout(t); clearInterval(t); });
       this.levelUpScreen.classList.add('hidden');
       this.levelUpScreen.removeEventListener('click', dismiss);
       document.removeEventListener('keydown', dismiss);
@@ -319,7 +345,7 @@ const UI = {
     this.levelUpScreen.style.cursor = 'pointer';
     this.levelUpScreen.addEventListener('click', dismiss);
     document.addEventListener('keydown', dismiss);
-    setTimeout(dismiss, 4000);
+    timers.push(setTimeout(dismiss, Math.max(4000, delay + 1600)));
   },
 
   updateTopBar(chapterTitle, turn, phase, objective) {
