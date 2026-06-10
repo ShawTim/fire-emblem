@@ -208,7 +208,8 @@ class BattleScene {
     if (t<0.3) { var d=this._eo(t/0.3); if(a) this.attackerAnimOffset=d*L; else this.defenderAnimOffset=-d*L; }
     else if (t<0.5) {
       if(a) this.attackerAnimOffset=L; else this.defenderAnimOffset=-L;
-      if(!this.hitTriggered){this.hitTriggered=true;this._hit(s,a);}
+      // ranged impact lands with the projectile (t≈0.46), melee on contact (t≈0.3)
+      if(!this.hitTriggered && (!ranged || t>=0.45)){this.hitTriggered=true;this._hit(s,a);}
     } else if (t<0.75) {
       var r=(t-0.5)/0.25;
       if(a) this.attackerAnimOffset=L*(1-this._ei(r)); else this.defenderAnimOffset=-L*(1-this._ei(r));
@@ -330,7 +331,7 @@ class BattleScene {
   }
 
   _drawTerrainLabel(ctx, ter, x, y) {
-    var names={plain:'平原',forest:'森林',mountain:'山地',wall:'城牆',gate:'城門',river:'河川',village:'村莊',throne:'王座',pillar:'柱子',fort:'砦',floor:'石板',hill:'山丘',ruins:'廢墟',brazier:'火炬台',stairs:'樓梯',road:'道路',bridge:'橋樑',desert:'沙漠'};
+    var names={plain:'平原',forest:'森林',mountain:'山地',wall:'城牆',gate:'城門',river:'河川',village:'村莊',throne:'王座',pillar:'柱子',fort:'砦',floor:'石板',hill:'山丘',ruins:'廢墟',brazier:'火炬台',stairs:'樓梯',road:'道路',bridge:'橋樑',desert:'沙漠',sea:'海',swamp:'沼澤',cliff:'懸崖',pass:'山道',basin:'窪地'};
     var name=names[ter]||ter;
     ctx.save();
     ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(x,y,100,20);
