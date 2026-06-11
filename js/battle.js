@@ -700,6 +700,7 @@ class BattleScene {
     var fl=facing==='left'?-1:1, sc=size/16;
     ctx.save(); ctx.translate(x+size/2,y+size); ctx.scale(fl,1);
     ctx.fillStyle='rgba(0,0,0,0.22)';ctx.beginPath();ctx.ellipse(0,1*sc,6.5*sc,2*sc,0,0,7);ctx.fill();
+    if(!this._drawFigure(ctx,unit,sc,striking,c,hr,ey,sk)){
     var cls=getClassData(unit.classId), tags=cls.tags||[];
     if(tags.includes('mounted')||tags.includes('flying')){
       var fly=tags.includes('flying');
@@ -733,10 +734,267 @@ class BattleScene {
     ctx.fillStyle='#111';ctx.fillRect(-0.5*sc,-13.6*sc,0.5*sc,0.6*sc);ctx.fillRect(1.5*sc,-13.6*sc,0.5*sc,0.6*sc);
     ctx.fillStyle='#da9';ctx.fillRect(0.5*sc,-13*sc,0.8*sc,1*sc);
     ctx.fillStyle='#c88';ctx.fillRect(-0.5*sc,-11.5*sc,2*sc,0.5*sc);
+    }
     if(unit.isBoss){ctx.fillStyle='#ffd700';ctx.fillRect(-2.5*sc,-17.5*sc,5*sc,1.5*sc);
       ctx.fillRect(-2.5*sc,-18.5*sc,1*sc,1*sc);ctx.fillRect(-0.5*sc,-19*sc,1*sc,1.5*sc);ctx.fillRect(1.5*sc,-18.5*sc,1*sc,1*sc);}
     this._drawWpn(ctx,unit,sc,striking,swing);
     ctx.restore();
+  }
+
+  _shade(col, f) {
+    var c = col.replace('#', '');
+    if (c.length === 3) c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2];
+    var n = parseInt(c, 16);
+    var m = function (v) { return Math.max(0, Math.min(255, Math.round(v * f))); };
+    return 'rgb(' + m((n >> 16) & 255) + ',' + m((n >> 8) & 255) + ',' + m(n & 255) + ')';
+  }
+
+  // New-style figure painter (per-class silhouettes with shading + outline).
+  // Returns false for unknown classes (legacy block painter as fallback).
+  _drawFigure(ctx, unit, sc, striking, c, hr, ey, sk) {
+    var cls = unit.classId || 'soldier';
+    var ARCH = {
+      knight: 'armored', general: 'armored', greatKnight: 'armored',
+      mercenary: 'merc', swordmaster: 'merc', hero: 'merc',
+      thief: 'rogue', assassin: 'rogue',
+      lord: 'lord', masterLord: 'lord',
+      soldier: 'soldier', cavalier: 'soldier', paladin: 'soldier',
+      wyvernRider: 'soldier', wyvernLord: 'soldier', pegasusKnight: 'soldier', falconKnight: 'soldier',
+      fighter: 'axe', warrior: 'axe', brigand: 'axe',
+      archer: 'bow', sniper: 'bow', ranger: 'bow',
+      mage: 'mage', sage: 'mage', mageKnight: 'mage', bishop: 'bishop',
+      darkMage: 'dark', cleric: 'cleric', valkyrie: 'cleric',
+      skeleton: 'bone'
+    };
+    var arche = ARCH[cls];
+    if (!arche) return false;
+    var cd = getClassData(cls) || {}; var tags = cd.tags || [];
+    var mounted = tags.includes('mounted') || tags.includes('flying');
+    var S = this._shade.bind(this);
+    var F = function (x, y, w, h, col) { ctx.fillStyle = col; ctx.fillRect(x * sc, y * sc, w * sc, h * sc); };
+    var OR = function (x, y, w, h, base) { F(x, y, w, h, '#15151f'); F(x + 0.25, y + 0.25, w - 0.5, h - 0.5, base); };
+    var TRI = function (x1, y1, x2, y2, x3, y3, col) {
+      ctx.fillStyle = col; ctx.beginPath();
+      ctx.moveTo(x1 * sc, y1 * sc); ctx.lineTo(x2 * sc, y2 * sc); ctx.lineTo(x3 * sc, y3 * sc);
+      ctx.closePath(); ctx.fill();
+    };
+
+    if (mounted) this._drawMount(ctx, sc, c, cls.indexOf('wyvern') === 0 ? 'wyvern' : (cls === 'pegasusKnight' || cls === 'falconKnight') ? 'pegasus' : 'horse');
+
+    var robe = (arche === 'mage' || arche === 'bishop' || arche === 'dark' || arche === 'cleric');
+    var bone = arche === 'bone';
+    var robeCol = arche === 'cleric' ? S(c.body, 1.15) : arche === 'dark' ? S(c.body, 0.55) : c.body;
+    var armCol = arche === 'armored' ? S(c.armor, 0.95) : bone ? '#d8d2c0' : robe ? robeCol : arche === 'axe' ? sk : c.body;
+    var handCol = arche === 'armored' ? '#9aa2b2' : bone ? '#e6e0ce' : sk;
+
+    // ---- back arm ----
+    OR(-3.8, -10.0, bone ? 1.4 : 1.9, 4.8, S(armCol, 0.62));
+    F(-3.5, -5.6, 1.2, 1.2, arche === 'armored' ? '#7e8696' : bone ? '#d8d2c0' : S(sk, 0.8));
+
+    // ---- capes (behind torso) ----
+    if (arche === 'merc') { TRI(-1.0, -10.9, -4.7, -5.0, -1.9, -5.4, S(c.cloth, 0.55)); TRI(-1.0, -10.9, -4.2, -5.2, -1.9, -5.5, S(c.cloth, 0.78)); }
+    if (arche === 'lord') { TRI(-0.6, -11.0, -5.0, -3.4, -1.6, -4.4, S(c.accent, 0.6)); TRI(-0.6, -11.0, -4.4, -3.8, -1.6, -4.6, S(c.accent, 0.85)); }
+    if (arche === 'rogue' || cls === 'sniper') { TRI(-1.0, -10.9, -4.2, -6.0, -1.9, -5.8, S(c.body, 0.5)); }
+
+    // ---- legs / lower half ----
+    if (mounted) {
+      F(-2.5, -6.5, 4.8, 1.5, c.cloth); F(-2.5, -5.2, 4.8, 0.4, S(c.cloth, 0.6));   // saddle blanket
+      if (robe) { OR(-2.4, -6.8, 5.0, 3.4, robeCol); F(-2.1, -3.9, 4.4, 0.5, c.accent); }
+      else {
+        var legC = arche === 'armored' ? S(c.armor, 0.95) : S(c.cloth, 0.9);
+        OR(0.9, -6.3, 2.2, 1.6, legC); OR(2.1, -5.2, 1.4, 2.6, S(legC, 1.05)); OR(1.9, -2.9, 2.1, 1.1, '#2e241c');
+      }
+    } else if (robe) {
+      OR(-3.2, -11.0, 6.6, 10.5, robeCol);
+      F(0.9, -10.7, 1.7, 9.6, S(robeCol, 1.22)); F(-2.9, -10.7, 1.1, 9.6, S(robeCol, 0.7));
+      F(-2.9, -1.6, 6.0, 0.7, c.accent);                                            // hem
+      F(-1.8, -0.8, 1.5, 0.8, '#2e241c'); F(0.8, -0.8, 1.5, 0.8, '#2e241c');        // shoe tips
+      F(-2.9, -6.9, 6.0, 0.7, S(robeCol, 0.6));                                     // rope belt
+    } else if (bone) {
+      OR(-2.2, -5.9, 1.3, 5.9, '#d8d2c0'); OR(0.8, -5.7, 1.3, 5.7, '#cfc8b4');
+      F(-2.1, -3.4, 1.1, 0.5, '#9a9484'); F(0.9, -3.2, 1.1, 0.5, '#9a9484');        // knee joints
+      F(-2.5, -6.6, 5.4, 1.6, S(c.body, 0.8));                                      // tattered loincloth
+      TRI(-2.5, -5.0, -1.2, -5.0, -2.0, -3.6, S(c.body, 0.8)); TRI(0.4, -5.0, 1.8, -5.0, 1.2, -3.8, S(c.body, 0.8));
+    } else if (arche === 'armored') {
+      OR(-2.7, -6.0, 2.5, 4.6, S(c.armor, 0.9)); OR(0.4, -5.7, 2.5, 4.3, c.armor);
+      F(-2.4, -4.5, 1.9, 0.8, S(c.armor, 1.32)); F(0.7, -4.2, 1.9, 0.8, S(c.armor, 1.38));
+      OR(-2.9, -2.0, 2.8, 2.1, '#3a4150'); OR(0.2, -2.1, 3.0, 2.2, '#454e60');
+    } else {
+      var pant = arche === 'axe' ? S('#7a5c3a', 0.95) : S(c.cloth, 0.9);
+      OR(-2.5, -5.9, 2.2, 4.4, S(pant, 0.85)); OR(0.5, -5.6, 2.2, 4.1, pant);
+      OR(-2.7, -1.9, 2.5, 2.0, '#2e241c'); OR(0.3, -2.0, 2.7, 2.1, '#3a2e22');
+      F(-2.4, -1.7, 1.9, 0.5, '#4a3a2c'); F(0.6, -1.8, 2.1, 0.5, '#54422f');
+    }
+
+    // ---- armor skirt (ground armored only) ----
+    if (arche === 'armored' && !mounted) {
+      TRI(-3.3, -7.3, 3.6, -7.3, 2.9, -4.9, S(c.armor, 0.82));
+      TRI(-3.3, -7.3, 2.9, -4.9, -2.6, -4.9, S(c.armor, 0.82));
+      F(-3.0, -6.4, 6.3, 0.35, S(c.armor, 0.55));
+    }
+
+    // ---- torso ----
+    if (arche === 'armored') {
+      OR(-3.6, -11.3, 7.4, 5.3, c.armor);
+      F(0.9, -11.0, 2.0, 4.4, S(c.armor, 1.32)); F(-3.3, -11.0, 1.3, 4.4, S(c.armor, 0.62));
+      F(-0.7, -9.9, 1.5, 1.5, c.accent); F(-3.0, -7.1, 6.4, 0.5, S(c.armor, 1.18));
+    } else if (robe) {
+      if (mounted) { OR(-3.1, -11.0, 6.4, 4.6, robeCol); F(0.9, -10.7, 1.7, 3.9, S(robeCol, 1.22)); F(-2.8, -10.7, 1.1, 3.9, S(robeCol, 0.7)); }
+      if (arche === 'bishop') { F(-2.0, -10.9, 1.0, 9.0, c.accent); F(1.1, -10.9, 1.0, 9.0, c.accent); }   // stole
+      if (arche === 'cleric') { F(-0.55, -9.6, 1.2, 2.6, c.accent); F(-1.25, -8.9, 2.6, 1.1, c.accent); }  // cross
+      F(-2.9, -11.0, 5.8, 0.7, S(robeCol, 1.3));                                                           // collar
+    } else if (bone) {
+      OR(-2.6, -10.9, 5.4, 4.6, '#231f28');
+      F(-2.2, -10.4, 4.6, 0.7, '#d8d2c0'); F(-2.2, -9.2, 4.6, 0.7, '#cfc8b4'); F(-2.2, -8.0, 4.6, 0.7, '#c4bda8');
+      F(-0.5, -10.6, 0.9, 4.0, '#cfc8b4');                                                                 // sternum
+    } else if (arche === 'axe') {
+      OR(-3.0, -11.0, 6.2, 5.6, sk);
+      F(0.9, -10.7, 1.6, 4.7, S(sk, 1.12)); F(-2.7, -10.7, 1.1, 4.7, S(sk, 0.82));
+      ctx.save(); ctx.translate(0, -8.3 * sc); ctx.rotate(0.55); F(-3.4, -0.5, 6.8, 1.0, '#5a4226'); ctx.restore();
+      F(-2.8, -6.3, 5.8, 1.1, '#4e3a24'); F(0.0, -6.2, 1.2, 0.9, '#c9a23e');
+      if (cls === 'warrior') { OR(1.7, -11.7, 2.7, 2.4, '#6b5340'); F(1.95, -11.45, 2.2, 0.6, '#7d6450'); }
+    } else {
+      OR(-3.1, -11.1, 6.4, 5.6, c.body);
+      F(0.9, -10.8, 1.7, 4.7, S(c.body, 1.3)); F(-2.8, -10.8, 1.1, 4.7, S(c.body, 0.66));
+      F(-2.8, -11.1, 5.8, 0.7, arche === 'lord' ? '#d9b24e' : c.accent);
+      F(-2.8, -6.6, 5.8, 1.0, '#4e3a24'); F(0.1, -6.5, 1.0, 0.8, '#d9b24e');
+      if (arche === 'bow') { F(-2.0, -10.6, 3.6, 4.0, '#7a5c3a'); F(-2.0, -10.6, 3.6, 0.6, S('#7a5c3a', 1.25)); }
+      if (arche === 'soldier') F(-0.5, -10.2, 1.2, 1.2, c.accent);
+    }
+
+    // ---- quiver (bow classes, slung behind the shoulder) ----
+    if (arche === 'bow') {
+      ctx.save(); ctx.translate(-2.6 * sc, -10.2 * sc); ctx.rotate(0.5);
+      OR(-0.8, -1.2, 1.6, 4.6, '#6b4e2e');
+      F(-0.6, -2.0, 0.35, 1.0, '#cfd6e2'); F(0.1, -2.2, 0.35, 1.2, '#cfd6e2'); F(0.7, -1.9, 0.35, 0.9, '#cfd6e2');
+      ctx.restore();
+    }
+
+    // ---- pauldrons ----
+    if (arche === 'armored') {
+      OR(-4.4, -11.9, 2.6, 2.6, S(c.armor, 0.88)); F(-4.15, -11.65, 2.1, 0.7, S(c.armor, 1.3));
+      OR(1.8, -12.0, 2.9, 2.8, S(c.armor, 1.05)); F(2.05, -11.75, 2.4, 0.7, S(c.armor, 1.45));
+    } else if (arche === 'merc' || arche === 'lord' || arche === 'soldier') {
+      OR(2.0, -11.3, 2.3, 2.2, S(c.armor, 1.05)); F(2.25, -11.05, 1.8, 0.6, S(c.armor, 1.45));
+    }
+
+    // ---- front arm + hand (grips match the weapon pivot) ----
+    if (striking) { OR(2.6, -11.0, bone ? 1.6 : 2.1, 3.9, armCol); F(3.2, -10.5, 1.6, 1.5, handCol); }
+    else { OR(2.7, -9.4, bone ? 1.6 : 2.1, 5.2, armCol); F(3.7, -4.5, 1.6, 1.5, handCol); }
+    if (arche === 'bow' && !striking) F(2.8, -7.2, 1.7, 0.9, '#7a5c3a');            // bracer
+
+    // ---- head ----
+    if (arche === 'armored') {
+      F(-1.3, -11.6, 2.9, 1.3, S(c.armor, 0.75));
+      OR(-2.5, -15.9, 5.0, 5.0, S(c.armor, 1.08)); F(-2.25, -15.65, 4.5, 1.1, S(c.armor, 1.5));
+      F(-1.9, -13.9, 3.8, 0.95, '#0e1218');
+      F(-1.1, -13.75, 0.55, 0.6, '#dfe8f8'); F(0.65, -13.75, 0.55, 0.6, '#dfe8f8');
+      F(-2.25, -12.6, 4.5, 0.55, S(c.armor, 0.75));
+      F(-0.45, -17.5, 1.0, 1.9, c.accent); F(-0.45, -18.0, 1.0, 0.7, S(c.accent, 1.35));
+    } else if (bone) {
+      OR(-2.3, -15.5, 4.7, 4.6, '#e2dcc8'); F(1.5, -15.25, 0.6, 4.1, '#bdb6a0');
+      F(-1.5, -13.9, 1.3, 1.3, '#171219'); F(0.5, -13.9, 1.3, 1.3, '#171219');      // sockets
+      F(-1.2, -13.6, 0.5, 0.5, '#b5e8ff'); F(0.8, -13.6, 0.5, 0.5, '#b5e8ff');      // glints
+      F(-0.35, -12.7, 0.8, 0.7, '#171219');                                          // nose
+      F(-1.4, -11.6, 3.0, 0.4, '#9a9484');                                           // jaw
+    } else if (arche === 'dark') {
+      OR(-2.7, -16.0, 5.5, 5.3, robeCol);
+      TRI(-2.7, -15.4, -3.9, -13.0, -2.7, -12.6, robeCol);
+      F(-1.8, -14.7, 3.7, 3.5, '#140f1e');
+      F(-1.2, -13.6, 1.0, 0.8, '#c07aff'); F(0.5, -13.6, 1.0, 0.8, '#c07aff');      // glowing eyes
+    } else {
+      F(-0.7, -11.5, 1.8, 1.1, S(sk, 0.85));                                         // neck
+      OR(-2.4, -15.6, 4.9, 4.7, sk); F(1.7, -15.35, 0.55, 4.2, S(sk, 0.86));
+      var hooded = (cls === 'sniper' || arche === 'rogue');
+      if (arche === 'soldier') {
+        OR(-2.6, -16.1, 5.3, 2.4, S(c.armor, 1.05));                                 // helmet dome
+        F(-3.0, -13.9, 6.1, 0.8, S(c.armor, 1.3));                                   // brim
+      } else if (arche === 'cleric') {
+        F(-2.6, -16.2, 5.3, 1.6, '#eceaf2'); F(-2.6, -15.0, 1.0, 3.9, '#e0deea'); F(1.7, -15.0, 1.0, 3.9, '#e0deea'); // wimple
+      } else if (arche === 'mage') {
+        F(-2.3, -15.3, 4.7, 0.9, hr);
+        F(-3.3, -15.2, 6.8, 0.9, '#15151f'); F(-3.15, -15.05, 6.5, 0.6, S(robeCol, 0.85)); // brim
+        TRI(-2.3, -15.0, 0.2, -19.2, 2.9, -15.0, S(robeCol, 0.95));                  // cone
+        F(-1.7, -15.9, 3.4, 0.75, c.accent);                                         // band
+        if (cls === 'sage') F(0.0, -17.6, 0.7, 0.7, '#ffe07a');
+      } else if (arche === 'bishop') {
+        F(-2.3, -16.1, 4.7, 1.3, '#eceaf2'); F(-2.3, -15.0, 4.7, 0.6, hr);           // skullcap
+      } else if (hooded) {
+        OR(-2.6, -16.1, 5.3, 3.0, S(c.body, 0.7));
+        TRI(-2.6, -15.2, -3.7, -13.2, -2.6, -12.9, S(c.body, 0.7));
+        if (arche === 'rogue') F(-1.7, -12.5, 3.5, 1.2, S(c.cloth, 0.75));           // face scarf
+      } else if (cls === 'brigand') {
+        F(-0.6, -17.2, 1.3, 2.2, hr); F(-2.4, -15.7, 1.0, 1.4, S(sk, 0.92)); F(1.5, -15.7, 1.0, 1.4, S(sk, 0.92)); // mohawk
+      } else {
+        F(-2.5, -16.3, 5.1, 1.9, hr); F(-2.7, -15.0, 1.2, 2.7, hr); F(1.9, -15.2, 1.0, 1.7, hr); F(0.2, -15.7, 1.5, 0.8, hr);
+        if (arche === 'merc' || arche === 'axe') F(-2.3, -14.55, 4.7, 0.7, c.accent); // headband
+        if (arche === 'lord') { F(-2.4, -14.9, 4.9, 0.6, '#f5cf4a'); F(-0.3, -15.15, 0.8, 0.95, '#ff6868'); } // circlet
+      }
+      var eyY = arche === 'soldier' ? -13.0 : -13.7;
+      F(-1.1, eyY, 1.2, 1.0, '#fff'); F(0.6, eyY, 1.2, 1.0, '#fff');
+      F(-0.6, eyY + 0.15, 0.6, 0.75, ey); F(1.1, eyY + 0.15, 0.6, 0.75, ey);
+      if (!hooded) F(-0.2, eyY + 1.55, 1.0, 0.4, '#b07868');                         // mouth
+    }
+    return true;
+  }
+
+  // Mounts for cavalry / fliers: horse, wyvern, pegasus.
+  _drawMount(ctx, sc, c, kind) {
+    var S = this._shade.bind(this);
+    var F = function (x, y, w, h, col) { ctx.fillStyle = col; ctx.fillRect(x * sc, y * sc, w * sc, h * sc); };
+    var OR = function (x, y, w, h, base) { F(x, y, w, h, '#15151f'); F(x + 0.25, y + 0.25, w - 0.5, h - 0.5, base); };
+    var TRI = function (x1, y1, x2, y2, x3, y3, col) {
+      ctx.fillStyle = col; ctx.beginPath();
+      ctx.moveTo(x1 * sc, y1 * sc); ctx.lineTo(x2 * sc, y2 * sc); ctx.lineTo(x3 * sc, y3 * sc);
+      ctx.closePath(); ctx.fill();
+    };
+    if (kind === 'wyvern') {
+      var wb = '#41705c';
+      TRI(-1.2, -5.0, -9.2, -13.2, -4.4, -4.2, S(c.cloth, 0.5));                     // back wing
+      ctx.strokeStyle = S(c.cloth, 0.35); ctx.lineWidth = Math.max(1, 0.45 * sc);
+      ctx.beginPath(); ctx.moveTo(-1.4 * sc, -5.0 * sc); ctx.lineTo(-8.6 * sc, -12.6 * sc); ctx.stroke();
+      TRI(-5.6, -4.4, -8.8, -1.2, -4.8, -1.6, S(wb, 0.8));                           // tail
+      TRI(-8.4, -2.2, -9.8, -0.4, -7.4, -0.6, S(wb, 0.9));                           // tail spade
+      OR(-5.6, -5.4, 10.4, 4.4, wb);
+      F(-5.2, -2.8, 9.6, 1.4, '#c9c194');                                            // belly plates
+      F(-5.2, -5.1, 9.6, 0.8, S(wb, 1.25));
+      OR(-3.6, -1.8, 1.8, 2.0, S(wb, 0.85)); OR(1.7, -1.9, 1.9, 2.1, S(wb, 0.95));   // legs
+      F(-3.5, -0.4, 1.6, 0.5, '#e8e2cc'); F(1.8, -0.4, 1.7, 0.5, '#e8e2cc');         // claws
+      TRI(3.4, -5.4, 4.6, -9.6, 6.0, -4.6, wb);                                      // neck
+      OR(3.9, -10.0, 3.1, 2.1, wb);
+      F(6.4, -9.5, 1.2, 1.3, S(wb, 1.2));                                            // snout
+      TRI(4.4, -10.0, 3.8, -11.6, 5.2, -10.0, '#ddd6ba'); TRI(5.4, -10.0, 5.0, -11.0, 6.0, -10.0, '#ccc4a8'); // horns
+      F(5.4, -9.4, 0.6, 0.6, '#ffd24a');                                             // eye
+      TRI(0.6, -5.4, 5.8, -13.0, 2.9, -4.4, c.cloth);                                // front wing
+      ctx.strokeStyle = S(c.cloth, 0.6);
+      ctx.beginPath(); ctx.moveTo(0.8 * sc, -5.2 * sc); ctx.lineTo(5.3 * sc, -12.4 * sc); ctx.stroke();
+    } else {
+      var hb = kind === 'pegasus' ? '#edeff6' : '#8a6a48';
+      var mane = kind === 'pegasus' ? '#c9cedd' : S(hb, 0.55);
+      if (kind === 'pegasus') {
+        TRI(-1.0, -5.2, -8.6, -12.4, -4.0, -4.4, '#dfe3ee');                          // back wing
+        ctx.strokeStyle = '#b9c0d4'; ctx.lineWidth = Math.max(1, 0.4 * sc);
+        ctx.beginPath(); ctx.moveTo(-1.2 * sc, -5.0 * sc); ctx.lineTo(-8.0 * sc, -11.8 * sc); ctx.stroke();
+      }
+      TRI(-5.4, -4.6, -7.2, -1.2, -4.8, -2.2, mane);                                  // tail
+      OR(-5.4, -5.0, 9.8, 3.8, hb);
+      F(-5.0, -2.6, 9.0, 1.0, S(hb, 0.82)); F(-5.0, -4.7, 9.0, 0.7, S(hb, 1.18));
+      var lx = [-4.6, -2.5, 1.7, 3.5];
+      for (var i = 0; i < 4; i++) { OR(lx[i], -1.7, 1.15, 1.8, S(hb, 0.92)); F(lx[i] + 0.1, -0.5, 0.95, 0.55, '#241c12'); }
+      TRI(3.2, -5.0, 4.3, -8.0, 5.6, -4.6, hb);                                       // neck
+      OR(4.1, -8.4, 2.8, 2.0, hb);
+      F(6.3, -7.9, 1.0, 1.2, S(hb, 1.15)); F(6.9, -7.3, 0.35, 0.35, '#1c1612');       // muzzle + nostril
+      TRI(4.5, -8.4, 4.9, -9.4, 5.5, -8.4, hb);                                       // ear
+      F(5.4, -7.9, 0.5, 0.5, '#181410');                                              // eye
+      F(3.9, -8.6, 0.9, 3.4, mane); F(4.3, -8.9, 1.7, 0.6, mane);                     // mane
+      F(-2.6, -5.6, 4.8, 1.2, c.cloth); F(-2.6, -4.5, 4.8, 0.4, S(c.cloth, 0.6));     // saddle
+      F(-0.7, -4.4, 0.9, 2.9, '#54402a');                                             // girth
+      if (kind === 'pegasus') {
+        TRI(0.6, -5.2, 5.2, -12.0, 2.7, -4.4, '#f4f6fb');                             // front wing
+        ctx.strokeStyle = '#c3cadf'; ctx.lineWidth = Math.max(1, 0.4 * sc);
+        ctx.beginPath(); ctx.moveTo(0.8 * sc, -5.0 * sc); ctx.lineTo(4.8 * sc, -11.5 * sc); ctx.stroke();
+      }
+    }
   }
 
   _drawWpn(ctx, unit, sc, striking, swing) {
