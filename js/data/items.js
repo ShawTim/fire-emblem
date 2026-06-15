@@ -2,49 +2,49 @@
 
 const ITEMS = {
   // Swords
-  slimSword:    { name: '細身劍', type: 'sword', might: 3, hit: 85, crit: 0, weight: 3, range: [1], uses: 30, price: 480 },
-  slimLance:    { name: '細身槍', type: 'lance', might: 4, hit: 85, crit: 0, weight: 4, range: [1], uses: 30, price: 450 },
-  ironSword:    { name: '鐵劍', type: 'sword', might: 5, hit: 90, crit: 0, weight: 5, range: [1], uses: 46, price: 460 },
-  steelSword:   { name: '鋼劍', type: 'sword', might: 8, hit: 75, crit: 0, weight: 10, range: [1], uses: 30, price: 600 },
-  silverSword:  { name: '銀劍', type: 'sword', might: 13, hit: 80, crit: 0, weight: 8, range: [1], uses: 20, price: 1500 },
-  rapier:       { name: '細劍', type: 'sword', might: 7, hit: 95, crit: 10, weight: 5, range: [1], uses: 40, effective: { armored: 3, cavalry: 3 }, prf: ['lord', 'masterLord'], price: 6000 },
-  killingEdge:  { name: '殺手劍', type: 'sword', might: 9, hit: 75, crit: 30, weight: 7, range: [1], uses: 20, price: 1300 },
+  slimSword:    { name: '細身劍', type: 'sword', might: 3, hit: 85, crit: 0, weight: 3, range: [1], uses: 22, price: 480 },
+  slimLance:    { name: '細身槍', type: 'lance', might: 4, hit: 85, crit: 0, weight: 4, range: [1], uses: 22, price: 450 },
+  ironSword:    { name: '鐵劍', type: 'sword', might: 5, hit: 90, crit: 0, weight: 5, range: [1], uses: 30, price: 460 },
+  steelSword:   { name: '鋼劍', type: 'sword', might: 8, hit: 75, crit: 0, weight: 10, range: [1], uses: 22, price: 600 },
+  silverSword:  { name: '銀劍', type: 'sword', might: 13, hit: 80, crit: 0, weight: 8, range: [1], uses: 15, price: 1500 },
+  rapier:       { name: '細劍', type: 'sword', might: 7, hit: 95, crit: 10, weight: 5, range: [1], uses: 28, effective: { armored: 3, cavalry: 3 }, prf: ['lord', 'masterLord'], price: 6000 },
+  killingEdge:  { name: '殺手劍', type: 'sword', might: 9, hit: 75, crit: 30, weight: 7, range: [1], uses: 14, price: 1300 },
 
   // Lances
-  ironLance:    { name: '鐵槍', type: 'lance', might: 7, hit: 80, crit: 0, weight: 8, range: [1], uses: 45, price: 360 },
-  steelLance:   { name: '鋼槍', type: 'lance', might: 10, hit: 70, crit: 0, weight: 13, range: [1], uses: 30, price: 480 },
-  silverLance:  { name: '銀槍', type: 'lance', might: 14, hit: 75, crit: 0, weight: 10, range: [1], uses: 20, price: 1200 },
-  javelin:      { name: '手槍', type: 'lance', might: 6, hit: 65, crit: 0, weight: 11, range: [1,2], uses: 20, price: 400 },
+  ironLance:    { name: '鐵槍', type: 'lance', might: 7, hit: 80, crit: 0, weight: 8, range: [1], uses: 30, price: 360 },
+  steelLance:   { name: '鋼槍', type: 'lance', might: 10, hit: 70, crit: 0, weight: 13, range: [1], uses: 22, price: 480 },
+  silverLance:  { name: '銀槍', type: 'lance', might: 14, hit: 75, crit: 0, weight: 10, range: [1], uses: 15, price: 1200 },
+  javelin:      { name: '手槍', type: 'lance', might: 6, hit: 65, crit: 0, weight: 11, range: [1,2], uses: 14, price: 400 },
 
   // Axes
-  ironAxe:      { name: '鐵斧', type: 'axe', might: 8, hit: 75, crit: 0, weight: 10, range: [1], uses: 45, price: 270 },
-  steelAxe:     { name: '鋼斧', type: 'axe', might: 11, hit: 65, crit: 0, weight: 15, range: [1], uses: 30, price: 360 },
-  handAxe:      { name: '手斧', type: 'axe', might: 7, hit: 60, crit: 0, weight: 12, range: [1,2], uses: 20, price: 300 },
+  ironAxe:      { name: '鐵斧', type: 'axe', might: 8, hit: 75, crit: 0, weight: 10, range: [1], uses: 30, price: 270 },
+  steelAxe:     { name: '鋼斧', type: 'axe', might: 11, hit: 65, crit: 0, weight: 15, range: [1], uses: 22, price: 360 },
+  handAxe:      { name: '手斧', type: 'axe', might: 7, hit: 60, crit: 0, weight: 12, range: [1,2], uses: 14, price: 300 },
 
   // Bows
-  ironBow:      { name: '鐵弓', type: 'bow', might: 6, hit: 85, crit: 0, weight: 5, range: [2], uses: 45, price: 540 },
-  steelBow:     { name: '鋼弓', type: 'bow', might: 9, hit: 70, crit: 0, weight: 9, range: [2], uses: 30, price: 720 },
-  killerBow:    { name: '殺手弓', type: 'bow', might: 9, hit: 75, crit: 30, weight: 7, range: [2], uses: 20, price: 1400 },
-  longbow:      { name: '長弓', type: 'bow', might: 5, hit: 65, crit: 0, weight: 10, range: [2,3], uses: 20, price: 2000 },
+  ironBow:      { name: '鐵弓', type: 'bow', might: 6, hit: 85, crit: 0, weight: 5, range: [2], uses: 30, price: 540 },
+  steelBow:     { name: '鋼弓', type: 'bow', might: 9, hit: 70, crit: 0, weight: 9, range: [2], uses: 22, price: 720 },
+  killerBow:    { name: '殺手弓', type: 'bow', might: 9, hit: 75, crit: 30, weight: 7, range: [2], uses: 14, price: 1400 },
+  longbow:      { name: '長弓', type: 'bow', might: 5, hit: 65, crit: 0, weight: 10, range: [2,3], uses: 14, price: 2000 },
 
   // Tomes (magic)
-  fire:         { name: '火焰', type: 'fire', might: 5, hit: 90, crit: 0, weight: 4, range: [1,2], uses: 40, magic: true, price: 560 },
-  thunder:      { name: '雷電', type: 'thunder', might: 8, hit: 80, crit: 5, weight: 6, range: [1,2], uses: 35, magic: true, price: 700 },
-  wind:         { name: '疾風', type: 'wind', might: 4, hit: 95, crit: 0, weight: 2, range: [1,2], uses: 40, magic: true, effective: { flying: 3 }, price: 600 },
-  elfire:       { name: '烈焰', type: 'fire', might: 10, hit: 85, crit: 0, weight: 10, range: [1,2], uses: 25, magic: true, price: 1200 },
+  fire:         { name: '火焰', type: 'fire', might: 5, hit: 90, crit: 0, weight: 4, range: [1,2], uses: 28, magic: true, price: 560 },
+  thunder:      { name: '雷電', type: 'thunder', might: 8, hit: 80, crit: 5, weight: 6, range: [1,2], uses: 24, magic: true, price: 700 },
+  wind:         { name: '疾風', type: 'wind', might: 4, hit: 95, crit: 0, weight: 2, range: [1,2], uses: 28, magic: true, effective: { flying: 3 }, price: 600 },
+  elfire:       { name: '烈焰', type: 'fire', might: 10, hit: 85, crit: 0, weight: 10, range: [1,2], uses: 18, magic: true, price: 1200 },
   bolting:      { name: '天雷', type: 'thunder', might: 12, hit: 60, crit: 5, weight: 14, range: [3,10], uses: 5, magic: true, price: 2500 },
-  dark:         { name: '暗黑', type: 'dark', might: 10, hit: 85, crit: 0, weight: 12, range: [1,2], uses: 20, magic: true, price: 900 },
+  dark:         { name: '暗黑', type: 'dark', might: 10, hit: 85, crit: 0, weight: 12, range: [1,2], uses: 15, magic: true, price: 900 },
   fenrir:       { name: '芬里爾', type: 'dark', might: 15, hit: 70, crit: 0, weight: 18, range: [1,2], uses: 10, magic: true, price: 4000 },
 
   // Staves
-  heal:         { name: '治療杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 2, range: [1], uses: 30, heals: 10, magic: true, price: 600 },
-  mend:         { name: '恢復杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 4, range: [1], uses: 20, heals: 20, magic: true, price: 1000 },
-  physic:       { name: '遠距杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 6, range: [1,2,3], uses: 15, heals: 15, magic: true, price: 3750 },
+  heal:         { name: '治療杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 2, range: [1], uses: 22, heals: 10, magic: true, price: 600 },
+  mend:         { name: '恢復杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 4, range: [1], uses: 15, heals: 20, magic: true, price: 1000 },
+  physic:       { name: '遠距杖', type: 'staff', might: 0, hit: 100, crit: 0, weight: 6, range: [1,2,3], uses: 12, heals: 15, magic: true, price: 3750 },
 
   // Additional magic
-  elthunder:    { name: '雷擊', type: 'thunder', might: 10, hit: 80, crit: 5, weight: 8, range: [1,2], uses: 25, magic: true, price: 1200 },
-  flux:         { name: '暗流', type: 'dark', might: 7, hit: 80, crit: 0, weight: 8, range: [1,2], uses: 30, magic: true, price: 900 },
-  nosferatu:    { name: '吸血', type: 'dark', might: 8, hit: 70, crit: 0, weight: 14, range: [1,2], uses: 15, magic: true, drain: true, price: 3000 },
+  elthunder:    { name: '雷擊', type: 'thunder', might: 10, hit: 80, crit: 5, weight: 8, range: [1,2], uses: 18, magic: true, price: 1200 },
+  flux:         { name: '暗流', type: 'dark', might: 7, hit: 80, crit: 0, weight: 8, range: [1,2], uses: 22, magic: true, price: 900 },
+  nosferatu:    { name: '吸血', type: 'dark', might: 8, hit: 70, crit: 0, weight: 14, range: [1,2], uses: 12, magic: true, drain: true, price: 3000 },
   eclipse:      { name: '蝕', type: 'dark', might: 18, hit: 50, crit: 0, weight: 20, range: [1,2], uses: 5, magic: true, price: 4000 },
 
   // Consumables
