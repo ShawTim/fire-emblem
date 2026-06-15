@@ -244,7 +244,7 @@
       "classId": "darkMage",
       "level": 1,
       "x": 8,
-      "y": 2,
+      "y": 0,
       "items": [
         "nosferatu",
         "flux"

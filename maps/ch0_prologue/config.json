@@ -130,7 +130,7 @@
       "items": [
         "ironLance"
       ],
-      "ai": "defensive",
+      "ai": "boss",
       "name": "守衛隊長",
       "isBoss": true,
       "bonusStats": {

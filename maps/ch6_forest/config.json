@@ -284,7 +284,7 @@
     {
       "classId": "archer",
       "level": 9,
-      "x": 9,
+      "x": 8,
       "y": 2,
       "items": [
         "killerBow"
