@@ -1290,27 +1290,41 @@ class Game {
   doVisit(event) {
     event._visited = true;
     const unit = this.selectedUnit;
+    const r = event.reward;
 
-    // Grant reward
-    if (event.reward && unit) {
-      const r = event.reward;
-      if (r.type === 'item' && r.id) {
+    // Grant the reward AFTER any dialogue, always with a clear acquisition popup,
+    // then end the unit's turn. Supports item/weapon and exp rewards.
+    const grantReward = (after) => {
+      if (!r || !unit) { after(); return; }
+      if (r.type === 'exp') {
+        const amt = r.amount || r.value || 0;
+        if (amt <= 0) { after(); return; }
+        const gains = unit.gainExp(amt);
+        UI.showExpGain(unit, amt, () => {
+          if (gains) UI.showLevelUp(unit, gains, after);
+          else after();
+        });
+        return;
+      }
+      if ((r.type === 'item' || r.type === 'weapon') && r.id) {
         const item = createItem(r.id);
         if (item) {
           if (r.usesLeft !== undefined) item.usesLeft = r.usesLeft;
           unit.items.push(item);
+          UI.showItemGet(item, unit.name, after);
+          return;
         }
       }
-      // Future: gold, exp, stat-boost rewards can branch here.
-    }
+      after();
+    };
 
-    // Run dialogue (supports either .dialogue or .text), then end unit's turn
+    // Run dialogue (supports either .dialogue or .text), then reward, then end turn.
     const dlg = event.dialogue || event.text;
     if (dlg && dlg.length > 0) {
       this.state = 'dialogue';
-      this.dialogue.start(dlg, () => this.doWait());
+      this.dialogue.start(dlg, () => grantReward(() => this.doWait()));
     } else {
-      this.doWait();
+      grantReward(() => this.doWait());
     }
   }
 

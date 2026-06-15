@@ -357,6 +357,26 @@
     "plainToHill": 0.02,
     "safeRadius": 1
   },
+  "villageEvents": [
+    {
+      "x": 9,
+      "y": 12,
+      "reward": { "type": "item", "id": "steelSword" },
+      "dialogue": [
+        { "speaker": null, "text": "獵戶從小屋走出，遞上一柄打磨光亮的鋼劍。" },
+        { "speaker": null, "text": "「呢把劍跟咗我多年，今日交俾你哋。砍得幾多得幾多。」" }
+      ]
+    },
+    {
+      "x": 20,
+      "y": 6,
+      "reward": { "type": "exp", "amount": 30 },
+      "dialogue": [
+        { "speaker": null, "text": "山道旁的老兵向你們講述當年的戰陣。" },
+        { "speaker": null, "text": "「聽老夫一席話，勝過操練十日。去啩，後生仔。」" }
+      ]
+    }
+  ],
   "seizePos": {
     "x": 19,
     "y": 2

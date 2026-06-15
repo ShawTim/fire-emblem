@@ -87,11 +87,14 @@ function executeCombat(attacker, defender, map) {
   const defWpn = defender.getEquippedWeapon();
 
   function doAttack(actor, target, fc) {
+    const wpn = (actor === attacker) ? atkWpn : defWpn;
     const roll = Math.random() * 100;
     if (roll >= fc.hit) {
+      // Miss — a whiff doesn't wear the weapon; only connecting blows consume a use.
       steps.push({ actor, target, damage: 0, hit: false, crit: false, killed: false });
       return false;
     }
+    if (wpn) wpn.usesLeft = Math.max(0, wpn.usesLeft - 1);
     const critRoll = Math.random() * 100;
     const isCrit = critRoll < fc.crit;
     const dmg = isCrit ? fc.damage * 3 : fc.damage;
@@ -103,14 +106,12 @@ function executeCombat(attacker, defender, map) {
     return killed;
   }
 
-  // Attacker hits
-  if (atkWpn) atkWpn.usesLeft = Math.max(0, atkWpn.usesLeft - 1);
+  // Attacker strikes
   if (doAttack(attacker, defender, forecast.attacker)) {
     return { steps, exp: calculateExp(attacker, defender, true) };
   }
   // Defender counters
   if (forecast.defender.canCounter && defender.hp > 0) {
-    if (defWpn) defWpn.usesLeft = Math.max(0, defWpn.usesLeft - 1);
     if (doAttack(defender, attacker, forecast.defender)) {
       // BUG FIX: 反擊殺敵時使用與主動進攻一致的 EXP 公式
       // 若防守方（可能是玩家）殺死進攻方，使用相同的 calculateExp 公式
@@ -119,14 +120,12 @@ function executeCombat(attacker, defender, map) {
   }
   // Attacker doubles
   if (forecast.attacker.doubleAttack && defender.hp > 0) {
-    if (atkWpn) atkWpn.usesLeft = Math.max(0, atkWpn.usesLeft - 1);
     if (doAttack(attacker, defender, forecast.attacker)) {
       return { steps, exp: calculateExp(attacker, defender, true) };
     }
   }
   // Defender doubles
   if (forecast.defender.canCounter && forecast.defender.doubleAttack && attacker.hp > 0 && defender.hp > 0) {
-    if (defWpn) defWpn.usesLeft = Math.max(0, defWpn.usesLeft - 1);
     if (doAttack(defender, attacker, forecast.defender)) {
       // BUG FIX: 防守方二次攻擊殺敵，同樣使用一致的 EXP 公式
       return { steps, exp: calculateExp(defender, attacker, true) };

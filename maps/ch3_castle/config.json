@@ -342,5 +342,43 @@
     "opening": "公主殿下，您逃了三天。今天，到了臣下交差的時候了。",
     "mid": "可惡——這群傭兵居然真的肯為公主出手！",
     "death": "報告……追擊隊……全軍覆沒……"
-  }
+  },
+  "villageEvents": [
+    {
+      "x": 11,
+      "y": 14,
+      "reward": {
+        "type": "item",
+        "id": "steelLance"
+      },
+      "dialogue": [
+        {
+          "speaker": null,
+          "text": "逃難嘅鐵匠喺小屋裡收起一批兵器。"
+        },
+        {
+          "speaker": null,
+          "text": "「呢支鋼槍俾你哋，擋住佢哋！」"
+        }
+      ]
+    },
+    {
+      "x": 10,
+      "y": 9,
+      "reward": {
+        "type": "item",
+        "id": "vulnerary"
+      },
+      "dialogue": [
+        {
+          "speaker": null,
+          "text": "驚惶嘅村婦探出頭嚟。"
+        },
+        {
+          "speaker": null,
+          "text": "「呢支傷藥俾你，求你哋快啲趕走敵兵。」"
+        }
+      ]
+    }
+  ]
 }

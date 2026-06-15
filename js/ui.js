@@ -7,6 +7,7 @@ const UI = {
   forecastEl: document.getElementById('combat-forecast'),
   phaseBanner: document.getElementById('phase-banner'),
   levelUpScreen: document.getElementById('level-up-screen'),
+  itemGetScreen: document.getElementById('item-get-screen'),
   topBar: document.getElementById('top-bar'),
   terrainInfo: null,
   titleScreen: document.getElementById('title-screen'),
@@ -346,6 +347,50 @@ const UI = {
     this.levelUpScreen.addEventListener('click', dismiss);
     document.addEventListener('keydown', dismiss);
     timers.push(setTimeout(dismiss, Math.max(4000, delay + 1600)));
+  },
+
+  // Item acquisition popup — shown whenever a unit obtains a weapon/staff/item
+  // (village reward, future drops/chests). `recipient` is the unit's display name.
+  // Click / key / timeout dismisses, then calls onDone.
+  showItemGet(item, recipient, onDone) {
+    const ICONS = {
+      sword: '⚔️', lance: '🔱', axe: '🪓', bow: '🏹', staff: '✨',
+      fire: '🔥', thunder: '⚡', wind: '🍃', dark: '🌑', consumable: '🧪'
+    };
+    const TYPE_NAMES = {
+      sword: '劍', lance: '槍', axe: '斧', bow: '弓', staff: '杖',
+      fire: '火焰魔法', thunder: '雷電魔法', wind: '風魔法', dark: '暗黑魔法', consumable: '道具'
+    };
+    const it = item || {};
+    const icon = ICONS[it.type] || '📦';
+    const usesTxt = (it.usesLeft !== undefined && it.type !== 'consumable')
+      ? ` <span style="color:#8ab">(${it.usesLeft}/${it.uses})</span>` : '';
+    const sub = recipient ? `${recipient} 取得` : '';
+    this.itemGetScreen.innerHTML =
+      `<div style="font-size:40px;line-height:1">${icon}</div>
+       <div style="font-size:14px;color:#cde;letter-spacing:2px;margin-top:4px">獲得物品</div>
+       <div style="font-size:20px;font-weight:bold;color:#4fd6c8;margin:6px 0">${it.name || '?'}${usesTxt}</div>
+       <div style="font-size:12px;color:#9ab">${TYPE_NAMES[it.type] || ''}</div>
+       <div style="font-size:12px;color:#9ab;margin-top:6px">${sub}</div>
+       <div style="font-size:10px;color:#567;margin-top:10px">點擊繼續</div>`;
+    this.itemGetScreen.classList.remove('hidden');
+    if (typeof SFX !== 'undefined' && SFX.levelUp) SFX.levelUp();
+
+    let dismissed = false;
+    let timer = null;
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
+      if (timer) clearTimeout(timer);
+      this.itemGetScreen.classList.add('hidden');
+      this.itemGetScreen.removeEventListener('click', dismiss);
+      document.removeEventListener('keydown', dismiss);
+      if (onDone) onDone();
+    };
+    this.itemGetScreen.style.cursor = 'pointer';
+    this.itemGetScreen.addEventListener('click', dismiss);
+    document.addEventListener('keydown', dismiss);
+    timer = setTimeout(dismiss, 4000);
   },
 
   updateTopBar(chapterTitle, turn, phase, objective) {
