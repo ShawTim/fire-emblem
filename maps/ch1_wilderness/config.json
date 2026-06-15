@@ -364,7 +364,7 @@
       "reward": { "type": "item", "id": "steelSword" },
       "dialogue": [
         { "speaker": null, "text": "獵戶從小屋走出，遞上一柄打磨光亮的鋼劍。" },
-        { "speaker": null, "text": "「呢把劍跟咗我多年，今日交俾你哋。砍得幾多得幾多。」" }
+        { "speaker": null, "text": "「這把劍跟了我多年，今日交給你們。能砍多少是多少。」" }
       ]
     },
     {
@@ -373,7 +373,7 @@
       "reward": { "type": "exp", "amount": 30 },
       "dialogue": [
         { "speaker": null, "text": "山道旁的老兵向你們講述當年的戰陣。" },
-        { "speaker": null, "text": "「聽老夫一席話，勝過操練十日。去啩，後生仔。」" }
+        { "speaker": null, "text": "「聽老夫一席話，勝過操練十日。去吧，年輕人。」" }
       ]
     }
   ],

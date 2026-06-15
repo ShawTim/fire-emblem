@@ -12,7 +12,7 @@ var PrologueDisplay = {
       root.id = "prologue-root";
       root.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;z-index:300;overflow:hidden;";
 
-      // 1. 背景層 (可選) - 調低透明度 (0.5) 令佢變暗，唔搶文字風頭
+      // 1. 背景層 (可選) - 調低透明度 (0.5) 令它變暗，不搶文字風頭
       if (prologueData.background) {
         const bg = document.createElement("div");
         bg.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background-image:url('" + prologueData.background + "');background-size:cover;background-position:center;opacity:0.5;z-index:1;";
