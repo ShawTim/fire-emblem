@@ -182,6 +182,9 @@ const UnitLayer = {
   _positionUnit(unit, el) {
     el.style.left = (unit.x * this._tileSize) + 'px';
     el.style.top = (unit.y * this._tileSize) + 'px';
+    // Depth sort: units lower on the map (larger y) draw in front of those above
+    // them, so a tall sprite never renders "behind" a unit/object to its south.
+    el.style.zIndex = unit.y + 1;
   },
 
   // Set up sprite background image and dimensions
@@ -324,6 +327,7 @@ const UnitLayer = {
     if (el) {
       el.style.left = (x * this._tileSize) + 'px';
       el.style.top = (y * this._tileSize) + 'px';
+      el.style.zIndex = y + 1;   // keep depth order in sync while moving
     }
   },
 

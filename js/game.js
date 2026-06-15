@@ -145,6 +145,13 @@ class Game {
         unit.acted = false;
         unit.moved = false;
         unit.faction = 'player';
+        unit._selected = false; unit._direction = null; unit.vx = 0; unit.vy = 0; // clear stale select/walk state
+        // Auto-resupply: refill weapons & staves to full uses at the start of each
+        // chapter. There is no shop/convoy, so durability is a per-chapter concern
+        // only — surviving units never carry permanently-depleted weapons forward.
+        for (const it of unit.items) {
+          if (it.type !== 'consumable' && it.type !== 'promotion') it.usesLeft = it.uses;
+        }
       } else {
         unit = new Unit({
           charId: pu.charId, name: charData.name, classId: charData.classId,
@@ -445,6 +452,14 @@ class Game {
     const tile = GameMap.screenToTile(screenX, screenY);
     Cursor.moveTo(tile.x, tile.y);
     GameMap.scrollToward(tile.x, tile.y, this.canvasW, this.canvasH);
+
+    // Touch input has no hover, so surface terrain bonus + unit panel on tap.
+    if (this.state === 'map' || this.state === 'unitSelected' || this.state === 'unitCommand') {
+      const _terr = GameMap.getEffectiveTerrain(tile.x, tile.y);
+      const _u = this.units.find(u => u.x === tile.x && u.y === tile.y && u.hp > 0);
+      UI.showTerrainInfo(_terr, _u);
+      if (_u) UI.showUnitPanel(_u, _terr);
+    }
 
     if (this.state === 'map') {
       this.onMapClick(tile.x, tile.y, screenX, screenY);
@@ -1065,6 +1080,7 @@ class Game {
     this.state = 'combatAnim';
     this.combatAttacker = attacker;
     this.combatDefender = defender;
+    const _preHP = { atk: attacker.hp, def: defender.hp }; // before executeCombat applies damage
     this.combatResult = executeCombat(attacker, defender, GameMap);
     const forecast = calculateCombat(attacker, defender, GameMap);
     this.logEvent({
@@ -1091,7 +1107,7 @@ class Game {
     } else {
       BGM.play('battle', true);
     }
-    this.battleScene.start(attacker, defender, this.combatResult, forecast, () => this.finishCombat());
+    this.battleScene.start(attacker, defender, this.combatResult, forecast, () => this.finishCombat(), _preHP);
   }
 
   finishCombat() {

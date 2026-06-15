@@ -68,9 +68,31 @@ class DialogueSystem {
       this.nameEl.textContent = line.speaker ? line.speaker : '';
       this.nameEl.style.display = line.speaker ? 'block' : 'none';
       this.portraitCtx.clearRect(0, 0, 80, 80);
-      this.portraitCtx.fillStyle = '#223';
-      this.portraitCtx.fillRect(0, 0, 80, 80);
-      this.portraitCanvas.style.display = line.speaker ? 'block' : 'block';
+      // Bosses/named enemies speak by display name (not a CHARACTERS key). Resolve
+      // the matching on-field unit and draw its existing portrait avatar
+      // (portraits/<charId>.png), using the same guardCaptain fallback the unit
+      // panel uses for bosses without a dedicated portrait.
+      var _spk = line.speaker;
+      var _u = (_spk && typeof game !== 'undefined' && game.units)
+        ? (game.units.find(function (x) { return x.name === _spk && x.hp > 0; }) || game.units.find(function (x) { return x.name === _spk; }))
+        : null;
+      var _pid = _u ? (_u.charId || (_u.isBoss ? 'guardCaptain' : null)) : null;
+      if (_pid) {
+        Sprites.drawPortrait(this.portraitCtx, _pid, 80, 80);
+        // Redraw once the PNG finishes loading (in case it wasn't cached yet).
+        var _pctx = this.portraitCtx;
+        var _pc = Sprites._portraitCache && Sprites._portraitCache[_pid];
+        if (_pc && !_pc.loaded && _pc.img) {
+          _pc.img.addEventListener('load', function () {
+            _pctx.clearRect(0, 0, 80, 80);
+            Sprites.drawPortrait(_pctx, _pid, 80, 80);
+          }, { once: true });
+        }
+      } else {
+        this.portraitCtx.fillStyle = '#223';
+        this.portraitCtx.fillRect(0, 0, 80, 80);
+      }
+      this.portraitCanvas.style.display = 'block';
     }
 
     this.textEl.textContent = '';

@@ -23,7 +23,7 @@ function getAIAction(unit, game) {
   const atkRange = unit.getAttackRange();
 
   if (ai === 'boss' || ai === 'defensive') {
-    // Stay put, attack if in range
+    // Hold position; attack immediately if a player is already in static range.
     const inRange = targets.filter(t => {
       const dist = Math.abs(unit.x - t.x) + Math.abs(unit.y - t.y);
       return atkRange.includes(dist);
@@ -32,12 +32,23 @@ function getAIAction(unit, game) {
       const target = pickBestTarget(unit, inRange, game);
       return { unit, type: 'attack', target, moveX: unit.x, moveY: unit.y };
     }
+    // Boss: classic throne guard — never leaves its tile.
     if (ai === 'boss') return { unit, type: 'wait' };
-    // Defensive: don't move
-    return { unit, type: 'wait' };
+    // Defensive: fall through to the move+attack search below. The guard only
+    // commits to a move that actually lands an attack (engage when a player
+    // enters striking reach), and holds otherwise — it never chases.
   }
 
-  // Aggressive: move toward best target and attack
+  // Defensive units guard: move only if it results in an attack (no creeping).
+  const holdUnlessAttack = (ai === 'defensive');
+
+  // T1 safety: defensive guards never leave their post on the opening enemy
+  // phase, so the player's starting formation is never blindsided before it can
+  // act. (Static-range attacks above still apply, matching the original hold
+  // behaviour exactly.) From turn 2 onward they engage anyone in striking reach.
+  if (holdUnlessAttack && game.turn <= 1) return { unit, type: 'wait' };
+
+  // Aggressive / engaged-defensive: move toward best target and attack
   const moveRange = getMovementRange(unit, GameMap.terrain, game.units, GameMap.width, GameMap.height);
 
   let bestAction = null;
@@ -89,7 +100,11 @@ function getAIAction(unit, game) {
 
   if (bestAction) return bestAction;
 
-  // No attack possible: move toward nearest target
+  // No attack possible this turn.
+  // Defensive guards hold position instead of creeping toward distant players.
+  if (holdUnlessAttack) return { unit, type: 'wait' };
+
+  // Aggressive: move toward nearest target
   if (targets.length > 0) {
     let nearest = targets[0], nearestDist = Infinity;
     for (const t of targets) {

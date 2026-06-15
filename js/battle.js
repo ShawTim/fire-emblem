@@ -46,7 +46,7 @@ class BattleScene {
     this.projProg = -1;
   }
 
-  start(attacker, defender, combatResult, forecast, onComplete) {
+  start(attacker, defender, combatResult, forecast, onComplete, preHP) {
     this.active = true;
     this.attacker = attacker;
     this.defender = defender;
@@ -62,8 +62,10 @@ class BattleScene {
         else if (st.target === defender) defHP += st.damage;
       }
     }
-    this.attackerHP = Math.min(atkHP, attacker.maxHp);
-    this.defenderHP = Math.min(defHP, defender.maxHp);
+    // Prefer the true pre-combat HP (overkill makes the step-sum reconstruction
+    // too high, which drew an HP bar longer than the unit's real HP).
+    this.attackerHP = Math.min(preHP ? preHP.atk : atkHP, attacker.maxHp);
+    this.defenderHP = Math.min(preHP ? preHP.def : defHP, defender.maxHp);
     this.attackerMaxHP = attacker.maxHp;
     this.defenderMaxHP = defender.maxHp;
     this.attackerTargetHP = this.attackerHP;
