@@ -287,6 +287,7 @@ class Game {
     }
 
     const dialogueQueue = [];
+    let reinforceFocus = null;   // first reinforcement tile — camera pans here to alert the player
 
     for (const evt of this.chapterData.turnEvents) {
       if (evt.turn !== this.turn) continue;
@@ -325,8 +326,12 @@ class Game {
             baseStats: this.generateEnemyStats(ed.classId, ed.level),
           });
           this.units.push(unit);
+          if (!reinforceFocus) reinforceFocus = { x: ed.x, y: ed.y };
         }
+        // Always prompt the player when reinforcements arrive (use the event's
+        // own lines, or a default notice if it has none).
         if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
+        else dialogueQueue.push({ speaker: null, text: '（敵軍增援抵達戰場！）' });
 
       } else if (evt.type === 'dialogue') {
         if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
@@ -341,8 +346,10 @@ class Game {
             baseStats: this.generateEnemyStats(ad.classId, ad.level),
           });
           this.units.push(unit);
+          if (!reinforceFocus) reinforceFocus = { x: ad.x, y: ad.y };
         }
         if (evt.text && evt.text.length) dialogueQueue.push(...evt.text);
+        else dialogueQueue.push({ speaker: null, text: '（援軍趕到！）' });
 
       } else if (evt.type === 'starCrestSurge') {
         for (const u of this.units) {
@@ -353,6 +360,8 @@ class Game {
       }
     }
 
+    // Pan to the reinforcements so the player sees where they appeared.
+    if (reinforceFocus) GameMap.centerOn(reinforceFocus.x, reinforceFocus.y, this.canvasW, this.canvasH);
     if (dialogueQueue.length) {
       const prevState = this.state;
       this.state = 'dialogue';

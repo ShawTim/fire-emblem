@@ -357,6 +357,10 @@ const Sprites = {
 
   // Classify edge transition type — must mirror the dispatch if/else chain exactly
   _classifyEdge: function(center, neighbor) {
+    // A bridge spans the water: never draw a shoreline/beach between a bridge and
+    // its neighbours. The river should flow cleanly up to the planks, and the
+    // bridge must not grow sandy banks toward the land it connects.
+    if (center.terrain === 'bridge' || neighbor.terrain === 'bridge') return null;
     if (!neighbor.differs) {
       if (center.terrain === 'forest' && neighbor.terrain === 'forest') return 'forestToForest';
       if (center.terrain === 'wall' && neighbor.terrain === 'wall') return 'wallToWall';
@@ -401,6 +405,10 @@ const Sprites = {
       var eSeed = this._edgeSeed(tileX, tileY, side);
       var tType = edgeTypes[side];
       var variant = tType ? this._pickEdgeVariant(tileX, tileY, center.terrain, side, tType) : 0;
+
+      // A bridge spans the water cleanly — no shoreline on either tile (mirrors
+      // the bridge short-circuit in _classifyEdge).
+      if (center.terrain === 'bridge' || n.terrain === 'bridge') continue;
 
       // Different-terrain transitions
       if (n.differs) {
