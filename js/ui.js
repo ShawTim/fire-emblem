@@ -228,7 +228,8 @@ const UI = {
       if (w.magic) badges.push('魔法');
       const div = document.createElement('div');
       div.className = 'menu-item';
-      div.style.cssText = 'line-height:1.35;padding:5px 12px;text-align:left';
+      // override the global .menu-item flex layout so the stat lines stack vertically
+      div.style.cssText = 'display:block;line-height:1.35;padding:5px 12px;text-align:left';
       div.innerHTML =
         `<div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
            <span style="font-weight:bold;color:${eq ? '#ffd700' : '#fff'}">${eq ? '◆ ' : ''}${w.name}</span>
