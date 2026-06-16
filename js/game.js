@@ -687,23 +687,11 @@ class Game {
       this.showUnitCommandMenu(unit);
       return;
     }
-    const items = weapons.map((w, i) => ({
-      label: w.name + ' (' + w.usesLeft + '/' + w.uses + ')',
-      action: 'equip_' + i,
-      weaponIndex: i,
-    }));
-    items.push({ label: '返回', action: 'equip_cancel' });
-
     this.state = 'equipMenu';
     const pos = this.getMenuPosForUnit(unit);
-    UI.showActionMenu(items, pos.x, pos.y, (action, idx) => {
+    UI.showEquipMenu(weapons, unit.getEquippedWeapon(), pos.x, pos.y, (wi) => {
       UI.hideActionMenu();
-      if (action === 'equip_cancel') {
-        this.showUnitCommandMenu(unit);
-        return;
-      }
-      // Move selected weapon to front of items array
-      const wi = items[idx].weaponIndex;
+      // Move selected weapon to front of items array (= equipped)
       const weapon = weapons[wi];
       const origIdx = unit.items.indexOf(weapon);
       if (origIdx > 0) {
@@ -711,6 +699,9 @@ class Game {
         unit.items.unshift(weapon);
       }
       UI.showUnitPanel(unit, GameMap.getEffectiveTerrain(unit.x, unit.y));
+      this.showUnitCommandMenu(unit);
+    }, () => {
+      UI.hideActionMenu();
       this.showUnitCommandMenu(unit);
     });
   }
@@ -961,21 +952,10 @@ class Game {
           this.showActionMenuForUnit(u, pos.x, pos.y);
           return;
         }
-        const equipItems = weapons.map((w, i) => ({
-          label: w.name + ' (' + w.usesLeft + '/' + w.uses + ')',
-          action: 'equip_post_' + i,
-          weaponIndex: i,
-        }));
-        equipItems.push({ label: '返回', action: 'equip_post_cancel' });
         this.state = 'equipMenu';
-        UI.showActionMenu(equipItems, pos.x, pos.y, (action, idx) => {
+        UI.showEquipMenu(weapons, u.getEquippedWeapon(), pos.x, pos.y, (wi) => {
           UI.hideActionMenu();
           this.state = 'unitMoved';
-          if (action === 'equip_post_cancel') {
-            this.showActionMenuForUnit(u, pos.x, pos.y);
-            return;
-          }
-          const wi = equipItems[idx].weaponIndex;
           const weapon = weapons[wi];
           const origIdx = u.items.indexOf(weapon);
           if (origIdx > 0) {
@@ -983,6 +963,10 @@ class Game {
             u.items.unshift(weapon);
           }
           UI.showUnitPanel(u, GameMap.getEffectiveTerrain(u.x, u.y));
+          this.showActionMenuForUnit(u, pos.x, pos.y);
+        }, () => {
+          UI.hideActionMenu();
+          this.state = 'unitMoved';
           this.showActionMenuForUnit(u, pos.x, pos.y);
         });
         break;

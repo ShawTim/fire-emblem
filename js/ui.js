@@ -193,6 +193,7 @@ const UI = {
 
   showActionMenu(items, x, y, onClick) {
     this.actionMenu.innerHTML = '';
+    this.actionMenu.classList.remove('equip-menu');
     items.forEach((item, i) => {
       const div = document.createElement('div');
       div.className = 'menu-item' + (item.disabled ? ' disabled' : '');
@@ -209,7 +210,45 @@ const UI = {
     this.actionMenu.classList.remove('hidden');
   },
 
-  hideActionMenu() { this.actionMenu.classList.add('hidden'); },
+  hideActionMenu() { this.actionMenu.classList.add('hidden'); this.actionMenu.classList.remove('equip-menu'); },
+
+  // Weapon-equip menu that shows each weapon's stats (攻擊/重量/命中/必殺/射程/特效).
+  // onPick(weaponIndex) equips; onCancel() goes back.
+  showEquipMenu(weapons, equipped, x, y, onPick, onCancel) {
+    const EFF = { armored: '重甲', cavalry: '騎兵', mounted: '騎乘', flying: '飛行', dragon: '龍族', infantry: '步兵', beast: '魔獸' };
+    const rangeStr = (r) => (!r || !r.length) ? '—' : (r.length === 1 ? '' + r[0] : r[0] + '–' + r[r.length - 1]);
+    this.actionMenu.innerHTML = '';
+    this.actionMenu.classList.add('equip-menu');
+    weapons.forEach((w, i) => {
+      const eq = equipped && w === equipped;
+      const eff = w.effective ? Object.keys(w.effective).map(k => EFF[k] || k).join('、') : '';
+      const badges = [];
+      if (w.prf) badges.push('專用');
+      if (w.drain) badges.push('吸血');
+      if (w.magic) badges.push('魔法');
+      const div = document.createElement('div');
+      div.className = 'menu-item';
+      div.style.cssText = 'line-height:1.35;padding:5px 12px;text-align:left';
+      div.innerHTML =
+        `<div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+           <span style="font-weight:bold;color:${eq ? '#ffd700' : '#fff'}">${eq ? '◆ ' : ''}${w.name}</span>
+           <span style="color:#888;font-size:11px">${w.usesLeft}/${w.uses}</span>
+         </div>
+         <div style="font-size:11px;color:#9fb8d8;margin-top:2px;letter-spacing:.3px">攻 ${w.atk} · 重 ${w.weight} · 中 ${w.hit} · 殺 ${w.crit} · 程 ${rangeStr(w.range)}</div>
+         ${eff ? `<div style="font-size:10px;color:#5cc8ff;margin-top:1px">特效：${eff}</div>` : ''}
+         ${badges.length ? `<div style="font-size:10px;color:#ffae5c;margin-top:1px">${badges.join(' · ')}</div>` : ''}`;
+      div.addEventListener('click', (e) => { e.stopPropagation(); onPick(i); });
+      this.actionMenu.appendChild(div);
+    });
+    const back = document.createElement('div');
+    back.className = 'menu-item';
+    back.textContent = '返回';
+    back.addEventListener('click', (e) => { e.stopPropagation(); onCancel(); });
+    this.actionMenu.appendChild(back);
+    this.actionMenu.style.left = x + 'px';
+    this.actionMenu.style.top = y + 'px';
+    this.actionMenu.classList.remove('hidden');
+  },
 
   showCombatForecast(forecast, onConfirm, onCancel) {
     const a = forecast.attacker, d = forecast.defender;
