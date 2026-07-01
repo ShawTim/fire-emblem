@@ -433,7 +433,7 @@ const UI = {
     timer = setTimeout(dismiss, 4000);
   },
 
-  updateTopBar(chapterTitle, turn, phase, objective) {
+  updateTopBar(chapterTitle, turn, phase, objective, objectiveDesc) {
     document.getElementById('chapter-name').textContent = chapterTitle || '';
     document.getElementById('turn-count').textContent = `第 ${turn} 回合`;
     const pi = document.getElementById('phase-indicator');
@@ -449,7 +449,7 @@ const UI = {
     }
     if (objective) {
       const objNames = {rout:'殲滅敵軍',boss:'擊破敵將',seize:'制壓據點',survive:'堅守防線'};
-      objEl.textContent = '目標：' + (objNames[objective] || objective);
+      objEl.textContent = '目標：' + (objectiveDesc || objNames[objective] || objective);
     }
   },
 
@@ -483,6 +483,18 @@ const UI = {
     popup.style.top = screenY + 'px';
     document.getElementById('ui-overlay').appendChild(popup);
     setTimeout(() => popup.remove(), 1000);
+  },
+
+  showTextPopup(screenX, screenY, text, color = '#ff7777') {
+    const popup = document.createElement('div');
+    popup.className = 'dmg-popup text-popup';
+    popup.textContent = text;
+    popup.style.left = screenX + 'px';
+    popup.style.top = screenY + 'px';
+    popup.style.color = color;
+    popup.style.textShadow = '0 0 5px #000, 0 0 8px rgba(255,80,80,0.8)';
+    document.getElementById('ui-overlay').appendChild(popup);
+    setTimeout(() => popup.remove(), 900);
   },
 
   showGameOver(onRestart) {
@@ -1086,7 +1098,8 @@ const UI = {
   // TRADE MENU  (交換道具)
   // ============================================================
   showTradeMenu(unitA, unitB, onDone) {
-    const MAX_ITEMS = 5;
+    const MAX_ITEMS = (typeof MAX_UNIT_ITEMS === 'number') ? MAX_UNIT_ITEMS : 5;
+    let changed = false;
     const overlay = document.createElement('div');
     overlay.id = 'trade-overlay';
     overlay.style.cssText = [
@@ -1176,7 +1189,11 @@ const UI = {
           const receiver = side === 'A' ? unitB : unitA;
           if (receiver.items.length >= MAX_ITEMS) return; // Full
           const [item] = giver.items.splice(idx, 1);
-          receiver.items.push(item);
+          if (!receiver.addItem || !receiver.addItem(item)) {
+            giver.items.splice(idx, 0, item);
+            return;
+          }
+          changed = true;
           // Re-render
           renderTrade();
         });
@@ -1185,7 +1202,7 @@ const UI = {
       overlay.querySelector('#trade-done').addEventListener('click', (e) => {
         e.stopPropagation();
         overlay.remove();
-        if (onDone) onDone();
+        if (onDone) onDone(changed);
       });
     }
 

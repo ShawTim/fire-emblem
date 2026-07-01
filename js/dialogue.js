@@ -16,6 +16,14 @@ class DialogueSystem {
     this.textEl = document.getElementById('dialogue-text');
     this.portraitCanvas = document.getElementById('portrait-canvas');
     this.portraitCtx = this.portraitCanvas.getContext('2d');
+
+    // The dialogue box sits above the canvas, so canvas clicks never reach
+    // Game.handleClick(). Let players advance dialogue by clicking/tapping the
+    // box itself instead of requiring keyboard-only input.
+    this.box.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.advance();
+    });
   }
 
   start(lines, onComplete) {

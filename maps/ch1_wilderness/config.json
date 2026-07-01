@@ -31,51 +31,18 @@
       "classId": "soldier",
       "level": 1,
       "x": 6,
-      "y": 9,
+      "y": 11,
       "items": [
         "slimLance"
       ],
       "ai": "aggressive",
-      "name": "帝國追兵"
-    },
-    {
-      "classId": "soldier",
-      "level": 1,
-      "x": 17,
-      "y": 9,
-      "items": [
-        "slimLance"
-      ],
-      "ai": "aggressive",
-      "name": "帝國追兵"
-    },
-    {
-      "classId": "soldier",
-      "level": 2,
-      "x": 9,
-      "y": 7,
-      "items": [
-        "ironLance"
-      ],
-      "ai": "aggressive",
-      "name": "帝國追兵"
+      "name": "帝國前鋒"
     },
     {
       "classId": "fighter",
       "level": 1,
-      "x": 12,
-      "y": 8,
-      "items": [
-        "ironAxe"
-      ],
-      "ai": "aggressive",
-      "name": "帝國斧兵"
-    },
-    {
-      "classId": "fighter",
-      "level": 2,
-      "x": 14,
-      "y": 6,
+      "x": 7,
+      "y": 12,
       "items": [
         "ironAxe"
       ],
@@ -85,8 +52,8 @@
     {
       "classId": "archer",
       "level": 2,
-      "x": 15,
-      "y": 4,
+      "x": 8,
+      "y": 12,
       "items": [
         "ironBow"
       ],
@@ -96,36 +63,91 @@
     {
       "classId": "soldier",
       "level": 2,
-      "x": 8,
-      "y": 5,
+      "x": 11,
+      "y": 12,
+      "items": [
+        "ironLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國追兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 2,
+      "x": 13,
+      "y": 8,
       "items": [
         "ironLance"
       ],
       "ai": "aggressive",
-      "name": "帝國精兵"
+      "name": "帝國追兵"
+    },
+    {
+      "classId": "fighter",
+      "level": 2,
+      "x": 15,
+      "y": 8,
+      "items": [
+        "ironAxe"
+      ],
+      "ai": "defensive",
+      "name": "帝國斧兵"
+    },
+    {
+      "classId": "archer",
+      "level": 2,
+      "x": 16,
+      "y": 7,
+      "items": [
+        "ironBow"
+      ],
+      "ai": "defensive",
+      "name": "帝國弓兵"
     },
     {
       "classId": "soldier",
       "level": 3,
-      "x": 11,
-      "y": 4,
+      "x": 14,
+      "y": 6,
       "items": [
         "ironLance"
       ],
-      "ai": "aggressive",
+      "ai": "defensive",
       "name": "帝國精兵"
+    },
+    {
+      "classId": "archer",
+      "level": 2,
+      "x": 13,
+      "y": 6,
+      "items": [
+        "ironBow"
+      ],
+      "ai": "defensive",
+      "name": "帝國弓兵"
     },
     {
       "classId": "fighter",
       "level": 3,
-      "x": 16,
-      "y": 3,
+      "x": 17,
+      "y": 5,
       "items": [
         "ironAxe",
         "handAxe"
       ],
-      "ai": "aggressive",
+      "ai": "defensive",
       "name": "帝國老兵"
+    },
+    {
+      "classId": "soldier",
+      "level": 3,
+      "x": 18,
+      "y": 4,
+      "items": [
+        "ironLance"
+      ],
+      "ai": "defensive",
+      "name": "帝國精兵"
     },
     {
       "classId": "archer",
@@ -140,14 +162,14 @@
     },
     {
       "classId": "soldier",
-      "level": 3,
-      "x": 18,
-      "y": 4,
+      "level": 2,
+      "x": 21,
+      "y": 3,
       "items": [
         "ironLance"
       ],
       "ai": "defensive",
-      "name": "帝國精兵"
+      "name": "帝國追兵"
     },
     {
       "classId": "knight",
@@ -167,28 +189,6 @@
         "spd": -2
       },
       "charId": "guardCaptain"
-    },
-    {
-      "classId": "soldier",
-      "level": 2,
-      "x": 21,
-      "y": 3,
-      "items": [
-        "ironLance"
-      ],
-      "ai": "aggressive",
-      "name": "帝國追兵"
-    },
-    {
-      "classId": "archer",
-      "level": 2,
-      "x": 13,
-      "y": 6,
-      "items": [
-        "ironBow"
-      ],
-      "ai": "defensive",
-      "name": "帝國弓兵"
     }
   ],
   "npcs": [],
@@ -257,6 +257,62 @@
       ]
     },
     {
+      "turn": 4,
+      "type": "reinforce",
+      "enemies": [
+        {
+          "classId": "cavalier",
+          "level": 1,
+          "x": 1,
+          "y": 17,
+          "items": [
+            "slimLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國斥候騎兵"
+        },
+        {
+          "classId": "soldier",
+          "level": 2,
+          "x": 1,
+          "y": 16,
+          "items": [
+            "ironLance"
+          ],
+          "ai": "aggressive",
+          "name": "帝國後續追兵"
+        },
+        {
+          "classId": "fighter",
+          "level": 2,
+          "x": 0,
+          "y": 15,
+          "items": [
+            "ironAxe"
+          ],
+          "ai": "aggressive",
+          "name": "帝國斧援兵"
+        },
+        {
+          "classId": "archer",
+          "level": 2,
+          "x": 2,
+          "y": 17,
+          "items": [
+            "ironBow"
+          ],
+          "ai": "aggressive",
+          "name": "帝國追擊弓兵"
+        }
+      ],
+      "text": [
+        {
+          "speaker": null,
+          "text": "後方塵土翻起——第一隊帝國追兵從退路衝入，號角聲逼近。"
+        }
+      ]
+    },
+    {
       "turn": 5,
       "type": "dialogue",
       "text": [
@@ -279,41 +335,51 @@
       ]
     },
     {
-      "turn": 4,
+      "turn": 5,
       "type": "reinforce",
       "enemies": [
         {
-          "classId": "soldier",
-          "level": 3,
+          "classId": "cavalier",
+          "level": 2,
           "x": 0,
-          "y": 8,
+          "y": 14,
           "items": [
-            "ironLance"
+            "slimLance"
           ],
           "ai": "aggressive",
-          "name": "帝國援兵"
+          "name": "帝國追獵騎兵"
         },
         {
           "classId": "soldier",
-          "level": 3,
-          "x": 23,
-          "y": 8,
+          "level": 2,
+          "x": 1,
+          "y": 15,
           "items": [
             "ironLance"
           ],
           "ai": "aggressive",
-          "name": "帝國援兵"
+          "name": "帝國追擊槍兵"
         },
         {
-          "classId": "fighter",
-          "level": 3,
-          "x": 23,
-          "y": 11,
+          "classId": "archer",
+          "level": 2,
+          "x": 3,
+          "y": 17,
           "items": [
-            "ironAxe"
+            "ironBow"
           ],
           "ai": "aggressive",
-          "name": "帝國斧援兵"
+          "name": "帝國追擊弓兵"
+        }
+      ],
+      "text": [
+        {
+          "speaker": null,
+          "text": "第二隊追兵循舊路咬上來——退路徹底被封住了。"
+        },
+        {
+          "speaker": "marcus",
+          "text": "殿下，不能再戀戰。向北突破，直取追擊隊長！"
         }
       ]
     },
@@ -323,9 +389,9 @@
       "enemies": [
         {
           "classId": "archer",
-          "level": 4,
-          "x": 21,
-          "y": 0,
+          "level": 3,
+          "x": 22,
+          "y": 4,
           "items": [
             "ironBow"
           ],
@@ -334,14 +400,20 @@
         },
         {
           "classId": "soldier",
-          "level": 4,
+          "level": 3,
           "x": 16,
-          "y": 0,
+          "y": 3,
           "items": [
-            "steelLance"
+            "ironLance"
           ],
-          "ai": "aggressive",
+          "ai": "defensive",
           "name": "帝國精銳援兵"
+        }
+      ],
+      "text": [
+        {
+          "speaker": null,
+          "text": "追擊隊長的預備隊趕到北岸，企圖守住最後的山道。"
         }
       ]
     }
@@ -361,19 +433,37 @@
     {
       "x": 9,
       "y": 12,
-      "reward": { "type": "item", "id": "steelSword" },
+      "reward": {
+        "type": "item",
+        "id": "vulnerary"
+      },
       "dialogue": [
-        { "speaker": null, "text": "獵戶從小屋走出，遞上一柄打磨光亮的鋼劍。" },
-        { "speaker": null, "text": "「這把劍跟了我多年，今日交給你們。能砍多少是多少。」" }
+        {
+          "speaker": null,
+          "text": "獵戶從小屋走出，遞上一包包紮妥當的傷藥。"
+        },
+        {
+          "speaker": null,
+          "text": "「別在這裡久留。後面的馬蹄聲越來越近了。」"
+        }
       ]
     },
     {
       "x": 20,
       "y": 6,
-      "reward": { "type": "exp", "amount": 30 },
+      "reward": {
+        "type": "exp",
+        "amount": 30
+      },
       "dialogue": [
-        { "speaker": null, "text": "山道旁的老兵向你們講述當年的戰陣。" },
-        { "speaker": null, "text": "「聽老夫一席話，勝過操練十日。去吧，年輕人。」" }
+        {
+          "speaker": null,
+          "text": "山道旁的老兵向你們講述當年的戰陣。"
+        },
+        {
+          "speaker": null,
+          "text": "「聽老夫一席話，勝過操練十日。去吧，年輕人。」"
+        }
       ]
     }
   ],

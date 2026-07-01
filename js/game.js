@@ -110,6 +110,24 @@ class Game {
       UI.showEnding();
       return;
     }
+    // Clear any stale UI/selection from the previous chapter before prologue/card.
+    // Otherwise the old unit panel/top action state can remain visible while the
+    // next chapter is loading its cinematic/dialogue.
+    if (this.selectedUnit) {
+      this.selectedUnit._selected = false;
+      this.selectedUnit._direction = null;
+    }
+    this.selectedUnit = null;
+    this.moveRange = [];
+    this.attackRange = [];
+    this.attackTargets = [];
+    this.healTargets = [];
+    this.prevUnitPos = null;
+    UI.hideUnitPanel();
+    UI.hideActionMenu();
+    UI.hideCombatForecast();
+    UI.hideEndTurnButton();
+
     // Check for prologue and play it first
     if (chapter.prologue) {
       await PrologueDisplay.show(chapter.prologue);
@@ -244,7 +262,7 @@ class Game {
     }
     this.logEvent({ type: 'phase', phaseStart: 'player' });
     this.processTurnEvents();
-    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'player', this.chapterData.objective);
+    UI.updateTopBar(this.chapterData.title + '：' + this.chapterData.subtitle, this.turn, 'player', this.chapterData.objective, this.chapterData.objectiveDesc);
     UI.showPhaseBanner('player');
     UI.hideActionMenu();
     UI.hideCombatForecast();
@@ -459,6 +477,18 @@ class Game {
         this.state === 'mapMenu' || this.state === 'mapBrowse') return;
 
     const tile = GameMap.screenToTile(screenX, screenY);
+    if (!tile) return;
+
+    // Movement selection needs to validate the target before moving the cursor
+    // or auto-scrolling the camera.  Otherwise an out-of-range click can pan
+    // the map and make the selected unit appear to have shifted, which feels
+    // like the old "free move/cancel" bug even when the unit coordinates stay
+    // unchanged.
+    if (this.state === 'unitSelected') {
+      this.onUnitSelectedClick(tile.x, tile.y, screenX, screenY);
+      return;
+    }
+
     Cursor.moveTo(tile.x, tile.y);
     GameMap.scrollToward(tile.x, tile.y, this.canvasW, this.canvasH);
 
@@ -477,8 +507,6 @@ class Game {
       UI.hideActionMenu();
       this.cancelSelection();
       return;
-    } else if (this.state === 'unitSelected') {
-      this.onUnitSelectedClick(tile.x, tile.y, screenX, screenY);
     } else if (this.state === 'selectTarget') {
       this.onSelectTargetClick(tile.x, tile.y);
     }
@@ -533,12 +561,16 @@ class Game {
     const ts = GameMap.tileSize * GameMap.scale;
     let mx = unit.x * ts - GameMap.camX + ts + 8;
     let my = unit.y * ts - GameMap.camY;
-    // Keep menu on screen (use viewport height for mobile fullscreen support)
+    // Keep menu on screen (use viewport height for mobile fullscreen support).
+    // Menus are positioned inside #ui-overlay, so convert viewport height into
+    // overlay-local coordinates before clamping.
+    const canvasTop = this.canvas ? this.canvas.getBoundingClientRect().top : 0;
     const viewportH = window.innerHeight || this.canvasH;
     const mobileBuffer = 60;
-    const menuHeight = itemCount * 32 + 20; // estimate menu height
+    const menuHeight = itemCount * 44 + 8; // CSS .menu-item min-height + border
+    const maxLocalY = viewportH - canvasTop - menuHeight - mobileBuffer;
     if (mx > this.canvasW - 130) mx = unit.x * ts - GameMap.camX - 130;
-    if (my > viewportH - menuHeight - mobileBuffer) my = viewportH - menuHeight - mobileBuffer;
+    if (my > maxLocalY) my = maxLocalY;
     if (mx < 4) mx = 4;
     if (my < 32) my = 32;
     return { x: mx, y: my };
@@ -557,7 +589,17 @@ class Game {
     if (cmdWeapons.length > 0) {
       items.push({ label: '裝備', action: 'cmd_equip' });
     }
-    items.push({ label: '道具', action: 'cmd_item' });
+    const cmdConsumables = unit.items.filter(it => it.type === 'consumable' && it.usesLeft > 0);
+    if (cmdConsumables.length > 0) {
+      items.push({ label: '道具', action: 'cmd_item' });
+    }
+    const preMoveNeighbors = this.getAdjacentFriendlyUnits(unit);
+    if (preMoveNeighbors.length > 0) {
+      items.push({ label: '交換', action: 'cmd_trade', neighbors: preMoveNeighbors });
+    }
+    if (unit.items.length > 0) {
+      items.push({ label: '丟棄', action: 'cmd_discard' });
+    }
     items.push({ label: '狀態', action: 'cmd_status' });
 
     // Talk check
@@ -597,7 +639,7 @@ class Game {
     items.push({ label: '取消', action: 'cmd_cancel' });
 
     this.state = 'unitCommand';
-    const pos = this.getMenuPosForUnit(unit);
+    const pos = this.getMenuPosForUnit(unit, items.length);
     UI.showActionMenu(items, pos.x, pos.y, (action, idx) => this.onUnitCommandSelect(action, items[idx]));
   }
 
@@ -651,6 +693,20 @@ class Game {
         this.showItemMenu(unit);
         break;
 
+      case 'cmd_trade':
+        this.startTrade(unit, menuItem.neighbors || this.getAdjacentFriendlyUnits(unit),
+          () => this.doWait(),
+          () => this.showUnitCommandMenu(unit)
+        );
+        break;
+
+      case 'cmd_discard':
+        this.showDiscardMenu(unit,
+          () => this.showUnitCommandMenu(unit),
+          () => this.showUnitCommandMenu(unit)
+        );
+        break;
+
       case 'cmd_status':
         UI.showStatusScreen(unit, () => {
           // Re-open command menu after status screen closes
@@ -688,7 +744,7 @@ class Game {
       return;
     }
     this.state = 'equipMenu';
-    const pos = this.getMenuPosForUnit(unit);
+    const pos = this.getMenuPosForUnit(unit, weapons.length + 1);
     UI.showEquipMenu(weapons, unit.getEquippedWeapon(), pos.x, pos.y, (wi) => {
       UI.hideActionMenu();
       // Move selected weapon to front of items array (= equipped)
@@ -725,7 +781,7 @@ class Game {
     menuItems.push({ label: '返回', action: 'item_cancel' });
 
     this.state = 'itemMenu';
-    const pos = this.getMenuPosForUnit(unit);
+    const pos = this.getMenuPosForUnit(unit, menuItems.length);
     UI.showActionMenu(menuItems, pos.x, pos.y, (action, idx) => {
       UI.hideActionMenu();
       if (action === 'item_cancel') {
@@ -816,29 +872,58 @@ class Game {
   }
 
   onUnitSelectedClick(x, y, screenX, screenY) {
-    const inRange = this.moveRange.find(t => t.x === x && t.y === y);
-    if (inRange) {
-      this.prevUnitPos = { x: this.selectedUnit.x, y: this.selectedUnit.y };
-      const path = findPath(this.selectedUnit.x, this.selectedUnit.y, x, y,
-        this.selectedUnit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
+    const unit = this.selectedUnit;
+    if (!unit) {
+      this.cancelSelection();
+      return;
+    }
+
+    const showInvalidMove = () => {
+      unit._direction = null;
+      if (typeof UI.showTextPopup === 'function') {
+        UI.showTextPopup(screenX, screenY, '不可到達');
+      } else if (typeof UI.showDamagePopup === 'function') {
+        // Backward-compatible fallback if an older ui.js is still in memory.
+        UI.showDamagePopup(screenX, screenY, '不可到達', 'text');
+      }
+    };
+
+    if (x === unit.x && y === unit.y) {
+      // Clicking the selected unit again behaves like a soft cancel back to
+      // the command menu (more discoverable than requiring Esc/X).
       this.moveRange = [];
       this.attackRange = [];
+      UI.showUnitPanel(unit, GameMap.getEffectiveTerrain(unit.x, unit.y));
+      this.showUnitCommandMenu(unit);
+      return;
+    }
+
+    const inRange = this.moveRange.find(t => t.x === x && t.y === y);
+    if (inRange) {
+      const path = findPath(unit.x, unit.y, x, y,
+        unit, GameMap.terrain, this.units, GameMap.width, GameMap.height);
       if (!path || path.length <= 1) {
-        // Direct placement if path is trivial
-        this.selectedUnit.x = x;
-        this.selectedUnit.y = y;
-        this.selectedUnit.moved = true;
-        this.state = 'unitMoved';
-        this.showActionMenuForUnit(this.selectedUnit, screenX, screenY);
-      } else {
-        this.animateMove(this.selectedUnit, path, () => {
-          this.selectedUnit.moved = true;
-          this.state = 'unitMoved';
-          this.showActionMenuForUnit(this.selectedUnit, screenX, screenY);
-        });
+        // `moveRange` and `findPath` should agree, but terrain/object overlays
+        // or unit occupancy can make an old highlighted tile no longer pathable.
+        // Never treat a null path as a free/direct move.
+        showInvalidMove();
+        return;
       }
+      this.prevUnitPos = { x: unit.x, y: unit.y };
+      this.moveRange = [];
+      this.attackRange = [];
+      this.animateMove(unit, path, () => {
+          unit.moved = true;
+          this.state = 'unitMoved';
+          this.showActionMenuForUnit(unit, screenX, screenY);
+      });
     } else {
-      this.cancelSelection();
+      // Keep movement selection active on an invalid tile click, but give
+      // feedback.  Accidentally tapping a just-out-of-range square should not
+      // silently drop the unit selection or leave the player wondering whether
+      // the move was accepted.
+      showInvalidMove();
+      return;
     }
   }
 
@@ -898,6 +983,9 @@ class Game {
     if (postMoveConsumables.length > 0) {
       items.push({ label: '道具', action: 'item' });
     }
+    if (unit.items.length > 0) {
+      items.push({ label: '丟棄', action: 'discard' });
+    }
 
     // 交換系統：若有相鄰友方單位則顯示交換選項
     const friendlyNeighbors = this.getAdjacentFriendlyUnits(unit);
@@ -908,12 +996,8 @@ class Game {
     items.push({ label: '待機', action: 'wait' });
     items.push({ label: '取消', action: 'cancel' });
 
-    const menuX = Math.min(screenX, this.canvasW - 120);
-    // Use window.innerHeight for mobile fullscreen support, with buffer for mobile UI
-    const viewportH = window.innerHeight || this.canvasH;
-    const mobileBuffer = 60; // Space for "exit fullscreen" button etc.
-    const menuY = Math.min(screenY, viewportH - items.length * 32 - mobileBuffer);
-    UI.showActionMenu(items, menuX, menuY, (action, idx) => this.onActionMenuSelect(action, items[idx]));
+    const pos = this.getMenuPosForUnit(unit, items.length);
+    UI.showActionMenu(items, pos.x, pos.y, (action, idx) => this.onActionMenuSelect(action, items[idx]));
   }
 
   onActionMenuSelect(action, menuItem) {
@@ -980,6 +1064,18 @@ class Game {
         });
         break;
       }
+      case 'discard': {
+        const u = this.selectedUnit;
+        const pos = this.getMenuPosForUnit(u);
+        this.showDiscardMenu(u,
+          () => this.doWait(),
+          () => {
+            this.state = 'unitMoved';
+            this.showActionMenuForUnit(u, pos.x, pos.y);
+          }
+        );
+        break;
+      }
       case 'trade': {
         // 交換系統
         const u = this.selectedUnit;
@@ -989,24 +1085,7 @@ class Game {
           this.state = 'unitMoved';
           this.showActionMenuForUnit(u, pos.x, pos.y);
         };
-        if (neighbors.length === 1) {
-          // 只有一個相鄰友方，直接開啟交換畫面
-          UI.showTradeMenu(u, neighbors[0], reopenAction);
-        } else {
-          // 多個相鄰友方，先選擇要交換的對象
-          const neighborItems = neighbors.map((n, i) => ({
-            label: n.name + ' (' + getClassData(n.classId).name + ')',
-            action: 'trade_target_' + i,
-            targetUnit: n,
-          }));
-          neighborItems.push({ label: '取消', action: 'trade_cancel' });
-          this.state = 'unitCommand';
-          UI.showActionMenu(neighborItems, pos.x, pos.y, (action, idx) => {
-            UI.hideActionMenu();
-            if (action === 'trade_cancel') { reopenAction(); return; }
-            UI.showTradeMenu(u, neighborItems[idx].targetUnit, reopenAction);
-          });
-        }
+        this.startTrade(u, neighbors, () => this.doWait(), reopenAction);
         break;
       }
       case 'wait':
@@ -1190,6 +1269,7 @@ class Game {
 
     if (expUnit && expAmt > 0) {
       const gains = expUnit.gainExp(expAmt);
+      UI.showUnitPanel(expUnit, GameMap.getEffectiveTerrain(expUnit.x, expUnit.y));
       UI.showExpGain(expUnit, expAmt, () => {
         if (gains) {
           UI.showLevelUp(expUnit, gains, () => this.afterCombatDone());
@@ -1303,8 +1383,7 @@ class Game {
         const item = createItem(r.id);
         if (item) {
           if (r.usesLeft !== undefined) item.usesLeft = r.usesLeft;
-          unit.items.push(item);
-          UI.showItemGet(item, unit.name, after);
+          this.giveItemWithLimit(unit, item, after);
           return;
         }
       }
@@ -1319,6 +1398,102 @@ class Game {
     } else {
       grantReward(() => this.doWait());
     }
+  }
+
+  startTrade(unit, neighbors, onChanged, onUnchanged) {
+    const finish = (changed) => {
+      if (changed) {
+        if (onChanged) onChanged();
+      } else if (onUnchanged) {
+        onUnchanged();
+      }
+    };
+
+    if (!neighbors || neighbors.length === 0) {
+      if (onUnchanged) onUnchanged();
+      return;
+    }
+
+    if (neighbors.length === 1) {
+      this.state = 'tradeMenu';
+      UI.showTradeMenu(unit, neighbors[0], finish);
+      return;
+    }
+
+    const neighborItems = neighbors.map((n, i) => ({
+      label: n.name + ' (' + getClassData(n.classId).name + ')',
+      action: 'trade_target_' + i,
+      targetUnit: n,
+    }));
+    neighborItems.push({ label: '取消', action: 'trade_cancel' });
+    this.state = 'unitCommand';
+    const tradePos = this.getMenuPosForUnit(unit, neighborItems.length);
+    UI.showActionMenu(neighborItems, tradePos.x, tradePos.y, (action, idx) => {
+      UI.hideActionMenu();
+      if (action === 'trade_cancel') {
+        if (onUnchanged) onUnchanged();
+        return;
+      }
+      this.state = 'tradeMenu';
+      UI.showTradeMenu(unit, neighborItems[idx].targetUnit, finish);
+    });
+  }
+
+  showDiscardMenu(unit, onDiscard, onCancel, title) {
+    if (!unit || unit.items.length === 0) {
+      if (onCancel) onCancel();
+      return;
+    }
+    const menuItems = [];
+    if (title) menuItems.push({ label: title, action: 'discard_title', disabled: true });
+    unit.items.forEach((it, i) => {
+      const uses = it.usesLeft !== undefined ? it.usesLeft : it.uses;
+      menuItems.push({
+        label: '丟棄 ' + it.name + ' (' + uses + '/' + it.uses + ')',
+        action: 'discard_' + i,
+        itemRef: it,
+      });
+    });
+    menuItems.push({ label: '返回', action: 'discard_cancel' });
+
+    this.state = 'discardMenu';
+    const menuPos = this.getMenuPosForUnit(unit, menuItems.length);
+    UI.showActionMenu(menuItems, menuPos.x, menuPos.y, (action, idx) => {
+      if (action === 'discard_cancel') {
+        UI.hideActionMenu();
+        if (onCancel) onCancel();
+        return;
+      }
+      const item = menuItems[idx].itemRef;
+      if (!item) return;
+      UI.hideActionMenu();
+      UI.showConfirm('丟棄「' + item.name + '」？', () => {
+        const realIdx = unit.items.indexOf(item);
+        if (realIdx >= 0) unit.items.splice(realIdx, 1);
+        UI.showUnitPanel(unit, GameMap.getEffectiveTerrain(unit.x, unit.y));
+        if (onDiscard) onDiscard(item);
+      }, () => {
+        this.showDiscardMenu(unit, onDiscard, onCancel, title);
+      });
+    });
+  }
+
+  giveItemWithLimit(unit, item, after) {
+    if (!unit || !item) { if (after) after(); return; }
+    if (unit.addItem && unit.addItem(item)) {
+      UI.showItemGet(item, unit.name, after);
+      return;
+    }
+
+    this.showDiscardMenu(unit, () => {
+      if (unit.addItem && unit.addItem(item)) {
+        UI.showItemGet(item, unit.name, after);
+      } else if (after) {
+        after();
+      }
+    }, () => {
+      UI.showMapMenuMsg('道具已滿，未取得「' + item.name + '」', after);
+    }, '道具已滿：丟棄一件以取得「' + item.name + '」');
   }
 
   doWait() {

@@ -79,7 +79,7 @@ class Unit {
     if (data.items) {
       for (const itemId of data.items) {
         const item = createItem(itemId);
-        if (item) this.items.push(item);
+        this.addItem(item);
       }
     }
 
@@ -143,6 +143,14 @@ class Unit {
 
   canHeal() {
     return this.items.some(it => it.type === 'staff' && it.usesLeft > 0);
+  }
+
+  addItem(item) {
+    if (!item) return false;
+    const limit = (typeof MAX_UNIT_ITEMS === 'number') ? MAX_UNIT_ITEMS : 5;
+    if (this.items.length >= limit) return false;
+    this.items.push(item);
+    return true;
   }
 
   getHealStaff() {
@@ -225,7 +233,10 @@ class Unit {
     unit.items = [];
     for (const idata of (data.items || [])) {
       const item = createItem(idata.id);
-      if (item) { item.usesLeft = idata.usesLeft; unit.items.push(item); }
+      if (item) {
+        item.usesLeft = idata.usesLeft;
+        unit.addItem(item);
+      }
     }
     return unit;
   }

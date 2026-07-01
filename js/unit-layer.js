@@ -158,13 +158,16 @@ const UnitLayer = {
       }
 
       // Faction tinting / grayed
+      // Keep faction classes even after a unit has acted.  Previously `showGray`
+      // removed `map-unit--enemy`, so acted enemies stopped looking like enemies
+      // during enemy phase (they became plain gray/blue-looking units).
       var showGray = unit.acted && (
         (unit.faction === 'player' && game.phase === 'player') ||
         (unit.faction === 'enemy' && game.phase === 'enemy')
       );
       el.classList.toggle('map-unit--grayed', showGray);
-      el.classList.toggle('map-unit--enemy', !showGray && unit.faction === 'enemy');
-      el.classList.toggle('map-unit--ally', !showGray && (unit.faction === 'ally' || unit.isAlly === true));
+      el.classList.toggle('map-unit--enemy', unit.faction === 'enemy');
+      el.classList.toggle('map-unit--ally', unit.faction === 'ally' || unit.isAlly === true);
 
       // HP bar
       this._updateHP(unit, el);

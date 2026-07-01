@@ -25,3 +25,7 @@ const GAME_CONFIG = {
     }
   }
 };
+
+// Fire Emblem-style inventory cap. Keep this as a single shared value so
+// trading, rewards, save/load, and discard menus all enforce the same limit.
+const MAX_UNIT_ITEMS = 5;

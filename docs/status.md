@@ -7,7 +7,7 @@ Every chapter has terrain, config, dialogues, and prologue. All chapters are now
 | Chapter | Enemies (initial) | Reinforce waves | Recruits | Boss | Notes |
 |---|---|---|---|---|---|
 | ch0 序章 | 5 | — | Eirine, Marcus | guardCaptain | Tutorial chapter |
-| ch1 第一章 | ~10 | — | Lina | 追擊隊長 | |
+| ch1 第一章 | 14 | turn 4 (4), turn 5 (3), turn 6 (2) | Lina | 追擊隊長 | Rear pursuit upgraded into two chasing squads so the retreat route feels pressured; turn 6 north soldier is defensive/iron-lance so it guards instead of rushing the bridge |
 | ch2 第二章 | ~12 | turn 2 (text added) | Thor, Serra | 帝國百夫長 | |
 | ch3 第三章 | 13 | turn 4 (2, text) | Cain (t1) | 追討騎士長 cav lv8 | Castle-themed terrain; Cain spawns at east-fort flank |
 | ch4 第四章 | 18 | turn 3 (2 skeletons, text) | Fran (t1) | 首席魔導師澤諾 darkMage | Was empty; filled |
